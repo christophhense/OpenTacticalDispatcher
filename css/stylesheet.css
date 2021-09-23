@@ -1,0 +1,336 @@
+/*
+* http://www.thestyleworks.de/tut-art/style-aufbau.shtml
+*/
+@CHARSET "UTF-8";
+
+body {
+	font-size: 12px;
+}
+
+@media screen {
+
+	th {
+		color: #000000;
+	}
+	
+	td {
+		color: #000000;
+	}
+
+	.table th, td {
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+		white-space: nowrap !important;
+	}
+
+	.table-striped {
+	}
+
+	.td-div {
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+		white-space: nowrap !important;
+	}
+
+	.highlight {
+		background-color: #FFFF88;
+	}
+}
+
+@media print {
+	.table th, td {
+		border-color: transparent !important;
+		border-bottom: 0px !important;
+		overflow: visible !important;
+		text-overflow: inherit !important;
+		white-space: pre-wrap !important;
+		font-size: 11px !important;
+	}
+
+	.big {
+		font-size: 21px !important;
+	}
+
+	.panel-default {
+		border-color: transparent !important;
+	}
+
+	.td-div {
+		text-overflow: inherit !important;
+		white-space: pre-wrap !important;
+	}
+
+	.hidden-border {
+		border-style: none;
+	}
+
+	.printer {
+		display: none
+	}
+}
+
+.status {
+	font-weight: bold;
+	font-size: 11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.dispatched {
+	font-weight: bold;
+	font-size: 11px;
+	color: #000000;
+	background-color: #FFFFFF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.responding {
+	font-weight: bold;
+	font-size: 11px;
+	color: #000000;
+	background-color: #FFC0CB;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.on_scene {
+	font-weight: bold;
+	font-size: 11px;
+	color: #FFFFFF;
+	background-color: #FF0000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.u2fenr {
+	font-weight: bold;
+	font-size: 11px;
+	color: #FFFFFF;
+	background-color: #FF0000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.u2farr {
+	font-weight: bold;
+	font-size: 11px;
+	color: #000000;
+	background-color: #FFA500;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.hover_set_callprogression {
+	background-color: #E0E0E0 !important;
+}
+
+.closed {
+	font-weight: bold;
+	font-size: 11px;
+	color: #000000;
+	background-color: #C0C0C0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	height: 14px;
+	border: 1px solid #A9A9A9;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.severity_high {
+	font-weight: bold;
+	font-size: 11px;
+	color: #C00000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.severity_priority {
+	font-weight: bold;
+	font-size: 11px;
+	color: #EB9316;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.severity_medium {
+	font-weight: bold;
+	font-size: 11px;
+	color: #008000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.severity_normal {
+	font-weight: bold;
+	font-size: 11px;
+	color: #0000FF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.severity_counts {
+	font-weight: bold;
+	font-size: 10px;
+	background-color: #CECECE;
+	margin-left: 40px;
+	margin-right: 40px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.text_green_bold {
+	font-weight: bold;
+	font-size: 11px;
+	color: #009000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.text_red_bold {
+	font-weight: bold;
+	font-size: 11px;
+	color: #C00000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.text_black {
+	font-weight: normal;
+	font-size: 11px;
+	color: #000000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+.infobox-head {
+	color: #000000;
+	background-color: #FFFFFF;
+}
+
+.mandatory {
+	background-color: rgba(255, 0, 0, 0.1);
+}
+
+.btn-info_transparent {
+	background-color: transparent;
+}
+
+.btn-warning_transparent {
+	background-color: transparent;
+}
+
+.btn-danger_transparent {
+	background-color: transparent;
+}
+
+.alert-warning-flat {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin: 0px;
+}
+
+.alert-warning-flat_transparent {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin: 0px;
+	color: transparent;
+}
+
+p.page {
+	page-break-before: always;
+}
+
+.btn-info.noblink {
+}
+
+select.sit {
+	font-weight: bold;
+	font-size: 10px;
+	color: #000000;
+	background-color: #FFFFFF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	width: 100%;
+	text-align: left;
+}
+
+.label-clock {
+	font-weight: 500;
+	color: #000000;
+	background-color: #F5F5F5;
+	border-color: #CCC;
+	border-style: solid;
+	border-width: 1px;
+	padding-top: .2em;
+	padding-right: .6em;
+	padding-left: .6em;
+	padding-bottom: .3em;
+}
+
+.file-caption-name {
+	font-size: 12px;
+}
+
+.hidden-xs {
+	font-size: 12px;
+}
+
+.loader {
+	border: 16px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 16px solid #3498db;
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+	0% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.infostring {
+	font-weight: 700;
+	font-size: 18px;
+}
+
+.pw_show {
+	 line-height: 34px;
+	 vertical-align: middle;
+}

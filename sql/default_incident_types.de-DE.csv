@@ -1,0 +1,18 @@
+"import";"incident_type";"severity";"group";"sort";"description";"protocol";"delete(yes)"
+"incident_types";"MED_UNKLAR";"medium";"Medizinisch";10;"wahrscheinlich hilflose Person, genauer Einsatzanlass konnte nicht ermittelt werden";"Hinweistext zum Einsatzstichwort MED_UNKLAR.";
+"incident_types";"MED_BEWUSSTLOS";"high";"Medizinisch";20;"Bewusstlose Person, mit hoher Wahrscheinlichkeit Lebensgefahr vorhanden";"Hinweistext zum Einsatzstichwort MED_BEWUSSTLOS.";
+"incident_types";"MED_INTERN_1";"medium";"Medizinisch";30;"Erkrankung, Kreislaufschwäche, etc.";"Hinweistext zum Einsatzstichwort MED_INTERN_1.";
+"incident_types";"MED_INTERN_2";"high";"Medizinisch";40;"Schwere Erkrankung, ggfls. Lebensbedrohlich";"Hinweistext zum Einsatzstichwort MED_INTERN_2.";
+"incident_types";"MED_CHIRUGISCH_1";"medium";"Medizinisch";50;"Unfall, Verletzung, leicht";"Hinweistext zum Einsatzstichwort MED_CHIRUGISCH_1.";
+"incident_types";"MED_CHIRUGISCH_2";"high";"Medizinisch";60;"Unfall, Verletzung, schwer";"Hinweistext zum Einsatzstichwort MED_CHIRUGISCH_2.";
+"incident_types";"MED_VU_1";"medium";"Medizinisch";70;"Leichter Verkehrsunfall mit Verletzten";"Hinweistext zum Einsatzstichwort MED_VU_1.";
+"incident_types";"MED_VU_2";"high";"Medizinisch";80;"Schwerer Verkehrsunfall mit Verletzten";"Hinweistext zum Einsatzstichwort MED_VU_2.";
+"incident_types";"MED_SONSTIGES";"medium";"Medizinisch";90;"Sonstiges, nicht näher benanntes medizinisches Problem";"Hinweistext zum Einsatzstichwort MED_SONSTIGES.";
+"incident_types";"MED_TRANSPORT";"medium";"Medizinisch";100;"Patiententransport, i. d. R. mit Krankenkraftwagen";"Hinweistext zum Einsatzstichwort MED_TRANSPORT.";
+"incident_types";"SON_BEREITSTELLUNG";"medium";"Sonstiges";110;"Bereitstellung an bestimmtem Ort";"Hinweistext zum Einsatzstichwort SON_BEREITSTELLUNG.";
+"incident_types";"SON_TRANSPORT";"medium";"Sonstiges";120;"Materialtransport";"Hinweistext zum Einsatzstichwort SON_TRANSPORT.";
+"incident_types";"SON_BETREUUNG";"medium";"Sonstiges";130;"Betreuungseinsatz, PSNV, o.Ä.";"Hinweistext zum Einsatzstichwort SON_BETREUUNG.";
+"incident_types";"SON_SERVICE";"medium";"Sonstiges";140;"Material aufrüsten, besondere Reinigung von Personal und/oder Gerät aufgrund von Infektion und/oder Verschmutzung oder Ähnlichem.";"Hinweistext zum Einsatzstichwort SON_SERVICE.";
+"incident_types";"SON_SONSTIGES";"medium";"Sonstiges";150;"Sonstiger, nicht näher benannter Einsatz";"Hinweistext zum Einsatzstichwort SON_SONSTIGES.";
+"incident_types";"SON_ÜBUNG";"normal";"Sonstiges";160;"Übungseinsatz";"Hinweistext zum Einsatzstichwort SON_ÜBUNG.";
+"incident_types";"SON_TEST";"normal";"Sonstiges";170;"Testen der Funktionen des Einsatzleitsystems";"Hinweistext zum Einsatzstichwort SON_TEST.";

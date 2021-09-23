@@ -1,0 +1,79 @@
+OpenTacticalDispatcher
+   === Librarys ===
+
+/css
+	Components under their licenses of librarys standing below.
+
+/fonts
+	glyphicons-halflings-regular
+		MIT-license
+		https://glyphicons.bootstrapcheatsheets.com/
+
+	FreeMono
+		GPLv3
+		http://www.gnu.org/software/freefont/
+
+/ics
+	PHPcoord
+		GPLv3
+		https://github.com/dvdoug/PHPCoord
+
+/js
+	jscolor
+		GPLv3
+		http://jscolor.com/
+
+	bootstrap-checkbox
+		MIT-license
+		https://vsn4ik.github.io/bootstrap-checkbox/
+
+	bootstrap-datetimepicker
+		MIT-license
+		https://eonasdan.github.io/bootstrap-datetimepicker/
+
+	bootstrap-multiselect
+		Apache License v2.0
+		BSD-license
+		http://davidstutz.github.io/bootstrap-multiselect/
+
+	bootstrap-tabdrop
+		Apache License v2.0
+		https://www.eyecon.ro/bootstrap-tabdrop/
+
+	bootstrap
+		MIT-license
+		https://getbootstrap.com/
+
+	bootstrap-fileinput
+		BSD-license
+		https://github.com/kartik-v/bootstrap-fileinput
+
+	jquery
+		MIT-license
+		https://jquery.org/
+
+	jquery-highlite
+		MIT-license
+		https://github.com/knownasilya/jquery-highlight
+
+	md5.js
+		BSD-license
+		http://pajhome.org.uk/crypt/md5/
+
+	moment-with-locales
+		MIT-license
+		https://momentjs.com/
+
+	wztooltip
+		LGPL2.1 or later
+		http://www.walterzorn.de
+
+/lib
+	phpMailer
+		LGPLv2.1
+		https://github.com/PHPMailer/PHPMailer
+
+	phpprinttip
+		LGPLv2.1
+		http://www.nongnu.org/phpprintipp
+
