@@ -277,9 +277,7 @@ function insert_into_allocates($group = 1, $type = 0, $resource_id = 0, $user_id
 function get_working_in_development_environement() {
 	if (
 		file_exists(get_current_path(".project")) ||
-		file_exists(get_current_path(".buildpath")) ||
-		file_exists(get_current_path(".svn")) ||
-		file_exists(get_current_path(".settings")) ||
+		file_exists(get_current_path(".gitignore")) ||
 		file_exists(get_current_path(".git"))
 	) {
 		return true;
