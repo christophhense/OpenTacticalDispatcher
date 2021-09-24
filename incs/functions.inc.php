@@ -2555,67 +2555,31 @@ function get_status_settings($select_type, $status_id) {
 	}
 }
 
-$GLOBALS['LEGACY_SELECT'] = false;
 function get_status_select_str($select_type, $unit_facility, $status_id, $back) {
-	if ($GLOBALS['LEGACY_SELECT']) {
-		$disabled_str = "";
-		if (is_guest()) {
-			$disabled_str = " disabled";
-		}
-		$status_settings = get_status_settings($select_type, 0);
-		$init_bg_color = "transparent";
-		$init_txt_color = "black";
-		if (isset($status_settings[$status_id]["bg_color"]) && isset($status_settings[$status_id]["text_color"])) {
-			$init_bg_color = $status_settings[$status_id]["bg_color"];
-			$init_txt_color = $status_settings[$status_id]["text_color"];
-		}
-		if ($select_type == $GLOBALS['TYPE_UNIT']) {
-			$return_str = "\t\t<select class='sit label' id='frm_status_id_u_" . $unit_facility . "' name='frm_status_id' " . $disabled_str . " style='background-color: " .
-				$init_bg_color . "; color: " . $init_txt_color . ";' onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; " .
-				"this.style.color=this.options[this.selectedIndex].style.color; set_unit_status(" . $unit_facility . ", this.value, \"" .
-				get_text("Status update applied") . "\")'>";
-		} else {
-			$return_str = "\t\t<select class='sit label' id='frm_status_id_f_" . $unit_facility . "' name='frm_status_id' " . $disabled_str . " style='background-color: " .
-				$init_bg_color . "; color: " . $init_txt_color . ";' onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; " .
-				"this.style.color=this.options[this.selectedIndex].style.color; set_facility_status(" . $unit_facility . ", this.value, \"" .
-				get_text("Status update applied") . "\")'>";
-		}
-		foreach ($status_settings as $key => $value) {
-			$select_str = "";
-			if ($key == $status_id) {
-				$select_str = " SELECTED";
-			}
-			$return_str .= "\t\t\t<option value=" . $key . $select_str." style='background-color:" . $value['bg_color'] . "; color:" . $value['text_color'] .
-				";' onMouseover = 'style.backgroundColor = this.backgroundColor;'>" . remove_nls($value["status_name"]) . " </option>";
-		}
-		$return_str .= "\t\t</select>";
-		return $return_str;
-	} else {
-		$type_key = "unit_id";
-		$name_value = "unit_status";
-		if ($select_type == $GLOBALS['TYPE_FACILITY']) {
-			$type_key = "facility_id";
-			$name_value = "facility_status";
-		}
-		$click_str = "";
-		if (is_super() || is_admin() || is_operator()) {
-			$back_value = "situation";
-			switch ($back) {
-			case "units":
-				$back_value = "units";
-				break;
-			case "facilities":
-				$back_value = "facilities";
-				break;
-			default:
-			}
-			$click_str = " onClick='window.location.href=\"log_report.php?back=" . $back_value . "&" . $type_key . "=" . $unit_facility ."\"'";
-		}
-		$status_settings = get_status_settings($select_type, $status_id);
-		return "<div name='" . $name_value . "' class='label status col-md-12' style='height: auto; text-align: left; " .
-			"background-color:" . $status_settings['bg_color'] . "; color:" . $status_settings['text_color'] . ";' " . $click_str .
-			"data-" . $type_key . "=" . $unit_facility . ">" . remove_nls($status_settings["status_name"]) . "</div>";
+	$type_key = "unit_id";
+	$name_value = "unit_status";
+	if ($select_type == $GLOBALS['TYPE_FACILITY']) {
+		$type_key = "facility_id";
+		$name_value = "facility_status";
 	}
+	$click_str = "";
+	if (is_super() || is_admin() || is_operator()) {
+		$back_value = "situation";
+		switch ($back) {
+		case "units":
+			$back_value = "units";
+			break;
+		case "facilities":
+			$back_value = "facilities";
+			break;
+		default:
+		}
+		$click_str = " onClick='window.location.href=\"log_report.php?back=" . $back_value . "&" . $type_key . "=" . $unit_facility ."\"'";
+	}
+	$status_settings = get_status_settings($select_type, $status_id);
+	return "<div name='" . $name_value . "' class='label status col-md-12' style='height: auto; text-align: left; " .
+		"background-color:" . $status_settings['bg_color'] . "; color:" . $status_settings['text_color'] . ";' " . $click_str .
+		"data-" . $type_key . "=" . $unit_facility . ">" . remove_nls($status_settings["status_name"]) . "</div>";
 }
 
 function show_unit_facility_status_select($unit_facility) {

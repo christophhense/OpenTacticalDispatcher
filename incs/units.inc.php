@@ -982,12 +982,8 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				$title_status_assign = get_text("Cleared") . "<br>" . date(get_variable("date_format"), strtotime($row['clear'])) . "<br><br>" . get_text("Click to edit assign");
 			} else {
 				$unit_status_time_raw = $row['updated'];
-				if ($GLOBALS['LEGACY_SELECT']) {
-					$title_status_assign = html_entity_decode(remove_nls(wordwrap($unit_st_val, 80, "<br>", true)));
-				} else {
-					if (is_super() || is_admin() || is_operator()) {
-						$title_status_assign = html_entity_decode(remove_nls(wordwrap($unit_st_val . "<br><br>" . get_text("Click to edit log report") . "<br>" . get_text("Click right to set status"), 80, "<br>", true)));
-					}
+				if (is_super() || is_admin() || is_operator()) {
+					$title_status_assign = html_entity_decode(remove_nls(wordwrap($unit_st_val . "<br><br>" . get_text("Click to edit log report") . "<br>" . get_text("Click right to set status"), 80, "<br>", true)));
 				}
 				$status_select = get_status_select_str($GLOBALS['TYPE_UNIT'], $row['unit_id'], $row['unit_status_id'], $function);
 			}
