@@ -222,7 +222,6 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Updated', 'Updated'),
 ('Edited', 'Edited'),
 ('User', 'User'),
-('USNG', 'USNG'),
 ('Written', 'Written'),
 ('Window too low for menu!', 'Window too low for menu!'),
 ('Cellular phone', 'Mobile'),
