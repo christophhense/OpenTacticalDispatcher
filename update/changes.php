@@ -20,7 +20,7 @@ function do_changes_sql() {
 
 function do_changes_files() {
 	$unlink_array = array (
-		"",	//main-folder: to_unlink_file.php
+		"incs/usng.inc.php",	//main-folder: to_unlink_file.php
 		""	//sub-folder: folder/to_unlink_file.php
 	);
 	foreach ($unlink_array as $filename) {

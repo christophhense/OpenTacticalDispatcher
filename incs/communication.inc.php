@@ -1173,8 +1173,8 @@ function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type
 				break;
 			case "M":
 				$caption = get_text("Position") . ": ";
-				$utm = LLtoUTM($row['lat'], $row['lng']);
-				$text = $row['lat'] . " " . $row['lng'] . ", " . $utm . "\n";
+				$utm = toUTM($row['lat'], $row['lng']);
+				$text = $row['lat'] . " " . $row['lng'] . ", " . $utm[3] . $utm[2] . $utm[0] . $utm[1] . "\n";
 				break;
 			case "N":
 				$caption = get_text("Incident name") . ": ";
