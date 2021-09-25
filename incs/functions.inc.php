@@ -2,7 +2,6 @@
 error_reporting(E_ALL);
 require_once ("db_credentials.inc.php");
 require_once ("phpcoord.inc.php");				// UTM converter
-require_once ("usng.inc.php");				// USNG converter
 
 //====== misc-codes
 

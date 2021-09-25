@@ -3,7 +3,6 @@ error_reporting(E_ALL);
 session_start();	
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/configuration.inc.php");
-require_once ("./incs/usng.inc.php");
 require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
