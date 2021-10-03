@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `captions` (
 	`capt` varchar(256) NOT NULL,
 	`repl` varchar(256) NOT NULL,
 	`user_id` int(7) NOT NULL DEFAULT '0',
-	`client_address` varchar(16) NOT NULL DEFAULT '',
+	`client_address` varchar(50) NOT NULL DEFAULT '',
 	`updated` datetime DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `hints` (
 	`tag` varchar(200) NOT NULL,
 	`hint` varchar(4096) NOT NULL,
 	`user_id` int(7) NOT NULL DEFAULT '0',
-	`client_address` varchar(16) NOT NULL DEFAULT '',
+	`client_address` varchar(50) NOT NULL DEFAULT '',
 	`updated` datetime DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 	`name` tinytext,
 	`value` varchar(512) DEFAULT NULL, 
 	`user_id` int(7) NOT NULL DEFAULT '0',
-	`client_address` varchar(16) NOT NULL DEFAULT '',
+	`client_address` varchar(50) NOT NULL DEFAULT '',
 	`updated` datetime DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
