@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `api_log` (
 
 CREATE TABLE IF NOT EXISTS `assigns` (
 	`id` bigint(8) NOT NULL AUTO_INCREMENT,
-	`ticket_id` int(4) DEFAULT NULL,
-	`unit_id` int(4) DEFAULT NULL,
+	`ticket_id` int(8) DEFAULT NULL,
+	`unit_id` int(8) DEFAULT NULL,
 	`comments` varchar(1024) DEFAULT NULL,
 	`start_miles` int(8) DEFAULT NULL,
 	`on_scene_miles` int(8) DEFAULT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `assigns` (
 	`progession_changed` VARCHAR(10) DEFAULT NULL,
 	`user_id` int(8) NOT NULL DEFAULT '0',
 	`updated` datetime DEFAULT NULL,
-	`dispatching_user_id` int(4) NOT NULL,
+	`dispatching_user_id` int(8) NOT NULL,
 	`client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address',
 	`datetime` datetime DEFAULT NULL,
 	PRIMARY KEY (id)
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `facilities` (
 	`security_phone` varchar(255) DEFAULT NULL,
 	`security_email` varchar(255) DEFAULT NULL,
 	`type` tinyint(3) DEFAULT NULL,
-	`facility_status_id` int(4) NOT NULL DEFAULT '0',
+	`facility_status_id` int(8) NOT NULL DEFAULT '0',
 	`description` text DEFAULT '',
 	`capabilities` varchar(255) DEFAULT NULL,
 	`opening_hours` mediumtext,
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `facility_status` (
 	`id` bigint(4) NOT NULL AUTO_INCREMENT,
 	`status_name` varchar(30) DEFAULT NULL,
 	`description` varchar(60) DEFAULT NULL,
-	`sort` int(11) NOT NULL DEFAULT '0',
+	`sort` int(8) NOT NULL DEFAULT '0',
 	`display` bigint(1) NOT NULL DEFAULT '0',
 	`bg_color` varchar(16) NOT NULL DEFAULT 'transparent',
 	`text_color` varchar(16) NOT NULL DEFAULT '#000000',
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `facility_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `facility_types` (
-	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`name` varchar(48) DEFAULT NULL,
 	`description` varchar(96) DEFAULT NULL,
 	`bg_color` varchar(16) NOT NULL DEFAULT 'transparent' COMMENT 'background color',
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `incident_types` (
 	`protocol` varchar(255) DEFAULT NULL,
 	`set_severity` int(1) NOT NULL DEFAULT '0' COMMENT 'sets incident severity',
 	`group` varchar(20) DEFAULT NULL,
-	`sort` int(11) DEFAULT NULL,
+	`sort` int(8) DEFAULT NULL,
 	`user_id` int(8) NOT NULL DEFAULT '0',
 	`client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address',
 	`updated` datetime DEFAULT NULL,
@@ -157,9 +157,9 @@ CREATE TABLE IF NOT EXISTS `incident_types` (
 CREATE TABLE IF NOT EXISTS `log` (
 	`id` bigint(8) NOT NULL AUTO_INCREMENT,
 	`code` smallint(7) NOT NULL DEFAULT '0',
-	`ticket_id` int(7) DEFAULT NULL,
-	`unit_id` int(7) DEFAULT NULL,
-	`facility_id` int(7) DEFAULT NULL,
+	`ticket_id` int(8) DEFAULT NULL,
+	`unit_id` int(8) DEFAULT NULL,
+	`facility_id` int(8) DEFAULT NULL,
 	`text` varchar(2048) DEFAULT NULL,
 	`lat` double DEFAULT NULL,
 	`lng` double DEFAULT NULL,
@@ -173,9 +173,9 @@ CREATE TABLE IF NOT EXISTS `regions` (
 	`id` bigint(8) NOT NULL AUTO_INCREMENT,
 	`region_name` varchar(60) NOT NULL,
 	`group` varchar(20) DEFAULT NULL,
-	`sort` int(11) DEFAULT NULL,
+	`sort` int(8) DEFAULT NULL,
 	`description` varchar(60) DEFAULT NULL,
-	`owner_id` int(2) NOT NULL DEFAULT '1',
+	`owner_id` int(8) NOT NULL DEFAULT '1',
 	`def_city` varchar(20) DEFAULT NULL,
 	`def_lat` double DEFAULT NULL,
 	`def_lng` double DEFAULT NULL,
@@ -188,13 +188,13 @@ CREATE TABLE IF NOT EXISTS `regions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `textblocks` (
-	`id` int(7) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`type` varchar(20) DEFAULT '',
 	`group` varchar(20) DEFAULT '',
 	`text` varchar(128) DEFAULT '',
 	`code` varchar(128) DEFAULT '',
 	`report_channels` bigint(8) NOT NULL DEFAULT '0',
-	`sort` int(3) NOT NULL DEFAULT '0',
+	`sort` int(8) NOT NULL DEFAULT '0',
 	`user_id` int(8) NOT NULL DEFAULT '0',
 	`client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address',
 	`updated` datetime DEFAULT NULL,
@@ -203,11 +203,11 @@ CREATE TABLE IF NOT EXISTS `textblocks` (
 
 CREATE TABLE IF NOT EXISTS `tickets` (
 	`id` bigint(8) NOT NULL AUTO_INCREMENT,
-	`incident_type_id` int(4) NOT NULL DEFAULT '0',
+	`incident_type_id` int(8) NOT NULL DEFAULT '0',
 	`contact` varchar(48) NOT NULL DEFAULT '',
 	`location` text,
 	`phone` varchar(48) DEFAULT NULL,
-	`facility_id` int(4) DEFAULT '0',
+	`facility_id` int(8) DEFAULT '0',
 	`problemstart` datetime DEFAULT NULL,
 	`problemend` datetime DEFAULT NULL,
 	`incident_name` text DEFAULT '',
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `units` (
 	`unit_phone` varchar(255) DEFAULT NULL,
 	`unit_email` varchar(255) DEFAULT NULL,
 	`type` tinyint(3) DEFAULT NULL,
-	`unit_status_id` int(4) NOT NULL DEFAULT '0',
+	`unit_status_id` int(8) NOT NULL DEFAULT '0',
 	`multi` int(1) NOT NULL DEFAULT '0' COMMENT 'if 2, allow multiple call assigns',
 	`mobile` varchar(32) DEFAULT NULL,
 	`parent_unit_id` bigint(4) UNSIGNED NOT NULL DEFAULT '0',
@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `unit_status` (
 	`status_name` varchar(30) NOT NULL,
 	`description` varchar(60) NOT NULL,
 	`dispatch` int(1) NOT NULL DEFAULT '0'COMMENT '0 - can dispatch, 1 - no - enforceable, 2 - no - not enforceable, 3 - no - only monitor, 4 - no - no evaluation',
-	`sort` int(11) NOT NULL DEFAULT '0',
+	`sort` int(8) NOT NULL DEFAULT '0',
 	`bg_color` varchar(16) NOT NULL DEFAULT 'transparent' COMMENT 'background color',
 	`text_color` varchar(16) NOT NULL DEFAULT '#000000' COMMENT 'text color',
 	`user_id` int(8) NOT NULL DEFAULT '0',
@@ -269,7 +269,7 @@ CREATE TABLE IF NOT EXISTS `unit_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `unit_types` (
-	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`name` varchar(48) NOT NULL,
 	`description` varchar(96) NOT NULL,
 	`bg_color` varchar(16) NOT NULL DEFAULT 'transparent' COMMENT 'background color',
