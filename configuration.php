@@ -5087,6 +5087,23 @@ default:
 									</li>
 								</ul>
 							</div>
+	<?php
+		}
+		if (can_config_presentation($GLOBALS['TYPE_FACILITY'])) {
+	?>
+							<div class="col-xs-2">
+								<ul<?php print get_help_text_str("facility_presentation");?> class="nav nav-pills" class="nav nav-pills">
+									<li role="presentation">
+										<a href="<?php print basename(__FILE__);?>?function=presentation&type_id=<?php print $GLOBALS['TYPE_FACILITY'];?>" style="white-space: nowrap;">
+											<?php print (get_text("Presentation"));?>
+										</a>
+									</li>
+								</ul>
+							</div>
+	<?php
+		}
+		if (is_super()) {
+	?>
 						</div>
 						<div class="row">
 							<div class="col-xs-2">
@@ -5112,10 +5129,12 @@ default:
 							</div>
 	<?php
 		}
+		if (is_admin() || is_super()) {	
 	?>
 						</div>
 					</div>
 	<?php
+		}
 	}
 	?>
 <!--=========================================================================================================================================-->
@@ -5159,6 +5178,23 @@ default:
 									</li>
 								</ul>
 							</div>
+	<?php
+		}
+		if (can_config_presentation($GLOBALS['TYPE_UNIT'])) {
+	?>
+							<div class="col-xs-2">
+								<ul<?php print get_help_text_str("unit_presentation");?> class="nav nav-pills">
+									<li role="presentation">
+										<a href="<?php print basename(__FILE__);?>?function=presentation&type_id=<?php print $GLOBALS['TYPE_UNIT'];?>" style="white-space: nowrap;">
+											<?php print (get_text("Presentation"));?>
+										</a>
+									</li>
+								</ul>
+							</div>
+	<?php
+		}
+		if (is_super()) {
+	?>
 						</div>
 						<div class="row">
 							<div class="col-xs-2">
@@ -5184,10 +5220,12 @@ default:
 							</div>
 	<?php
 		}
+		if (is_admin() || is_super()) {	
 	?>
 						</div>
 					</div>
 	<?php
+		}
 	}
 	?>
 <!--=========================================================================================================================================-->

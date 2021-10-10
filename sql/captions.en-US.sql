@@ -638,6 +638,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Position message', 'Positionsmeldung');
 
 INSERT INTO `captions` (`capt`, `repl`) VALUES
+('Presentation', 'Presentation'),
 ('Print job completed', 'Print job completed'),
 ('Print job failed', 'Print job failed'),
 ('Receipt', 'Receipt'),

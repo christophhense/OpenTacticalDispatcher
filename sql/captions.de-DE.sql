@@ -640,6 +640,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Position message', 'Positionsmeldung');
 
 INSERT INTO `captions` (`capt`, `repl`) VALUES
+('Presentation', 'Darstellung'),
 ('Print job completed', 'Duckauftrag verschickt'),
 ('Print job failed', 'Druckauftrag - Fehler'),
 ('Receipt', 'Statuszuweisung'),

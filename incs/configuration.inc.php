@@ -740,4 +740,75 @@ function get_default_textblocks($file) {
 		return "";
 	}
 }
+
+//====== presentation
+
+function can_config_presentation($type_id = 0) {
+	$return_value = false;
+	switch ($type_id) {
+	case $GLOBALS['TYPE_UNIT']:
+		if (is_super() || (is_admin() && false)) {
+			$return_value = true;
+		}
+		break;
+	case $GLOBALS['TYPE_FACILITY']:
+		if (is_super() || (is_admin() && true)) {
+			$return_value = true;
+		}
+		break;
+	default:
+	}
+	return $return_value;
+}
+
+function can_add_presentation($type_id = 0) {
+	if (!can_config_presentation($type_id)) {
+		return false;
+	}
+	$return_value = false;
+	switch ($type_id) {
+		case $GLOBALS['TYPE_UNIT']:
+			if (is_super() || (is_admin() && false)) {
+				$return_value = true;
+			}
+			break;
+		case $GLOBALS['TYPE_FACILITY']:
+			if (is_super() || (is_admin() && true)) {
+				$return_value = true;
+			}
+			break;
+		default:
+	}
+	return $return_value;
+}
+
+function can_edit_presentation($type_id = 0, $tab_id = 0) {
+	if (!can_config_presentation($type_id)) {
+		return false;
+	}
+	$return_value = false;
+	/*======= if ==========
+	$type_id
+		$GLOBALS['TYPE_UNIT']
+		$GLOBALS['TYPE_FACILITY']
+	$tab_id*/
+	$return_value = true;
+	//=====================
+	return $return_value;
+}
+
+function can_hide_presentation($type_id = 0, $tab_id = 0) {
+	if (!can_config_presentation($type_id)) {
+		return false;
+	}
+	$return_value = false;
+	/*======= if ==========
+	$type_id
+		$GLOBALS['TYPE_UNIT']
+		$GLOBALS['TYPE_FACILITY']
+	$tab_id*/
+	$return_value = true;
+	//=====================
+	return $return_value;
+}
 ?>
