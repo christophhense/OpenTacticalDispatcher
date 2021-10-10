@@ -7,7 +7,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 CREATE TABLE IF NOT EXISTS `actions` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`ticket_id` int(8) NOT NULL DEFAULT '0',
 	`description` text DEFAULT NULL,
 	`action_type` int(8) DEFAULT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `allocates` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`group` int(8) NOT NULL DEFAULT '1',
 	`type` tinyint(1) NOT NULL DEFAULT '1',
 	`resource_id` int(8) DEFAULT NULL,
@@ -32,15 +32,15 @@ CREATE TABLE IF NOT EXISTS `allocates` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `api_log` (
-	`id` bigint(16) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`datetime` datetime DEFAULT NULL,
 	`source` varchar(64) DEFAULT NULL,
 	`source_regexp` varchar(1024) DEFAULT NULL,
-	`unit_id` bigint(8) DEFAULT NULL,
+	`unit_id` int(8) DEFAULT NULL,
 	`destination` varchar(32) DEFAULT NULL,
 	`destination_alias` varchar(32) DEFAULT NULL,
 	`audio_link` varchar(64) DEFAULT NULL,
-	`code` smallint(7) NOT NULL DEFAULT '0',
+	`code` int(8) NOT NULL DEFAULT '0',
 	`text` varchar(2048) DEFAULT NULL,
 	`lat` double DEFAULT NULL,
 	`lng` double DEFAULT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `api_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Log of application interface actions';
 
 CREATE TABLE IF NOT EXISTS `assigns` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`ticket_id` int(8) DEFAULT NULL,
 	`unit_id` int(8) DEFAULT NULL,
 	`comments` varchar(1024) DEFAULT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `assigns` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `facilities` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`name` text,
 	`handle` varchar(64) DEFAULT NULL,
 	`object_id` varchar(28) DEFAULT NULL,
@@ -115,11 +115,11 @@ CREATE TABLE IF NOT EXISTS `facilities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `facility_status` (
-	`id` bigint(4) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`status_name` varchar(30) DEFAULT NULL,
 	`description` varchar(60) DEFAULT NULL,
 	`sort` int(8) NOT NULL DEFAULT '0',
-	`display` bigint(1) NOT NULL DEFAULT '0',
+	`display` int(8) NOT NULL DEFAULT '0',
 	`bg_color` varchar(16) NOT NULL DEFAULT 'transparent',
 	`text_color` varchar(16) NOT NULL DEFAULT '#000000',
 	`user_id` int(8) NOT NULL DEFAULT '0',
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `facility_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Allows for variable facility types';
 
 CREATE TABLE IF NOT EXISTS `incident_types` (
-	`id` bigint(4) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`type` varchar(20) NOT NULL,
 	`description` varchar(255) NOT NULL,
 	`protocol` varchar(255) DEFAULT NULL,
@@ -155,8 +155,8 @@ CREATE TABLE IF NOT EXISTS `incident_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Incident types';
 
 CREATE TABLE IF NOT EXISTS `log` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
-	`code` smallint(7) NOT NULL DEFAULT '0',
+	`id` int(8) NOT NULL AUTO_INCREMENT,
+	`code` int(8) NOT NULL DEFAULT '0',
 	`ticket_id` int(8) DEFAULT NULL,
 	`unit_id` int(8) DEFAULT NULL,
 	`facility_id` int(8) DEFAULT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Log of station actions';
 
 CREATE TABLE IF NOT EXISTS `regions` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`region_name` varchar(60) NOT NULL,
 	`group` varchar(20) DEFAULT NULL,
 	`sort` int(8) DEFAULT NULL,
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `textblocks` (
 	`group` varchar(20) DEFAULT '',
 	`text` varchar(128) DEFAULT '',
 	`code` varchar(128) DEFAULT '',
-	`report_channels` bigint(8) NOT NULL DEFAULT '0',
+	`report_channels` int(8) NOT NULL DEFAULT '0',
 	`sort` int(8) NOT NULL DEFAULT '0',
 	`user_id` int(8) NOT NULL DEFAULT '0',
 	`client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address',
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `textblocks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `tickets` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`incident_type_id` int(8) NOT NULL DEFAULT '0',
 	`contact` varchar(48) NOT NULL DEFAULT '',
 	`location` text,
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS `tickets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `units` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`name` text,
 	`handle` varchar(32) DEFAULT NULL,
 	`remote_data_services` varchar(255) DEFAULT NULL,
@@ -237,8 +237,8 @@ CREATE TABLE IF NOT EXISTS `units` (
 	`unit_status_id` int(8) NOT NULL DEFAULT '0',
 	`multi` int(1) NOT NULL DEFAULT '0' COMMENT 'if 2, allow multiple call assigns',
 	`mobile` varchar(32) DEFAULT NULL,
-	`parent_unit_id` bigint(4) UNSIGNED NOT NULL DEFAULT '0',
-	`guard_house_id` bigint(4) UNSIGNED NOT NULL DEFAULT '0',
+	`parent_unit_id` int(8) UNSIGNED NOT NULL DEFAULT '0',
+	`guard_house_id` int(8) UNSIGNED NOT NULL DEFAULT '0',
 	`description` text NOT NULL,
 	`capabilities` varchar(255) DEFAULT NULL COMMENT 'Capability',
 	`contact_name` varchar(64) DEFAULT NULL,
@@ -255,7 +255,7 @@ CREATE TABLE IF NOT EXISTS `units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `unit_status` (
-	`id` bigint(4) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`status_name` varchar(30) NOT NULL,
 	`description` varchar(60) NOT NULL,
 	`dispatch` int(1) NOT NULL DEFAULT '0'COMMENT '0 - can dispatch, 1 - no - enforceable, 2 - no - not enforceable, 3 - no - only monitor, 4 - no - no evaluation',
@@ -281,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `unit_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Allows for variable unit types';
 
 CREATE TABLE IF NOT EXISTS `users` (
-	`id` bigint(8) NOT NULL AUTO_INCREMENT,
+	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`name` text NOT NULL COMMENT 'user name',
 	`password` tinytext NOT NULL COMMENT 'MySQL hash',
 	`level` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'privileges',

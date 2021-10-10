@@ -144,3 +144,4 @@ Activities sorted by application function.
 	CODE
 		Change the number of characters ind db-table captions, hints and settings to save IPv6.
 		Harmonize int(lenght) to 8 in database-schema.
+		Harmonize smallint and bigint to int in database-schema.
