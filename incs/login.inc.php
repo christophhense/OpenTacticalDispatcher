@@ -142,6 +142,7 @@ function do_login($requested_page, $logout = false) {
 				$_SESSION['unit_flag_1'] = "";		// unit id where status or position change (Flag-Icon)
 				$_SESSION['regions_boxes'] = "s";
 				$_SESSION['timeout'] = "on";
+				$_SESSION['number_of_screens'] = 1;
 				if ($session_logout_warning == 0) {
 					$_SESSION['timeout'] = "off";
 				}

@@ -17,13 +17,13 @@ if ($api_log_max_age != 0) {
 $auto_poll_settings = explode(",", get_variable("auto_poll"));
 $auto_poll_time = trim($auto_poll_settings[0]);
 $function = "";
-if (isset ($_GET['function'])) {
-	$function = $_GET['function'];
+if (isset ($_GET["function"])) {
+	$function = $_GET["function"];
 }
-if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0)) {
+if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0)) {
 	$current_user_id = 0;
-	if (isset ($_SESSION['user_id'])) {
-		$current_user_id = $_SESSION['user_id'];
+	if (isset ($_SESSION["user_id"])) {
+		$current_user_id = $_SESSION["user_id"];
 	}
 
 	$query = "SELECT `name` AS `user_name`, " .
@@ -40,23 +40,23 @@ if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0)) {
 	}
 	$current_user_name = "0";
 	if ($row) {
-		$current_user_name = $row['user_name'];
+		$current_user_name = $row["user_name"];
 	}
-	if ($row['expires'] <= mysql_datetime(time() + 60)) {
-		if ($_SESSION['timeout'] == "off") {
+	if ($row["expires"] <= mysql_datetime(time() + 60)) {
+		if ($_SESSION["timeout"] == "off") {
 			set_session_expire_time("off");
 		}
-		if ($_SESSION['timeout'] == "disabled") {
+		if ($_SESSION["timeout"] == "disabled") {
 			set_session_expire_time("disabled");
 		}
 	}
 }
 switch ($function) {
 case "reporting_channel":
-	if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0) && ($rows_affected == 1) && ($row['expires'] > mysql_datetime())) {
+	if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0) && ($rows_affected == 1) && ($row["expires"] > mysql_datetime())) {
 		$unit_id = "";
-		if (isset ($_GET['unit_id'])) {
-			$unit_id = $_GET['unit_id'];
+		if (isset ($_GET["unit_id"])) {
+			$unit_id = $_GET["unit_id"];
 		}
 
 		$query_reporting_channel = "SELECT `unit_phone`, " .
@@ -69,9 +69,9 @@ case "reporting_channel":
 		if (db_num_rows($result_reporting_channel) > 0)  {
 			$row_reporting_channel = stripslashes_deep(db_fetch_assoc($result_reporting_channel));
 			$json_connections = array (
-				"smsg_id" => $row_reporting_channel['remote_data_services'],
-				"email" => $row_reporting_channel['unit_email'],
-				"phone" => $row_reporting_channel['unit_phone']
+				"smsg_id" => $row_reporting_channel["remote_data_services"],
+				"email" => $row_reporting_channel["unit_email"],
+				"phone" => $row_reporting_channel["unit_phone"]
 			);
 			print json_encode($json_connections);
 		}
@@ -82,26 +82,29 @@ default:
 	//========== Screen
 	$json_screen = array ();
 	$json_screen["date_time"] = mysql_datetime();
-	if (isset ($_SESSION['day_night'])) {
-		$json_screen["day_night"] = $_SESSION['day_night'];
+	if (isset ($_SESSION["day_night"])) {
+		$json_screen["day_night"] = $_SESSION["day_night"];
 	} else {
 		$json_screen["day_night"] = "day";
 	}
-	$_SESSION['screens'][$_GET['screen_id']] = date("U");
-	foreach ($_SESSION['screens'] as $key => $value) {
+	$number_of_screens = 0;
+	$_SESSION["screens"][$_GET["screen_id"]] = date("U");
+	foreach ($_SESSION["screens"] as $key => $value) {
+		$number_of_screens++;
 		if (date("U") - $value > (ceil(($auto_poll_time * 200) / 1000))) {
-			unset ($_SESSION['screens'][$key]);
+			unset ($_SESSION["screens"][$key]);
 		}
 	}
-	$json_screen['screen_list'] = $_SESSION['screens'];
+	$json_screen["number_of_screens"] = $_SESSION["number_of_screens"] = $number_of_screens;
+	$json_screen["screen_list"] = $_SESSION["screens"];
 	$json_screen["first_screen"] = "off";
-	if ((isset ($_SESSION['first_screen'])) && ($_SESSION['first_screen'] == $_GET['screen_id'])) {
+	if ((isset ($_SESSION["first_screen"])) && ($_SESSION["first_screen"] == $_GET["screen_id"])) {
 		$json_screen["first_screen"] = "on";
-		$_SESSION['first_screen_timestamp'] = date("U");
+		$_SESSION["first_screen_timestamp"] = date("U");
 	} else {
-		if ((!isset ($_SESSION['first_screen_timestamp'])) || (date("U") - $_SESSION['first_screen_timestamp'] > (ceil(($auto_poll_time * 200) / 1000)))) {
-			$_SESSION['first_screen'] = $_GET['screen_id'];
-			$_SESSION['first_screen_timestamp'] = date("U");
+		if ((!isset ($_SESSION["first_screen_timestamp"])) || (date("U") - $_SESSION['first_screen_timestamp'] > (ceil(($auto_poll_time * 200) / 1000)))) {
+			$_SESSION["first_screen"] = $_GET["screen_id"];
+			$_SESSION["first_screen_timestamp"] = date("U");
 			$json_screen["first_screen"] = "on";
 		}
 	}
@@ -109,31 +112,31 @@ default:
 		$json_screen["update_progress_time"] = get_variable("_update_progress_time");
 	}
 	//========== User
-	if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0) && ($rows_affected == 1) && ($row['expires'] > mysql_datetime(time()))) {
-		foreach ($_SESSION['reset_button'] as $key => $value) {
-			if ($key == $_GET['screen_id']) {
-				$json_screen['reset_button'] = $value;
-				unset ($_SESSION['reset_button'][$key]);
+	if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0) && ($rows_affected == 1) && ($row["expires"] > mysql_datetime(time()))) {
+		foreach ($_SESSION["reset_button"] as $key => $value) {
+			if ($key == $_GET["screen_id"]) {
+				$json_screen["reset_button"] = $value;
+				unset ($_SESSION["reset_button"][$key]);
 			}
 		}
 		$current_user_name = "0";
 		if ($row) {
-			$current_user_name = $row['user_name'];
+			$current_user_name = $row["user_name"];
 		}
 		$current_user_level = "0";
 		if ($row) {
-			$current_user_level = $row['level'];
+			$current_user_level = $row["level"];
 		}
 		$current_user_expires = "0";
 		if ($row) {
-			$current_user_expires = round((strtotime($row['expires']) - time()) / 60);
+			$current_user_expires = round((strtotime($row["expires"]) - time()) / 60);
 		}
 		$json_user = array (
 			"id" => $current_user_id,
 			"name" => $current_user_name,
 			"level" => $current_user_level,
 			"expires" => $current_user_expires,
-			"timeout" => $_SESSION['timeout']
+			"timeout" => $_SESSION["timeout"]
 		);
 		//========== Communication
 
@@ -142,7 +145,7 @@ default:
 			"`al`.`destination_alias` AS `apilog_destination_alias` " .
 			"FROM `api_log` `al` " .
 			"WHERE `al`.`datetime` >=  '" . mysql_datetime(time() - (ceil(($auto_poll_time * 200) / 1000))) . "' " .
-			"AND `al`.`code` = " . $GLOBALS['LOG_CURRENT_RADIO'] .
+			"AND `al`.`code` = " . $GLOBALS["LOG_CURRENT_RADIO"] .
 			" LIMIT 1;";
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -154,9 +157,9 @@ default:
 			}
 			$json_screen['communication'] = get_text("Current radio") . ": " . $destination;
 			*/
-			$source = remove_nls($row['apilog_source']);
-			$json_screen['communication'] = get_text("Current radio") . ": " . $source;
-			$json_screen['appearance'] = "success";
+			$source = remove_nls($row["apilog_source"]);
+			$json_screen["communication"] = get_text("Current radio") . ": " . $source;
+			$json_screen["appearance"] = "success";
 		}	
 		$current_radio = "";
 		$where_radio_str = "";
@@ -169,9 +172,9 @@ default:
 		$result = db_query($query, __FILE__, __LINE__);
 		if (db_num_rows($result) > 0) {
 			$row = stripslashes_deep(db_fetch_assoc($result));
-			if (($row['current_radio'] != null) && ($row['current_radio'] != "")) {
-				$where_radio_str = " AND `al`.`destination` = '" . $row['current_radio'] . "'";
-				$current_radio = $row['current_radio'];
+			if (($row["current_radio"] != null) && ($row["current_radio"] != "")) {
+				$where_radio_str = " AND `al`.`destination` = '" . $row["current_radio"] . "'";
+				$current_radio = $row["current_radio"];
 			}
 		}
 
@@ -181,43 +184,43 @@ default:
 			"FROM `api_log` `al` " .
 			"LEFT JOIN `units` `u` ON `al`.`unit_id` = `u`.`id` " .
 			"WHERE `al`.`datetime` >=  '" . mysql_datetime(time() - (ceil(($auto_poll_time * 200) / 1000))) . "' " .
-			"AND `al`.`code` = " . $GLOBALS['LOG_PTT'] . $where_radio_str . " " .
+			"AND `al`.`code` = " . $GLOBALS["LOG_PTT"] . $where_radio_str . " " .
 			"LIMIT 1;";
 
 		$result = db_query($query, __FILE__, __LINE__);
 		if (db_num_rows($result) > 0)  {
 		$row = stripslashes_deep(db_fetch_assoc($result));
-			if ($row['unit_handle'] != "") {
-				$json_screen['communication'] = remove_nls($row['unit_handle']);
-				$json_screen['appearance'] = "primary";
+			if ($row["unit_handle"] != "") {
+				$json_screen["communication"] = remove_nls($row["unit_handle"]);
+				$json_screen["appearance"] = "primary";
 			} else {
-				$receiver_array = split_api_receiver_str($row['apilog_source']);
-				$json_screen['communication'] = $receiver_array[1];
-				$json_screen['appearance'] = "default";
+				$receiver_array = split_api_receiver_str($row["apilog_source"]);
+				$json_screen["communication"] = $receiver_array[1];
+				$json_screen["appearance"] = "default";
 			}
 		}
 		//========== Application interface
 		$json_api = array ();
-		$json_api['current_radio'] = $current_radio;
+		$json_api["current_radio"] = $current_radio;
 		$api_availability = get_api_availability("api");
-		$json_api['api_host_available'] = $api_availability['available'];
-		$json_api['api_host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
-		$json_api['api_host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
-		$json_api['api_host_code'] = $api_availability['code'];
-		$json_api['api_host_text'] = $api_availability['text'];
+		$json_api["api_host_available"] = $api_availability["available"];
+		$json_api["api_host_timestamp_current_state"] = $api_availability["timestamp_current_state"];
+		$json_api["api_host_timestamp_last_retry"] = $api_availability["timestamp_last_retry"];
+		$json_api["api_host_code"] = $api_availability["code"];
+		$json_api["api_host_text"] = $api_availability["text"];
 		$api_availability = get_api_availability("phone");
-		$json_api['api_phone_host_available'] = $api_availability['available'];
-		$json_api['api_phone_host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
-		$json_api['api_phone_host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
-		$json_api['api_phone_host_code'] = $api_availability['code'];
-		$json_api['api_phone_host_text'] = $api_availability['text'];
+		$json_api["api_phone_host_available"] = $api_availability["available"];
+		$json_api["api_phone_host_timestamp_current_state"] = $api_availability["timestamp_current_state"];
+		$json_api["api_phone_host_timestamp_last_retry"] = $api_availability["timestamp_last_retry"];
+		$json_api["api_phone_host_code"] = $api_availability["code"];
+		$json_api["api_phone_host_text"] = $api_availability["text"];
 		//========== Ticket
-		$where_str = get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_TICKET'], "AND");
+		$where_str = get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_TICKET"], "AND");
 
 		$query = "SELECT `t`.`id` AS `ticket_id` " .
 			"FROM `tickets` `t` " .
 			"LEFT JOIN `allocates` ON `t`.`id` = `allocates`.`resource_id` " .
-			"WHERE `t`.`status` = " . $GLOBALS['STATUS_OPEN'] . " " .  $where_str . " " .
+			"WHERE `t`.`status` = " . $GLOBALS["STATUS_OPEN"] . " " .  $where_str . " " .
 			"ORDER BY `t`.`id` DESC " .
 			"LIMIT 1;";
 
@@ -227,7 +230,7 @@ default:
 			$row = stripslashes_deep(db_fetch_assoc($result));	
 		}
 		if ($row) {
-			$ticket_max_id = $row['ticket_id'];
+			$ticket_max_id = $row["ticket_id"];
 		} else {
 			$ticket_max_id = "0";
 		}
@@ -237,8 +240,8 @@ default:
 			"`t`.`updated` AS `updated` " .
 			"FROM `tickets` `t` " .
 			"LEFT JOIN `allocates` ON `t`.`id` = `allocates`.`resource_id` " .
-			"WHERE (`t`.`status` = " . $GLOBALS['STATUS_OPEN'] . ")||" .
-			"(`t`.`status` = " . $GLOBALS['STATUS_SCHEDULED'] . ") " .  $where_str . " " .
+			"WHERE (`t`.`status` = " . $GLOBALS["STATUS_OPEN"] . ")||" .
+			"(`t`.`status` = " . $GLOBALS["STATUS_SCHEDULED"] . ") " .  $where_str . " " .
 			"ORDER BY `t`.`updated` DESC " .
 			"LIMIT 1;";
 
@@ -249,21 +252,21 @@ default:
 		}
 		$ticket_changed_id = "0";
 		if ($row) {
-			$ticket_changed_id = $row['ticket_id'];
+			$ticket_changed_id = $row["ticket_id"];
 		}
 		$ticket_updated = "0";
 		if ($row) {
-			$ticket_updated = $row['updated'];
+			$ticket_updated = $row["updated"];
 		}
 		$ticket_user_id = "0";
 		if ($row) {
-			$ticket_user_id = $row['user_id'];
+			$ticket_user_id = $row["user_id"];
 		}
 		//========== Scheduled
 
 		$query = "SELECT `id` " .
 			"FROM `tickets` " .
-			"WHERE `status` = '" . $GLOBALS['STATUS_SCHEDULED'] . "' " .
+			"WHERE `status` = '" . $GLOBALS["STATUS_SCHEDULED"] . "' " .
 			"AND `booked_date` <= (NOW() + INTERVAL " . get_variable("hide_booked") . " MINUTE);";
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -286,7 +289,7 @@ default:
 			"`u`.`updated` AS `unit_updated` " .
 			"FROM `units` `u` " .
 			"LEFT JOIN `allocates` ON `u`.`id` = `allocates`.`resource_id` " .
-			"WHERE (TRUE) " . get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_UNIT'], "AND") . " " .
+			"WHERE (TRUE) " . get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_UNIT"], "AND") . " " .
 			"ORDER BY `u`.`updated` DESC " .
 			"LIMIT 1;";
 
@@ -296,8 +299,8 @@ default:
 			$row = stripslashes_deep(db_fetch_assoc($result));
 		}
 		if ($row) {
-			$unit_update_unit_id = $row['unit_id'];
-			$unit_update_time = $row['unit_updated'];
+			$unit_update_unit_id = $row["unit_id"];
+			$unit_update_time = $row["unit_updated"];
 		}
 
 		$query = "SELECT `u`.`status_updated` AS `updated`, " .
@@ -306,7 +309,7 @@ default:
 			"FROM `units` `u` " .
 			"LEFT JOIN `allocates` ON `u`.`id` = `allocates`.`resource_id` " .
 			"LEFT JOIN `assigns` `as` ON `u`.`id` = `as`.`unit_id` " .
-			"WHERE `u`.`user_id` != 0 " . get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_UNIT'], "AND") . " " .
+			"WHERE `u`.`user_id` != 0 " . get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_UNIT"], "AND") . " " .
 			"ORDER BY `updated` DESC " .
 			"LIMIT 1;";
 
@@ -316,22 +319,22 @@ default:
 			$row = stripslashes_deep(db_fetch_assoc($result));
 		}
 		if ($row) {
-			if ($row['updated'] > $unit_update_time) {
-				$unit_update_unit_id = $row['unit_id'];
-				$unit_update_time = $row['updated'];
+			if ($row["updated"] > $unit_update_time) {
+				$unit_update_unit_id = $row["unit_id"];
+				$unit_update_time = $row["updated"];
 			}
 		}
 		$unit_id = "0";
 		if ($row) {
-			$unit_id = $row['unit_id'];
+			$unit_id = $row["unit_id"];
 		}
 		$unit_updated = "0";
-		if (($row != false) && ($row['updated']) && ($row['updated'] != null)) {
-			$unit_updated = $row['updated'];
+		if (($row != false) && ($row["updated"]) && ($row["updated"] != null)) {
+			$unit_updated = $row["updated"];
 		}
 		$unit_user = "0";
-		if (($row != false) && ($row['user_id'])) {
-			$unit_user = $row['user_id'];
+		if (($row != false) && ($row["user_id"])) {
+			$unit_user = $row["user_id"];
 		}
 		$json_units_status = array (
 			"id" => $unit_id,
@@ -348,7 +351,7 @@ default:
 			"FROM `assigns` `as` " .
 			"LEFT JOIN `tickets` `t` ON `as`.`ticket_id` = `t`.`id` " .
 			"LEFT JOIN `allocates` ON `t`.`id` = `allocates`.`resource_id` " .
-			"WHERE `as`.`user_id` != 0 " . get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_TICKET'], "AND") . " " .
+			"WHERE `as`.`user_id` != 0 " . get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_TICKET"], "AND") . " " .
 			"AND (`as`.`responding` IS NOT NULL " .
 			"OR `as`.`on_scene` IS NOT NULL " .
 			"OR `as`.`u2fenr` IS NOT NULL " .
@@ -363,18 +366,18 @@ default:
 		}
 		$call_progression_id = "0";
 		if ($assign_row) {
-			$call_progression_id = $assign_row['assign_id'];
+			$call_progression_id = $assign_row["assign_id"];
 		}
 		$call_progression_change = "0";
 		if ($assign_row) {
-			$call_progression_change = $assign_row['updated'];
+			$call_progression_change = $assign_row["updated"];
 		}
 		$call_progression_user = "0";
 		if ($assign_row) {
-			$call_progression_user = $assign_row['user_id'];
+			$call_progression_user = $assign_row["user_id"];
 		}
 		$progession_changed = "true";
-		if ($assign_row && (trim($assign_row['progession_changed'])) == "false") {
+		if ($assign_row && (trim($assign_row["progession_changed"])) == "false") {
 			$progession_changed = "false";
 		}
 		$json_call_progression = array (
@@ -383,9 +386,9 @@ default:
 			"user" => $call_progression_user,
 			"progession_changed" => $progession_changed
 		);
-		if (($assign_row != false) && ($assign_row['updated'] > $unit_update_time)) {
-			$unit_update_unit_id = $assign_row['unit_id'];
-			$unit_update_time = $assign_row['updated'];
+		if (($assign_row != false) && ($assign_row["updated"] > $unit_update_time)) {
+			$unit_update_unit_id = $assign_row["unit_id"];
+			$unit_update_time = $assign_row["updated"];
 		}
 		//=========== Dispatch
 
@@ -397,7 +400,7 @@ default:
 			"FROM `assigns` `as` " .
 			"LEFT JOIN `tickets` `t` ON `as`.`ticket_id` = `t`.`id` " .
 			"LEFT JOIN `allocates` ON `t`.`id` = `allocates`.`resource_id` " . 	
-			"WHERE `as`.`user_id` != 0 " . get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_TICKET'], "AND") . " " .
+			"WHERE `as`.`user_id` != 0 " . get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_TICKET"], "AND") . " " .
 			"ORDER BY `as`.`datetime` DESC " .
 			"LIMIT 1;";
 
@@ -408,19 +411,19 @@ default:
 		}
 		$assign_max_id = "0";
 		if ($assign_row) {
-			$assign_max_id = $assign_row['assign_id'];
+			$assign_max_id = $assign_row["assign_id"];
 		}
 		$assign_quantity = "-1";
 		if ($assign_row) {
-			$assign_quantity = $assign_row['quantity_assigned'];
+			$assign_quantity = $assign_row["quantity_assigned"];
 		}
 		$assign_changed = "0";
 		if ($assign_row) {
-			$assign_changed = $assign_row['updated'];
+			$assign_changed = $assign_row["updated"];
 		}
 		$assign_user_id = "0";
 		if ($assign_row) {
-			$assign_user_id = $assign_row['user_id'];
+			$assign_user_id = $assign_row["user_id"];
 		}		
 		$json_assign = array (
 			"id_max" => $assign_max_id,
@@ -428,11 +431,11 @@ default:
 			"update" => $assign_changed,
 			"user" => $assign_user_id
 		);
-		if (($assign_row != false) && ($assign_row['updated'] > $unit_update_time)) {
-			$unit_update_unit_id = $assign_row['unit_id'];
-			$unit_update_time = $assign_row['updated'];
+		if (($assign_row != false) && ($assign_row["updated"] > $unit_update_time)) {
+			$unit_update_unit_id = $assign_row["unit_id"];
+			$unit_update_time = $assign_row["updated"];
 		}
-		$_SESSION['unit_flag_1'] = $unit_update_unit_id;
+		$_SESSION["unit_flag_1"] = $unit_update_unit_id;
 		//=========== Actions
 
 		$query = "SELECT `id`, " .
@@ -449,19 +452,19 @@ default:
 		}
 		$action_max_id ="0";
 		if ($action_row) {
-			$action_max_id = $action_row['id'];
+			$action_max_id = $action_row["id"];
 		}
 		$action_changed_id = "0";
 		if ($action_row) {
-			$action_changed_id = $action_row['id'];
+			$action_changed_id = $action_row["id"];
 		}
 		$action_updated = "0";
 		if ($action_row) {
-			$action_updated = $action_row['updated'];
+			$action_updated = $action_row["updated"];
 		}
 		$action_user_id = "0";
 		if ($action_row) {
-			$action_user_id = $action_row['user_id'];
+			$action_user_id = $action_row["user_id"];
 		}
 		$json_action = array (
 			"id_max" => $action_max_id,
@@ -472,7 +475,7 @@ default:
 		//========== Call requests - ptt
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE (`code` = " . $GLOBALS['LOG_PTT'] . ") " .
+			"WHERE (`code` = " . $GLOBALS["LOG_PTT"] . ") " .
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);	
@@ -483,9 +486,9 @@ default:
 		//========== Call requests - api status
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE (`code` = " . $GLOBALS['LOG_API_CONNECTED'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_API_DISCONNECTED'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_API_DEVICE_TEXT'] .
+			"WHERE (`code` = " . $GLOBALS["LOG_API_CONNECTED"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_API_DISCONNECTED"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_API_DEVICE_TEXT"] .
 			") AND (DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " .
 			get_variable("_api_log_max_display_setng") . " MINUTE) <= `api_log`.`datetime`);";
 
@@ -498,9 +501,9 @@ default:
 		//========== Call requests - messages
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE (`code` = " . $GLOBALS['LOG_INFO'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_ERROR'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_MESSAGE_RECEIVE'] . ") " .
+			"WHERE (`code` = " . $GLOBALS["LOG_INFO"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_ERROR"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_MESSAGE_RECEIVE"] . ") " .
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -511,7 +514,7 @@ default:
 		//========== Call requests - auto-ticket
 		$auto_ticket = 0;
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
-			$is_auto_ticket = get_is_auto_ticket_line($row['text']);
+			$is_auto_ticket = get_is_auto_ticket_line($row["text"]);
 			if ($is_auto_ticket["MATCH"]) {
 				$auto_ticket++;
 			}
@@ -521,12 +524,12 @@ default:
 		//========== Requests-badge
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE (`code` = " . $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_CALL_REQ'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET'] . " " .
-			"OR `code` = " . $GLOBALS['LOG_CALL_MANACKN'] . ") " .
+			"WHERE (`code` = " . $GLOBALS["LOG_CALL_RESPONDING_WITHOUT_TICKET"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_CALL_ON_SCENE_WITHOUT_TICKET"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_CALL_REQ"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET"] . " " .
+			"OR `code` = " . $GLOBALS["LOG_CALL_MANACKN"] . ") " .
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -537,7 +540,7 @@ default:
 		//========== Emergency-requests
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE `code` = " . $GLOBALS['LOG_EMGCY_LO'] . " " .
+			"WHERE `code` = " . $GLOBALS["LOG_EMGCY_LO"] . " " .
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -547,9 +550,9 @@ default:
 		}
 
 		$query = "SELECT * FROM `api_log` " .
-			"WHERE `code` = " . $GLOBALS['LOG_EMGCY_HI'] . " " .
+			"WHERE `code` = " . $GLOBALS["LOG_EMGCY_HI"] . " " .
 			"AND `cleared_datetime` IS NULL;";
-		
+
 		$result = db_query($query, __FILE__, __LINE__);
 		$emergency_requests_high = 0;
 		if (db_num_rows($result)) {
@@ -572,7 +575,7 @@ default:
 			"`f`.`user_id` AS `user_id` " .
 			"FROM `facilities` `f` " .
 			"LEFT JOIN `allocates` ON `f`.`id` = `allocates`.`resource_id` " .
-			"WHERE `f`.`user_id` != 0 " . get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_FACILITY'], "AND") . " " .
+			"WHERE `f`.`user_id` != 0 " . get_allocates_where_str($GLOBALS["TYPE_USER"], $GLOBALS["TYPE_FACILITY"], "AND") . " " .
 			"ORDER BY `updated` DESC LIMIT 1";		// get most recent
 
 		$result = db_query($query, __FILE__, __LINE__);
@@ -581,15 +584,15 @@ default:
 		}
 		$facility_id = "0";
 		if ($row) {
-			$facility_id = $row['facility_id'];
+			$facility_id = $row["facility_id"];
 		}
 		$facility_updated = "0";
-		if (($row != false) && isset($row['updated']) && ($row['updated'] != null)) {
-			$facility_updated = $row['updated'];
+		if (($row != false) && isset($row["updated"]) && ($row["updated"] != null)) {
+			$facility_updated = $row["updated"];
 		}
 		$facility_user = "0";
-		if (($row != false) && ($row['user_id'])) {
-			$facility_user = $row['user_id'];
+		if (($row != false) && ($row["user_id"])) {
+			$facility_user = $row["user_id"];
 		}
 		$json_facilities_status = array (
 			"id" => $facility_id,
@@ -605,7 +608,7 @@ default:
 		$result = db_query($query, __FILE__, __LINE__);
 		if (db_num_rows($result)) {
 			$row = stripslashes_deep(db_fetch_assoc($result));
-			$the_log_data = $row['id'];
+			$the_log_data = $row["id"];
 		} else {
 			$the_log_data = 0;
 		}
