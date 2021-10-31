@@ -2687,6 +2687,331 @@ case "unit_status":
 	<?php
 	}
 	break;
+case "presentation_update":
+	
+	break;
+case "presentation":
+	$type_id = 0;
+	if (isset ($_GET['type_id'])) {
+		$type_id = $_GET['type_id'];
+	}
+	if (can_config_presentation($type_id) && $type_id != 0) {
+		$helptext = "";
+		$page_caption = "";
+		$admin_can_add_select_caption = get_text("No");
+		switch ($type_id) {
+		case $GLOBALS['TYPE_FACILITY']:
+			$helptext = "facility_presentation";
+			$page_caption = get_text("Facilities presentation configuration");
+			$admin_can_add_select_caption = get_text("Facility tabs");
+			break;
+		case $GLOBALS['TYPE_UNIT']:
+			$helptext = "unit_presentation";
+			$page_caption = get_text("Units presentation configuration");
+			$admin_can_add_select_caption = get_text("Unit tabs");
+			break;
+		default:
+		}
+	?>
+		<div class="container-fluid" id="main_container">
+			<div class="row infostring">
+				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<?php print $page_caption . " - "  . get_variable("page_caption");?>
+				</div>
+			</div>
+			<form name="presentation" method="post" action="configuration.php?function=presentation_update">
+				<input type="hidden" name="type_id" value="<?php print $type_id;?>">
+				<div class="row">
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<table class='table table-striped table-condensed' style="text-align: left;">
+								<tr style="height: 44px;">
+									<th style="width: 75%;"><?php print get_text("Tab order preview");?></th>
+									<th style="width: 15%;">
+										<?php if (is_super()) { ?>
+										<?php print get_text("Admin can add");?>
+										<?php } ?>
+									</th>
+									<th style="width: 10%;"></th>
+								</tr>
+								<tr class="form-group">
+									<td><?php show_tab_preview();?></td>
+									<td>
+										<?php if (is_super()) { ?>
+										<select name="dispatch_new" class="form-control">
+											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print $admin_can_add_select_caption;?></option>
+										</select>
+										<?php } ?>
+									</td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div> 
+					<div class="col-md-1"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="document.presentation.reset();"><?php print get_text("Reset");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="document.presentation.submit();"><?php print get_text("Save");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text($helptext);?>');"><?php print get_text("Helptext");?></button>
+								</div>
+							</div>
+						</div>
+					</div>
+	<?php if (can_add_presentation($type_id)) { ?>
+					<div class="col-md-10">
+						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<table class='table table-striped table-condensed' style="text-align: left;">
+								<tr style="height: 44px;">
+									<th style="width: 20%;"><?php print get_text("Tab name");?></th>
+									<th style="width: 20%;"><?php print get_text("Visible");?></th>
+	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
+									<th style="width: 15%;"><?php print get_text("Add tickets");?></th>
+	<?php } else { ?>
+									<th style="width: 15%;"></th>
+	<?php } ?>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%;"></th>
+									<th style="width: 5%;"></th>
+									<?php if (is_super()) { ?>
+									<th style="width: 15%;"><?php print get_text("Admin can config");?></th>
+									<?php } else { ?>
+									<th style="width: 15%;"></th>
+									<?php } ?>
+									<th style="width: 5%;"></th>
+									<th style="width: 5%;"></th>
+								</tr>
+								<tr class="form-group">
+									<td><input type="text" class="form-control" name="status_val_new" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td>
+										<select name="visible_new" class="form-control">
+											<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?> selected><?php print get_text("No");?></option>
+											<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
+											<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
+											<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?>><?php print get_text("Yes");?></option>
+										</select>
+									</td>
+	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
+									<td>
+										<select name="add_tickets_new" class="form-control">
+											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
+											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
+											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
+											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
+										</select>
+									</td>
+	<?php } else { ?>
+									<td></td>
+	<?php } ?>
+									<td><input type="text" class="form-control" name="sort_new"></input></td>
+									<td></td>
+									<td></td>
+									<td>
+	<?php if (is_super()) { ?>
+										<select name="admin_edit_new" class="form-control">
+											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab ein-/ausblenden");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab editieren/löschen");?></option>
+										</select>
+	<?php } ?>
+									</td>
+									<td></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div> 
+	<?php } ?>
+					<div class="col-md-1"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;"></div>
+					</div>
+					<div class="col-md-10">
+						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+								<table class='table table-striped table-condensed' style="text-align: left;">
+									<tr style="height: 44px;">
+										<th style="width: 20%;"><?php print get_text("Tab name");?></th>
+										<th style="width: 20%;"><?php print get_text("Visible");?></th>
+	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
+										<th style="width: 15%;"><?php print get_text("Add tickets");?></th>
+	<?php } else { ?>
+										<th style="width: 15%;"></th>
+	<?php } ?>
+										<th style="width: 10%;"><?php print get_text("Sort");?></th>
+										<th style="width: 5%;"><?php print get_text("Colums");?></th>
+										<th style="width: 5%;"><?php print get_text("Rows");?></th>
+										<th style="width: 15%;"><?php print get_text("Admin can config");?></th>
+										<th style="width: 5%;"></th>
+										<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
+									</tr>
+	<?php if (is_super() && $type_id == $GLOBALS['TYPE_UNIT']) { ?>
+									<tr class="form-group">
+										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Situation");?>" readonly></input></td>
+										<td>
+											<select name="visible_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?>><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only Tab+Units");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only Tab+Units");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?> selected><?php print get_text("Yes");?></option>
+											</select>
+										</td>
+										<td>
+											<select name="add_tickets_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
+											</select>
+										</td>
+										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
+										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
+										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+										<tr class="form-group">
+										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Tickets");?>" readonly></input></td>
+										<td>
+											<select name="visible_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?>><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only Tab+Tickets");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only Tab+Tickets");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?> selected><?php print get_text("Yes");?></option>
+											</select>
+										</td>
+										<td></td>
+										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+										<tr class="form-group">
+										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Scheduled tickets_short");?>" readonly></input></td>
+										<td></td>
+										<td></td>
+										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class="form-group">
+										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Closed tickets_short");?>" readonly></input></td>
+										<td></td>
+										<td></td>
+										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+	<?php } ?>
+	<?php
+		$dispatch_select_str = array ("", "", "", "", "");
+
+		$query = "SELECT * " .
+			"FROM `unit_status` " .
+			"ORDER BY `sort` ASC;";	
+
+		$result = db_query($query, __FILE__, __LINE__);
+		if (db_affected_rows($result) > 0) {
+			while ($row = stripslashes_deep(db_fetch_array($result))) {
+				$dispatch_select_str = array ("", "", "", "", "");
+				$dispatch_select_str[0] = $dispatch_select_str[1] = $dispatch_select_str[2] = $dispatch_select_str[3] = $dispatch_select_str[4] = "";
+				$dispatch_select_str[$row['dispatch']] = " selected";
+				$delete_disabled_str = "";
+				$change_readonly_str = "";
+				if (dont_delete_unit_status($row['id'])) {
+					$delete_disabled_str = " disabled";
+					$change_readonly_str = " readonly";
+				}
+	?>
+									<tr class="form-group">
+										<td><input type="text" class="form-control" name="status_val[]" value="<?php print $row['status_name'];?>" readonly></input></td>
+										<td>
+											<select name="visible_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?> selected><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?>><?php print get_text("Yes");?></option>
+											</select>
+										</td>
+	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
+										<td>
+											<select name="add_tickets_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
+												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
+											</select>
+										</td>
+	<?php } else { ?>
+										<td></td>
+	<?php } ?>
+										<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"<?php print $change_readonly_str;?>></input></td>
+										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
+										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
+										<td>
+											<select name="admin_edit_new" class="form-control">
+												<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
+												<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab ein-/ausblenden");?></option>
+												<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab editieren/löschen");?></option>
+											</select>
+										</td>
+										<td></td>
+										<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
+											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+											<input type="hidden" name="un_status_id[]" value="<?php print $row['id'];?>">
+										</td>
+									</tr>
+	<?php
+			}
+		} else {
+	?>
+									<tr class="form-group" style="height: 44px;">
+										<th colspan=7 style="text-align: center;"><?php print get_text("No data");?></th>
+									</tr>
+	<?php
+		}
+	?>
+								</table>
+							</div>
+						</div>
+					<div class="col-md-1"></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
+	<?php
+	}
+	break;
 case "regions_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
@@ -4840,6 +5165,7 @@ case "facility_status":
 case "unit_status_reset":
 case "unit_types":
 case "unit_status":
+case "presentation":
 case "regions":
 case "cleanse_regions":
 case "reset_regions":

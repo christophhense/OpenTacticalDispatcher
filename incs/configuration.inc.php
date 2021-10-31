@@ -811,4 +811,20 @@ function can_hide_presentation($type_id = 0, $tab_id = 0) {
 	//=====================
 	return $return_value;
 }
+
+function show_tab_preview() {
+	?>
+	<ul class="nav nav-tabs">
+		<li role="presentation" class="active"><a>Löschzug 1</a></li>
+		<li role="presentation"><a>Löschzug 2</a></li>
+		<li role="presentation"><a>Rettungsdienst</a></li>
+		<li role="presentation"><a>Einsätze</a></li>
+		<li role="presentation"><a>Vorbestellte</a></li>
+		<li role="presentation"><a>Löschzug 3</a></li>
+		<li role="presentation"><a>Katastrophenschutz</a></li>
+		<li role="presentation"><a>Stadion##*</a></li>
+		<li role="presentation"><a>Geschlossene</a></li>
+	</ul>
+	<?php
+}
 ?>
