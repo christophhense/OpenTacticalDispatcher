@@ -49,6 +49,7 @@ default:
 		<link href="./css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
 		<link href="./css/fileinput.min.css" media="all" rel="stylesheet" type="text/css">
 		<link href="./css/stylesheet.css" rel="stylesheet">
+		<link href="./css/tabdrop.css" rel="stylesheet">
 		<script src="./js/jquery-2.1.4.min.js" type="text/javascript"></script>
 		<script src="./js/bootstrap.min.js" type="text/javascript"></script>
 		<script src="./js/moment-with-locales.js" type="text/javascript"></script>
@@ -56,6 +57,7 @@ default:
 		<script src="./js/md5.js"></script>
 		<script src="./js/jscolor/jscolor.js"></script>
 		<script src="./js/functions.js" type="text/javascript"></script>
+		<script src="./js/bootstrap-tabdrop.js" type="text/javascript"></script>
 		<script src="./js/fileinput.min.js" type="text/javascript"></script>
 		<script src="./js/fileinput_locales/<?php print $locale[0];?>.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
@@ -2688,70 +2690,215 @@ case "unit_status":
 	}
 	break;
 case "presentation_update":
-	
+	$result_admin_can_add = false;
+	$result_tab_new = false;
+	$type_id = 0;
+	if (isset ($_POST['type_id'])) {
+		$type_id = $_POST['type_id'];
+	}
+	if (($type_id == $GLOBALS['TYPE_UNIT']) || ($type_id == $GLOBALS['TYPE_FACILITY'])) {
+		$tab_list = get_tab_list($type_id);
+		if ((isset ($_POST['admin_can_add'])) && (($_POST['admin_can_add'] == $GLOBALS['TAB_CONFIG_NO']) || ($_POST['admin_can_add'] == $GLOBALS['TAB_CONFIG_ADD_EDIT']))) {
+			if ($_POST['admin_can_add'] != $tab_list[0]["admin_can_add"]) {
+				$result_admin_can_add = set_admin_can_add_presentation($type_id, $_POST['admin_can_add'], $datetime_now);
+			}
+		}
+		if ((isset ($_POST['tab_name_new'])) && (preg_match("/^[0-9a-zA-Z\.\-_ " . get_variable("_vowel_mutation") . "]{4,24}$/", $_POST['tab_name_new']))) {
+			$visible_new = $GLOBALS['TAB_VISIBLE_NO'];
+			if ((isset ($_POST['visible_new'])) && ($_POST['visible_new'] >= $GLOBALS['TAB_VISIBLE_NO']) && ($_POST['visible_new'] <= $GLOBALS['TAB_VISIBLE_YES'])) {
+				$visible_new = $_POST['visible_new'];
+			}
+			$add_tickets_new = $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];
+			if ((isset ($_POST['add_tickets_new'])) && ($_POST['add_tickets_new'] >= $GLOBALS['TAB_ADDITIONAL_TICKETS_NO']) && ($_POST['add_tickets_new'] <= $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'])) {
+				$add_tickets_new = $_POST['add_tickets_new'];
+			}
+			$sort_new = 0;
+			if ((isset ($_POST['sort_new'])) && (preg_match("/^[0-9]{1,3}/", $_POST['sort_new']))) {
+				$sort_new = $_POST['sort_new'];
+			}
+			$admin_edit_new = $GLOBALS['TAB_CONFIG_NO'];
+			if ((isset ($_POST['admin_edit_new'])) && ($_POST['admin_edit_new'] >= $GLOBALS['TAB_ADDITIONAL_TICKETS_NO']) && ($_POST['admin_edit_new'] <= $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'])) {
+				$admin_edit_new = $_POST['admin_edit_new'];
+			}
+			$result_tab_new = insert_presentation_tab($type_id, $_POST['tab_name_new'], $visible_new, $add_tickets_new, $sort_new, $admin_edit_new, $datetime_now, $tab_list[0]["admin_can_add"]);
+		}
+		$updated_tabs = 0;
+		$changed_tab_names_str = "";
+		$deleted_tabs = 0;
+		if (isset ($_POST['tab_id'])) {
+			foreach ($_POST['tab_id'] as $VarName => $VarValue) {
+				if (isset ($_POST['delete_' . $VarValue]) && ($_POST['delete_' . $VarValue] == "on")) {
+					if (is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_edit"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+						$statement = $GLOBALS['DATABASE_LINK']->prepare("DELETE FROM presentation WHERE tab_id = :tab_id");
+						$statement->bindParam(':tab_id', $VarValue);
+						if ($statement->execute() > 0) {
+							$deleted_tabs++;
+						}
+					}
+				} else {
+					$updated_values = 0;
+					if ((is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_edit"] >= $GLOBALS['TAB_CONFIG_VISIBILITY'])) && ($VarValue > 4)) {
+						if ((isset ($_POST['tab_name_' . $VarValue])) && (preg_match("/^[0-9a-zA-Z\.\-_ " . get_variable("_vowel_mutation") . "]{4,24}$/", $_POST['tab_name_' . $VarValue]))) {
+							if ($_POST['tab_name_' . $VarValue] != $tab_list[$VarValue]["tab_name"]) {
+								$tab_name = $_POST['tab_name_' . $VarValue];
+								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET label_0 = :label_0 WHERE tab_id = :tab_id AND row = 0");
+								$statement->bindParam(':label_0', $tab_name);
+								$statement->bindParam(':tab_id', $VarValue);
+								$statement->execute();
+								$updated_values++;
+								$changed_tab_names_str .= $tab_list[$VarValue]["tab_name"] . " => " . $_POST['tab_name_' . $VarValue] . ". ";
+							}
+						}
+					}
+					$visible = $tab_list[$VarValue]["visible"];
+					if (is_super() || ((is_admin() && $tab_list[$VarValue]["admin_can_edit"] >= $GLOBALS['TAB_CONFIG_VISIBILITY']) && $VarValue > 4)) {
+						if (($VarValue != 3) && ($VarValue != 4)) {
+							if ((isset ($_POST['visible_' . $VarValue])) && ($_POST['visible_' . $VarValue] >= $GLOBALS['TAB_VISIBLE_NO']) && ($_POST['visible_' . $VarValue] <= $GLOBALS['TAB_VISIBLE_YES'])) {
+								if ($_POST['visible_' . $VarValue] != $tab_list[$VarValue]["visible"]) {
+									$visible = $_POST['visible_' . $VarValue];
+									$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :item_id_0 WHERE tab_id = :tab_id AND row = 0");
+									$statement->bindParam(':item_id_0', $visible);
+									$statement->bindParam(':tab_id', $VarValue);
+									$statement->execute();
+									$updated_values++;
+								}
+							}
+						}
+					}
+					if (is_super() || (is_admin() && ($tab_list[$VarValue]["admin_can_edit"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) && $VarValue > 4)) {
+						if ((isset ($_POST['add_tickets_' . $VarValue])) && ($_POST['add_tickets_' . $VarValue] >= $GLOBALS['TAB_ADDITIONAL_TICKETS_NO']) && ($_POST['add_tickets_' . $VarValue] <= $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'])) {
+							if ($type_id == $GLOBALS['TYPE_UNIT']) {
+								$add_tickets = get_additional_tickets_change($visible, $_POST['add_tickets_' . $VarValue]);
+								if ($add_tickets != $tab_list[$VarValue]["add_tickets"]) {
+									$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :item_id_1 WHERE tab_id = :tab_id AND row = 0");
+									$statement->bindParam(':item_id_1', $add_tickets);
+									$statement->bindParam(':tab_id', $VarValue);
+									$statement->execute();
+									$updated_values++;
+								}
+							}
+						}
+						if ((isset ($_POST['sort_' . $VarValue])) && (preg_match("/^[0-9]{1,3}/", $_POST['sort_' . $VarValue]))) {
+							if ($_POST['sort_' . $VarValue] != $tab_list[$VarValue]["sort"]) {
+								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_2 = :item_id_2 WHERE tab_id = :tab_id AND row = 0");
+								$statement->bindParam(':item_id_2', $_POST['sort_' . $VarValue]);
+								$statement->bindParam(':tab_id', $VarValue);
+								$statement->execute();
+								$updated_values++;
+							}
+						}
+					}
+					if (is_super() && $VarValue > 4) {
+						if ((isset ($_POST['admin_can_edit_' . $VarValue])) && ($_POST['admin_can_edit_' . $VarValue] >= $GLOBALS['TAB_CONFIG_NO']) && ($_POST['admin_can_edit_' . $VarValue] <= $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+							if ($_POST['admin_can_edit_' . $VarValue] != $tab_list[$VarValue]["admin_can_edit"]) {
+								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_3 = :item_id_3 WHERE tab_id = :tab_id AND row = 0");
+								$statement->bindParam(':item_id_3', $_POST['admin_can_edit_' . $VarValue]);
+								$statement->bindParam(':tab_id', $VarValue);
+								$statement->execute();
+								$updated_values++;
+							}
+						}
+					}
+					if ($updated_values > 0) {
+						$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET user_id = :user_id, client_address = :client_address, updated = :updated  WHERE tab_id = :tab_id AND row = 0");
+						$statement->bindParam(':user_id', $_SESSION['user_id']);
+						$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
+						$statement->bindParam(':updated', $datetime_now);
+						$statement->bindParam(':tab_id', $VarValue);
+						if ($statement->execute() >0) {
+							$updated_tabs++;
+						}
+					}
+				}
+			}
+		}
+		$log_admin_can_add_str = "";
+		$log_result_tab_new_str = "";
+		$log_updated_tabs_str = "";
+		$log_deleted_tabs_str = "";
+		switch ($type_id) {
+		case $GLOBALS['TYPE_FACILITY']:
+			if ($_POST['admin_can_add'] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
+				$log_admin_can_add_str = get_text("Set to admin can add facility tabs");
+			} else {
+				$log_admin_can_add_str = get_text("Set to admin can not add facility tabs");
+			}
+			$log_tab_new_str = get_text("New facility tab added") . ": " . remove_nls($_POST['tab_name_new']);
+			$log_updated_tabs_str = get_text("Facilty tabs updated") . ": " . $updated_tabs;
+			$log_deleted_tabs_str = get_text("Facility tabs deleted") . ": " . $deleted_tabs;
+			break;
+		case $GLOBALS['TYPE_UNIT']:
+			if ($_POST['admin_can_add'] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
+				$log_admin_can_add_str = get_text("Set to admin can add unit tabs");
+			} else {
+				$log_admin_can_add_str = get_text("Set to admin can not add unit tabs");
+			}
+			$log_tab_new_str = get_text("New unit tab added") . ": " . remove_nls($_POST['tab_name_new']);
+			$log_updated_tabs_str = get_text("Unit tabs updated") . ": " . $updated_tabs;
+			$log_deleted_tabs_str = get_text("Unit tabs deleted") . ": " . $deleted_tabs;
+			break;
+		default:
+		}
+		if ($result_admin_can_add == TRUE) {
+			$top_notice_str .= $log_admin_can_add_str . "<br>";
+			$top_notice_log_str .= $log_admin_can_add_str . ". ";
+		}
+		if ($result_tab_new == TRUE) {
+			$top_notice_str .= $log_tab_new_str . "<br>";
+			$top_notice_log_str .= $log_tab_new_str . ". ";
+		}
+		if ($updated_tabs != 0) {
+			$top_notice_str .= $log_updated_tabs_str . "<br>";
+			$top_notice_log_str .= $log_updated_tabs_str . ". ";
+		}
+		if ($changed_tab_names_str != "") {
+			$top_notice_log_str .= get_text("Changed Tab name") . ": " . $changed_tab_names_str . " ";
+		}
+		if ($deleted_tabs != 0) {
+			$top_notice_str .= $log_deleted_tabs_str . "<br>";
+			$top_notice_log_str .= $log_deleted_tabs_str . ". ";
+		}
+	}
 	break;
 case "presentation":
 	$type_id = 0;
 	if (isset ($_GET['type_id'])) {
 		$type_id = $_GET['type_id'];
 	}
-	if (can_config_presentation($type_id) && $type_id != 0) {
+	$tab_list = get_tab_list($type_id);
+	if ((is_super() || get_admin_can_config_presentation($tab_list)) && (($type_id == $GLOBALS['TYPE_UNIT']) || ($type_id == $GLOBALS['TYPE_FACILITY']))) {
 		$helptext = "";
 		$page_caption = "";
 		$admin_can_add_select_caption = get_text("No");
 		switch ($type_id) {
 		case $GLOBALS['TYPE_FACILITY']:
-			$helptext = "facility_presentation";
+			$helptext = "facility_presentation_tab_list";
 			$page_caption = get_text("Facilities presentation configuration");
-			$admin_can_add_select_caption = get_text("Facility tabs");
+			$admin_can_add_select_caption = get_text("Facility tab");
 			break;
 		case $GLOBALS['TYPE_UNIT']:
-			$helptext = "unit_presentation";
+			$helptext = "unit_presentation_tab_list";
 			$page_caption = get_text("Units presentation configuration");
-			$admin_can_add_select_caption = get_text("Unit tabs");
+			$admin_can_add_select_caption = get_text("Unit tab");
 			break;
 		default:
+		}
+		$can_add_presentation_no = " selected";
+		$can_add_presentation_yes = "";
+		if ($tab_list[0]["admin_can_add"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
+			$can_add_presentation_no = "";
+			$can_add_presentation_yes = " selected";
 		}
 	?>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">
 				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print $page_caption . " - "  . get_variable("page_caption");?>
+					<?php print $page_caption . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
-			<form name="presentation" method="post" action="configuration.php?function=presentation_update">
+			<form name="presentation" method="post" action="configuration.php">
+				<input type="hidden" name="function" value="presentation_update">
 				<input type="hidden" name="type_id" value="<?php print $type_id;?>">
-				<div class="row">
-					<div class="col-md-1"></div>
-					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class='table table-striped table-condensed' style="text-align: left;">
-								<tr style="height: 44px;">
-									<th style="width: 75%;"><?php print get_text("Tab order preview");?></th>
-									<th style="width: 15%;">
-										<?php if (is_super()) { ?>
-										<?php print get_text("Admin can add");?>
-										<?php } ?>
-									</th>
-									<th style="width: 10%;"></th>
-								</tr>
-								<tr class="form-group">
-									<td><?php show_tab_preview();?></td>
-									<td>
-										<?php if (is_super()) { ?>
-										<select name="dispatch_new" class="form-control">
-											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
-											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print $admin_can_add_select_caption;?></option>
-										</select>
-										<?php } ?>
-									</td>
-									<td></td>
-								</tr>
-							</table>
-						</div>
-					</div> 
-					<div class="col-md-1"></div>
-				</div>
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -2777,31 +2924,50 @@ case "presentation":
 							</div>
 						</div>
 					</div>
-	<?php if (can_add_presentation($type_id)) { ?>
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class='table table-striped table-condensed' style="text-align: left;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
+								<tr style="height: 44px;">
+									<th style="width: 75%;"<?php print get_help_text_str("tab_order_preview");?>><?php print get_text("Tab order preview");?></th>
+									<th style="width: 15%;">
+										<?php print get_text("Admin can add");?>
+									</th>
+									<th style="width: 10%;"></th>
+								</tr>
+								<tr class="form-group">
+									<td<?php print get_help_text_str("tab_order_preview");?>><?php show_tab_preview();?></td>
+									<td>
+										<select name="admin_can_add" class="form-control"<?php if (!is_super()) print " disabled";?>>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'] . " " . $can_add_presentation_no;?>><?php print get_text("No");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'] . " " . $can_add_presentation_yes;?>><?php print $admin_can_add_select_caption;?></option>
+										</select>
+									</td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div> 
+					<div class="col-md-1"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-1"></div>
+					<?php if (is_super() || $tab_list[0]["admin_can_add"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) { ?>
+					<div class="col-md-10">
+						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 20%;"><?php print get_text("Tab name");?></th>
-									<th style="width: 20%;"><?php print get_text("Visible");?></th>
-	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
-									<th style="width: 15%;"><?php print get_text("Add tickets");?></th>
-	<?php } else { ?>
-									<th style="width: 15%;"></th>
-	<?php } ?>
+									<th style="width: 17.5%;"><?php print get_text("Visible");?></th>
+									<th style="width: 17.5%;"><?php if ($type_id == $GLOBALS['TYPE_UNIT']) print get_text("Add tickets");?></th>
 									<th style="width: 10%;"><?php print get_text("Sort");?></th>
 									<th style="width: 5%;"></th>
 									<th style="width: 5%;"></th>
-									<?php if (is_super()) { ?>
-									<th style="width: 15%;"><?php print get_text("Admin can config");?></th>
-									<?php } else { ?>
-									<th style="width: 15%;"></th>
-									<?php } ?>
+									<th style="width: 15%;"><?php if (is_super()) print get_text("Admin can config");?></th>
 									<th style="width: 5%;"></th>
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="status_val_new" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" class="form-control" name="tab_name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
 									<td>
 										<select name="visible_new" class="form-control">
 											<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?> selected><?php print get_text("No");?></option>
@@ -2810,29 +2976,27 @@ case "presentation":
 											<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?>><?php print get_text("Yes");?></option>
 										</select>
 									</td>
-	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
 									<td>
+										<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
 										<select name="add_tickets_new" class="form-control">
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
 										</select>
+										<?php } ?>
 									</td>
-	<?php } else { ?>
-									<td></td>
-	<?php } ?>
 									<td><input type="text" class="form-control" name="sort_new"></input></td>
 									<td></td>
 									<td></td>
 									<td>
-	<?php if (is_super()) { ?>
+										<?php if (is_super()) { ?>
 										<select name="admin_edit_new" class="form-control">
 											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
-											<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab ein-/ausblenden");?></option>
-											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab editieren/löschen");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab show/hide");?></option>
+											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab edit/delete");?></option>
 										</select>
-	<?php } ?>
+										<?php } ?>
 									</td>
 									<td></td>
 									<td></td>
@@ -2840,7 +3004,7 @@ case "presentation":
 							</table>
 						</div>
 					</div> 
-	<?php } ?>
+					<?php } ?>
 					<div class="col-md-1"></div>
 				</div>
 				<div class="row">
@@ -2849,15 +3013,12 @@ case "presentation":
 					</div>
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-								<table class='table table-striped table-condensed' style="text-align: left;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
+									<?php if ($tab_list[0]["tab_number"] > 0) { ?>
 									<tr style="height: 44px;">
 										<th style="width: 20%;"><?php print get_text("Tab name");?></th>
-										<th style="width: 20%;"><?php print get_text("Visible");?></th>
-	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
-										<th style="width: 15%;"><?php print get_text("Add tickets");?></th>
-	<?php } else { ?>
-										<th style="width: 15%;"></th>
-	<?php } ?>
+										<th style="width: 17.5%;"><?php print get_text("Visible");?></th>
+										<th style="width: 17.5%;"><?php if ($type_id == $GLOBALS['TYPE_UNIT']) print get_text("Add tickets");?></th>
 										<th style="width: 10%;"><?php print get_text("Sort");?></th>
 										<th style="width: 5%;"><?php print get_text("Colums");?></th>
 										<th style="width: 5%;"><?php print get_text("Rows");?></th>
@@ -2865,137 +3026,94 @@ case "presentation":
 										<th style="width: 5%;"></th>
 										<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
 									</tr>
-	<?php if (is_super() && $type_id == $GLOBALS['TYPE_UNIT']) { ?>
-									<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Situation");?>" readonly></input></td>
-										<td>
-											<select name="visible_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?>><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only Tab+Units");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only Tab+Units");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?> selected><?php print get_text("Yes");?></option>
-											</select>
-										</td>
-										<td>
-											<select name="add_tickets_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
-											</select>
-										</td>
-										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
-										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
-										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-										<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Tickets");?>" readonly></input></td>
-										<td>
-											<select name="visible_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?>><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only Tab+Tickets");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only Tab+Tickets");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?> selected><?php print get_text("Yes");?></option>
-											</select>
-										</td>
-										<td></td>
-										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-										<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Scheduled tickets_short");?>" readonly></input></td>
-										<td></td>
-										<td></td>
-										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print get_text("Closed tickets_short");?>" readonly></input></td>
-										<td></td>
-										<td></td>
-										<td><input type="text" class="form-control" name="sort[]" value=""></input></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-	<?php } ?>
-	<?php
-		$dispatch_select_str = array ("", "", "", "", "");
-
-		$query = "SELECT * " .
-			"FROM `unit_status` " .
-			"ORDER BY `sort` ASC;";	
-
-		$result = db_query($query, __FILE__, __LINE__);
-		if (db_affected_rows($result) > 0) {
-			while ($row = stripslashes_deep(db_fetch_array($result))) {
-				$dispatch_select_str = array ("", "", "", "", "");
-				$dispatch_select_str[0] = $dispatch_select_str[1] = $dispatch_select_str[2] = $dispatch_select_str[3] = $dispatch_select_str[4] = "";
-				$dispatch_select_str[$row['dispatch']] = " selected";
-				$delete_disabled_str = "";
-				$change_readonly_str = "";
-				if (dont_delete_unit_status($row['id'])) {
-					$delete_disabled_str = " disabled";
-					$change_readonly_str = " readonly";
-				}
+									<?php } ?>
+	<?php 
+		$visible_select_str = $add_tickets_select_str = $admin_can_config_select_str = array ("", "", "", "", "");
+		if ($tab_list[0]["tab_number"] > 0) {
+			foreach ($tab_list as $tab_id => $tab_value) {
+//				if ((($tab_id > 0) && (is_super())) || ($tab_id > 4)) {
+				if ($tab_id > 0) {
+					if (($tab_id >= 1) && ($tab_id <= 4)) {
+						$tab_value["tab_name"] = get_text($tab_value["tab_name"]);
+					}
+					$visible_select_str[$GLOBALS['TAB_VISIBLE_NO']] = $visible_select_str[$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']] = $visible_select_str[$GLOBALS['TAB_VISIBLE_MULTI_ONLY']] = $visible_select_str[$GLOBALS['TAB_VISIBLE_YES']] = "";
+					$visible_select_str[$tab_value["visible"]] = " selected";
+					$add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_NO']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_YES']] = "";
+					$add_tickets_select_str[$tab_value["add_tickets"]] = " selected";
+					$admin_can_config_select_str[$GLOBALS['TAB_CONFIG_NO']] = $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_VISIBILITY']] = $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_ADD_EDIT']] = "";
+					$admin_can_config_select_str[$tab_value["admin_can_edit"]] = " selected";
+					$edit_disabled_str = "";
+					if ((!is_super()) && ($tab_value["admin_can_edit"] < $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+						$edit_disabled_str = " disabled";
+					}
+					$hide_disabled_str = "";
+					if ((!is_super()) && ($tab_value["admin_can_edit"] < $GLOBALS['TAB_CONFIG_VISIBILITY'])) {
+						$hide_disabled_str = " disabled";
+					}
 	?>
-									<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print $row['status_name'];?>" readonly></input></td>
-										<td>
-											<select name="visible_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?> selected><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'];?>><?php print get_text("Yes");?></option>
-											</select>
-										</td>
-	<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
-										<td>
-											<select name="add_tickets_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
-												<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];?>><?php print get_text("Yes");?></option>
-											</select>
-										</td>
-	<?php } else { ?>
-										<td></td>
-	<?php } ?>
-										<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"<?php print $change_readonly_str;?>></input></td>
-										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
-										<td><input type="text" class="form-control" name="sort_new" disabled></input></td>
-										<td>
-											<select name="admin_edit_new" class="form-control">
-												<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
-												<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab ein-/ausblenden");?></option>
-												<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab editieren/löschen");?></option>
-											</select>
-										</td>
-										<td></td>
-										<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" name="un_status_id[]" value="<?php print $row['id'];?>">
-										</td>
-									</tr>
+										<tr class="form-group">
+											<td>
+												<input type="hidden" name="tab_id[]" value="<?php print $tab_id;?>">
+												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["tab_name"]) . "\" name=\"tab_name_" . $tab_id . "\""; if (($tab_id < 5) || ($edit_disabled_str != "")) print " readonly";?>></input>
+											</td>
+											<td>
+												<?php if (($tab_id != 3) && ($tab_id != 4)) { ?>
+												<select name="visible_<?php print $tab_id;?>" class="form-control" <?php if ($hide_disabled_str != "") print get_help_text_str("not_editable") . $hide_disabled_str;?>>
+													<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_NO']];?>><?php print get_text("No");?></option>
+													<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']];?>><?php print get_text("Singlemonitor only");?></option>
+													<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_MULTI_ONLY']];?>><?php print get_text("Multimonitor only");?></option>
+													<option value=<?php print $GLOBALS['TAB_VISIBLE_YES'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_YES']];?>><?php print get_text("Yes");?></option>
+												</select>
+												<?php } ?>
+											</td>
+											<td>
+												<?php if (($type_id == $GLOBALS['TYPE_UNIT']) && (($tab_id == 1) || ($tab_id > 4))) { ?>
+												<select name="add_tickets_<?php print $tab_id;?>" class="form-control" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable") . $edit_disabled_str;?>>
+													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_NO']];?>><?php print get_text("No");?></option>
+													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']];?>><?php print get_text("Singlemonitor only");?></option>
+													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']];?>><?php print get_text("Multimonitor only");?></option>
+													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_YES']];?>><?php print get_text("Yes");?></option>
+												</select>
+												<?php } ?>
+											</td>
+											<td><input type="text" class="form-control" name="sort_<?php print $tab_id;?>" value="<?php print remove_nls($tab_value["sort"]);?>"<?php print $edit_disabled_str;?>></input></td>
+											<td>
+												<?php if (($tab_id == 1) || ($tab_id > 4)) { ?>
+												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["column"]);?>" disabled></input>
+												<?php } ?>
+											</td>
+											<td>
+												<?php if ($tab_id > 4) { ?>
+												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["row"]);?>" disabled></input>
+												<?php } ?>
+											</td>
+											<td>
+												<?php if ($tab_id > 4) { ?>
+												<select name="admin_can_edit_<?php print $tab_id;?>" class="form-control" <?php if (!is_super()) print get_help_text_str("not_editable") . " disabled";?>>
+													<option value=<?php print $GLOBALS['TAB_CONFIG_NO'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_NO']];?>><?php print get_text("No");?></option>
+													<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_VISIBILITY']];?>><?php print get_text("Tab show/hide");?></option>
+													<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_ADD_EDIT']];?>><?php print get_text("Tab edit/delete");?></option>
+												</select>
+												<?php } ?>
+											</td>
+											<td style="text-align: center;">
+												<?php if ($tab_id > 4) { ?>
+												<span <?php if ($edit_disabled_str != "") { print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=edit_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+												<?php } ?>
+											</td>
+											<td style="text-align: center;" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable");?>>
+												<?php if ($tab_id > 4) { ?>
+												<input type="checkbox" name="delete_<?php print $tab_id;?>"<?php print $edit_disabled_str;?>>
+												<?php } ?>
+											</td>
+										</tr>
 	<?php
+				}
 			}
 		} else {
 	?>
 									<tr class="form-group" style="height: 44px;">
-										<th colspan=7 style="text-align: center;"><?php print get_text("No data");?></th>
+										<th colspan=9 style="text-align: center;"><?php print get_text("No data");?></th>
 									</tr>
 	<?php
 		}
@@ -5415,7 +5533,7 @@ default:
 							</div>
 	<?php
 		}
-		if (can_config_presentation($GLOBALS['TYPE_FACILITY'])) {
+		if (is_super() || get_admin_can_config_presentation(get_tab_list($GLOBALS['TYPE_FACILITY']))) {
 	?>
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("facility_presentation");?> class="nav nav-pills" class="nav nav-pills">
@@ -5506,7 +5624,7 @@ default:
 							</div>
 	<?php
 		}
-		if (can_config_presentation($GLOBALS['TYPE_UNIT'])) {
+		if (is_super() || get_admin_can_config_presentation(get_tab_list($GLOBALS['TYPE_UNIT']))) {
 	?>
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("unit_presentation");?> class="nav nav-pills">

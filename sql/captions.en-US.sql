@@ -914,6 +914,35 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Reset settings (do not touch user data)', 'Reset settings (do not touch user data)'),
 ('Write db-configuration file only', 'Write db-configuration file only');
 
+INSERT INTO `captions` (`capt`, `repl`) VALUES
+('Facilities presentation configuration', 'Facilities presentation configuration'),
+('Units presentation configuration', 'Units presentation configuration'),
+('Tab order preview', 'Tab order preview'),
+('Admin can add', 'Admin can add'),
+('Tab name', 'Tab name'),
+('Visible', 'Visible'),
+('Add tickets', 'Add tickets'),
+('Colums', 'Colums'),
+('Rows', 'Rows'),
+('Admin can config', 'Admin can config'),
+('Facility tab', 'Facility tab'),
+('Unit tab', 'Unit tab'),
+('Singlemonitor only', 'Singlemonitor only'),
+('Multimonitor only', 'Multimonitor only'),
+('Tab show/hide', 'Tab show/hide'),
+('Tab edit/delete', 'Tab edit/delete'),
+('Set to admin can add facility tabs', 'Set to admin can add facility tabs'),
+('Set to admin can not add facility tabs', 'Set to admin can not add facility tabs'),
+('New facility tab added', 'New facility tab added'),
+('Facilty tabs updated', 'Facilty tabs updated'),
+('Facility tabs deleted', 'Facility tabs deleted'),
+('Set to admin can add unit tabs', 'Set to admin can add unit tabs'),
+('Set to admin can not add unit tabs', 'Set to admin can not add unit tabs'),
+('New unit tab added', 'New unit tab added'),
+('Unit tabs updated', 'Unit tabs updated'),
+('Unit tabs deleted', 'Unit tabs deleted'),
+('Changed Tab name', 'Changed Tab name');
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

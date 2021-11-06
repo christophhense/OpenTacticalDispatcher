@@ -743,88 +743,202 @@ function get_default_textblocks($file) {
 
 //====== presentation
 
-function can_config_presentation($type_id = 0) {
-	$return_value = false;
+function get_tab_list($type_id = 0) {
+	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT * FROM presentation WHERE row = 0 AND (type_id = :type_id_1 OR type_id = :type_id_2 OR tab_id = 0) ORDER BY tab_id ASC");
+	$statement->bindParam(':type_id_1', $type_id);
+	$statement->bindParam(':type_id_2', $type_id);
+	if ($type_id == $GLOBALS['TYPE_UNIT']) {
+		$statement->bindParam(':type_id_2', $GLOBALS['TYPE_TICKET']);
+	}
+	$tab_number = 0;
+	$tab_list = array ();
+	if ($statement->execute() > 0) {
+		foreach ($statement as $row) {
+			if ($row['tab_id'] == 0) {
+				switch ($type_id) {
+				case $GLOBALS['TYPE_UNIT']:
+					$tab_list[0]["admin_can_add"] = $row['item_id_0'];
+					$tab_list[0]["type_id"] = $GLOBALS['TYPE_UNIT'];
+					break;
+				case $GLOBALS['TYPE_FACILITY']:
+					$tab_list[0]["admin_can_add"] = $row['item_id_1'];
+					$tab_list[0]["type_id"] = $GLOBALS['TYPE_FACILITY'];
+					break;
+				default:
+				}
+			} else {
+				$tab_number++;
+				$tab_list[$row['tab_id']]["tab_name"] = $row['label_0'];
+				$tab_list[$row['tab_id']]["visible"] = $row['item_id_0'];
+				$tab_list[$row['tab_id']]["add_tickets"] = $row['item_id_1'];
+				$tab_list[$row['tab_id']]["sort"] = $row['item_id_2'];
+				switch ($row['tab_id']) {
+				case 1:
+					$tab_list[$row['tab_id']]["column"] = 2;
+					$tab_list[$row['tab_id']]["row"] = 0;
+					break;
+				case 2:
+				case 3:
+				case 4:
+					$tab_list[$row['tab_id']]["column"] = 0;
+					$tab_list[$row['tab_id']]["row"] = 0;
+					break;
+				default:
+					$tab_list[$row['tab_id']]["column"] = 4;
+					$tab_list[$row['tab_id']]["row"] = 20;
+				}
+				$tab_list[$row['tab_id']]["admin_can_edit"] = $GLOBALS['TAB_CONFIG_NO'];
+				if ($row['tab_id'] > 4) {
+					$tab_list[$row['tab_id']]["admin_can_edit"] = $row['item_id_3'];
+				}
+			}
+		}
+		$tab_list[0]["tab_number"] = $tab_number;
+	}
+	return $tab_list;
+}
+
+function show_tab_preview() {
+	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC");
+	$class_active_str = " class=\"active\"";
+	if ($statement->execute() > 0) {
+		print "<ul class=\"nav nav-tabs\">";
+		foreach ($statement as $row) {
+			$tab_name = "";
+			if ($row['tab_id'] < 5) {
+				$tab_name = get_text($row['label_0']);
+			} else {
+				$tab_name = remove_nls($row['label_0']);
+			}
+			switch ($row['item_id_0']) {
+			case $GLOBALS['TAB_VISIBLE_SINGLE_ONLY']:
+				$tab_name .= "#";
+				break;
+			case $GLOBALS['TAB_VISIBLE_MULTI_ONLY']:
+				$tab_name .= "##";
+				break;
+			default:
+			}
+			if (($row['tab_id'] == 1) || ($row['tab_id'] > 4) && ($row['type_id'] == $GLOBALS['TYPE_UNIT'])) {
+				switch ($row['item_id_1']) {
+				case $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']:
+				case $GLOBALS['TAB_ADDITIONAL_TICKETS_YES']:
+					$tab_name .= "*";
+					break;
+				case $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']:
+					$tab_name .= "**";
+					break;
+				default:
+				}
+			}
+			print "<li role=\"presentation\"" . $class_active_str . "><a>" . $tab_name . "</a></li>";
+			$class_active_str = "";
+		}
+		print "</ul><script>$(\".nav-pills, .nav-tabs\").tabdrop();</script>";
+	}
+}
+
+function set_admin_can_add_presentation($type_id = 0, $admin_can_add = 0, $datetime_now) {
+	if (!is_super()) {
+		return false;
+	}
+	$statement = NULL;
 	switch ($type_id) {
 	case $GLOBALS['TYPE_UNIT']:
-		if (is_super() || (is_admin() && false)) {
-			$return_value = true;
-		}
+		$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :value, user_id = :user_id, client_address = :client_address, updated = :updated WHERE tab_id = 0");
 		break;
 	case $GLOBALS['TYPE_FACILITY']:
-		if (is_super() || (is_admin() && true)) {
-			$return_value = true;
+		$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :value, user_id = :user_id, client_address = :client_address, updated = :updated WHERE tab_id = 0");
+		break;
+	default:
+	}
+	$statement->bindParam(':value', $admin_can_add);
+	$statement->bindParam(':user_id', $_SESSION['user_id']);
+	$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
+	$statement->bindParam(':updated', $datetime_now);
+	$statement->execute();
+	return true;
+}
+
+function get_admin_can_config_presentation($tab_list) {
+	if (is_admin() && $tab_list[0]["admin_can_add"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
+		return true;
+	}
+	foreach ($tab_list as $VarName => $VarValue) {
+		if ($VarName > 0) {
+			if ($VarValue["admin_can_edit"] > $GLOBALS['TAB_CONFIG_NO']) {
+				return true;
+			}
+		}
+	}
+}
+
+function get_additional_tickets_change($visible, $add_tickets) {
+	$statement = NULL;
+	switch ($visible) {
+	case $GLOBALS['TAB_VISIBLE_SINGLE_ONLY']:
+		if ($add_tickets == $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']) {
+			$add_tickets = $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];
+		}
+		if ($add_tickets == $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']) {
+			$add_tickets = $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];
+		}
+		break;
+	case $GLOBALS['TAB_VISIBLE_MULTI_ONLY']:
+		if ($add_tickets == $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']) {
+			$add_tickets = $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];
+		}
+		if ($add_tickets == $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']) {
+			$add_tickets = $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'];
 		}
 		break;
 	default:
 	}
-	return $return_value;
+	return $add_tickets;
 }
 
-function can_add_presentation($type_id = 0) {
-	if (!can_config_presentation($type_id)) {
+function insert_presentation_tab($type_id, $tab_name_new, $visible_new, $add_tickets_new, $sort_new, $admin_edit_new, $datetime_now, $admin_can_add) {
+	if (is_super() || $admin_can_add == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
+		$tab_id_new = 5;
+		$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT MAX(tab_id) FROM presentation");
+		$statement->execute();
+		$row = $statement->fetch();
+		if ((isset ($row[0])) && ($row[0] != "") && ($row[0] >= 5)) {
+			$tab_id_new = $row[0] + 1;
+		}
+		$add_tickets_new = get_additional_tickets_change($visible_new, $add_tickets_new);
+		if (is_admin()) {
+			$admin_edit_new = $GLOBALS['TAB_CONFIG_ADD_EDIT'];
+		}
+		$statement = $GLOBALS['DATABASE_LINK']->prepare("INSERT INTO presentation (tab_id, type_id, row, item_id_0, label_0, " . 
+			"item_id_1, label_1, item_id_2, label_2, item_id_3, label_3, user_id, client_address, updated) VALUES " . 
+			"(:tab_id, :type_id, :row, :item_id_0, :label_0, :item_id_1, :label_1, :item_id_2, :label_2, :item_id_3, :label_3, " . 
+			":user_id, :client_address, :updated)");
+
+		$statement->bindParam(':tab_id', $tab_id_new);
+		$statement->bindParam(':type_id', $type_id);
+		$zero = 0;
+		$statement->bindParam(':row', $zero);
+		$statement->bindParam(':item_id_0', $visible_new);
+		$statement->bindParam(':label_0', $tab_name_new);
+		$statement->bindParam(':item_id_1', $add_tickets_new);
+		$nostring = "";
+		$statement->bindParam(':label_1', $nostring);
+		$statement->bindParam(':item_id_2', $sort_new);
+		$statement->bindParam(':label_2', $nostring);
+		$statement->bindParam(':item_id_3', $admin_edit_new);
+		$statement->bindParam(':label_3', $nostring);
+		$statement->bindParam(':user_id', $_SESSION['user_id']);
+		$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
+		$statement->bindParam(':updated', $datetime_now);
+		$statement->execute();
+		for ($i = 1; $i <= 20; $i++) {
+			//$statement->bindParam(':name', $name);
+			//$statement->execute();
+		}
+		return true;
+	} else {
 		return false;
 	}
-	$return_value = false;
-	switch ($type_id) {
-		case $GLOBALS['TYPE_UNIT']:
-			if (is_super() || (is_admin() && false)) {
-				$return_value = true;
-			}
-			break;
-		case $GLOBALS['TYPE_FACILITY']:
-			if (is_super() || (is_admin() && true)) {
-				$return_value = true;
-			}
-			break;
-		default:
-	}
-	return $return_value;
-}
-
-function can_edit_presentation($type_id = 0, $tab_id = 0) {
-	if (!can_config_presentation($type_id)) {
-		return false;
-	}
-	$return_value = false;
-	/*======= if ==========
-	$type_id
-		$GLOBALS['TYPE_UNIT']
-		$GLOBALS['TYPE_FACILITY']
-	$tab_id*/
-	$return_value = true;
-	//=====================
-	return $return_value;
-}
-
-function can_hide_presentation($type_id = 0, $tab_id = 0) {
-	if (!can_config_presentation($type_id)) {
-		return false;
-	}
-	$return_value = false;
-	/*======= if ==========
-	$type_id
-		$GLOBALS['TYPE_UNIT']
-		$GLOBALS['TYPE_FACILITY']
-	$tab_id*/
-	$return_value = true;
-	//=====================
-	return $return_value;
-}
-
-function show_tab_preview() {
-	?>
-	<ul class="nav nav-tabs">
-		<li role="presentation" class="active"><a>Löschzug 1</a></li>
-		<li role="presentation"><a>Löschzug 2</a></li>
-		<li role="presentation"><a>Rettungsdienst</a></li>
-		<li role="presentation"><a>Einsätze</a></li>
-		<li role="presentation"><a>Vorbestellte</a></li>
-		<li role="presentation"><a>Löschzug 3</a></li>
-		<li role="presentation"><a>Katastrophenschutz</a></li>
-		<li role="presentation"><a>Stadion##*</a></li>
-		<li role="presentation"><a>Geschlossene</a></li>
-	</ul>
-	<?php
 }
 ?>

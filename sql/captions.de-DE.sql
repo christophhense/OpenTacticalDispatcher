@@ -924,6 +924,35 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Reset settings (do not touch user data)', 'Einstellungen zurücksetzen, vorhandene Daten bleiben erhalten.'),
 ('Write db-configuration file only', 'Zugangsdaten der Datenbank neu speichern, alle Daten bleiben erhalten.');
 
+INSERT INTO `captions` (`capt`, `repl`) VALUES
+('Facilities presentation configuration', 'Objekt-Darstellung bearbeiten'),
+('Units presentation configuration', 'Einheiten-Darstellung bearbeiten'),
+('Tab order preview', 'Vorschau der Tab-Reihenfolge'),
+('Admin can add', 'Schichtführer kann hinzufügen'),
+('Tab name', 'Tab-Name'),
+('Visible', 'Sichtbar'),
+('Add tickets', 'Einsätze zeigen'),
+('Colums', 'Spalten'),
+('Rows', 'Zeilen'),
+('Admin can config', 'Schichtführer kann bearbeiten'),
+('Facility tab', 'Objekt-Tab'),
+('Unit tab', 'Einheiten-Tab'),
+('Singlemonitor only', 'Ein Bildschirm'),
+('Multimonitor only', 'Mehrere Bildschirme'),
+('Tab show/hide', 'Tab ein-/ausblenden'),
+('Tab edit/delete', 'Tab editieren/löschen'),
+('Set to admin can add facility tabs', 'Schichtführer kann Objekt-Tabs hinzufügen gespeichert'),
+('Set to admin can not add facility tabs', 'Schichtführer kann Objekt-Tabs nicht hinzufügen gespeichert'),
+('New facility tab added', 'Neuer Objekt-Tab hinzugefügt'),
+('Facilty tabs updated', 'Objekt-Tab geändert'),
+('Facility tabs deleted', 'Objekt-Tab gelöscht'),
+('Set to admin can add unit tabs', 'Schichtführer kann Einheiten-Tabs hinzufügen gespeichert'),
+('Set to admin can not add unit tabs', 'Schichtführer kann Einheiten-Tabs nicht hinzufügen gespeichert'),
+('New unit tab added', 'Neuer Einheiten-Tab hinzugefügt'),
+('Unit tabs updated', 'Einheiten-Tab geändert'),
+('Unit tabs deleted', 'Einheiten-Tab gelöscht'),
+('Changed Tab name', 'Geänderter Tab-Name');
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
