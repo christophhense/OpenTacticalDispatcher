@@ -744,7 +744,7 @@ function get_default_textblocks($file) {
 //====== presentation
 
 function get_tab_list($type_id = 0) {
-	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT * FROM presentation WHERE row = 0 AND (type_id = :type_id_1 OR type_id = :type_id_2 OR tab_id = 0) ORDER BY tab_id ASC");
+	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_LIST'];
 	$statement->bindParam(':type_id_1', $type_id);
 	$statement->bindParam(':type_id_2', $type_id);
 	if ($type_id == $GLOBALS['TYPE_UNIT']) {
@@ -875,7 +875,7 @@ Database-schema table "presentation"
 		last update in mysql datetime-format, default: install- or import-date
 */
 function show_tab_preview() {
-	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC, tab_id ASC");
+	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_PREVIEW'];
 	$class_active_str = " class=\"active\"";
 	if ($statement->execute() > 0) {
 		print "<ul class=\"nav nav-tabs\">";
@@ -921,10 +921,10 @@ function set_admin_can_add_presentation($type_id = 0, $admin_can_add = 0, $datet
 	$statement = NULL;
 	switch ($type_id) {
 	case $GLOBALS['TYPE_UNIT']:
-		$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :value, user_id = :user_id, client_address = :client_address, updated = :updated WHERE tab_id = 0");
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_UNITS'];
 		break;
 	case $GLOBALS['TYPE_FACILITY']:
-		$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :value, user_id = :user_id, client_address = :client_address, updated = :updated WHERE tab_id = 0");
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_FACILITIES'];
 		break;
 	default:
 	}
@@ -976,7 +976,7 @@ function get_additional_tickets_change($visible, $add_tickets) {
 function insert_presentation_tab($type_id, $tab_name_new, $visible_new, $add_tickets_new, $sort_new, $admin_edit_new, $datetime_now, $admin_can_add) {
 	if (is_super() || $admin_can_add == $GLOBALS['TAB_CONFIG_ADD_EDIT']) {
 		$tab_id_new = 5;
-		$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT MAX(tab_id) FROM presentation");
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_NUMBER'];
 		$statement->execute();
 		$row = $statement->fetch();
 		if ((isset ($row[0])) && ($row[0] != "") && ($row[0] >= 5)) {
@@ -986,11 +986,7 @@ function insert_presentation_tab($type_id, $tab_name_new, $visible_new, $add_tic
 		if (is_admin()) {
 			$admin_edit_new = $GLOBALS['TAB_CONFIG_ADD_EDIT'];
 		}
-		$statement = $GLOBALS['DATABASE_LINK']->prepare("INSERT INTO presentation (tab_id, type_id, row, item_id_0, label_0, " . 
-			"item_id_1, label_1, item_id_2, label_2, item_id_3, label_3, user_id, client_address, updated) VALUES " . 
-			"(:tab_id, :type_id, :row, :item_id_0, :label_0, :item_id_1, :label_1, :item_id_2, :label_2, :item_id_3, :label_3, " . 
-			":user_id, :client_address, :updated)");
-
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_NEW_TAB'];
 		$statement->bindParam(':tab_id', $tab_id_new);
 		$statement->bindParam(':type_id', $type_id);
 		$zero = 0;

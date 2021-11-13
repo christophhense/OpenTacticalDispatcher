@@ -2738,7 +2738,7 @@ case "presentation_update":
 			foreach ($_POST['tab_id'] as $VarName => $VarValue) {
 				if (isset ($_POST['delete_' . $VarValue]) && ($_POST['delete_' . $VarValue] == "on")) {
 					if (is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_config"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
-						$statement = $GLOBALS['DATABASE_LINK']->prepare("DELETE FROM presentation WHERE tab_id = :tab_id");
+						$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_DELETE'];
 						$statement->bindParam(':tab_id', $VarValue);
 						if ($statement->execute() > 0) {
 							$deleted_tabs++;
@@ -2750,7 +2750,7 @@ case "presentation_update":
 						if ((isset ($_POST['tab_name_' . $VarValue])) && (preg_match("/^[0-9a-zA-Z\.\-_ " . get_variable("_vowel_mutation") . "]{4,24}$/", $_POST['tab_name_' . $VarValue]))) {
 							if ($_POST['tab_name_' . $VarValue] != $tab_list[$VarValue]["tab_name"]) {
 								$tab_name = $_POST['tab_name_' . $VarValue];
-								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET label_0 = :label_0 WHERE tab_id = :tab_id AND row = 0");
+								$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_NAME'];
 								$statement->bindParam(':label_0', $tab_name);
 								$statement->bindParam(':tab_id', $VarValue);
 								$statement->execute();
@@ -2765,7 +2765,7 @@ case "presentation_update":
 							if ((isset ($_POST['visible_' . $VarValue])) && ($_POST['visible_' . $VarValue] >= $GLOBALS['TAB_VISIBLE_NO']) && ($_POST['visible_' . $VarValue] <= $GLOBALS['TAB_VISIBLE_YES'])) {
 								if ($_POST['visible_' . $VarValue] != $tab_list[$VarValue]["visible"]) {
 									$visible = $_POST['visible_' . $VarValue];
-									$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :item_id_0 WHERE tab_id = :tab_id AND row = 0");
+									$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_VISIBLE'];
 									$statement->bindParam(':item_id_0', $visible);
 									$statement->bindParam(':tab_id', $VarValue);
 									$statement->execute();
@@ -2779,7 +2779,7 @@ case "presentation_update":
 							if ($type_id == $GLOBALS['TYPE_UNIT']) {
 								$add_tickets = get_additional_tickets_change($visible, $_POST['add_tickets_' . $VarValue]);
 								if ($add_tickets != $tab_list[$VarValue]["add_tickets"]) {
-									$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :item_id_1 WHERE tab_id = :tab_id AND row = 0");
+									$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADDITIONAL_TICKETS'];
 									$statement->bindParam(':item_id_1', $add_tickets);
 									$statement->bindParam(':tab_id', $VarValue);
 									$statement->execute();
@@ -2789,7 +2789,7 @@ case "presentation_update":
 						}
 						if ((isset ($_POST['sort_' . $VarValue])) && (preg_match("/^[0-9]{1,3}/", $_POST['sort_' . $VarValue]))) {
 							if ($_POST['sort_' . $VarValue] != $tab_list[$VarValue]["sort"]) {
-								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_2 = :item_id_2 WHERE tab_id = :tab_id AND row = 0");
+								$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_SORT'];
 								$statement->bindParam(':item_id_2', $_POST['sort_' . $VarValue]);
 								$statement->bindParam(':tab_id', $VarValue);
 								$statement->execute();
@@ -2800,7 +2800,7 @@ case "presentation_update":
 					if (is_super() && $VarValue > 4) {
 						if ((isset ($_POST['admin_can_config_' . $VarValue])) && ($_POST['admin_can_config_' . $VarValue] >= $GLOBALS['TAB_CONFIG_NO']) && ($_POST['admin_can_config_' . $VarValue] <= $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
 							if ($_POST['admin_can_config_' . $VarValue] != $tab_list[$VarValue]["admin_can_config"]) {
-								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_3 = :item_id_3 WHERE tab_id = :tab_id AND row = 0");
+								$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_CONFIG'];
 								$statement->bindParam(':item_id_3', $_POST['admin_can_config_' . $VarValue]);
 								$statement->bindParam(':tab_id', $VarValue);
 								$statement->execute();
@@ -2809,7 +2809,7 @@ case "presentation_update":
 						}
 					}
 					if ($updated_values > 0) {
-						$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET user_id = :user_id, client_address = :client_address, updated = :updated  WHERE tab_id = :tab_id AND row = 0");
+						$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_USER_CLIENT_DATETIME'];
 						$statement->bindParam(':user_id', $_SESSION['user_id']);
 						$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
 						$statement->bindParam(':updated', $datetime_now);

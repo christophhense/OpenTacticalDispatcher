@@ -176,6 +176,33 @@ try {
 	die ();
 }
 
+$GLOBALS['STATEMENTS']['CONFIG_TAB_DELETE'] = $GLOBALS['DATABASE_LINK']->prepare("DELETE FROM presentation WHERE tab_id = :tab_id");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_NAME'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET label_0 = :label_0 " .
+	"WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_VISIBLE'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :item_id_0 " .
+	"WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADDITIONAL_TICKETS'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :item_id_1 " .
+	"WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_SORT'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_2 = :item_id_2 " .
+	"WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_CONFIG'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_3 = :item_id_3 " .
+	"WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_USER_CLIENT_DATETIME'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET user_id = :user_id, " .
+	"client_address = :client_address, updated = :updated  WHERE tab_id = :tab_id AND row = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_LIST'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT * FROM presentation WHERE row = 0 AND (type_id = :type_id_1 OR " .
+	"type_id = :type_id_2 OR tab_id = 0) ORDER BY tab_id ASC");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_PREVIEW'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 " .
+	"FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC, tab_id ASC");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_UNITS'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :value, user_id = :user_id, " .
+	"client_address = :client_address, updated = :updated WHERE tab_id = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_FACILITIES'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :value, user_id = :user_id, " .
+	"client_address = :client_address, updated = :updated WHERE tab_id = 0");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_NUMBER'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT MAX(tab_id) FROM presentation");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_NEW_TAB'] = $GLOBALS['DATABASE_LINK']->prepare("INSERT INTO presentation (tab_id, type_id, row, item_id_0, label_0, " .
+	"item_id_1, label_1, item_id_2, label_2, item_id_3, label_3, user_id, client_address, updated) VALUES " .
+	"(:tab_id, :type_id, :row, :item_id_0, :label_0, :item_id_1, :label_1, :item_id_2, :label_2, :item_id_3, :label_3, " .
+	":user_id, :client_address, :updated)");
+
 $GLOBALS['LAST_RESULT'] = null;
 $GLOBALS['LAST_STATEMENT'] = null;
 function db_query($query_str, $file = "", $line = "") {
