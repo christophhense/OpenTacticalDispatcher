@@ -2728,7 +2728,7 @@ case "presentation_update":
 		if (isset ($_POST['tab_id'])) {
 			foreach ($_POST['tab_id'] as $VarName => $VarValue) {
 				if (isset ($_POST['delete_' . $VarValue]) && ($_POST['delete_' . $VarValue] == "on")) {
-					if (is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_edit"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+					if (is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_config"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
 						$statement = $GLOBALS['DATABASE_LINK']->prepare("DELETE FROM presentation WHERE tab_id = :tab_id");
 						$statement->bindParam(':tab_id', $VarValue);
 						if ($statement->execute() > 0) {
@@ -2737,7 +2737,7 @@ case "presentation_update":
 					}
 				} else {
 					$updated_values = 0;
-					if ((is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_edit"] >= $GLOBALS['TAB_CONFIG_VISIBILITY'])) && ($VarValue > 4)) {
+					if ((is_super() || (is_admin() && $tab_list[$VarValue]["admin_can_config"] >= $GLOBALS['TAB_CONFIG_VISIBILITY'])) && ($VarValue > 4)) {
 						if ((isset ($_POST['tab_name_' . $VarValue])) && (preg_match("/^[0-9a-zA-Z\.\-_ " . get_variable("_vowel_mutation") . "]{4,24}$/", $_POST['tab_name_' . $VarValue]))) {
 							if ($_POST['tab_name_' . $VarValue] != $tab_list[$VarValue]["tab_name"]) {
 								$tab_name = $_POST['tab_name_' . $VarValue];
@@ -2751,7 +2751,7 @@ case "presentation_update":
 						}
 					}
 					$visible = $tab_list[$VarValue]["visible"];
-					if (is_super() || ((is_admin() && $tab_list[$VarValue]["admin_can_edit"] >= $GLOBALS['TAB_CONFIG_VISIBILITY']) && $VarValue > 4)) {
+					if (is_super() || ((is_admin() && $tab_list[$VarValue]["admin_can_config"] >= $GLOBALS['TAB_CONFIG_VISIBILITY']) && $VarValue > 4)) {
 						if (($VarValue != 3) && ($VarValue != 4)) {
 							if ((isset ($_POST['visible_' . $VarValue])) && ($_POST['visible_' . $VarValue] >= $GLOBALS['TAB_VISIBLE_NO']) && ($_POST['visible_' . $VarValue] <= $GLOBALS['TAB_VISIBLE_YES'])) {
 								if ($_POST['visible_' . $VarValue] != $tab_list[$VarValue]["visible"]) {
@@ -2765,7 +2765,7 @@ case "presentation_update":
 							}
 						}
 					}
-					if (is_super() || (is_admin() && ($tab_list[$VarValue]["admin_can_edit"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) && $VarValue > 4)) {
+					if (is_super() || (is_admin() && ($tab_list[$VarValue]["admin_can_config"] == $GLOBALS['TAB_CONFIG_ADD_EDIT']) && $VarValue > 4)) {
 						if ((isset ($_POST['add_tickets_' . $VarValue])) && ($_POST['add_tickets_' . $VarValue] >= $GLOBALS['TAB_ADDITIONAL_TICKETS_NO']) && ($_POST['add_tickets_' . $VarValue] <= $GLOBALS['TAB_ADDITIONAL_TICKETS_YES'])) {
 							if ($type_id == $GLOBALS['TYPE_UNIT']) {
 								$add_tickets = get_additional_tickets_change($visible, $_POST['add_tickets_' . $VarValue]);
@@ -2789,10 +2789,10 @@ case "presentation_update":
 						}
 					}
 					if (is_super() && $VarValue > 4) {
-						if ((isset ($_POST['admin_can_edit_' . $VarValue])) && ($_POST['admin_can_edit_' . $VarValue] >= $GLOBALS['TAB_CONFIG_NO']) && ($_POST['admin_can_edit_' . $VarValue] <= $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
-							if ($_POST['admin_can_edit_' . $VarValue] != $tab_list[$VarValue]["admin_can_edit"]) {
+						if ((isset ($_POST['admin_can_config_' . $VarValue])) && ($_POST['admin_can_config_' . $VarValue] >= $GLOBALS['TAB_CONFIG_NO']) && ($_POST['admin_can_config_' . $VarValue] <= $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+							if ($_POST['admin_can_config_' . $VarValue] != $tab_list[$VarValue]["admin_can_config"]) {
 								$statement = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_3 = :item_id_3 WHERE tab_id = :tab_id AND row = 0");
-								$statement->bindParam(':item_id_3', $_POST['admin_can_edit_' . $VarValue]);
+								$statement->bindParam(':item_id_3', $_POST['admin_can_config_' . $VarValue]);
 								$statement->bindParam(':tab_id', $VarValue);
 								$statement->execute();
 								$updated_values++;
@@ -2926,7 +2926,7 @@ case "presentation":
 					</div>
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class="table table-striped table-condensed" style="text-align: left;">
+							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 75%;"<?php print get_help_text_str("tab_order_preview");?>><?php print get_text("Tab order preview");?></th>
 									<th style="width: 15%;">
@@ -2935,7 +2935,7 @@ case "presentation":
 									<th style="width: 10%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td<?php print get_help_text_str("tab_order_preview");?>><?php show_tab_preview();?></td>
+									<td<?php print get_help_text_str("tab_order_preview");?> style="overflow: visible !important;"><?php show_tab_preview();?></td>
 									<td>
 										<select name="admin_can_add" class="form-control"<?php if (!is_super()) print " disabled";?>>
 											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'] . " " . $can_add_presentation_no;?>><?php print get_text("No");?></option>
@@ -3041,13 +3041,13 @@ case "presentation":
 					$add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_NO']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']] = $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_YES']] = "";
 					$add_tickets_select_str[$tab_value["add_tickets"]] = " selected";
 					$admin_can_config_select_str[$GLOBALS['TAB_CONFIG_NO']] = $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_VISIBILITY']] = $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_ADD_EDIT']] = "";
-					$admin_can_config_select_str[$tab_value["admin_can_edit"]] = " selected";
+					$admin_can_config_select_str[$tab_value["admin_can_config"]] = " selected";
 					$edit_disabled_str = "";
-					if ((!is_super()) && ($tab_value["admin_can_edit"] < $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+					if ((!is_super()) && ($tab_value["admin_can_config"] < $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
 						$edit_disabled_str = " disabled";
 					}
 					$hide_disabled_str = "";
-					if ((!is_super()) && ($tab_value["admin_can_edit"] < $GLOBALS['TAB_CONFIG_VISIBILITY'])) {
+					if ((!is_super()) && ($tab_value["admin_can_config"] < $GLOBALS['TAB_CONFIG_VISIBILITY'])) {
 						$hide_disabled_str = " disabled";
 					}
 	?>
@@ -3089,7 +3089,7 @@ case "presentation":
 											</td>
 											<td>
 												<?php if ($tab_id > 4) { ?>
-												<select name="admin_can_edit_<?php print $tab_id;?>" class="form-control" <?php if (!is_super()) print get_help_text_str("not_editable") . " disabled";?>>
+												<select name="admin_can_config_<?php print $tab_id;?>" class="form-control" <?php if (!is_super()) print get_help_text_str("not_editable") . " disabled";?>>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_NO'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_NO']];?>><?php print get_text("No");?></option>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_VISIBILITY']];?>><?php print get_text("Tab show/hide");?></option>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_ADD_EDIT']];?>><?php print get_text("Tab edit/delete");?></option>

@@ -787,9 +787,9 @@ function get_tab_list($type_id = 0) {
 					$tab_list[$row['tab_id']]["column"] = 4;
 					$tab_list[$row['tab_id']]["row"] = 20;
 				}
-				$tab_list[$row['tab_id']]["admin_can_edit"] = $GLOBALS['TAB_CONFIG_NO'];
+				$tab_list[$row['tab_id']]["admin_can_config"] = $GLOBALS['TAB_CONFIG_NO'];
 				if ($row['tab_id'] > 4) {
-					$tab_list[$row['tab_id']]["admin_can_edit"] = $row['item_id_3'];
+					$tab_list[$row['tab_id']]["admin_can_config"] = $row['item_id_3'];
 				}
 			}
 		}
@@ -797,7 +797,82 @@ function get_tab_list($type_id = 0) {
 	}
 	return $tab_list;
 }
-
+/*
+Database-schema table "presentation"
+	id
+		progessive ID
+	tab_id
+		[0] admin can add
+		item_id_0
+			units
+			$GLOBALS['TAB_CONFIG_NO'] = 0; no
+			$GLOBALS['TAB_CONFIG_ADD_EDIT'] = 2; admin can add unit tabs
+		item_id_1
+			facilitys
+			$GLOBALS['TAB_CONFIG_NO'] = 0; no
+			$GLOBALS['TAB_CONFIG_ADD_EDIT'] = 2; admin can add facility tabs
+		[1] Situation
+		[2] Tickets
+		[3] Scheduled
+		[4] Closed
+		[5-n] progessive tab number
+	type_id
+		$GLOBALS['TYPE_TICKET']	= 1;
+		$GLOBALS['TYPE_UNIT'] = 2;
+		$GLOBALS['TYPE_FACILITY'] = 3;
+	row
+		[0] => settings for the respective tab
+	item_id_0 => tab visible
+		$GLOBALS['TAB_VISIBLE_NO'] = 0;
+		$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']	= 1; at units, if at least one unit-tab is visible
+		$GLOBALS['TAB_VISIBLE_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
+		$GLOBALS['TAB_VISIBLE_YES']	= 3;
+	label_0 => Tab-Name
+	item_id_1 => at units, tickets additional visible
+		$GLOBALS['TAB_ADDITIONAL_TICKETS_NO'] = 0;
+		$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'] = 1; at units, if at least one unit-tab is visible
+		$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
+		$GLOBALS['TAB_ADDITIONAL_TICKETS_YES'] = 3;
+	label_1 => unused
+	item_id_2 => sort
+	label_2 => unused
+	item_id_3 => Admin can config
+		$GLOBALS['TAB_CONFIG_NO'] = 0; no
+		$GLOBALS['TAB_CONFIG_VISIBILITY'] = 1; show/hide
+		$GLOBALS['TAB_CONFIG_ADD_EDIT'] = 2; add/edit/delete
+	label_3 => unused
+		[1-20] => tab-content
+	item_id_0
+		[NULL] => unused
+		[0]    => show caption-text
+		[1-n]  => unit- or facility-id
+	label_0
+		caption-text column 0
+	item_id_1
+		[NULL] => unused
+		[0]    => show caption-text
+		[1-n]  => unit- or facility-id
+	label_1
+		caption-text column 1
+	item_id_2
+		[NULL] => unused
+		[0]    => show caption-text
+		[1-n]  => unit- or facility-id
+	label_2
+		caption-text column 2
+	item_id_3
+		[NULL] => unused
+		[0]    => show caption-text
+		[1-n]  => unit- or facility-id
+	label_3
+		caption-text column 3
+	user_id
+		changed user-id, default: 1
+	client_address
+		IP-address of used client-host, default: 127.0.0.1 or ::1
+	updated
+		last update in mysql datetime-format, default: install- or import-date
+*/
 function show_tab_preview() {
 	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC");
 	$class_active_str = " class=\"active\"";
@@ -866,7 +941,7 @@ function get_admin_can_config_presentation($tab_list) {
 	}
 	foreach ($tab_list as $VarName => $VarValue) {
 		if ($VarName > 0) {
-			if ($VarValue["admin_can_edit"] > $GLOBALS['TAB_CONFIG_NO']) {
+			if ($VarValue["admin_can_config"] > $GLOBALS['TAB_CONFIG_NO']) {
 				return true;
 			}
 		}
