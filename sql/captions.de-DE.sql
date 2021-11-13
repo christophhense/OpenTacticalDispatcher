@@ -260,7 +260,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Action updated', 'Rückmeldung bearbeitet'),
 ('Actions', 'Rückmeldungen'),
 ('ActionDescription is required', 'Rückmeldung'),
-('Add new', 'Neu hinzufügen');
+('Add new', 'Neu zufügen');
 
 INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Address', 'Adresse'),
@@ -928,7 +928,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Facilities presentation configuration', 'Objekt-Darstellung bearbeiten'),
 ('Units presentation configuration', 'Einheiten-Darstellung bearbeiten'),
 ('Tab order preview', 'Vorschau der Tab-Reihenfolge'),
-('Admin can add', 'Schichtführer kann hinzufügen'),
+('Admin can add', 'Schichtführer kann zufügen'),
 ('Tab name', 'Tab-Name'),
 ('Visible', 'Sichtbar'),
 ('Add tickets', 'Einsätze zeigen'),
@@ -941,14 +941,14 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Multimonitor only', 'Mehrere Bildschirme'),
 ('Tab show/hide', 'Tab ein-/ausblenden'),
 ('Tab edit/delete', 'Tab editieren/löschen'),
-('Set to admin can add facility tabs', 'Schichtführer kann Objekt-Tabs hinzufügen gespeichert'),
-('Set to admin can not add facility tabs', 'Schichtführer kann Objekt-Tabs nicht hinzufügen gespeichert'),
-('New facility tab added', 'Neuer Objekt-Tab hinzugefügt'),
+('Set to admin can add facility tabs', 'Schichtführer kann Objekt-Tabs zufügen gespeichert'),
+('Set to admin can not add facility tabs', 'Schichtführer kann Objekt-Tabs nicht zufügen gespeichert'),
+('New facility tab added', 'Neuer Objekt-Tab zugefügt'),
 ('Facilty tabs updated', 'Objekt-Tab geändert'),
 ('Facility tabs deleted', 'Objekt-Tab gelöscht'),
-('Set to admin can add unit tabs', 'Schichtführer kann Einheiten-Tabs hinzufügen gespeichert'),
-('Set to admin can not add unit tabs', 'Schichtführer kann Einheiten-Tabs nicht hinzufügen gespeichert'),
-('New unit tab added', 'Neuer Einheiten-Tab hinzugefügt'),
+('Set to admin can add unit tabs', 'Schichtführer kann Einheiten-Tabs zufügen gespeichert'),
+('Set to admin can not add unit tabs', 'Schichtführer kann Einheiten-Tabs nicht zufügen gespeichert'),
+('New unit tab added', 'Neuer Einheiten-Tab zugefügt'),
 ('Unit tabs updated', 'Einheiten-Tab geändert'),
 ('Unit tabs deleted', 'Einheiten-Tab gelöscht'),
 ('Changed Tab name', 'Geänderter Tab-Name');

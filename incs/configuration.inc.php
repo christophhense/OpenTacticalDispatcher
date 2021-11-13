@@ -822,26 +822,27 @@ Database-schema table "presentation"
 		$GLOBALS['TYPE_FACILITY'] = 3;
 	row
 		[0] => settings for the respective tab
-	item_id_0 => tab visible
-		$GLOBALS['TAB_VISIBLE_NO'] = 0;
-		$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']	= 1; at units, if at least one unit-tab is visible
-		$GLOBALS['TAB_VISIBLE_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
-		$GLOBALS['TAB_VISIBLE_YES']	= 3;
-	label_0 => Tab-Name
-	item_id_1 => at units, tickets additional visible
-		$GLOBALS['TAB_ADDITIONAL_TICKETS_NO'] = 0;
-		$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'] = 1; at units, if at least one unit-tab is visible
-		$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
-		$GLOBALS['TAB_ADDITIONAL_TICKETS_YES'] = 3;
-	label_1 => unused
-	item_id_2 => sort
-	label_2 => unused
-	item_id_3 => Admin can config
-		$GLOBALS['TAB_CONFIG_NO'] = 0; no
-		$GLOBALS['TAB_CONFIG_VISIBILITY'] = 1; show/hide
-		$GLOBALS['TAB_CONFIG_ADD_EDIT'] = 2; add/edit/delete
-	label_3 => unused
-		[1-20] => tab-content
+			item_id_0 => tab visible
+				$GLOBALS['TAB_VISIBLE_NO'] = 0;
+				$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']	= 1; at units, if at least one unit-tab is visible
+				$GLOBALS['TAB_VISIBLE_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
+				$GLOBALS['TAB_VISIBLE_YES']	= 3;
+			label_0 => Tab-Name
+			item_id_1 => at units, tickets additional visible
+				$GLOBALS['TAB_ADDITIONAL_TICKETS_NO'] = 0;
+				$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'] = 1; at units, if at least one unit-tab is visible
+				$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'] = 2; at units, if at least one unit-tab is visible
+				$GLOBALS['TAB_ADDITIONAL_TICKETS_YES'] = 3;
+			label_1 => unused
+			item_id_2 => sort
+			label_2 => unused
+			item_id_3 => Admin can config
+				$GLOBALS['TAB_CONFIG_NO'] = 0; no
+				$GLOBALS['TAB_CONFIG_VISIBILITY'] = 1; show/hide
+				$GLOBALS['TAB_CONFIG_ADD_EDIT'] = 2; add/edit/delete
+			label_3 => unused
+				[1-20] => tab-content
+		[1-n] => tab content
 	item_id_0
 		[NULL] => unused
 		[0]    => show caption-text
@@ -874,7 +875,7 @@ Database-schema table "presentation"
 		last update in mysql datetime-format, default: install- or import-date
 */
 function show_tab_preview() {
-	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC");
+	$statement = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC, tab_id ASC");
 	$class_active_str = " class=\"active\"";
 	if ($statement->execute() > 0) {
 		print "<ul class=\"nav nav-tabs\">";

@@ -2713,6 +2713,15 @@ case "presentation_update":
 				$add_tickets_new = $_POST['add_tickets_new'];
 			}
 			$sort_new = 0;
+			switch ($type_id) {
+			case $GLOBALS['TYPE_FACILITY']:
+				$sort_new = 60;
+				break;
+			case $GLOBALS['TYPE_UNIT']:
+				$sort_new = 50;
+				break;
+			default:
+			}
 			if ((isset ($_POST['sort_new'])) && (preg_match("/^[0-9]{1,3}/", $_POST['sort_new']))) {
 				$sort_new = $_POST['sort_new'];
 			}
