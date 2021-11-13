@@ -951,7 +951,8 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('New unit tab added', 'Neuer Einheiten-Tab zugefügt'),
 ('Unit tabs updated', 'Einheiten-Tab geändert'),
 ('Unit tabs deleted', 'Einheiten-Tab gelöscht'),
-('Changed Tab name', 'Geänderter Tab-Name');
+('Changed Tab name', 'Geänderter Tab-Name'),
+('Deleted Tab name', 'Gelöschter Tab-Name');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

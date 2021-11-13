@@ -102,3 +102,4 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES ('New unit tab added', 'New unit 
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Unit tabs updated', 'Unit tabs updated');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Unit tabs deleted', 'Unit tabs deleted');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Changed Tab name', 'Changed Tab name');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Deleted Tab name', 'Deleted Tab name');

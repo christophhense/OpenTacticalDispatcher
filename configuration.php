@@ -2734,6 +2734,7 @@ case "presentation_update":
 		$updated_tabs = 0;
 		$changed_tab_names_str = "";
 		$deleted_tabs = 0;
+		$deleted_tab_names_str = "";
 		if (isset ($_POST['tab_id'])) {
 			foreach ($_POST['tab_id'] as $VarName => $VarValue) {
 				if (isset ($_POST['delete_' . $VarValue]) && ($_POST['delete_' . $VarValue] == "on")) {
@@ -2742,6 +2743,7 @@ case "presentation_update":
 						$statement->bindParam(':tab_id', $VarValue);
 						if ($statement->execute() > 0) {
 							$deleted_tabs++;
+							$deleted_tab_names_str .= $tab_list[$VarValue]["tab_name"] . ", ";
 						}
 					}
 				} else {
@@ -2860,12 +2862,16 @@ case "presentation_update":
 			$top_notice_str .= $log_updated_tabs_str . "<br>";
 			$top_notice_log_str .= $log_updated_tabs_str . ". ";
 		}
+		
 		if ($changed_tab_names_str != "") {
 			$top_notice_log_str .= get_text("Changed Tab name") . ": " . $changed_tab_names_str . " ";
 		}
 		if ($deleted_tabs != 0) {
 			$top_notice_str .= $log_deleted_tabs_str . "<br>";
 			$top_notice_log_str .= $log_deleted_tabs_str . ". ";
+		}
+		if ($deleted_tab_names_str != "") {
+			$top_notice_log_str .= get_text("Deleted Tab name") . ": " . substr($deleted_tab_names_str, 0, -2) . ". ";
 		}
 	}
 	break;
