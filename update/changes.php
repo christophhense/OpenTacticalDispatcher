@@ -21,6 +21,7 @@ function do_changes_sql() {
 function do_changes_files() {
 	$unlink_array = array (
 		"incs/usng.inc.php",	//main-folder: to_unlink_file.php
+		"sql/users.sql",
 		""	//sub-folder: folder/to_unlink_file.php
 	);
 	foreach ($unlink_array as $filename) {

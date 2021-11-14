@@ -100,7 +100,7 @@ function install($version, $locale, $option, $host, $name, $user, $password) {
 		do_sql_file("./sql/captions." . $locale . ".sql");
 		do_sql_file("./sql/hints." . $locale . ".sql");
 		do_sql_file("./sql/regions." . $locale . ".sql");
-		do_sql_file("./sql/users.sql");
+		do_sql_file("./sql/default_users_and_tab_presets.sql");
 		write_version($version, $locale);
 		$output_text .= "<li> Installation of tables-data complete!";
 		$output_text .= write_conf($host, $name, $user, $password);
@@ -137,7 +137,7 @@ function get_locale_select_str($current_sql_path, $current_locale) {
 		file_exists($current_sql_path . "database_userdata.sql") &&
 		file_exists($current_sql_path . "drop_database_settings.sql") &&
 		file_exists($current_sql_path . "drop_database_userdata.sql") &&
-		file_exists($current_sql_path . "users.sql")
+		file_exists($current_sql_path . "default_users_and_tab_presets.sql")
 	) {
 		if ($dh = opendir($current_sql_path)) {
 			if ($current_sql_path[strlen($current_sql_path) - 1] != "/") {
