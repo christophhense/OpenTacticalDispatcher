@@ -82,7 +82,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES ('Admin can add', 'Admin can add'
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Tab name', 'Tab name');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Visible', 'Visible');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Add tickets', 'Add tickets');
-INSERT INTO `captions` (`capt`, `repl`) VALUES ('Colums', 'Colums');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Columns', 'Columns');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Rows', 'Rows');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Admin can config', 'Admin can config');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Facility tab', 'Facility tab');
@@ -103,6 +103,10 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES ('Unit tabs updated', 'Unit tabs 
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Unit tabs deleted', 'Unit tabs deleted');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Changed Tab name', 'Changed Tab name');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Deleted Tab name', 'Deleted Tab name');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Edit custom units representation', 'Edit custom units representation');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Edit custom facilities representation', 'Edit custom facilities representation');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Row', 'Row');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Column', 'Column');
 INSERT INTO `hints` (`tag`, `hint`) VALUES ('facility_presentation', 'The display and order of the tabs for objects in the situation overview is defined here. Tabs with a user-defined object overview can be created here. Tabs for units, objects and operations are shown in a preview with the set order and visibility.');
 INSERT INTO `hints` (`tag`, `hint`) VALUES ('facility_presentation_tab_list', 'User-defined facility overviews for the situation overview can be created and managed here. The release of individual settings for the Admin user role can also be carried out here. To create a new user-defined facility overview, its tab name must have at least 4 characters. Only uppercase and lowercase letters, numbers, periods, minus signs, underscores and spaces can be used as characters. In order to be able to change a tab name, this rule must also be adhered to. The visibility of a tab can be defined under the Visible menu item. This can be used, for example, to hide a prepared user-defined facility overview and only offer it in a certain context. The visibility can be configured depending on the number of screens used. The automatic detection of the number of screens used and the resulting adjustment of the situation overview may take a few seconds. The order of the tabs in the location overview is defined using the number in the Sort by field. The display is from left to right in ascending order using the numbers configured here, depending on the configuration of tabs with units and tickets. The columns and rows used by the respective user-defined facility overview are displayed in the Columns and Rows fields in order to get a quick overview of the types of display to be expected. Under the menu items Admin can add and Admin can edit, the authorizations for the Admin user role can be defined in stages.');
 INSERT INTO `hints` (`tag`, `hint`) VALUES ('unit_presentation', 'The representation and order of the tabs for units and tickets in the situation overview is defined here. In addition to the situation-tab, other tabs with a user-defined unit overview can be created. Tabs for units, objects and operations are shown in a preview with the set order and visibility.');

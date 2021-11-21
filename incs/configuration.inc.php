@@ -986,15 +986,15 @@ function insert_presentation_tab($type_id, $tab_name_new, $visible_new, $add_tic
 		if (is_admin()) {
 			$admin_edit_new = $GLOBALS['TAB_CONFIG_ADD_EDIT'];
 		}
-		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_NEW_TAB'];
+		$zero = 0;
+		$nostring = "";
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_TAB'];
 		$statement->bindParam(':tab_id', $tab_id_new);
 		$statement->bindParam(':type_id', $type_id);
-		$zero = 0;
 		$statement->bindParam(':row', $zero);
 		$statement->bindParam(':item_id_0', $visible_new);
 		$statement->bindParam(':label_0', $tab_name_new);
 		$statement->bindParam(':item_id_1', $add_tickets_new);
-		$nostring = "";
 		$statement->bindParam(':label_1', $nostring);
 		$statement->bindParam(':item_id_2', $sort_new);
 		$statement->bindParam(':label_2', $nostring);
@@ -1004,13 +1004,107 @@ function insert_presentation_tab($type_id, $tab_name_new, $visible_new, $add_tic
 		$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
 		$statement->bindParam(':updated', $datetime_now);
 		$statement->execute();
+		$null = NULL;
 		for ($i = 1; $i <= 20; $i++) {
-			//$statement->bindParam(':name', $name);
-			//$statement->execute();
+			$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_TAB'];
+			$statement->bindParam(':tab_id', $tab_id_new);
+			$statement->bindParam(':type_id', $type_id);
+			$statement->bindParam(':row', $i);
+			$statement->bindParam(':item_id_0', $null);
+			$statement->bindParam(':label_0', $nostring);
+			$statement->bindParam(':item_id_1', $null);
+			$statement->bindParam(':label_1', $nostring);
+			$statement->bindParam(':item_id_2', $null);
+			$statement->bindParam(':label_2', $nostring);
+			$statement->bindParam(':item_id_3', $null);
+			$statement->bindParam(':label_3', $nostring);
+			$statement->bindParam(':user_id', $_SESSION['user_id']);
+			$statement->bindParam(':client_address', $_SERVER['REMOTE_ADDR']);
+			$statement->bindParam(':updated', $datetime_now);
+			$statement->execute();
 		}
 		return true;
 	} else {
 		return false;
 	}
+}
+
+function get_tab_id($tab_id) {
+	$return_str = "";
+	if (is_super()) {
+		$return_str = " #" . $tab_id;
+	}
+	return $return_str;
+}
+
+function set_custom_overview($tab_id, $new_overview) {
+	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_TAB'];
+	foreach ($new_overview as $row) {
+		$statement->bindParam(':type_id', $new_overview[$row["row"]]["type_id"]);
+		$statement->bindParam(':item_id_0', $new_overview[$row["row"]]["item_id_0"]);
+		$statement->bindParam(':label_0', $new_overview[$row["row"]]["label_0"]);
+		$statement->bindParam(':item_id_1', $new_overview[$row["row"]]["item_id_1"]);
+		$statement->bindParam(':label_1', $new_overview[$row["row"]]["label_1"]);
+		$statement->bindParam(':item_id_2', $new_overview[$row["row"]]["item_id_2"]);
+		$statement->bindParam(':label_2', $new_overview[$row["row"]]["label_2"]);
+		$statement->bindParam(':item_id_3', $new_overview[$row["row"]]["item_id_3"]);
+		$statement->bindParam(':label_3', $new_overview[$row["row"]]["label_3"]);
+		$statement->bindParam(':user_id', $new_overview[$row["row"]]["user_id"]);
+		$statement->bindParam(':client_address', $new_overview[$row["row"]]["client_address"]);
+		$statement->bindParam(':updated', $new_overview[$row["row"]]["updated"]);
+		$statement->bindParam(':tab_id', $tab_id);
+		$statement->bindParam(':row', $row["row"]);	
+		$statement->execute();
+	}
+}
+
+function get_custom_overview($tab_id) {
+	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB'];
+	$statement->bindParam(':tab_id', $tab_id);
+	$custom_overview = array ();
+	if ($statement->execute() > 0) {
+		foreach ($statement as $row) {
+			$custom_overview[$row["row"]]["type_id"] = $row["type_id"];
+			$custom_overview[$row["row"]]["item_id_0"] = $row["item_id_0"];
+			$custom_overview[$row["row"]]["label_0"] = $row["label_0"];
+			$custom_overview[$row["row"]]["item_id_1"] = $row["item_id_1"];
+			$custom_overview[$row["row"]]["label_1"] = $row["label_1"];
+			$custom_overview[$row["row"]]["item_id_2"] = $row["item_id_2"];
+			$custom_overview[$row["row"]]["label_2"] = $row["label_2"];
+			$custom_overview[$row["row"]]["item_id_3"] = $row["item_id_3"];
+			$custom_overview[$row["row"]]["label_3"] = $row["label_3"];
+			$custom_overview[$row["row"]]["user_id"] = $row["user_id"];
+			$custom_overview[$row["row"]]["client_address"] = $row["client_address"];
+			$custom_overview[$row["row"]]["updated"] = $row["updated"];
+		}
+	}
+	return $custom_overview;
+}
+
+function get_item_list($type_id, $option_value_as_text_for_super = true) {
+	$statement = "";
+	switch ($type_id) {
+	case $GLOBALS['TYPE_FACILITY']:
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_FACILITIES'];
+		break;
+	case $GLOBALS['TYPE_UNIT']:
+		$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_UNITS'];
+		break;
+	default:
+	}
+	$item_list = array ();
+	if ($statement->execute() > 0) {
+		$i = 0;
+		foreach ($statement as $row) {
+			$item_list[$i]["option_value"] = $row["option_value"];
+			$item_list[$i]["option_text"] = $row["option_text"];
+			if (is_super() && $option_value_as_text_for_super) {
+				$item_list[$i]["option_text"] = $row["option_text"] . "   #" . $row["option_value"];
+			}
+			$item_list[$i]["option_group"] = $row["option_group"];
+			$i++;
+		}
+	}
+	return $item_list;
 }
 ?>

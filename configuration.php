@@ -2359,7 +2359,7 @@ case "unit_types_update":
 				$top_notice_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "<br>";
 				$top_notice_log_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "  ";
 			}
-			}
+		}
 	}
 	break;
 case "unit_types":
@@ -2689,7 +2689,300 @@ case "unit_status":
 	<?php
 	}
 	break;
-case "presentation_update":
+case "presentation_tab_update":
+	$tab_id = 0;
+	$type_id = 0;
+	if (isset ($_POST['tab_id'])) {
+		$tab_id = $_POST['tab_id'];
+	}
+	if ($tab_id != 0) {
+		$custom_overview = get_custom_overview($tab_id);
+		$type_id = $custom_overview[1]['type_id'];
+		$item_list = get_item_list($type_id, false);
+		if (is_super() || (is_admin() && ($custom_overview[0]['item_id_3'] == $GLOBALS['TAB_CONFIG_ADD_EDIT']))) {
+			$new_overview = array ();
+			foreach ($_POST['field'] as $VarValue) {
+				if ($_POST['column'][$VarValue] == 0) {
+					$new_overview[$_POST['row'][$VarValue]]['row'] = $_POST['row'][$VarValue];
+					$new_overview[$_POST['row'][$VarValue]]['type_id'] = $custom_overview[$_POST['row'][$VarValue]]['type_id'];
+					$new_overview[$_POST['row'][$VarValue]]["user_id"] = $_SESSION['user_id'];
+					$new_overview[$_POST['row'][$VarValue]]["client_address"] = $_SERVER['REMOTE_ADDR'];
+					$new_overview[$_POST['row'][$VarValue]]["updated"] = $datetime_now;
+				}
+				$new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] = NULL;
+				$new_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]] = "";
+				switch ($_POST['switch'][$VarValue]) {
+				case "LIST":
+					if ($_POST['item_id'][$VarValue] != 0) {
+						$new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] = $_POST['item_id'][$VarValue];
+						$new_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]] = "";
+					}
+					break;
+				case "LABEL":
+					if ($_POST['label'][$VarValue] != "") {
+						$new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] = 0;
+						$new_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]] = $_POST['label'][$VarValue];
+					}
+					break;
+				default:
+				}
+				$old_value_log_str = "";
+				$new_value_log_str = "";
+				if (
+					($new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] != 
+						$custom_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]]) || 
+					($new_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]] != 
+						$custom_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]])
+					) {
+					if ($custom_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] == 0) {
+						$old_value_log_str = $custom_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]];
+					}
+					if ($custom_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] > 0) {
+						foreach ($item_list as $item) {
+							if ($item["option_value"] == $custom_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]]) {
+								$old_value_log_str = $item["option_text"];
+							}
+						}
+					}
+					if ($new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] == 0) {
+						$new_value_log_str = $new_overview[$_POST['row'][$VarValue]]["label_" . $_POST['column'][$VarValue]];
+					}
+					if ($new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]] > 0) {
+						foreach ($item_list as $item) {
+							if ($item["option_value"] == $new_overview[$_POST['row'][$VarValue]]["item_id_" . $_POST['column'][$VarValue]]) {
+								$new_value_log_str = $item["option_text"];
+							}
+						}
+					}
+					$top_notice_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . "<br>";
+					$top_notice_log_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . ". ";
+				}
+			}
+			if ($top_notice_str != "") {
+				switch ($type_id) {
+				case $GLOBALS['TYPE_FACILITY']:
+					$top_notice_str = get_text("Edit custom facilities representation") . "<br>" . $top_notice_str;
+					$top_notice_log_str = get_text("Edit custom facilities representation") . "  " . $top_notice_log_str;
+					break;
+				case $GLOBALS['TYPE_UNIT']:
+					$top_notice_str = get_text("Edit custom units representation") . "<br>" . $top_notice_str;
+					$top_notice_log_str = get_text("Edit custom units representation") . "  " . $top_notice_log_str;
+					break;
+				default:
+				}
+				set_custom_overview($tab_id, $new_overview);
+			}
+		}
+	}
+	break;
+case "presentation_tab":
+	$tab_id = 0;
+	if (isset ($_GET['tab_id'])) {
+		$tab_id = $_GET['tab_id'];
+	}
+	if ($tab_id != 0) {
+		$custom_overview = get_custom_overview($tab_id);
+		$item_list = array ();
+		$option_0 = "";
+		$no_elements = "";
+		$focus_id = "";
+		if (is_super() || ($custom_overview[0]["item_id_3"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
+			$helptext = "";
+			$page_caption = "";
+			switch ($custom_overview[0]["type_id"]) {
+			case $GLOBALS['TYPE_FACILITY']:
+				$page_caption = get_text("Edit custom facilities representation");
+				$item_list = get_item_list($GLOBALS['TYPE_FACILITY'], true);
+				$option_0 = get_text("Facility");
+				$no_elements = get_text("No facilities available!");
+				break;
+			case $GLOBALS['TYPE_UNIT']:
+				$page_caption = get_text("Edit custom units representation");
+				$item_list = get_item_list($GLOBALS['TYPE_UNIT'], true);
+				$option_0 = get_text("Unit");
+				$no_elements = get_text("No units available!");
+				break;
+			default:
+			}
+			$field_id = 0;
+	?>
+	<script>
+		function change_presentation_tab_field(symbol, row, column) {
+			select = "EMPTY";
+			switch ($("#switch_id_" + row + "_" + column).val()) {
+			case "EMPTY":
+				if (symbol == "left") {
+					select = "LIST";
+				}
+				if (symbol == "right") {
+					select = "LABEL";
+				}
+				break;
+			case "LABEL":
+				if (symbol == "left") {
+					select = "LIST";
+				}
+				if (symbol == "right") {
+					select = "EMPTY";
+				}
+				break;
+			case "LIST":
+				if (symbol == "left") {
+					select = "LABEL";
+				}
+				if (symbol == "right") {
+					select = "EMPTY";
+				}
+			default:
+			}
+			switch (select) {
+			case "LABEL":
+				$("#symbol_left_" + row + "_" + column).removeClass();
+				$("#symbol_right_" + row + "_" + column).removeClass();
+				$("#symbol_left_" + row + "_" + column).attr("class", "glyphicon glyphicon-list");
+				$("#symbol_right_" + row + "_" + column).attr("class", "glyphicon glyphicon-trash");
+				$("#input_id_" + row + "_" + column).show();
+				$("#select_id_" + row + "_" + column).hide();
+				$("#switch_id_" + row + "_" + column).val("LABEL");
+				$("#input_id_" + row + "_" + column).focus();
+				break;
+			case "LIST":
+				$("#symbol_left_" + row + "_" + column).removeClass();
+				$("#symbol_right_" + row + "_" + column).removeClass();
+				$("#symbol_left_" + row + "_" + column).attr("class", "glyphicon glyphicon-pencil");
+				$("#symbol_right_" + row + "_" + column).attr("class", "glyphicon glyphicon-trash");
+				$("#input_id_" + row + "_" + column).hide();
+				$("#select_id_" + row + "_" + column).show();
+				$("#switch_id_" + row + "_" + column).val("LIST");
+				$("#select_id_" + row + "_" + column).focus();
+				break;
+			case "EMPTY":
+			default:
+				$("#symbol_left_" + row + "_" + column).removeClass();
+				$("#symbol_right_" + row + "_" + column).removeClass();
+				$("#symbol_left_" + row + "_" + column).attr("class", "glyphicon glyphicon-list");
+				$("#symbol_right_" + row + "_" + column).attr("class", "glyphicon glyphicon-pencil");
+				$("#input_id_" + row + "_" + column).hide();
+				$("#select_id_" + row + "_" + column).hide();
+				$("#switch_id_" + row + "_" + column).val("EMPTY");
+			}
+		}
+	</script>
+		<div class="container-fluid" id="main_container">
+			<div class="row infostring">
+				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<?php print $page_caption . ": "  . remove_nls(substr($custom_overview[0]["label_0"], 0, 15)) . get_tab_id($tab_id) . " - " . get_variable("page_caption");?>
+				</div>
+			</div>
+			<form name="presentation_tab" method="post" action="configuration.php">
+				<input type="hidden" name="function" value="presentation_tab_update">
+				<input type="hidden" name="tab_id" value="<?php print $tab_id;?>">
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" tabindex=84 onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" tabindex=83 onClick="document.presentation_tab.reset();"><?php print get_text("Reset");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" tabindex=82 onClick="document.presentation_tab.submit();"><?php print get_text("Save");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" tabindex=81 onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("custom_overview");?>');"><?php print get_text("Helptext");?></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-10">
+						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">	
+	<?php 
+				$tabindex = 1;
+				for ($i = 1; $i <= 20; $i++) {
+	?>
+								<tr class="form-group" style="height: 45px;">
+	<?php
+					$with_2_str = " style=\"text-align: center;\"";
+					$with_18_str = " style=\"text-align: center;\"";
+					if ($i == 1) {
+						$with_2_str = " style=\"width: 2%;text-align: center;\"";
+						$with_18_str = " style=\"width: 18%; text-align: center;\"";
+					}
+					if (isset ($custom_overview[$i]["type_id"])) {
+						for ($j = 0; $j <= 3; $j++) {
+							$switch_symbol_str = "";
+							$switch_value = "";
+							$label_display_str = " style=\"display: none;\"";
+							$select_display_str = "display: none;";
+							switch ($custom_overview[$i]["item_id_" . $j]) {
+							case NULL:
+								$switch_symbol_str = "<span id=\"symbol_left_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-list\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('left', " . $i . ", " . $j. ");\"></span><span id=\"symbol_right_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('right', " . $i . ", " . $j. ");\"></span>";
+								$switch_value = "EMPTY";
+								break;
+							case 0:
+								$switch_symbol_str = "<span id=\"symbol_left_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-list\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('left', " . $i . ", " . $j. ");\"></span><span id=\"symbol_right_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('right', " . $i . ", " . $j. ");\"></span>";
+								$switch_value = "LABEL";
+								$label_display_str = " style=\"display: inline;\"";
+								break;
+							default:
+								$switch_symbol_str = "<span id=\"symbol_left_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('left', " . $i . ", " . $j. ");\"></span><span id=\"symbol_right_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('right', " . $i . ", " . $j. ");\"></span>";
+								$switch_value = "LIST";
+								$select_display_str = "display: inline;";
+							}
+							if (($focus_id == "") && ($switch_value == "LABEL")) {
+								$focus_id = "input_id_" . $i . "_" . $j;
+							}
+							if (($focus_id == "") && ($switch_value == "LIST")) {
+								$focus_id = "select_id_" . $i . "_" . $j;
+							}
+	?>
+									<td<?php print $with_2_str;?>>
+										<input type="hidden" name="field[]" value=<?php print $field_id;?>>
+										<input type="hidden" name="row[]" value=<?php print $i ;?>></input>
+										<input type="hidden" name="column[]" value=<?php print $j ;?>></input>
+										<input type="hidden" id="switch_id_<?php print $i . "_" . $j;?>" name="switch[]" value="<?php print $switch_value;?>"></input>
+										<?php print $switch_symbol_str;?>
+									</td>
+									<td<?php print $with_18_str;?>>
+										<input type="text" class="form-control" id="input_id_<?php print $i . "_" . $j;?>" name="label[]" value="<?php print $custom_overview[$i]["label_" . $j];?>"<?php print $label_display_str;?> tabindex=<?php print $tabindex;?>></input>
+										<?php print get_select_str($item_list, "select_id_" . $i . "_" . $j, "item_id[]", "form-control", "", $select_display_str, "", $option_0, $custom_overview[$i]["item_id_" . $j], $no_elements, $tabindex);?>
+									</td>
+	<?php
+							$tabindex++;
+							$field_id++;
+						}
+	?>
+								</tr>
+	<?php
+					}
+				}
+	?>
+							</table>
+							<script>
+								$("#<?php print $focus_id;?>").focus();
+							</script>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
+	<?php
+		}
+	}
+	break;
+case "presentation_list_update":
 	$result_admin_can_add = false;
 	$result_tab_new = false;
 	$type_id = 0;
@@ -2875,7 +3168,7 @@ case "presentation_update":
 		}
 	}
 	break;
-case "presentation":
+case "presentation_list":
 	$type_id = 0;
 	if (isset ($_GET['type_id'])) {
 		$type_id = $_GET['type_id'];
@@ -2912,7 +3205,7 @@ case "presentation":
 				</div>
 			</div>
 			<form name="presentation" method="post" action="configuration.php">
-				<input type="hidden" name="function" value="presentation_update">
+				<input type="hidden" name="function" value="presentation_list_update">
 				<input type="hidden" name="type_id" value="<?php print $type_id;?>">
 				<div class="row">
 					<div class="col-md-1">
@@ -3029,19 +3322,19 @@ case "presentation":
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
 							<table class="table table-striped table-condensed" style="text-align: left;">
-									<?php if ($tab_list[0]["tab_number"] > 0) { ?>
-									<tr style="height: 44px;">
-										<th style="width: 20%;"><?php print get_text("Tab name");?></th>
-										<th style="width: 17.5%;"><?php print get_text("Visible");?></th>
-										<th style="width: 17.5%;"><?php if ($type_id == $GLOBALS['TYPE_UNIT']) print get_text("Add tickets");?></th>
-										<th style="width: 10%;"><?php print get_text("Sort");?></th>
-										<th style="width: 5%;"><?php print get_text("Colums");?></th>
-										<th style="width: 5%;"><?php print get_text("Rows");?></th>
-										<th style="width: 15%;"><?php print get_text("Admin can config");?></th>
-										<th style="width: 5%;"></th>
-										<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
-									</tr>
-									<?php } ?>
+								<?php if ($tab_list[0]["tab_number"] > 0) { ?>
+								<tr style="height: 44px;">
+									<th style="width: 20%;"><?php print get_text("Tab name");?></th>
+									<th style="width: 17.5%;"><?php print get_text("Visible");?></th>
+									<th style="width: 17.5%;"><?php if ($type_id == $GLOBALS['TYPE_UNIT']) print get_text("Add tickets");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%;"><?php print get_text("Columns");?></th>
+									<th style="width: 5%;"><?php print get_text("Rows");?></th>
+									<th style="width: 15%;"><?php print get_text("Admin can config");?></th>
+									<th style="width: 5%;"></th>
+									<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
+								</tr>
+								<?php } ?>
 	<?php 
 		$visible_select_str = $add_tickets_select_str = $admin_can_config_select_str = array ("", "", "", "", "");
 		if ($tab_list[0]["tab_number"] > 0) {
@@ -3113,7 +3406,7 @@ case "presentation":
 											</td>
 											<td style="text-align: center;">
 												<?php if ($tab_id > 4) { ?>
-												<span <?php if ($edit_disabled_str != "") { print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=edit_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+												<span <?php if ($edit_disabled_str != "") { print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=presentation_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 												<?php } ?>
 											</td>
 											<td style="text-align: center;" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable");?>>
@@ -5298,7 +5591,8 @@ case "facility_status":
 case "unit_status_reset":
 case "unit_types":
 case "unit_status":
-case "presentation":
+case "presentation_tab":
+case "presentation_list":
 case "regions":
 case "cleanse_regions":
 case "reset_regions":
@@ -5553,7 +5847,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("facility_presentation");?> class="nav nav-pills" class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=presentation&type_id=<?php print $GLOBALS['TYPE_FACILITY'];?>" style="white-space: nowrap;">
+										<a href="<?php print basename(__FILE__);?>?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_FACILITY'];?>" style="white-space: nowrap;">
 											<?php print (get_text("Presentation"));?>
 										</a>
 									</li>
@@ -5644,7 +5938,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("unit_presentation");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=presentation&type_id=<?php print $GLOBALS['TYPE_UNIT'];?>" style="white-space: nowrap;">
+										<a href="<?php print basename(__FILE__);?>?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_UNIT'];?>" style="white-space: nowrap;">
 											<?php print (get_text("Presentation"));?>
 										</a>
 									</li>

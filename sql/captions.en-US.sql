@@ -922,7 +922,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Tab name', 'Tab name'),
 ('Visible', 'Visible'),
 ('Add tickets', 'Add tickets'),
-('Colums', 'Colums'),
+('Columns', 'Columns'),
 ('Rows', 'Rows'),
 ('Admin can config', 'Admin can config'),
 ('Facility tab', 'Facility tab'),
@@ -942,7 +942,11 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Unit tabs updated', 'Unit tabs updated'),
 ('Unit tabs deleted', 'Unit tabs deleted'),
 ('Changed Tab name', 'Changed Tab name'),
-('Deleted Tab name', 'Deleted Tab name');
+('Deleted Tab name', 'Deleted Tab name'),
+('Edit custom units representation', 'Edit custom units representation'),
+('Edit custom facilities representation', 'Edit custom facilities overview'),
+('Row', 'Row'),
+('Column', 'Column');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -932,7 +932,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Tab name', 'Reiter-Name'),
 ('Visible', 'Sichtbar'),
 ('Add tickets', 'Einsätze zeigen'),
-('Colums', 'Spalten'),
+('Columns', 'Spalten'),
 ('Rows', 'Zeilen'),
 ('Admin can config', 'Schichtführer kann bearbeiten'),
 ('Facility tab', 'Objekt-Reiter'),
@@ -952,7 +952,11 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Unit tabs updated', 'Einheiten-Reiter geändert'),
 ('Unit tabs deleted', 'Einheiten-Reiter gelöscht'),
 ('Changed Tab name', 'Geänderter Reiter-Name'),
-('Deleted Tab name', 'Gelöschter Reiter-Name');
+('Deleted Tab name', 'Gelöschter Reiter-Name'),
+('Edit custom units representation', 'Benutzerdefinierte Einheiten-Darstellung bearbeiten'),
+('Edit custom facilities representation', 'Benutzerdefinierte Objekt-Darstellung bearbeiten'),
+('Row', 'Zeile'),
+('Column', 'Spalte');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

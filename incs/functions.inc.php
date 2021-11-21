@@ -198,11 +198,20 @@ $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_UNITS'] = $GLOBALS['DATA
 $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_FACILITIES'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :value, user_id = :user_id, " .
 	"client_address = :client_address, updated = :updated WHERE tab_id = 0");
 $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_NUMBER'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT MAX(tab_id) FROM presentation");
-$GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_NEW_TAB'] = $GLOBALS['DATABASE_LINK']->prepare("INSERT INTO presentation (tab_id, type_id, row, item_id_0, label_0, " .
+$GLOBALS['STATEMENTS']['CONFIG_TAB_INSERT_TAB'] = $GLOBALS['DATABASE_LINK']->prepare("INSERT INTO presentation (tab_id, type_id, row, item_id_0, label_0, " .
 	"item_id_1, label_1, item_id_2, label_2, item_id_3, label_3, user_id, client_address, updated) VALUES " .
 	"(:tab_id, :type_id, :row, :item_id_0, :label_0, :item_id_1, :label_1, :item_id_2, :label_2, :item_id_3, :label_3, " .
 	":user_id, :client_address, :updated)");
-
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT * FROM presentation WHERE tab_id = :tab_id ORDER BY row ASC");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_TAB'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET type_id = :type_id, item_id_0 = :item_id_0, " .
+	"label_0 = :label_0, item_id_1 = :item_id_1, label_1 = :label_1, item_id_2 = :item_id_2, label_2 = :label_2, item_id_3 = :item_id_3, label_3 = :label_3, " .
+	"user_id = :user_id, client_address = :client_address, updated = :updated WHERE tab_id = :tab_id AND row = :row");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_FACILITIES'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT DISTINCT f.id AS option_value, f.handle AS option_text, t.name AS option_group FROM facilities f " .
+	"LEFT JOIN facility_types t ON (t.id = f.type) LEFT JOIN allocates a ON f.id = a.resource_id AND a.type = " . $GLOBALS['TYPE_FACILITY'] . " " .
+	"WHERE a.id IS NOT NULL ORDER BY t.name ASC, f.handle ASC");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_UNITS'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT DISTINCT u.id AS option_value, u.handle AS option_text, t.name AS option_group FROM units u " .
+	"LEFT JOIN unit_types t ON (t.id = u.type) LEFT JOIN allocates a ON u.id = a.resource_id AND a.type = " . $GLOBALS['TYPE_UNIT'] . " " .
+	"WHERE a.id IS NOT NULL ORDER BY t.name ASC, u.handle ASC");
 $GLOBALS['LAST_RESULT'] = null;
 $GLOBALS['LAST_STATEMENT'] = null;
 function db_query($query_str, $file = "", $line = "") {
@@ -1789,7 +1798,7 @@ function show_prevent_browser_back_button() {
 
 //====== selects
 
-function get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id = 0, $no_options, $tabindex) {
+function get_select_str($input, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id = 0, $no_options, $tabindex) {
 	$form_id_str = "";
 	if ($form_id != "") {
 		$form_id_str = " id=\"" . $form_id . "\"";
@@ -1822,13 +1831,32 @@ function get_select_str($query, $form_id, $form_name, $class, $title, $style, $o
 	if ($tabindex != "") {
 		$tabindex_str = " tabindex=" . $tabindex;
 	}
+	if (!is_array ($input)) {
+		$query = $input;
+		$input = array ();
+		$result = db_query($query, __FILE__, __LINE__);
+		$i = 0;
+		if (db_num_rows($result) > 0) {
+			while ($row = stripslashes_deep(db_fetch_array($result))) {
+				if (isset ($row['option_group'])){
+					$input[$i]['option_group'] = $row['option_group'];
+				}
+				if (isset ($row['option_value'])){
+					$input[$i]['option_value'] = $row['option_value'];
+				}
+				if (isset ($row['option_text'])){
+					$input[$i]['option_text'] = $row['option_text'];
+				}
+				$i++;
+			}
+		}
+	}
 	$return_str = "<select" . $form_id_str . $form_name_str . $class_str . $title_str . $style_str . $onchange_str . $tabindex_str . ">";
 	$return_str .= $option_0_str;
-	$result = db_query($query, __FILE__, __LINE__);
-	if (db_num_rows($result) > 0) {
+	if (is_array ($input)) {
 		$option_group = strval(rand());
 		$i = 0;
-		while ($row = stripslashes_deep(db_fetch_array($result))) {
+		foreach ($input as $row) {
 			if ((isset ($row['option_group'])) && ($option_group != $row['option_group'])) {
 				if (($i != 0) && (trim($option_group) != "")) {
 					$return_str .= "</optgroup>\n";
