@@ -214,6 +214,7 @@ $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_TAB_UNITS'] = $GLOBALS['DATABASE_LINK'
 	"WHERE a.id IS NOT NULL ORDER BY t.name ASC, u.handle ASC");
 $GLOBALS['LAST_RESULT'] = null;
 $GLOBALS['LAST_STATEMENT'] = null;
+
 function db_query($query_str, $file = "", $line = "") {
 	$result = $GLOBALS['DATABASE_LINK']->query($query_str);
 	if ($result != false) {

@@ -3178,6 +3178,7 @@ case "presentation_list":
 		$helptext = "";
 		$page_caption = "";
 		$admin_can_add_select_caption = get_text("No");
+		$tabindex = 1;
 		switch ($type_id) {
 		case $GLOBALS['TYPE_FACILITY']:
 			$helptext = "facility_presentation_tab_list";
@@ -3212,22 +3213,22 @@ case "presentation_list":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button id="cancel_button" type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.presentation.reset();"><?php print get_text("Reset");?></button>
+									<button id="reset_button" type="button" class="btn btn-xs btn-default" onClick="document.presentation.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.presentation.submit();"><?php print get_text("Save");?></button>
+									<button id="submit_button" type="button" class="btn btn-xs btn-default" onClick="document.presentation.submit();"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text($helptext);?>');"><?php print get_text("Helptext");?></button>
+									<button id="help_button" type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text($helptext);?>');"><?php print get_text("Helptext");?></button>
 								</div>
 							</div>
 						</div>
@@ -3254,7 +3255,7 @@ case "presentation_list":
 								</tr>
 							</table>
 						</div>
-					</div> 
+					</div>
 					<div class="col-md-1"></div>
 				</div>
 				<div class="row">
@@ -3275,9 +3276,9 @@ case "presentation_list":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="tab_name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" class="form-control" tabindex="<?php print $tabindex++;?>" name="tab_name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
 									<td>
-										<select name="visible_new" class="form-control">
+										<select name="visible_new" class="form-control" tabindex="<?php print $tabindex++;?>">
 											<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'];?> selected><?php print get_text("No");?></option>
 											<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
 											<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
@@ -3286,7 +3287,7 @@ case "presentation_list":
 									</td>
 									<td>
 										<?php if ($type_id == $GLOBALS['TYPE_UNIT']) { ?>
-										<select name="add_tickets_new" class="form-control">
+										<select name="add_tickets_new" class="form-control" tabindex="<?php print $tabindex++;?>">
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'];?> selected><?php print get_text("No");?></option>
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'];?>><?php print get_text("Singlemonitor only");?></option>
 											<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'];?>><?php print get_text("Multimonitor only");?></option>
@@ -3294,12 +3295,12 @@ case "presentation_list":
 										</select>
 										<?php } ?>
 									</td>
-									<td><input type="text" class="form-control" name="sort_new"></input></td>
+									<td><input type="text" class="form-control" tabindex="<?php print $tabindex++;?>" name="sort_new"></input></td>
 									<td></td>
 									<td></td>
 									<td>
 										<?php if (is_super()) { ?>
-										<select name="admin_edit_new" class="form-control">
+										<select name="admin_edit_new" class="form-control" tabindex="<?php print $tabindex++;?>">
 											<option value=<?php print $GLOBALS['TAB_CONFIG_NO'];?> selected><?php print get_text("No");?></option>
 											<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'];?>><?php print get_text("Tab show/hide");?></option>
 											<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'];?>><?php print get_text("Tab edit/delete");?></option>
@@ -3362,11 +3363,11 @@ case "presentation_list":
 										<tr class="form-group">
 											<td>
 												<input type="hidden" name="tab_id[]" value="<?php print $tab_id;?>">
-												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["tab_name"]) . "\" name=\"tab_name_" . $tab_id . "\""; if (($tab_id < 5) || ($edit_disabled_str != "")) print " readonly";?>></input>
+												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["tab_name"]) . "\" name=\"tab_name_" . $tab_id . "\""; if (($tab_id < 5) || ($edit_disabled_str != "")) {print " readonly";} else {print " tabindex=" . $tabindex++;}?>></input>
 											</td>
 											<td>
 												<?php if (($tab_id != 3) && ($tab_id != 4)) { ?>
-												<select name="visible_<?php print $tab_id;?>" class="form-control" <?php if ($hide_disabled_str != "") print get_help_text_str("not_editable") . $hide_disabled_str;?>>
+												<select name="visible_<?php print $tab_id;?>" class="form-control" <?php if ($hide_disabled_str != "") {print get_help_text_str("not_editable") . $hide_disabled_str;} else {print " tabindex=" . $tabindex++;}?>>
 													<option value=<?php print $GLOBALS['TAB_VISIBLE_NO'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_NO']];?>><?php print get_text("No");?></option>
 													<option value=<?php print $GLOBALS['TAB_VISIBLE_SINGLE_ONLY'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_SINGLE_ONLY']];?>><?php print get_text("Singlemonitor only");?></option>
 													<option value=<?php print $GLOBALS['TAB_VISIBLE_MULTI_ONLY'] . " " . $visible_select_str[$GLOBALS['TAB_VISIBLE_MULTI_ONLY']];?>><?php print get_text("Multimonitor only");?></option>
@@ -3376,7 +3377,7 @@ case "presentation_list":
 											</td>
 											<td>
 												<?php if (($type_id == $GLOBALS['TYPE_UNIT']) && (($tab_id == 1) || ($tab_id > 4))) { ?>
-												<select name="add_tickets_<?php print $tab_id;?>" class="form-control" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable") . $edit_disabled_str;?>>
+												<select name="add_tickets_<?php print $tab_id;?>" class="form-control" <?php if ($edit_disabled_str != "") {print get_help_text_str("not_editable") . $edit_disabled_str;} else {print " tabindex=" . $tabindex++;}?>>
 													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_NO'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_NO']];?>><?php print get_text("No");?></option>
 													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_SINGLE_ONLY']];?>><?php print get_text("Singlemonitor only");?></option>
 													<option value=<?php print $GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY'] . " " . $add_tickets_select_str[$GLOBALS['TAB_ADDITIONAL_TICKETS_MULTI_ONLY']];?>><?php print get_text("Multimonitor only");?></option>
@@ -3384,7 +3385,7 @@ case "presentation_list":
 												</select>
 												<?php } ?>
 											</td>
-											<td><input type="text" class="form-control" name="sort_<?php print $tab_id;?>" value="<?php print remove_nls($tab_value["sort"]);?>"<?php print $edit_disabled_str;?>></input></td>
+											<td><input type="text" class="form-control" <?php if ($edit_disabled_str == "") {print " tabindex=" . $tabindex++;}?> name="sort_<?php print $tab_id;?>" value="<?php print remove_nls($tab_value["sort"]);?>"<?php print $edit_disabled_str;?>></input></td>
 											<td>
 												<?php if (($tab_id == 1) || ($tab_id > 4)) { ?>
 												<input type="text" class="form-control" value="<?php print remove_nls($tab_value["column"]);?>" disabled></input>
@@ -3397,7 +3398,7 @@ case "presentation_list":
 											</td>
 											<td>
 												<?php if ($tab_id > 4) { ?>
-												<select name="admin_can_config_<?php print $tab_id;?>" class="form-control" <?php if (!is_super()) print get_help_text_str("not_editable") . " disabled";?>>
+												<select name="admin_can_config_<?php print $tab_id;?>" class="form-control" <?php if (!is_super()) {print get_help_text_str("not_editable") . " disabled";} else {print " tabindex=" . $tabindex++;}?>>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_NO'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_NO']];?>><?php print get_text("No");?></option>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_VISIBILITY'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_VISIBILITY']];?>><?php print get_text("Tab show/hide");?></option>
 													<option value=<?php print $GLOBALS['TAB_CONFIG_ADD_EDIT'] . " " . $admin_can_config_select_str[$GLOBALS['TAB_CONFIG_ADD_EDIT']];?>><?php print get_text("Tab edit/delete");?></option>
@@ -3406,12 +3407,12 @@ case "presentation_list":
 											</td>
 											<td style="text-align: center;">
 												<?php if ($tab_id > 4) { ?>
-												<span <?php if ($edit_disabled_str != "") { print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=presentation_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+												<span <?php if ($edit_disabled_str != "") {print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=presentation_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 												<?php } ?>
 											</td>
 											<td style="text-align: center;" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable");?>>
 												<?php if ($tab_id > 4) { ?>
-												<input type="checkbox" name="delete_<?php print $tab_id;?>"<?php print $edit_disabled_str;?>>
+												<input type="checkbox" <?php if ($edit_disabled_str == "") {print " tabindex=" . $tabindex++;}?> name="delete_<?php print $tab_id;?>"<?php print $edit_disabled_str;?>>
 												<?php } ?>
 											</td>
 										</tr>
@@ -3427,6 +3428,16 @@ case "presentation_list":
 		}
 	?>
 								</table>
+								<script>
+									$(document).ready(function() {
+										tabindex="<?php print $tabindex;?>";
+										$("#help_button").attr("tabindex",tabindex++);
+										$("#submit_button").attr("tabindex",tabindex++);
+										$("#reset_button").attr("tabindex",tabindex++);
+										$("#cancel_button").attr("tabindex",tabindex++);
+										$('[tabindex=1]').focus();
+									});
+								</script>
 							</div>
 						</div>
 					<div class="col-md-1"></div>
