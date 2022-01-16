@@ -193,6 +193,15 @@ $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_LIST'] = $GLOBALS['DATABASE_LINK']->pr
 	"type_id = :type_id_2 OR tab_id = 0) ORDER BY tab_id ASC");
 $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_PREVIEW'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT tab_id, type_id, label_0, item_id_0, item_id_1 " .
 	"FROM presentation WHERE (row = 0 AND tab_id <> 0 AND item_id_0 > 0) OR (row = 0 AND tab_id > 2 AND tab_id < 5) ORDER BY item_id_2 ASC, tab_id ASC");
+$GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_MAX_ROW_MAX_COLUMN'] = $GLOBALS['DATABASE_LINK']->prepare("SELECT DISTINCT tab_id AS row_tab_id, " .
+		"(SELECT MAX(row) FROM presentation WHERE tab_id = row_tab_id AND (item_id_0 IS NOT NULL OR item_id_1 IS NOT NULL OR item_id_2 IS NOT NULL OR item_id_3 IS NOT NULL)) AS max_row, " .
+		"(SELECT MAX(row) FROM presentation WHERE tab_id = row_tab_id AND (item_id_0 IS NOT NULL)) AS col_0, " .
+		"(SELECT MAX(row) FROM presentation WHERE tab_id = row_tab_id AND (item_id_1 IS NOT NULL)) AS col_1, " .
+		"(SELECT MAX(row) FROM presentation WHERE tab_id = row_tab_id AND (item_id_2 IS NOT NULL)) AS col_2, " .
+		"(SELECT MAX(row) FROM presentation WHERE tab_id = row_tab_id AND (item_id_3 IS NOT NULL)) AS col_3, " .
+		"((SELECT IF (col_0 > 0, 1, 0)) + (SELECT IF (col_1 > 0, 1, 0)) + (SELECT IF (col_2 > 0, 1, 0)) + (SELECT IF (col_3 > 0, 1, 0))) AS max_col, " .
+		"(SELECT IF (max_col >= 2, max_col, 2)) AS num_col " .
+	"FROM `presentation` WHERE tab_id > 4");
 $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_UNITS'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_0 = :value, user_id = :user_id, " .
 	"client_address = :client_address, updated = :updated WHERE tab_id = 0");
 $GLOBALS['STATEMENTS']['CONFIG_TAB_UPDATE_ADMIN_CAN_ADD_FACILITIES'] = $GLOBALS['DATABASE_LINK']->prepare("UPDATE presentation SET item_id_1 = :value, user_id = :user_id, " .

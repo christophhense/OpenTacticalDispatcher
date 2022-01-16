@@ -743,7 +743,20 @@ function get_default_textblocks($file) {
 
 //====== presentation
 
+function get_tab_num_column_max_row() {
+	$num_col_max_row = array ();
+	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_MAX_ROW_MAX_COLUMN'];
+	if ($statement->execute() > 0) {
+		foreach ($statement as $row) {
+			$num_col_max_row[$row["row_tab_id"]]["num_col"] = $row["num_col"];
+			$num_col_max_row[$row["row_tab_id"]]["max_row"] = $row["max_row"];
+		}
+	}
+	return $num_col_max_row;
+}
+
 function get_tab_list($type_id = 0) {
+	$num_col_max_row = get_tab_num_column_max_row();
 	$statement = $GLOBALS['STATEMENTS']['CONFIG_TAB_SELECT_LIST'];
 	$statement->bindParam(':type_id_1', $type_id);
 	$statement->bindParam(':type_id_2', $type_id);
@@ -784,8 +797,8 @@ function get_tab_list($type_id = 0) {
 					$tab_list[$row['tab_id']]["row"] = 0;
 					break;
 				default:
-					$tab_list[$row['tab_id']]["column"] = 4;
-					$tab_list[$row['tab_id']]["row"] = 20;
+					$tab_list[$row['tab_id']]["column"] = $num_col_max_row[$row['tab_id']]["num_col"];
+					$tab_list[$row['tab_id']]["row"] = $num_col_max_row[$row['tab_id']]["max_row"];
 				}
 				$tab_list[$row['tab_id']]["admin_can_config"] = $GLOBALS['TAB_CONFIG_NO'];
 				if ($row['tab_id'] > 4) {

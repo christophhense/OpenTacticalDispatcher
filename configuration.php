@@ -3340,7 +3340,6 @@ case "presentation_list":
 		$visible_select_str = $add_tickets_select_str = $admin_can_config_select_str = array ("", "", "", "", "");
 		if ($tab_list[0]["tab_number"] > 0) {
 			foreach ($tab_list as $tab_id => $tab_value) {
-//				if ((($tab_id > 0) && (is_super())) || ($tab_id > 4)) {
 				if ($tab_id > 0) {
 					if (($tab_id >= 1) && ($tab_id <= 4)) {
 						$tab_value["tab_name"] = get_text($tab_value["tab_name"]);
