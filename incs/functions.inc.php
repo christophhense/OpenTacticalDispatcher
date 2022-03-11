@@ -3811,7 +3811,7 @@ function mysql_datetime($datetime_input = "") {
 function format_date($date_in) {
 	$date_wk = trim($date_in);	
 	if (strlen(trim($date_in)) == 19) {	
-	   $date_wk = strtotime(trim($date_in));
+		$date_wk = strtotime(trim($date_in));
 	}
 	return date(get_variable("date_format"), intval($date_wk));
 }
@@ -3864,7 +3864,7 @@ function set_database_timezone() {
 	$mins = $now->getOffset() / 60;
 	$sgn = 1;
 	if ($mins < 0) {
-		$sgn =  -1;
+		$sgn = -1;
 	}
 	$mins = abs($mins);
 	$hrs = floor($mins / 60);

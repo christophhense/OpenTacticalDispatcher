@@ -29,7 +29,8 @@ Activities sorted by application function.
 * Ticket - new
 	NONE
 * Ticket - update
-	NONE
+	BUGFIX
+		fixed tabindex of buttons on the left side
 * Ticket - dispatch
 	NONE
 * Ticket - report
@@ -70,7 +71,7 @@ Activities sorted by application function.
 	NONE
 * Settings - general - notification sounds
 	NONE
-* Settings - general - Allgemeine Einstellungen
+* Settings - general - General Settings
 	NONE
 * Settings - general - ticket name
 	NONE
