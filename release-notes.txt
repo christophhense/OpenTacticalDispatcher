@@ -36,6 +36,7 @@ Activities sorted by application function.
 * Ticket - report
 	CHANGE
 		Headline incident report made larger
+		Start and end timestamps shown in bold
 * Ticket - close
 	NONE
 * Ticket - new action
@@ -63,6 +64,7 @@ Activities sorted by application function.
 * Reports
 	CHANGE
 		Headline incident report made larger
+		Start and end timestamps shown in bold
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account

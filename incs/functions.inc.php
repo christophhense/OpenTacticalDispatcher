@@ -703,7 +703,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 </tr>
 <tr>
 	<th><?php print get_text("Run Start");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></td>
+	<th colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></th>
 </tr>
 	<?php
 	if ($row['booked_date'] != null) {
@@ -736,7 +736,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 	?>
 <tr>
 	<th><?php print get_text("Run End");?>:</th>
-	<td colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></td>
+	<th colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></th>
 </tr>
  	<?php
  	$by_str = "";
