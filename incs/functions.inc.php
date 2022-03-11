@@ -566,11 +566,16 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 		$page_beak_str = " page-break-after: avoid;";
 	}
 	?>
-	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 		<tr>
+			<th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h3></th>
+		</tr>
+	</table>
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+		<tr style="heigth: 0px;">
 			<td style="text-align: left; width: 15%;"></td>
 			<td style="text-align: left; width: 15%;"></td>
-			<th style="text-align: right; width: 25%;"><h5><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h5></th>
+			<th style="text-align: right; width: 25%;"></th>
 			<td style="text-align: left; width: 40%;"></td>
 			<td style="text-align: left; width: 5%;"></td>
 		</tr>

@@ -34,7 +34,8 @@ Activities sorted by application function.
 * Ticket - dispatch
 	NONE
 * Ticket - report
-	NONE
+	CHANGE
+		Headline incident report made larger
 * Ticket - close
 	NONE
 * Ticket - new action
@@ -60,7 +61,8 @@ Activities sorted by application function.
 * Facilities - update
 	NONE
 * Reports
-	NONE
+	CHANGE
+		Headline incident report made larger
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account
