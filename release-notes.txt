@@ -25,7 +25,8 @@ Activities sorted by application function.
 * Callboard
 	NONE
 * Communication
-	NONE
+	BUGFIX
+		function prevent_browser_back_button no longer prevents the ticket selection from being displayed
 * Ticket - new
 	NONE
 * Ticket - update
