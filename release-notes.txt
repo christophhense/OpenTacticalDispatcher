@@ -21,218 +21,105 @@
 Activities sorted by application function.
 
 * Situation
-	BUGFIX
-		Crossed out time is updated a maximum of 3 times so that the tooltip does not flash.
-		Message to all units no longer finds any data records that have already been deleted.
-	CHANGE
-		Change the sorting order of the inserts. The most recently created missions are displayed within the respective priority at the top.
-		The availability status of units is set with a context menu instead of a dropdown.
-		Design of the status fields in the css adapted. Label field and text size enlarged a little.
-		Display time for ETB entry in tooltip increased from 12h to 24h.
-	FEATURE
-		In addition to the deployment data, the associated feedback is displayed in the information text of the dispatched units.
+	NONE
 * Callboard
+	NONE
+* Communication
 	BUGFIX
-		Fixed SQL error when left-clicking on mission progress time.
-		Revised program code. Note text application progress time harmonized.
-		Removed transfer of unnecessary parameters for ticket and unit.
-* Communikation
-	BUGFIX
-		Situation / Units - Message to all units: Recipient selection no longer contains any deleted units.
-		Message to all objects: Recipient selection no longer contains deleted objects.
-		Message to all users: Recipient selection no longer contains deleted users.
-		Reduced to the option "Call request" and "No processing" in the edit button for status message: manual acknowledgment (9)
-	CHANGE
-		Alarm print
-			- unit inserted.
-			- heading scalefont set from 20 to 15.
-			- display of umlauts possible.
-			- system name added in print head.
-		Option "dispose" in the edit button for status messages: responding(3) without disposition, onsite(4) without disposition, facility enroute(7) without disposition,
-		facility arrived(8) without disposition, the unit makes disposition regardless of its current availability.
-	FEATURE
-		Option "Add to mission diary" added to the edit button for status reports: responding(3) without disposition, onsite(4) without disposition, facility enroute(7) without disposition,
-		facility arrived(8) without disposition.
+		function prevent_browser_back_button no longer prevents the ticket selection from being displayed
 * Ticket - new
-	CODE
-		JavaScript code revised and field access switched to jQuery.
-	CHANGE
-		The telephone number of the reporting party from the Select field is automatically transferred to the Callback number field.
-	FEATURE
-		Entered information is cached for a preset time in the respective browser tab.
-		Dynamic help texts for the parking duration and criteria of forms added.
+	NONE
 * Ticket - update
 	BUGFIX
-		When the form is reset, the correct background color is set in the "Urgency" field.
-		Message to all units no longer finds any data records that have already been deleted.
-		Disposition list - check for valid release time when disposition closed.
-	CODE
-		JavaScript code revised and field access switched to jQuery.
-		Saving the start of the mission revised.
-	CHANGE
-		The telephone number of the reporting party from the Select field is automatically transferred to the Callback number field.
+		fixed tabindex of buttons on the left side
 * Ticket - dispatch
-	CHANGE
-		Manual printing harmonized with network printing.
-		System name added in printhead.
-* Ticket - report
 	NONE
+* Ticket - report
+	CHANGE
+		Headline incident report made larger
+		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
 * Ticket - close
-	CODE
-		JavaScript code revised and field access switched to jQuery.
-	FEATURE
-		Entered information is cached for a preset time in the respective browser tab.
-		Dynamic help texts for the parking duration and criteria of forms added.
+	NONE
 * Ticket - new action
-	CODE
-		Program code cleaned up.
-	FEATURE
-		Entered information is cached for a preset time in the respective browser tab.
-		Dynamic help texts for the parking duration and criteria of forms added.
+	NONE
 * Ticket - update action
-	FEATURE
-		For created and processed, the time stamp with the user is displayed.
+	NONE
 * Ticket - dispatch
-	BUGFIX
-		Detection of a transmission path is checked in the same way as in the unit representation.
-	CODE
-		Column width defined above the table header.
+	NONE
 * Ticket - disposition
 	NONE
 * Log report
-	CHANGE
-		System messages are displayed in the operation log for the "Super" user role.
-	FEATURE
-		Entries in the categories communication, status and settings can be hidden when the operational diary is displayed.
-		Entered information is cached for a preset time in the respective browser tab.
-		Dynamic help texts for the parking duration and criteria of forms added.
-* Units - overview
-	BUGFIX
-		Message to all units no longer finds any data records that have already been deleted.
-	CHANGE
-		The availability status of units is set with a context menu instead of a dropdown.
-		Design of the status fields in the css adapted. Label field and text size enlarged a little.
-		Display time for ETB entry in tooltip increased from 12h to 24h.
-	FEATURE
-		In addition to the deployment data, the associated feedback is displayed in the information text of the planned units.
-* Units - new
-	BUGFIX
-		Note text field Mobile phone use comma as a separator for telephone numbers.
-	CHANGE
-		Tab index for all table fields with buttons added at the end.
-		SELECT fields for transferring connection data now only show units that have field contents and have not yet been deleted.
-		Logging when creating with all fields.
-* Units - update
-	BUGFIX
-		Note text field Mobile phone use comma as a separator for telephone numbers.
-	CHANGE
-		Displays the date, time and user of the last edit.
-		Tab index for all table fields with buttons added at the end.
-		SELECT fields for transferring connection data now only show units that have field contents and have not yet been deleted.
-		Logging when editing/deleting with before/after comparison.
-* Facilities - overview
-	BUGFIX
-		Message to all objects no longer finds any data records that have already been deleted.
-	CHANGE
-		The availability status of objects is set with a context menu instead of a dropdown.
-		Design of the status fields in the css adapted. Label field and text size enlarged a little.
-		Automatic update of the changed objects.
-		Order of the fields in the information text sorted as in the edit view.
-		Display time for ETB entry in tooltip increased from 12h to 24h.
-* Facilities - new
-	CHANGE
-		Tab index for all table fields with buttons added at the end.
-		Logging when creating with all fields.
-* Facilities - update
-	BUGFIX
-		Fixed bug in database query when editing by "admin" user role .
-	CHANGE
-		Displays the date, time and user of the last edit.
-		Tab index for all table fields with buttons added at the end.
-		Logging when editing/deleting with before/after comparison.
-* Reports
-	BUGFIX
-		Fixed filter for transport destination with object selection.
-		Fixed filter for guard.
-		Ticket reports - Search text also searches in feedback.
-		Log - Search text also searches in the message text.
-		Fixed day/night view for operational reports.
-	FEATURE
-		Entries in the categories communication, status and settings can be hidden when the operational diary is displayed.
-	CHANGE
-		System messages are displayed in the operation log for the "Super" user role.
-* Settings - user accounts - User accounts
-	CHANGE
-		Table column of the user list for IP address enlarged by 150px in order to be able to display IPv6 addresses in full.
-		Display of the date, time and user of the last edit in the edit view.
-		Logging when editing / deleting with before / after comparison.
-		Display of the edit icon based on the user role.
-		Edit symbol for users with the special role application interface only available for user role "Super".
-	FEATURE
-		Entered password can be shown and hidden with the eye symbol.
-* Settings - user accounts - own account
-	FEATURE
-		Entered password can be shown and hidden with the eye symbol.
-* Settings - user accounts - new
-	CHANGE
-		Display of the date, time and user of the last edit in the edit view.
-		Logging when creating with all fields.
-	FEATURE
-		Entered password can be shown and hidden with the eye symbol.
-* Settings - user accounts - in-/export
 	NONE
+* Units - overview
+	NONE
+* Units - new
+	NONE
+* Units - update
+	NONE
+* Facilities - overview
+	NONE
+* Facilities - new
+	NONE
+* Facilities - update
+	NONE
+* Reports
+	CHANGE
+		Headline incident report made larger
+		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
+* Settings - user accounts - User accounts
+	NONE
+* Settings - user accounts - own account
+	NONE
+* Settings - user accounts - new
+	NONE
+* Settings - user accounts - in-/export
+	FEATURE
+		Timestamp in filename added.
 * Settings - general - notification sounds
 	NONE
-* Settings - general - Allgemeine Einstellungen
-	CHANGE
-		Note text for presettings for callboard in settings adapted.
+* Settings - general - General Settings
+	NONE
 * Settings - general - ticket name
-	CHANGE
-		Dynamic labeling of mandatory fields added.
-	CODE
-		Hidden variable '_serial_no_ap' removed. Necessary content generated from variable '_inc_num'.
+	NONE
 * Settings - general - API
-	NONE
-* Settings - general - fixmessage
 	BUGFIX
-		Information texts for grayed out delete checkboxes are displayed.
-* Settings - general - in-/export
+		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
+* Settings - general - fixmessage
 	NONE
+* Settings - general - in-/export
+	FEATURE
+		Timestamp in filename added.
 * Settings - facilities - put on the same status
 	NONE
 * Settings - facilities - categorie
-	BUGFIX
-		Information texts for grayed out delete checkboxes are displayed.
-		Object category can be deleted if categorized objects have been deleted.
+	NONE
 * Settings - facilities - status
-	BUGFIX
-		Information texts for grayed out delete checkboxes are displayed.
-		When creating, the value entered in the Sort field instead of 0.
-		Can be deleted when objects in the status have been deleted.
+	NONE
 * Settings - facilities - in-/export
-	BUGFIX
-		Extra field `admin_only` removed from database query.
+	FEATURE
+		Timestamp in filename added.
 * Settings - units - put on the same status
-	BUGFIX
-		Set to same status triggers automatic update.
+	NONE
 * Settings - units - categorie
-	BUGFIX
-		Information texts for grayed out delete checkboxes are displayed.
-		Can be deleted if the categorized unit has been deleted.
+	NONE
 * Settings - units - status
-	BUGFIX
-		Information texts for grayed out delete checkboxes are displayed.
-		Can be deleted if the unit has been deleted in the status.
+	NONE
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - incident types - incident types
 	NONE
 * Settings - incident types - default incident types
 	NONE
 * Settings - incident types - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - textblocks - synopsis
 	NONE
 * Settings - textblocks - comments
@@ -250,22 +137,21 @@ Activities sorted by application function.
 * Settings - textblocks - default-textblocks
 	NONE
 * Settings - textblocks - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - captions and hints - captions
 	NONE
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-	BUGFIX
-		Fixed import of translations.
+	FEATURE
+		Timestamp in filename added.
 * Settings - database and updates - optimize
 	NONE
 * Settings - database and updates - reset
 	NONE
 * Settings - database and updates - updates
-	CHANGE
-		Notice text revised.
-		Notes on updating via the update function added.
+	NONE
 * Settings - system information
 	NONE
 * Installation
@@ -273,19 +159,7 @@ Activities sorted by application function.
 * Configuration wizard
 	NONE
 * Program code and miscellaneous
-	BUGFIX
-		PHP8 /configuration.php Array and string offset access syntax replaced with curly braces.
-		PHP8 /incs/function.inc.php function get_magic_quotes_gpc() replaced.
-		PHP8 /lib/phpprinttip Deprecated function each() replaced.
 	CODE
-		Removed unnecessary explode function when transferring the deployment progress in set_data.php.
-		Parameter identifier for the transfer of the deployment progress to set_data.php changed from frm_vals to frm_callprogression.
-		Parameter identifier for transferring the progress of the operation to set_data.php changed from frm_id to assign_id.
-	CHANGE
-		Failed login attempts are saved with the user name, IP address and browser used in the deployment diary and in the web server log.
-		Data type of the database fields units.parent_unit_id and units.guard_house_id changed from varchar(32) to bigint(8).
-		Checking of data service addresses using the configured API prefix and search pattern.
-		Field name of the database field tickets.scope changed to tickets.incident_name.
-		In the standard setting, the browser's back button takes you back to the location page.
-	FEATURE
-		On login-page entered password can be shown and hidden with the eye symbol.
+		Change the number of characters ind db-table captions, hints and settings to save IPv6.
+		Harmonize int(lenght) to 8 in database-schema.
+		Harmonize smallint and bigint to int in database-schema.

@@ -3,7 +3,6 @@ error_reporting(E_ALL);
 session_start();	
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/configuration.inc.php");
-require_once ("./incs/usng.inc.php");
 require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
@@ -3217,7 +3216,7 @@ case "reset_regions_update":
 		//keine gelöschten Einheiten zurücksetzen!
 
 		$query = "CREATE TABLE IF NOT EXISTS `allocates` " .
-			"(`id` bigint(8) NOT NULL auto_increment, `group` int(4) NOT NULL default '1', `type` tinyint(1) NOT NULL default '1', `updated` datetime default NULL, `resource_id` int(4) default NULL, `user_id` int(4) NOT NULL default '0', PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;";
+			"(`id` int(8) NOT NULL auto_increment, `group` int(8) NOT NULL default '1', `type` tinyint(1) NOT NULL default '1', `updated` datetime default NULL, `resource_id` int(8) default NULL, `user_id` int(4) NOT NULL default '0', PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;";
 
 		$result = db_query($query, __FILE__, __LINE__);
 		$tickets_reset = 0;

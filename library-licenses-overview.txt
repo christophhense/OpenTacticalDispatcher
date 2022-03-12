@@ -13,7 +13,7 @@ OpenTacticalDispatcher
 		GPLv3
 		http://www.gnu.org/software/freefont/
 
-/ics
+/incs
 	PHPcoord
 		GPLv3
 		https://github.com/dvdoug/PHPCoord

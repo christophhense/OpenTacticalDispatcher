@@ -2,7 +2,6 @@
 error_reporting(E_ALL);
 require_once ("db_credentials.inc.php");
 require_once ("phpcoord.inc.php");				// UTM converter
-require_once ("usng.inc.php");				// USNG converter
 
 //====== misc-codes
 
@@ -277,9 +276,7 @@ function insert_into_allocates($group = 1, $type = 0, $resource_id = 0, $user_id
 function get_working_in_development_environement() {
 	if (
 		file_exists(get_current_path(".project")) ||
-		file_exists(get_current_path(".buildpath")) ||
-		file_exists(get_current_path(".svn")) ||
-		file_exists(get_current_path(".settings")) ||
+		file_exists(get_current_path(".gitignore")) ||
 		file_exists(get_current_path(".git"))
 	) {
 		return true;
@@ -569,11 +566,16 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 		$page_beak_str = " page-break-after: avoid;";
 	}
 	?>
-	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 		<tr>
+			<th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h3></th>
+		</tr>
+	</table>
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+		<tr style="heigth: 0px;">
 			<td style="text-align: left; width: 15%;"></td>
 			<td style="text-align: left; width: 15%;"></td>
-			<th style="text-align: right; width: 25%;"><h5><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h5></th>
+			<th style="text-align: right; width: 25%;"></th>
 			<td style="text-align: left; width: 40%;"></td>
 			<td style="text-align: left; width: 5%;"></td>
 		</tr>
@@ -701,7 +703,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 </tr>
 <tr>
 	<th><?php print get_text("Run Start");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></td>
+	<th colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></th>
 </tr>
 	<?php
 	if ($row['booked_date'] != null) {
@@ -734,7 +736,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 	?>
 <tr>
 	<th><?php print get_text("Run End");?>:</th>
-	<td colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></td>
+	<th colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></th>
 </tr>
  	<?php
  	$by_str = "";
@@ -2557,67 +2559,31 @@ function get_status_settings($select_type, $status_id) {
 	}
 }
 
-$GLOBALS['LEGACY_SELECT'] = false;
 function get_status_select_str($select_type, $unit_facility, $status_id, $back) {
-	if ($GLOBALS['LEGACY_SELECT']) {
-		$disabled_str = "";
-		if (is_guest()) {
-			$disabled_str = " disabled";
-		}
-		$status_settings = get_status_settings($select_type, 0);
-		$init_bg_color = "transparent";
-		$init_txt_color = "black";
-		if (isset($status_settings[$status_id]["bg_color"]) && isset($status_settings[$status_id]["text_color"])) {
-			$init_bg_color = $status_settings[$status_id]["bg_color"];
-			$init_txt_color = $status_settings[$status_id]["text_color"];
-		}
-		if ($select_type == $GLOBALS['TYPE_UNIT']) {
-			$return_str = "\t\t<select class='sit label' id='frm_status_id_u_" . $unit_facility . "' name='frm_status_id' " . $disabled_str . " style='background-color: " .
-				$init_bg_color . "; color: " . $init_txt_color . ";' onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; " .
-				"this.style.color=this.options[this.selectedIndex].style.color; set_unit_status(" . $unit_facility . ", this.value, \"" .
-				get_text("Status update applied") . "\")'>";
-		} else {
-			$return_str = "\t\t<select class='sit label' id='frm_status_id_f_" . $unit_facility . "' name='frm_status_id' " . $disabled_str . " style='background-color: " .
-				$init_bg_color . "; color: " . $init_txt_color . ";' onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; " .
-				"this.style.color=this.options[this.selectedIndex].style.color; set_facility_status(" . $unit_facility . ", this.value, \"" .
-				get_text("Status update applied") . "\")'>";
-		}
-		foreach ($status_settings as $key => $value) {
-			$select_str = "";
-			if ($key == $status_id) {
-				$select_str = " SELECTED";
-			}
-			$return_str .= "\t\t\t<option value=" . $key . $select_str." style='background-color:" . $value['bg_color'] . "; color:" . $value['text_color'] .
-				";' onMouseover = 'style.backgroundColor = this.backgroundColor;'>" . remove_nls($value["status_name"]) . " </option>";
-		}
-		$return_str .= "\t\t</select>";
-		return $return_str;
-	} else {
-		$type_key = "unit_id";
-		$name_value = "unit_status";
-		if ($select_type == $GLOBALS['TYPE_FACILITY']) {
-			$type_key = "facility_id";
-			$name_value = "facility_status";
-		}
-		$click_str = "";
-		if (is_super() || is_admin() || is_operator()) {
-			$back_value = "situation";
-			switch ($back) {
-			case "units":
-				$back_value = "units";
-				break;
-			case "facilities":
-				$back_value = "facilities";
-				break;
-			default:
-			}
-			$click_str = " onClick='window.location.href=\"log_report.php?back=" . $back_value . "&" . $type_key . "=" . $unit_facility ."\"'";
-		}
-		$status_settings = get_status_settings($select_type, $status_id);
-		return "<div name='" . $name_value . "' class='label status col-md-12' style='height: auto; text-align: left; " .
-			"background-color:" . $status_settings['bg_color'] . "; color:" . $status_settings['text_color'] . ";' " . $click_str .
-			"data-" . $type_key . "=" . $unit_facility . ">" . remove_nls($status_settings["status_name"]) . "</div>";
+	$type_key = "unit_id";
+	$name_value = "unit_status";
+	if ($select_type == $GLOBALS['TYPE_FACILITY']) {
+		$type_key = "facility_id";
+		$name_value = "facility_status";
 	}
+	$click_str = "";
+	if (is_super() || is_admin() || is_operator()) {
+		$back_value = "situation";
+		switch ($back) {
+		case "units":
+			$back_value = "units";
+			break;
+		case "facilities":
+			$back_value = "facilities";
+			break;
+		default:
+		}
+		$click_str = " onClick='window.location.href=\"log_report.php?back=" . $back_value . "&" . $type_key . "=" . $unit_facility ."\"'";
+	}
+	$status_settings = get_status_settings($select_type, $status_id);
+	return "<div name='" . $name_value . "' class='label status col-md-12' style='height: auto; text-align: left; " .
+		"background-color:" . $status_settings['bg_color'] . "; color:" . $status_settings['text_color'] . ";' " . $click_str .
+		"data-" . $type_key . "=" . $unit_facility . ">" . remove_nls($status_settings["status_name"]) . "</div>";
 }
 
 function show_unit_facility_status_select($unit_facility) {
@@ -3850,7 +3816,7 @@ function mysql_datetime($datetime_input = "") {
 function format_date($date_in) {
 	$date_wk = trim($date_in);	
 	if (strlen(trim($date_in)) == 19) {	
-	   $date_wk = strtotime(trim($date_in));
+		$date_wk = strtotime(trim($date_in));
 	}
 	return date(get_variable("date_format"), intval($date_wk));
 }
@@ -3903,7 +3869,7 @@ function set_database_timezone() {
 	$mins = $now->getOffset() / 60;
 	$sgn = 1;
 	if ($mins < 0) {
-		$sgn =  -1;
+		$sgn = -1;
 	}
 	$mins = abs($mins);
 	$hrs = floor($mins / 60);

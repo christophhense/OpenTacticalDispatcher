@@ -573,7 +573,9 @@ function prevent_browser_back_button() {
 	if (window.history && window.history.pushState) {
 		window.history.pushState("forward", null, "./#forward");
 		$(window).on("popstate", function() {
-			window.location.href="situation.php?screen_id=" + parent.frames["navigation"].$("#div_screen_id").html();
+			if (document.location.charAt(document.location.length - 1) != "#") {
+				window.location.href="situation.php?screen_id=" + parent.frames["navigation"].$("#div_screen_id").html();
+			}
 		});
 	}
 }

@@ -402,12 +402,8 @@ function show_facilities_list($table_side = "left", $split = 0) {
 	<?php
 		}
 		$title_status = html_entity_decode(remove_nls(wordwrap($row_fac['fac_status_desc']), 80, "<br>", true));
-		if ($GLOBALS['LEGACY_SELECT']) {
-			$title_status = html_entity_decode(remove_nls(wordwrap($row_fac['fac_status_desc'], 80, "<br>", true)));
-		} else {
-			if (is_super() || is_admin() || is_operator()) {
-				$title_status = html_entity_decode(remove_nls(wordwrap($row_fac['fac_status_desc'] . "<br><br>" . get_text("Click to edit log report") . "<br>" . get_text("Click right to set status"), 80, "<br>", true)));
-			}
+		if (is_super() || is_admin() || is_operator()) {
+			$title_status = html_entity_decode(remove_nls(wordwrap($row_fac['fac_status_desc'] . "<br><br>" . get_text("Click to edit log report") . "<br>" . get_text("Click right to set status"), 80, "<br>", true)));
 		}
 	?>
 		<td style="text-align: center; vertical-align: middle;"><?php print get_message_click_str("facility", $row_fac['fac_id'], 0, $row_fac['handle'], $row_fac['contact_email'], $row_fac['security_email'], "");?></td>
