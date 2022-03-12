@@ -86,7 +86,8 @@ Activities sorted by application function.
 * Settings - general - ticket name
 	NONE
 * Settings - general - API
-	NONE
+	BUGFIX
+		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
 * Settings - general - fixmessage
 	NONE
 * Settings - general - in-/export

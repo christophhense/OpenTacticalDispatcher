@@ -235,7 +235,7 @@ default:
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $types[$GLOBALS['LOG_CALL_FACILITY_ENROUTE']], $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
-						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET'], $types[$GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']], $lat, $lon);
+						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET'], $types[$GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']], $lat, $lon);
 					}
 					$result_str .= "TRUE";
 				}
