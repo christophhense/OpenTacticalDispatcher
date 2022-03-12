@@ -37,6 +37,8 @@ Activities sorted by application function.
 	CHANGE
 		Headline incident report made larger
 		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
 * Ticket - close
 	NONE
 * Ticket - new action
@@ -65,6 +67,8 @@ Activities sorted by application function.
 	CHANGE
 		Headline incident report made larger
 		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account
