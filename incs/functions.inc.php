@@ -626,11 +626,16 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 		$page_beak_str = " page-break-after: avoid;";
 	}
 	?>
-	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 		<tr>
+			<th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h3></th>
+		</tr>
+	</table>
+	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
+		<tr style="heigth: 0px;">
 			<td style="text-align: left; width: 15%;"></td>
 			<td style="text-align: left; width: 15%;"></td>
-			<th style="text-align: right; width: 25%;"><h5><strong style="white-space: nowrap;"><?php print get_text("Incident Report");?></strong></h5></th>
+			<th style="text-align: right; width: 25%;"></th>
 			<td style="text-align: left; width: 40%;"></td>
 			<td style="text-align: left; width: 5%;"></td>
 		</tr>
@@ -758,7 +763,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 </tr>
 <tr>
 	<th><?php print get_text("Run Start");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></td>
+	<th colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></th>
 </tr>
 	<?php
 	if ($row['booked_date'] != null) {
@@ -791,7 +796,7 @@ function show_head($ticket_id, $search = false, $ticket_report = false) {
 	?>
 <tr>
 	<th><?php print get_text("Run End");?>:</th>
-	<td colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></td>
+	<th colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></th>
 </tr>
  	<?php
  	$by_str = "";
@@ -3890,7 +3895,7 @@ function mysql_datetime($datetime_input = "") {
 function format_date($date_in) {
 	$date_wk = trim($date_in);	
 	if (strlen(trim($date_in)) == 19) {	
-	   $date_wk = strtotime(trim($date_in));
+		$date_wk = strtotime(trim($date_in));
 	}
 	return date(get_variable("date_format"), intval($date_wk));
 }
@@ -3943,7 +3948,7 @@ function set_database_timezone() {
 	$mins = $now->getOffset() / 60;
 	$sgn = 1;
 	if ($mins < 0) {
-		$sgn =  -1;
+		$sgn = -1;
 	}
 	$mins = abs($mins);
 	$hrs = floor($mins / 60);

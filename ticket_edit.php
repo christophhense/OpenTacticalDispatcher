@@ -489,7 +489,7 @@ default:
 			}
 
 			function do_reset_form() {
-				var default_severity = <?php print $row['severity'];?> + 0; //+0 against syntax error, in case of DB-row==null
+				var default_severity = <?php print $row['severity'];?> + 0;		//+0 against syntax error, in case of DB-row==null
 				document.edit.reset();
 				switch (default_severity) {
 				case 2:
@@ -684,23 +684,23 @@ default:
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');" tabindex=18><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');" tabindex=19><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_form();" tabindex=17><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_form();" tabindex=18><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=16><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=17><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div style="margin-top: 20px;">
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket'" tabindex=12><?php print get_text("Dispatch text");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket'" tabindex=16><?php print get_text("Dispatch text");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">

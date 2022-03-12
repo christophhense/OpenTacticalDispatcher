@@ -14,6 +14,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 	$output = "OpenTacticalDispatcher ". get_variable("_version") . "\n" .
 		"Export-file " . $_GET['do_export'] . "\n\n";
 	$filename = "";
+	$filename_suffix = "-" . date("YmdHis", time()) . ".csv";
 	switch ($_GET['do_export']) {
 	case ("units"):
 		$output .= $delimiter_text . "import" . $delimiter_text . $delimiter_field;
@@ -188,7 +189,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 				$output .= "\n";
 			}
 		}
-		$filename = "units.csv";
+		$filename = "units" . $filename_suffix;
 		break;
 	case "facilities":
 		$output .= $delimiter_text . "import" . $delimiter_text . $delimiter_field;
@@ -366,7 +367,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 				$output .= "\n";
 			}
 		}
-		$filename = "facilities.csv";
+		$filename = "facilities" . $filename_suffix;
 		break;
 	case "textblocks":
 
@@ -406,7 +407,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 		$output .= get_textblocks("textblocks_clo", "close");
 		$output .= get_textblocks("textblocks_log", "log");
 		$output .= get_textblocks("textblocks_msg", "message");
-		$filename = "textblocks.csv";
+		$filename = "textblocks" . $filename_suffix;
 		break;
 	case "nature":
 		$output .= $delimiter_text . "import" . $delimiter_text . $delimiter_field;
@@ -456,7 +457,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 				$output .= "\n";
 			}
 		}
-		$filename = "incident_types.csv";
+		$filename = "incident_types" . $filename_suffix;
 		break;
 	case "captions":
 		$output .= $delimiter_text . "import" . $delimiter_text . $delimiter_field;
@@ -492,7 +493,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 			}
 			$output .= "\n";
 		}
-		$filename = "captions_hints.csv";
+		$filename = "captions_hints" . $filename_suffix;
 		break;
 	case "settings":
 		$do_not_export = array ("_update_progress_time", "_version", "_locale", "_vowel_mutation", "_api_status", "_api_phone_status");
@@ -516,7 +517,7 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 				$output .= "\n";
 			}
 		}
-		$filename = "settings" . ".csv";
+		$filename = "settings" . $filename_suffix;
 		break;
 	case "user":
 		$output .= $delimiter_text . "import" . $delimiter_text . $delimiter_field;
@@ -545,10 +546,9 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 			$output .= $delimiter_text . $delimiter_text;
 			$output .= "\n";
 		}
-		$filename = "users" . ".csv";
+		$filename = "users" . $filename_suffix;
 		break;
 	case "log":
-//Datenbankabfrage mit oder ohne einsätze (nur ETB oder alles=incidents=yes), definition von anfang und ende nötig? wenn nicht, dann alles!
 		$output .= $delimiter_text . get_text("Table") . $delimiter_text . $delimiter_field;
 		$output .= $delimiter_text . get_text("DateTime") . $delimiter_text . $delimiter_field;
 		$output .= $delimiter_text . get_text("Code") . $delimiter_text . $delimiter_field;
@@ -568,15 +568,12 @@ if (empty ($_GET['do_export']) || !(is_super())) {
 		} else {
 
 		}
-//abfrage
-//zusammenbauen
 		if (empty ($_GET['incidents'])) {
 
 		} else {
 
 		}
-//ende zusammenbauen
-		$filename = get_text("log") . ".csv";
+		$filename = "log" . $filename_suffix;
 		break;
 	default:
 		exit;

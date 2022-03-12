@@ -25,15 +25,21 @@ Activities sorted by application function.
 * Callboard
 	NONE
 * Communication
-	NONE
+	BUGFIX
+		function prevent_browser_back_button no longer prevents the ticket selection from being displayed
 * Ticket - new
 	NONE
 * Ticket - update
-	NONE
+	BUGFIX
+		fixed tabindex of buttons on the left side
 * Ticket - dispatch
 	NONE
 * Ticket - report
-	NONE
+	CHANGE
+		Headline incident report made larger
+		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
 * Ticket - close
 	NONE
 * Ticket - new action
@@ -59,7 +65,11 @@ Activities sorted by application function.
 * Facilities - update
 	NONE
 * Reports
-	NONE
+	CHANGE
+		Headline incident report made larger
+		Start and end timestamps shown in bold
+		Headline log report made larger
+		Removed titestring in headline of log report
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account
@@ -67,19 +77,22 @@ Activities sorted by application function.
 * Settings - user accounts - new
 	NONE
 * Settings - user accounts - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - general - notification sounds
 	NONE
-* Settings - general - Allgemeine Einstellungen
+* Settings - general - General Settings
 	NONE
 * Settings - general - ticket name
 	NONE
 * Settings - general - API
-	NONE
+	BUGFIX
+		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
 * Settings - general - fixmessage
 	NONE
 * Settings - general - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - facilities - put on the same status
 	NONE
 * Settings - facilities - categorie
@@ -87,7 +100,8 @@ Activities sorted by application function.
 * Settings - facilities - status
 	NONE
 * Settings - facilities - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - units - put on the same status
 	NONE
 * Settings - units - categorie
@@ -97,13 +111,15 @@ Activities sorted by application function.
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - incident types - incident types
 	NONE
 * Settings - incident types - default incident types
 	NONE
 * Settings - incident types - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - textblocks - synopsis
 	NONE
 * Settings - textblocks - comments
@@ -121,13 +137,15 @@ Activities sorted by application function.
 * Settings - textblocks - default-textblocks
 	NONE
 * Settings - textblocks - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - captions and hints - captions
 	NONE
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-	NONE
+	FEATURE
+		Timestamp in filename added.
 * Settings - database and updates - optimize
 	NONE
 * Settings - database and updates - reset
