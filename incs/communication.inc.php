@@ -310,11 +310,13 @@ function update_communication($api_log_id, $api_log_action) {
 					$ticket_id = 0;
 				case "api_log_add_to_ticket_log":
 					$text = "";
+
 					switch ($code) {
 					case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+					case $GLOBALS['LOG_UNIT_STATUS']:
 
 						$query_source = "SELECT `source`, " .
 							"`unit_id`, " .
@@ -448,7 +450,7 @@ function show_communication_table_left() {
 			}
 //			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from database: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		} else {
-			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
+//			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		}
 		if ($oldest_call_id[$unit_id] == $api_log_id) {
 			return false;

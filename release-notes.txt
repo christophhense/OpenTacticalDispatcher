@@ -27,6 +27,7 @@ Activities sorted by application function.
 * Communication
 	BUGFIX
 		function prevent_browser_back_button no longer prevents the ticket selection from being displayed
+		Logging false log-code and datetime from callprogression without ticktet after status changed (e.g. CLEAR) fixed
 * Ticket - new
 	NONE
 * Ticket - update
