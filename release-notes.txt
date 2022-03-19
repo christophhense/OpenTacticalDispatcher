@@ -1,4 +1,4 @@
-@version 21.02.1: OpenTacticalDispatcher-release-notes.txt 2021-02-28 12:00:00
+@version 22.04.1: OpenTacticalDispatcher-release-notes.txt 2022-03-20 12:00:00
 
 * Tested platforms
 
@@ -7,16 +7,16 @@
 		- Webserver:     lighttpd-1.4.48-1-win64-ssl
 		- PHP:           php-7.2.3-nts-Win32-VC15-x64
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 84.0.1, Zoom: 120%
-						 Google Chrome 87.0.4280.88, Zoom: 125%
+		- Browser:       Firefox 98.0, Zoom: 120%
+						 Google Chrome 99.0.4844.51, Zoom: 125%
 
 	- Ubuntu 20.04 LTS
-		- Database:      10.3.25-MariaDB
+		- Database:      10.3.34-MariaDB
 		- Webserver:     Apache/2.4.41
-		- PHP:           8.0.1
+		- PHP:           8.0.16
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 82.0.2, Zoom: 120%
-						 Chromium 88.0.4324.96, Zoom 125%
+		- Browser:       Firefox 97.0.2, Zoom: 120%
+						 Chromium 99.0.4844.51, Zoom 125%
 
 Activities sorted by application function.
 
@@ -86,8 +86,7 @@ Activities sorted by application function.
 * Settings - general - ticket name
 	NONE
 * Settings - general - API
-	BUGFIX
-		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
+	NONE
 * Settings - general - fixmessage
 	NONE
 * Settings - general - in-/export
@@ -160,6 +159,8 @@ Activities sorted by application function.
 	NONE
 * Program code and miscellaneous
 	CODE
-		Change the number of characters ind db-table captions, hints and settings to save IPv6.
+		Change the number of characters in db-table captions, hints and settings to save IPv6.
 		Harmonize int(lenght) to 8 in database-schema.
 		Harmonize smallint and bigint to int in database-schema.
+	BUGFIX
+		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
