@@ -3162,7 +3162,7 @@ function get_units_addresses($smsg, $phone, $email) {
 	$phones_addresses = explode(",", remove_nls($phone));
 	foreach ($phones_addresses as $address) {
 		if (is_phone(trim($address))) {
-			//		if (preg_match("/^" . $match_array["PHONE"]["REGEXP"] . "$/", trim($address))) {
+			//if (preg_match("/^" . $match_array["PHONE"]["REGEXP"] . "$/", trim($address))) {
 			$addresses["PHONE"][$i] = "PHONE:" . trim($address);
 			$i++;
 		}
@@ -3502,7 +3502,7 @@ function is_guest() {
 		return false;
 	}
 }
-
+/*
 function is_member() {
 	if (isset ($_SESSION['level'])) {
 		return (($_SESSION['level'] == $GLOBALS['LEVEL_MEMBER']));
@@ -3534,7 +3534,7 @@ function is_service_user() {
 		return false;
 	}
 }
-
+*/
 function set_session_expire_time($timeout = "on") {
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
