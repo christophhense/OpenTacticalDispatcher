@@ -1,4 +1,8 @@
 DELETE FROM `captions` WHERE `capt` = 'USNG';
+DELETE FROM `captions` WHERE `capt` = 'permission_member';
+DELETE FROM `captions` WHERE `capt` = 'permission_unit';
+DELETE FROM `captions` WHERE `capt` = 'permission_statistics';
+DELETE FROM `captions` WHERE `capt` = 'permission_service_user';
 DELETE FROM `hints` WHERE `tag` = '_IncUSNG';
 DELETE FROM `hints` WHERE `tag` = 'IncOSGB';
 DELETE FROM `hints` WHERE `tag` = '__UTM2';

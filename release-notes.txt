@@ -72,7 +72,8 @@ Activities sorted by application function.
 		Headline log report made larger
 		Removed titestring in headline of log report
 * Settings - user accounts - User accounts
-	NONE
+	CODE
+		Unnecessary user-types removed
 * Settings - user accounts - own account
 	NONE
 * Settings - user accounts - new

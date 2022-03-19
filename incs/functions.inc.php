@@ -3453,21 +3453,6 @@ function get_level_text($level) {
 	case $GLOBALS['LEVEL_GUEST']:
 		return get_text("permission_guest");
 		break;
-/*	case $GLOBALS['LEVEL_MEMBER']:
-		return get_text("permission_member");
-		break;
-	case $GLOBALS['LEVEL_UNIT']:
-		return get_text("permission_unit");
-		break;
-	case $GLOBALS['LEVEL_STATS']:
-		return get_text("permission_statistics");
-		break;
-	case $GLOBALS['LEVEL_SERVICE_USER']:
-		return get_text("permission_service_user");
-		break;
-	default:
-		return "level error";
-		break;*/
 	}
 }
 
@@ -3502,39 +3487,7 @@ function is_guest() {
 		return false;
 	}
 }
-/*
-function is_member() {
-	if (isset ($_SESSION['level'])) {
-		return (($_SESSION['level'] == $GLOBALS['LEVEL_MEMBER']));
-	} else {
-		return false;
-	}
-}
 
-function is_unit() {
-	if (isset ($_SESSION['level'])) {
-		return ($_SESSION['level'] == $GLOBALS['LEVEL_UNIT']);
-	} else {
-		return false;
-	}
-}
-
-function is_statistics() {
-	if (isset ($_SESSION['level'])) {
-		return ($_SESSION['level'] == $GLOBALS['LEVEL_STATISTICS']);
-	} else {
-		return false;
-	}
-}
-
-function is_service_user() {
-	if (isset ($_SESSION['level'])) {
-		return ($_SESSION['level'] == $GLOBALS['LEVEL_SERVICE_USER']);
-	} else {
-		return false;
-	}
-}
-*/
 function set_session_expire_time($timeout = "on") {
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
