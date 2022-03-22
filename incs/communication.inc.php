@@ -79,9 +79,9 @@ function do_email($addresses, $subject = "", $text = "", $attachment = "") {
 		if ($attachment != "") {
 			$mail->addAttachment($attachment);	// Ex.: 'images/phpmailer_mini.png'
 		}
-		/*	$mail->isHTML(true);// Mail als HTML versenden bei html-email zeilenumbrüche durch <br> ersetzen
-			$mail->Body = 'Das ist die Nachricht als <code>HTML-Version</code>';
-			$mail->AltBody = 'Das ist ohne HTML, es soll wohl da draußen noch Leute geben, die das brauchen';*/
+		/*	$mail->isHTML(true);// Send mail as HTML replace line breaks with <br> in html-email
+			$mail->Body = 'This is the message as <code>HTML version</code>';
+			$mail->AltBody = 'It's without HTML, there are supposed to be people out there who need it';*/
 		//	print_r(get_object_vars($mail)); exit ();
 	} else {
 		$configuration_complete = false;
@@ -160,7 +160,7 @@ function update_communication($api_log_id, $api_log_action) {
 			$row = stripslashes_deep(db_fetch_assoc($result));
 			if (($row['cleared_datetime'] == null) && ($row['cleared_user_id'] == null)) {
 				//=============================================================================================================
-				//Meldung als bearbeitet markieren
+				//Mark message as processed
 				$who = (array_key_exists('user_id', $_SESSION))? $_SESSION['user_id'] : 0;
 
 				$query = "UPDATE `api_log` " .
@@ -170,7 +170,7 @@ function update_communication($api_log_id, $api_log_action) {
 
 				db_query($query, __FILE__, __LINE__);
 				//=============================================================================================================
-				//Bekannte Einheit oder ITSI? Bekannte Einheit einem Einsatz zugeteilt?
+				//Known entity or ITSI? Known unit assigned to ticket? 
 				$unit_id = 0;
 				$unit_handle = "";
 				$smsg_id = "";
@@ -310,11 +310,13 @@ function update_communication($api_log_id, $api_log_action) {
 					$ticket_id = 0;
 				case "api_log_add_to_ticket_log":
 					$text = "";
+
 					switch ($code) {
 					case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
 					case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+					case $GLOBALS['LOG_UNIT_STATUS']:
 
 						$query_source = "SELECT `source`, " .
 							"`unit_id`, " .
@@ -448,7 +450,7 @@ function show_communication_table_left() {
 			}
 //			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from database: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		} else {
-			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
+//			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		}
 		if ($oldest_call_id[$unit_id] == $api_log_id) {
 			return false;
@@ -782,8 +784,8 @@ function show_communication_table_right() {
 //			"OR `code` = " . $GLOBALS['LOG_PRIVATE_CALL'] .
 		") AND ((DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . get_variable("_api_log_max_display_setng") . " MINUTE) <= `api_log`.`datetime`))) " .
 		"ORDER BY `api_log`.`id` DESC;";						//TODO Über Variable steuern => immer alle unbearbeiteten!!!
-	//TODO Über Variable steuern => 5 nach 3 vor 5 nach 1?
-	//TODO Interval über Variable steuern => immer alle unbearbeiteten!!!
+	//TODO Control via variable => 5 after 3 before 5 after 1?
+	//TODO Control interval via variable => always all unprocessed!!!
 
 	$result = db_query($query, __FILE__, __LINE__);
 	if (db_num_rows($result)) {
@@ -980,7 +982,7 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 				$log_text .= substr($value["address"], 6) . "  " . $message_text;
 				break;
 			default:
-				//Empfänger im Log-Text angeben
+				//Specify recipient in the log text
 				$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $message_text;
 			}
 			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id);

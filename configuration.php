@@ -365,10 +365,6 @@ case "user_add":
 											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_GUEST'];?>">
 											<?php print get_text("permission_guest");?>
 										</label>
-<!--									<?php print get_text("permission_member");?> &raquo; <input type="radio" value="<?php print $GLOBALS['LEVEL_MEMBER'];?>" name="frm_level" />
-										<?php print get_text("permission_unit");?> &raquo; <input type="radio" value="<?php print $GLOBALS['LEVEL_UNIT'];?>" name="frm_level" />
-										<?php print get_text("permission_statistics");?> &raquo; <input type="radio" value="<?php print $GLOBALS['LEVEL_STATS'];?>" name="frm_level"/>
-										<?php print get_text("permission_service_user");?> &raquo; <input type="radio" value="<?php print $GLOBALS['LEVEL_SERVICE_USER'];?>" name="frm_level"/> -->
 									</td>
 									<td style="width: 40%;"></td>
 								</tr>

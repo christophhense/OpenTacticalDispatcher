@@ -403,7 +403,7 @@ default:
 						$result_str .= "TRUE";
 					} else {
 						//Debug_mode:
-							//Aufmerksamkeit: Niedrig mit Koordinaten
+							//Attention: Low with coordinates
 							//$result_str = "TRUE";
 					}
 				}
@@ -447,9 +447,8 @@ get_variable("_api_subscr_unsubscr_setng")
 get_variable("_api_subscr_unsubscr_repl")
 
 Acknowledge status
-Status quittieren
-RECEIPT an alle Funkgeräte
-nur wenn in Dispo
+RECEIPT to all subscriber
+only if dispatched
 get_variable("_api_emgcy_hi_repl")
 get_variable("_api_emgcy_lo_repl")
 get_variable("_api_callreq_repl")

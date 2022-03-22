@@ -57,12 +57,6 @@ function show_stats() {
 	if ($guest_in_db != 0) {
 		$count_users_str .= ", " . get_text("permission_guest") . ": " . $guest_in_db;
 	}
-	if ($memb_in_db != 0) {
-		$count_users_str .= ", " . get_text("permission_member") . ": " . $memb_in_db;
-	}
-	if ($stats_in_db != 0) {
-		$count_users_str .= ", " . get_text("permission_statistics") . ": " . $stats_in_db;
-	}
 	$count_users_str .= ", " . get_text("total") . ": " . ($super_in_db+$oper_in_db+$admin_in_db+$guest_in_db+$memb_in_db+$stats_in_db);
 
 	$query = "SELECT * " .
