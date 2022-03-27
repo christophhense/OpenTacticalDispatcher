@@ -1,4 +1,4 @@
-@version 22.04.1: OpenTacticalDispatcher-release-notes.txt 2022-03-20 12:00:00
+@version 22.10.1
 
 * Tested platforms
 
