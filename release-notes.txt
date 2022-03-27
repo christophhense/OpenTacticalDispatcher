@@ -142,5 +142,4 @@ Activities sorted by application function.
 * Configuration wizard
 	NONE
 * Program code and miscellaneous
-	CODE
-		Change the number of characters in db-table captions and hints to save IPv6.
+	NONE
