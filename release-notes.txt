@@ -1,4 +1,4 @@
-@version 22.04.1: OpenTacticalDispatcher-release-notes.txt 2022-03-20 12:00:00
+@version 22.10.1
 
 * Tested platforms
 
@@ -25,22 +25,15 @@ Activities sorted by application function.
 * Callboard
 	NONE
 * Communication
-	BUGFIX
-		function prevent_browser_back_button no longer prevents the ticket selection from being displayed
-		Logging false log-code and datetime from callprogression without ticktet after status changed (e.g. CLEAR) fixed
+	NONE
 * Ticket - new
 	NONE
 * Ticket - update
-	BUGFIX
-		fixed tabindex of buttons on the left side
+	NONE
 * Ticket - dispatch
 	NONE
 * Ticket - report
-	CHANGE
-		Headline incident report made larger
-		Start and end timestamps shown in bold
-		Headline log report made larger
-		Removed titestring in headline of log report
+	NONE
 * Ticket - close
 	NONE
 * Ticket - new action
@@ -66,21 +59,16 @@ Activities sorted by application function.
 * Facilities - update
 	NONE
 * Reports
-	CHANGE
-		Headline incident report made larger
-		Start and end timestamps shown in bold
-		Headline log report made larger
-		Removed titestring in headline of log report
+	NONE
 * Settings - user accounts - User accounts
 	CODE
-		Unnecessary user-types removed
+	NONE
 * Settings - user accounts - own account
 	NONE
 * Settings - user accounts - new
 	NONE
 * Settings - user accounts - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - general - notification sounds
 	NONE
 * Settings - general - General Settings
@@ -92,8 +80,7 @@ Activities sorted by application function.
 * Settings - general - fixmessage
 	NONE
 * Settings - general - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - facilities - put on the same status
 	NONE
 * Settings - facilities - categorie
@@ -101,8 +88,7 @@ Activities sorted by application function.
 * Settings - facilities - status
 	NONE
 * Settings - facilities - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - units - put on the same status
 	NONE
 * Settings - units - categorie
@@ -112,15 +98,13 @@ Activities sorted by application function.
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - incident types - incident types
 	NONE
 * Settings - incident types - default incident types
 	NONE
 * Settings - incident types - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - textblocks - synopsis
 	NONE
 * Settings - textblocks - comments
@@ -138,15 +122,13 @@ Activities sorted by application function.
 * Settings - textblocks - default-textblocks
 	NONE
 * Settings - textblocks - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - captions and hints - captions
 	NONE
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-	FEATURE
-		Timestamp in filename added.
+	NONE
 * Settings - database and updates - optimize
 	NONE
 * Settings - database and updates - reset
@@ -161,8 +143,4 @@ Activities sorted by application function.
 	NONE
 * Program code and miscellaneous
 	CODE
-		Change the number of characters in db-table captions, hints and settings to save IPv6.
-		Harmonize int(lenght) to 8 in database-schema.
-		Harmonize smallint and bigint to int in database-schema.
-	BUGFIX
-		Changed wrong text for LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET in db-table api_log
+		Change the number of characters in db-table captions and hints to save IPv6.
