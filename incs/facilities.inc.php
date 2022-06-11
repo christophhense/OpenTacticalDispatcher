@@ -291,13 +291,22 @@ function show_facilities_list($table_side = "left", $split = 0) {
 			e.preventDefault();
 			x = e.clientX;
 			y = e.clientY;
-			y_max = parent.frames["main"].window.innerHeight;
+			//======================================
+			/*y_max = parent.frames["main"].window.innerHeight;
 			y_abs = y + parent.frames["main"].window.pageYOffset;
 			y_abs_max = document.documentElement.scrollHeight;
 			y_oldPageOffset = parent.frames["main"].window.pageYOffset;
 			menue_margin = 10;
 			menue_height = $("#facility_status_menue").outerHeight() + menue_margin;
-			if ((x + 10 + $("#facility_status_menue").outerWidth()) > parent.frames["main"].window.innerWidth) {
+			if ((x + 10 + $("#facility_status_menue").outerWidth()) > parent.frames["main"].window.innerWidth) {*/
+			y_max = window.innerHeight;
+			y_abs = y + window.pageYOffset;
+			y_abs_max = document.documentElement.scrollHeight;
+			y_oldPageOffset = window.pageYOffset;
+			menue_margin = 10;
+			menue_height = $("#kontext_menue").outerHeight() + menue_margin;
+			if ((x + 10 + $("#kontext_menue").outerWidth()) > window.innerWidth) {
+			//======================================
 				x = x - $("#facility_status_menue").outerWidth();
 			}
 			if ((y + menue_height) > y_max) {
@@ -346,7 +355,10 @@ function show_facilities_list($table_side = "left", $split = 0) {
 				hide_kontext_menue();
 			} else {
 				menue_hide_locked = true;
-				y_newPageOffset = parent.frames["main"].window.pageYOffset;
+				//======================================
+				//y_newPageOffset = parent.frames["main"].window.pageYOffset;
+				y_newPageOffset = window.pageYOffset;
+				//======================================
 				y = y + (y_oldPageOffset - y_newPageOffset);
 				y_oldPageOffset = y_newPageOffset;
 				$("#facility_status_menue").css("top", y);
@@ -362,8 +374,13 @@ function show_facilities_list($table_side = "left", $split = 0) {
 				}
 			})
 			.done(function() {
-				parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");
-				parent.frames["main"].get_facilities();
+				//======================================
+				/*parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");
+				parent.frames["main"].get_facilities();*/
+				//var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				get_facilities();
+				//======================================
 			})
 			.fail(function() {
 				alert("error");

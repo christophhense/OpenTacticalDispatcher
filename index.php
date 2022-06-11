@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 
@@ -27,7 +28,7 @@ if (ini_get("display_errors") == true) {
 	<script>
 
 		function setIframeHeight() {
-			var navigation_height = $("#navigation").outerHeight();
+			var navigation_height = $("#navigationbar").outerHeight();
 			var callboard_height = $("#callboard").outerHeight();
 			callboard_offset = 10;
 			if (callboard_height == 0) {
@@ -36,12 +37,16 @@ if (ini_get("display_errors") == true) {
 			var main_height = window.innerHeight - navigation_height - callboard_height - callboard_offset - 10;
 			$("#main").css("height", main_height + "px");
 			try {
-				var element_height = parent.frames["navigation"].$("#head_line").outerHeight();
+				//======================================
+				//var element_height = parent.frames["navigationbar"].$("#head_line").outerHeight();
+				var element_height = window.parent.navigationbar.$("#head_line").outerHeight();
+				//console.log(element_height);
+				//======================================
 				var min_height = <?php print $framesize;?> + 0;
 				if (element_height < min_height) {
 					element_height = min_height;
 				}
-				$("#navigation").css("height", element_height + "px");
+				$("#navigationbar").css("height", element_height + "px");
 			} catch (e) {}
 		}
 
@@ -111,7 +116,7 @@ if (((count_units_and_facilities_and_users() == 0) && (($first_start == "yes") |
 		}
 	</style>
 	<body onresize="setIframeHeight();">
-		<iframe id="navigation" name="navigation" src="navigation.php" scrolling="no" frameborder="0" style="width: 100%; height: <?php print $framesize;?>px; overflow: hidden;">
+		<iframe id="navigationbar" name="navigationbar" src="navigation.php" scrolling="no" frameborder="0" style="width: 100%; height: <?php print $framesize;?>px; overflow: hidden;">
 			<?php print get_text("Requires a iframes-capable browser.");?>
 		</iframe>
 		<iframe id="callboard" name="callboard" src="callboard.php" scrolling="auto" frameborder="0" style="width: 100%; height: 0px;">

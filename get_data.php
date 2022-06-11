@@ -82,6 +82,7 @@ default:
 	//========== Screen
 	$json_screen = array ();
 	$json_screen["date_time"] = mysql_datetime();
+	$json_screen["screen_id"] = $_GET["screen_id"];
 	if (isset ($_SESSION['day_night'])) {
 		$json_screen["day_night"] = $_SESSION['day_night'];
 	} else {

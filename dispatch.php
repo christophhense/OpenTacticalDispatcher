@@ -417,12 +417,22 @@ case "insert":
 		$display_dispatch_message = $_POST['display_dispatch-message'];
 	}
 	if ($send_dispatch_message) {
-		$url_str = "communication.php?function=send_message&message_group=unit_ticket&targets_ids=" . $units_ids . "&ticket_id=" . $_POST['frm_ticket_id'] . "&display_dispatch-message=" . $display_dispatch_message . "&screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+		//======================================
+		/*$url_str = "communication.php?function=send_message&message_group=unit_ticket&targets_ids=" . 
+			$units_ids . "&ticket_id=" . $_POST['frm_ticket_id'] . "&display_dispatch-message=" . 
+			$display_dispatch_message . "&screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";*/
+		$url_str = "communication.php?function=send_message&message_group=unit_ticket&targets_ids=" .
+			$units_ids . "&ticket_id=" . $_POST['frm_ticket_id'] . "&display_dispatch-message=" .
+					$display_dispatch_message . "&screen_id=\'" . $_POST["screen_id"] . "\'";
+		//======================================
 	} else {
 		if ($display_dispatch_message == "on") {
 			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $_POST['frm_ticket_id'] . "&back=situation";
 		} else {
-			$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			//======================================
+			//$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			$url_str = "situation.php?screen_id=\'" . $_POST["screen_id"] . "\'";
+			//======================================
 		}
 	}
 	$message_text = get_text("Saved");
@@ -438,7 +448,11 @@ case "insert":
 	}
 	?>
 <script>
-	parent.frames["navigation"].show_message("<?php print $message_text;?>", "<?php print $appearance;?>");
+	//======================================
+	//parent.frames["navigation"].show_message("<?php print $message_text;?>", "<?php print $appearance;?>");
+	var changes_data ='{"type":"message","item":"<?php print $appearance;?>","action":"<?php print $message_text;?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	//======================================
 	window.location.href="<?php print $url_str;?>";
 </script>
 	<?php
@@ -467,9 +481,18 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
+
+			var get_infos_array;
+			
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("situation");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("situation");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
 
@@ -495,6 +518,14 @@ default:
 
 			$(document).ready(function() {
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
@@ -504,6 +535,7 @@ default:
 		<div class="container-fluid" id="main_container">
 			<form name="dispatch_form" method="post" action="<?php print basename( __FILE__);?>">
 				<input type="hidden" name="function" value="insert">
+				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<input type="hidden" name="frm_ticket_id" value="<?php print $_GET['ticket_id']; ?>">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">

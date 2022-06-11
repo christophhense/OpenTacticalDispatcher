@@ -223,8 +223,10 @@ function do_login($requested_page, $logout = false) {
 		<script src="./js/moment-with-locales.js" type="text/javascript"></script>
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<script defer="defer">
-			parent.frames["navigation"].location.href="navigation.php";
-
+			//======================================
+			//parent.frames["navigation"].location.href="navigation.php";
+			window.parent.navigationbar.href="navigation.php";
+			//======================================
 			$(document).ready(function() {
 				moment.locale("<?php print get_variable("_locale");?>");
 				$("#time_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
