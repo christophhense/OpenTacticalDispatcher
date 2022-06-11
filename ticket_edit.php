@@ -221,8 +221,13 @@ case "update":
 	unset ($_SESSION['active_ticket']);
 	?>
 <script>
-	parent.frames["navigation"].show_message ("<?php print get_text("Saved");?>", "success");
-	window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	//======================================
+	//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+	//window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	window.location.href="situation.php?screen_id=" + <?php print $_POST['screen_id'];?>;
+	//======================================
 </script>
 	<?php
 	break;
@@ -329,6 +334,10 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
+
+			var get_infos_array;
+			var change_situation_first_set = 0;
+
 			try {
 				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
 				parent.frames["navigation"].highlight_button("situation");
@@ -541,7 +550,8 @@ default:
 
 			function refresh_latest_infos() {
 				try {
-					unit_id = parent.frames["navigation"].$("#div_unit_id").html();
+					//======================================
+					/*unit_id = parent.frames["navigation"].$("#div_unit_id").html();
 					unit_updated = parent.frames["navigation"].$("#div_unit_updated").html();
 					unit_user = parent.frames["navigation"].$("#div_unit_user").html();
 
@@ -561,16 +571,44 @@ default:
 					ticket_changed_id = parent.frames["navigation"].$("#div_ticket_changed_id").html();
 					ticket_updated = parent.frames["navigation"].$("#div_ticket_updated").html();
 					ticket_user = parent.frames["navigation"].$("#div_ticket_user").html();
-					scheduled = parent.frames["navigation"].$("#div_scheduled").html();	
+					scheduled = parent.frames["navigation"].$("#div_scheduled").html();*/
+
+					unit_id = get_infos_array['units_status']['id'];
+					unit_updated = get_infos_array['units_status']['update'];
+					unit_user = get_infos_array['units_status']['user'];
+
+					unit_callprogress_id = get_infos_array['call_progression']['id'];
+					unit_callprogress_updated = get_infos_array['call_progression']['update'];
+					unit_callprogress_user = get_infos_array['call_progression']['user'];
+
+					assign_max_id = get_infos_array['assign']['id_max'];
+					assign_changed_id = get_infos_array['assign']['quantity'];
+					assign_updated = get_infos_array['assign']['update'];
+					assign_user = get_infos_array['assign']['user'];
+					assign_quantity = get_infos_array['assign']['quantity'];
+
+					action_updated = get_infos_array['action']['update'];
+
+					ticket_latest_id = get_infos_array['ticket']['id_max'];
+					ticket_changed_id = get_infos_array['ticket']['id_changed'];
+					ticket_updated = get_infos_array['ticket']['update'];
+					ticket_user = get_infos_array['ticket']['user'];
+					scheduled = get_infos_array['ticket']['scheduled'];
+					//======================================
 				} catch(e) {
+					console.log(e);
 				}
 			}
 
 			function do_watch() {
-				if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				//======================================
+				//if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				if (get_infos_array['user']['id'] != 0) {
+				//======================================
 					try {
 						if (
-							((
+							//======================================
+							/*((
 								(ticket_latest_id != parent.frames["navigation"].$("#div_ticket_latest_id").html()) ||
 								(ticket_changed_id != parent.frames["navigation"].$("#div_ticket_changed_id").html()) ||
 								(ticket_updated != parent.frames["navigation"].$("#div_ticket_updated").html()) ||
@@ -579,14 +617,26 @@ default:
 								(parent.frames["navigation"].$("#div_ticket_user").html() != parent.frames["navigation"].$("#div_user_id").html())
 							)) || (
 								(assign_quantity != parent.frames["navigation"].$("#div_assign_quantity").html())
+							)*/
+							((
+								(ticket_latest_id != get_infos_array['ticket']['id_max']) ||
+								(ticket_changed_id != get_infos_array['ticket']['id_changed']) ||
+								(ticket_updated != get_infos_array['ticket']['update']) ||
+								(scheduled != get_infos_array['ticket']['scheduled'])
+							) && (
+								(get_infos_array['ticket']['user'] != get_infos_array['user']['id'])
+							)) || (
+								(assign_quantity != get_infos_array['assign']['quantity'])
 							)
+							//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
 							}
 						}
 						if (
-							(unit_id != parent.frames["navigation"].$("#div_unit_id").html()) ||
+							//======================================
+							/*(unit_id != parent.frames["navigation"].$("#div_unit_id").html()) ||
 							((unit_updated != parent.frames["navigation"].$("#div_unit_updated").html()) &&
 							(unit_id == parent.frames["navigation"].$("#div_unit_id").html())) ||
 
@@ -596,7 +646,19 @@ default:
 
 							(assign_max_id != parent.frames["navigation"].$("#div_assign_max_id").html()) ||
 
-							(action_updated != parent.frames["navigation"].$("#div_action_updated").html())
+							(action_updated != parent.frames["navigation"].$("#div_action_updated").html())*/
+							(unit_id != get_infos_array['units_status']['id']) ||
+							((unit_updated != get_infos_array['units_status']['update']) &&
+							(unit_id == get_infos_array['units_status']['id'])) ||
+
+							(unit_callprogress_id != get_infos_array['call_progression']['id']) ||
+							((unit_callprogress_updated != get_infos_array['call_progression']['update']) &&
+							(unit_callprogress_id == get_infos_array['call_progression']['id'])) ||
+
+							(assign_max_id != get_infos_array['assign']['id_max']) ||
+
+							(action_updated != get_infos_array['action']['update'])
+							//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
@@ -653,10 +715,24 @@ default:
 				});
 
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				get_units();
-				get_actions();
-				start_polling();
+				//get_units();
+				//get_actions();
+				//start_polling();
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					if (change_situation_first_set == 0) { 
+						get_units();
+						get_actions();
+						start_polling();
+						change_situation_first_set = 1;
+					}
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
@@ -674,6 +750,7 @@ default:
 				<input type="hidden" name="frm_exist_groups" value="<?php print (isset($alloc_groups))? $alloc_groups : 1;?>">
 				<input type="hidden" name="frm_facility_changed" value="0">
 				<input type="hidden" id="incident_type" value="<?php print $row['incident_type_id'];?>">
+				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("ticket", $ticket_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit Ticket") . get_table_id($ticket_id) . " - "  . get_variable("page_caption");?>

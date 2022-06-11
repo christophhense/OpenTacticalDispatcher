@@ -289,27 +289,47 @@ case "table":
 
 		function refresh_latest_Infos_callboard() {
 			try {
-				$("#div_ticket_updated").html(parent.frames["navigation"].$("#div_ticket_updated").html());
+				//======================================
+				/*$("#div_ticket_updated").html(parent.frames["navigation"].$("#div_ticket_updated").html());
 				$("#div_unit_callprogress_id").html(parent.frames["navigation"].$("#div_unit_callprogress_id").html());
 				$("#div_unit_callprogress_updated").html(parent.frames["navigation"].$("#div_unit_callprogress_updated").html());
 				$("#div_unit_callprogress_user").html(parent.frames["navigation"].$("#div_unit_callprogress_user").html());
 				$("#div_assign_max_id").html(parent.frames["navigation"].$("#div_assign_max_id").html());
 				$("#div_assign_quantity").html(parent.frames["navigation"].$("#div_assign_quantity").html());
 				$("#div_assign_updated").html(parent.frames["navigation"].$("#div_assign_updated").html());
-				$("#div_assign_user").html(parent.frames["navigation"].$("#div_assign_user").html());
+				$("#div_assign_user").html(parent.frames["navigation"].$("#div_assign_user").html());*/
+				
+				$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
+				$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
+				$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
+				$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
+				$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
+				$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
+				$("#div_assign_updated").html(get_infos_array['assign']['update']);
+				$("#div_assign_user").html(get_infos_array['assign']['user']);
+				//======================================
 			} catch(e) {
 			}
 		}
 
 		function do_watch() {
 			try {
-				if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				//======================================
+				/*if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
 					if (
 						($("#div_ticket_updated").html() != parent.frames["navigation"].$("#div_ticket_updated").html()) ||
 						($("#div_unit_callprogress_updated").html() != parent.frames["navigation"].$("#div_unit_callprogress_updated").html()) ||
 						($("#div_assign_max_id").html() != parent.frames["navigation"].$("#div_assign_max_id").html()) ||
 						($("#div_assign_updated").html() != parent.frames["navigation"].$("#div_assign_updated").html()) ||
-						($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())
+						($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())*/
+				if (get_infos_array['user']['id'] != 0) {
+					if (
+						($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
+						($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) ||
+						($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
+						($("#div_assign_updated").html() != get_infos_array['assign']['update']) ||
+						($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
+				//======================================
 					) {
 						$.get("callboard.php?function=table", function(data) {
 							$("#callboard").html(data);
@@ -418,11 +438,14 @@ case "table":
 			params += "&frm_callprogression=" + progression;
 			params += "&function=call_progression";
 			$.post("set_data.php", params, function(data) {
-					if (data) {
-						parent.frames["main"].window.location.href = data;
-					}
 				})
-				.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");})
+				//======================================
+				//.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");})
+				.done(function() {
+					var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				})
+				//======================================
 				.fail(function() {alert("error");
 			});	
 		}
@@ -486,13 +509,25 @@ case "table":
 					switch(resp.toLowerCase()) {
 					case "r":
 						$.post("set_data.php", "function=assign_reset&assign_id=" + id)
-							.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Assign calls deleted");?>", "success");})
+							//======================================
+							//.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Assign calls deleted");?>", "success");})
+							.done(function() {
+								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
+								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							})
+							//======================================
 							.fail(function() {alert("error");});	
 						break;
 					case "d":
 						if (confirm("<?php print html_entity_decode(get_text('Delete this dispatch record?'));?>")) {
 							$.post("set_data.php", "function=assign_delete&assign_id=" + id)
-								.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Assign deleted");?>", "success");})
+								//======================================
+								//.done(function() {parent.frames["navigation"].show_message("<?php print get_text("Assign deleted");?>", "success");})
+								.done(function() {
+									var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
+									window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								})
+								//======================================
 								.fail(function() {alert("error");});
 						}
 						break;
@@ -509,15 +544,32 @@ case "table":
 		}
 
 		function assign_edit(id) {
-			parent.frames["main"].window.location.href = "assign.php?assign_id=" + id;
+			//======================================
+			//parent.frames["main"].window.location.href = "assign.php?assign_id=" + id;
+			//window_parent_main_location_reload
+			//parent.frames["main"].window.location.href = "assign.php?assign_id=" + id;
+			var changes_data ={"type":"script","item":"main","action":"assign.php?assign_id=" + id};
+			changes_data = JSON.stringify(changes_data);
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			//======================================
 		}
 
 		function ticket_view(id) {
-			parent.frames["main"].window.location.href = "ticket_report.php?ticket_id=" + id;
+			//======================================
+			//parent.frames["main"].window.location.href = "ticket_report.php?ticket_id=" + id;
+			var changes_data ={"type":"script","item":"main","action":"ticket_report.php?ticket_id=" + id};
+			changes_data = JSON.stringify(changes_data);
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			//======================================
 		}
 
 		function ticket_edit(id) {
-			parent.frames["main"].window.location.href = "ticket_edit.php?ticket_id=" + id;
+			//======================================
+			//parent.frames["main"].window.location.href = "ticket_edit.php?ticket_id=" + id;
+			var changes_data ={"type":"script","item":"main","action":"ticket_edit.php?ticket_id=" + id};
+			changes_data = JSON.stringify(changes_data);
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			//======================================
 		}
 
 	<?php
@@ -535,10 +587,22 @@ case "table":
 	?>
 
 		$(document).ready(function() {
-			start_watch();
+			//start_watch();
 			$.get("callboard.php?function=table", function(data) {
 				$("#callboard").html(data);
 			});
+			//======================================
+			var change_situation_first_set = 0;
+			window.addEventListener("message", function(event) {
+				if (event.origin != window.location.origin) return;
+				get_infos_array = JSON.parse(event.data);
+				if (change_situation_first_set == 0) {
+					start_watch();
+					change_situation_first_set = 1;
+				}
+				// can message back using event.source.postMessage(...)
+			});
+			//======================================
 		});
 
 	</script>

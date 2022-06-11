@@ -166,6 +166,25 @@ foreach ($sound_names_array as $value) {
 
 			function watch_latest_infos(data) {
 				var get_infos_array = JSON.parse(data);
+				//======================================
+				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
+				get_infos_array.parked_form_data = {"ticket_add_form_data":ticket_add_form_data, 
+					"ticket_add_timestamp":ticket_add_timestamp, 
+					"ticket_add_ticket_id":ticket_add_ticket_id, 
+					"ticket_close_form_data":ticket_close_form_data, 
+					"ticket_close_timestamp":ticket_close_timestamp, 
+					"action_form_data":action_form_data, 
+					"action_timestamp":action_timestamp, 
+					"log_report_form_data":log_report_form_data, 
+					"log_report_timestamp":log_report_timestamp};
+					data_additional = JSON.stringify(get_infos_array);
+					//console.log(get_infos_array);
+				window.parent.main.postMessage(data_additional, window.location.origin);
+				try {
+					window.parent.callboard.postMessage(data_additional, window.location.origin);
+				} catch(e) {
+				}
+				//======================================
 				var first_screen = get_infos_array['screen']['first_screen'];
 				if ((get_infos_array['screen']['date_time'].valueOf() != "") && (get_infos_array['user']['id'] == 0)) {
 					parent.frames["main"].$("#time_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_only_format;?>") + " <?php print get_text("o'clock");?>");
@@ -184,8 +203,8 @@ foreach ($sound_names_array as $value) {
 							format("<?php print $moment_date_only_format . " " . $moment_time_only_format;?>") +
 							" <?php print get_text("o'clock");?>"
 						);
-						parent.frames["navigation"].$("#div_server_time").html(get_infos_array['screen']['date_time']);
-						parent.frames["navigation"].$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						$("#div_server_time").html(get_infos_array['screen']['date_time']);
+						$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
 					}
 					if (
 						(($("#div_api_host_available").html() != get_infos_array['api']['api_host_available']) ||
@@ -737,8 +756,101 @@ foreach ($sound_names_array as $value) {
 				}
 			}
 
+			var get_changes_array;
+
 			$(document).ready(function() {
 				parent.window.setIframeHeight();
+				//======================================
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_changes_array = JSON.parse(event.data);
+					//console.log(get_changes_array);
+					switch (get_changes_array["type"]) {
+					case "button":
+						switch (get_changes_array["action"]) {
+						case "highlight":
+							highlight_button(get_changes_array["item"])
+							break;
+						default:
+						}
+						break;
+					case "message":
+						show_message(get_changes_array["action"], get_changes_array["item"]);
+						break;
+					case "div":
+						$("#" + get_changes_array["item"]).html(get_changes_array["action"]);
+						break;
+					case "script":
+						switch (get_changes_array["item"]) {
+						case "main":
+							window.parent.main.location.href=get_changes_array["action"];
+							break;
+						default:
+						}	
+						break;
+					case "function":
+						switch (get_changes_array["item"]) {
+						case "test_audio":
+							test_audio(get_changes_array["action"]);
+							break;
+						case "start_polling":
+							start_polling();
+							break;
+						case "stop_polling":
+							stop_polling();
+							break;
+						case "window_location_reload":
+							window.location.reload();
+							break;
+						default:
+						}
+						break;
+					case "set_parked_form_data":
+						switch (get_changes_array["item"]) {
+						case "ticket_add_form_data":
+							ticket_add_form_data = get_changes_array["ticket_add_form_data"];
+							break;
+						case "ticket_add_timestamp":
+							ticket_add_timestamp = get_changes_array["action"];
+							break;
+						case "ticket_add_ticket_id":
+							ticket_add_ticket_id = get_changes_array["action"];
+							break;
+						case "ticket_close_form_data":
+							ticket_close_form_data[get_changes_array["action"]] = get_changes_array["ticket_close_form_data"];
+							break;
+						case "ticket_close_timestamp":
+							ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+							break;
+						case "ticket_close_delete":
+							ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
+							ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
+							break;
+						case "action_form_data":
+							action_form_data[get_changes_array["action"]] = get_changes_array["action_form_data"];
+							break;
+						case "action_timestamp":
+							action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+							break;
+						case "action_delete":
+							action_form_data[get_changes_array["action"]] = (function () {return;})();
+							action_timestamp[get_changes_array["action"]] = (function () {return;})();
+							break;
+						case "log_report_form_data":
+							log_report_form_data = get_changes_array["log_report_form_data"];
+							break;
+						case "log_report_timestamp":
+							log_report_timestamp = get_changes_array["action"];
+							break;
+						default:
+						}
+						break;
+					default:
+					}
+					get_changes_array = "undefined";
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 			function show_situation() {

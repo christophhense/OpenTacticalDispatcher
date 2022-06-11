@@ -157,7 +157,7 @@ default:
 		$display_str = "none";
 	}
 	?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="<?php print get_variable("_locale");?>">
 	<head>
 		<title><?php print get_variable("page_caption");?></title>
@@ -180,9 +180,18 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
+
+			var get_infos_array;
+
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("situation");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("situation");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
 
@@ -234,9 +243,14 @@ default:
 			}
 
 			function get_tickets() {
-				$.get("situation.php?function=table_top&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html(), function(data) {
+				//======================================
+				/*$.get("situation.php?function=table_top&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html(), function(data) {
+					$("#table_top").html(data);
+				})*/
+				$.get("situation.php?function=table_top&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
 					$("#table_top").html(data);
 				})
+				//======================================
 				.done(function() {
 					$("#severity_normal").html($("#count_severity_normal").html());
 					$("#severity_medium").html($("#count_severity_medium").html());
@@ -248,19 +262,28 @@ default:
 			}
 
 			function get_units() {
-				$.get("situation.php?function=table_left&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html(), function(data) {
+				//======================================
+				/*$.get("situation.php?function=table_left&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html(), function(data) {
 					$("#table_left").html(data);
 				});
 				$.get("situation.php?function=table_right&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html(), function(data) {
 					$("#table_right").html(data);
+				});*/
+				$.get("situation.php?function=table_left&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
+					$("#table_left").html(data);
 				});
+				$.get("situation.php?function=table_right&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
+					$("#table_right").html(data);
+				});
+				//======================================
 			}
 
 			var watch_val;
 
 			function refresh_latest_infos_main() {
 				try {
-					$("#div_ticket_latest_id").html(parent.frames["navigation"].$("#div_ticket_latest_id").html());
+					//======================================
+					/*$("#div_ticket_latest_id").html(parent.frames["navigation"].$("#div_ticket_latest_id").html());
 					$("#div_ticket_changed_id").html(parent.frames["navigation"].$("#div_ticket_changed_id").html());
 					$("#div_ticket_updated").html(parent.frames["navigation"].$("#div_ticket_updated").html());
 					$("#div_ticket_user").html(parent.frames["navigation"].$("#div_ticket_user").html());
@@ -284,23 +307,73 @@ default:
 					$("#div_scheduled").html(parent.frames["navigation"].$("#div_scheduled").html());
 					if ($("#div_scheduled").text() == "") {
 						$("#div_scheduled").text(0);
+					}*/
+					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max']);
+					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
+					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
+					if ($("#div_scheduled").text() == "") {
+						$("#div_scheduled").text(0);
 					}
+					$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
+					$("#div_ticket_user").html(get_infos_array['ticket']['user']);
+
+					$("#div_unit_id").html(get_infos_array['units_status']['id']);
+					$("#div_unit_updated").html(get_infos_array['units_status']['update']);
+					$("#div_unit_user").html(get_infos_array['units_status']['user']);
+
+					$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
+					$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
+					$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
+
+					$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
+					$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
+					$("#div_assign_updated").html(get_infos_array['assign']['update']);
+					$("#div_assign_user").html(get_infos_array['assign']['user']);
+
+					$("#div_action_updated").html(get_infos_array['action']['update']);
+					$("#div_requests").html(get_infos_array['requests']['normal']);
+					//======================================
 				} catch(e) {
+					console.log(e);
 				}
 			}
 
 			function do_watch() {
-				if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				//======================================
+				//if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
+					//console.log(get_infos_array['screen']['date_time']);
+				//======================================
 					try {
 						if (
 							((
-								($("#div_ticket_latest_id").html() != parent.frames["navigation"].$("#div_ticket_latest_id").html()) ||
+								//======================================
+								/*($("#div_ticket_latest_id").html() != parent.frames["navigation"].$("#div_ticket_latest_id").html()) ||
 								($("#div_ticket_changed_id").html() != parent.frames["navigation"].$("#div_ticket_changed_id").html()) ||
 								($("#div_ticket_updated").html() != parent.frames["navigation"].$("#div_ticket_updated").html()) ||
 								($("#div_scheduled").html() != parent.frames["navigation"].$("#div_scheduled").html()) ||
-								($("#div_action_updated").html() != parent.frames["navigation"].$("#div_action_updated").html())
+								($("#div_action_updated").html() != parent.frames["navigation"].$("#div_action_updated").html())*/
+								($("#div_ticket_latest_id").html() != get_infos_array['ticket']['id_max']) ||
+								($("#div_ticket_changed_id").html() != get_infos_array['ticket']['id_changed']) ||
+								($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
+								($("#div_scheduled").html() != get_infos_array['ticket']['scheduled']) ||
+								($("#div_action_updated").html() != get_infos_array['action']['update'])
+								//======================================
 							)) || (
-								($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())
+								//======================================
+								//($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())
+								
+								//($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
+								($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
+								(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
+								($("#div_unit_id").html() == get_infos_array['units_status']['id'])) ||
+	
+								($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
+								(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
+								($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
+	
+								($("#div_assign_max_id").html() != get_infos_array['assign']['id_max'])
+								//======================================
 							)
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
@@ -308,10 +381,19 @@ default:
 							}
 							get_tickets();
 							get_infostring();
-							parent.frames["navigation"].highlight_button("situation");
-						}	
+							//======================================
+							//parent.frames["navigation"].highlight_button("situation", true)
+							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
+						}
+						/*console.log("old: " + $("#div_unit_updated").html());
+						console.log("new: " + get_infos_array['units_status']['update']);
+						console.log($("#div_unit_updated").html() != get_infos_array['units_status']['update']);
+						console.log($("#div_unit_user").html() == get_infos_array['units_status']['user']);*/
 						if (
-							($("#div_unit_id").html() != parent.frames["navigation"].$("#div_unit_id").html()) ||
+							//======================================
+							/*($("#div_unit_id").html() != parent.frames["navigation"].$("#div_unit_id").html()) ||
 							(($("#div_unit_updated").html() != parent.frames["navigation"].$("#div_unit_updated").html()) &&
 							($("#div_unit_id").html() == parent.frames["navigation"].$("#div_unit_id").html())) ||
 
@@ -321,15 +403,32 @@ default:
 
 							($("#div_assign_max_id").html() != parent.frames["navigation"].$("#div_assign_max_id").html()) ||
 							($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())
+							*/
+							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
+							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
+							($("#div_unit_user").html() == get_infos_array['units_status']['user'])) ||
+
+							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
+							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
+							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['user'])) ||
+
+							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
+							($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
+							//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
 							}
 							get_units();
 							get_infostring();
-							parent.frames["navigation"].highlight_button("situation");
+							//======================================
+							//parent.frames["navigation"].highlight_button("situation");
+							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
 						}
 					} catch (e) {
+						console.log(e);
 					}
 				}
 				refresh_latest_infos_main();
@@ -382,10 +481,16 @@ default:
 				var url = "set_data.php";
 				var params = "";
 				if (type == "start") {
-					params = "function=closed_interval_start&value=" + time + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+					//======================================
+					//params = "function=closed_interval_start&value=" + time + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+					params = "function=closed_interval_start&value=" + time + "&screen_id=" + get_infos_array['screen']['screen_id'];
+					//======================================
 					start_date = time;
 				} else {
-					params = "function=closed_interval_end&value=" + time + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+					//======================================
+					//params = "function=closed_interval_end&value=" + time + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+					params = "function=closed_interval_end&value=" + time + "&screen_id=" + get_infos_array['screen']['screen_id'];
+					//======================================
 					end_date = time;
 				}
 				$.get(url, params)
@@ -397,21 +502,37 @@ default:
 			}
 
 			function change_situation(tab_id) {
-				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html())
+				//======================================
+				/*$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html())
+				.done(function () {
+				})
+				.fail(function () {
+					alert("error");
+				});*/
+				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + get_infos_array['screen']['screen_id'])
 				.done(function () {
 				})
 				.fail(function () {
 					alert("error");
 				});
+				//======================================
 				$("#" + tab_id).addClass("active");
 				if (tab_id == "tickets_closed") {
 					if (start_date.valueOf() == "0") {
-						$("#closed_interval_start").val(moment(moment(parent.frames["navigation"].$("#div_server_time").html(), "YYYY-MM-DD HH:mm:ss").subtract(report_last, "seconds")).format("<?php print $moment_date_format;?>"));
-						$("#closed_interval_start_mysql").val(moment(parent.frames["navigation"].$("#div_server_time").html()).subtract(report_last, "seconds"));
+						//======================================
+						/*$("#closed_interval_start").val(moment(moment(parent.frames["navigation"].$("#div_server_time").html(), "YYYY-MM-DD HH:mm:ss").subtract(report_last, "seconds")).format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_start_mysql").val(moment(parent.frames["navigation"].$("#div_server_time").html()).subtract(report_last, "seconds"));*/
+						$("#closed_interval_start").val(moment(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").subtract(report_last, "seconds")).format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_start_mysql").val(moment(get_infos_array['screen']['date_time']).subtract(report_last, "seconds"));
+						//======================================
 					}
 					if (end_date.valueOf() == "0") {
-						$("#closed_interval_end").val(moment(parent.frames["navigation"].$("#div_server_time").html(), "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
-						$("#closed_interval_end_mysql").val(parent.frames["navigation"].$("#div_server_time").html());
+						//======================================
+						/*$("#closed_interval_end").val(moment(parent.frames["navigation"].$("#div_server_time").html(), "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_end_mysql").val(parent.frames["navigation"].$("#div_server_time").html());*/
+						$("#closed_interval_end").val(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_end_mysql").val(get_infos_array['screen']['date_time']);
+						//======================================
 					}
 					closed_interval_changed();
 					$("#severity_counts").css("display", "none");
@@ -502,9 +623,22 @@ default:
 				$("#closed_interval_end").data("DateTimePicker").
 					minDate(moment($("#closed_interval_start").val(), "<?php print $moment_date_format;?>"));
 
-				change_situation("<?php print $current_situation_type;?>");
+				//change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
-				start_watch();
+				//======================================
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					if (change_situation_first_set == 0) {
+						change_situation("<?php print $current_situation_type;?>");
+						start_watch();
+						change_situation_first_set = 1;
+					}
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
+				//start_watch();
 			});
 
 		</script>

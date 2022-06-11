@@ -198,16 +198,25 @@ if (is_operator() || is_admin() || is_super()) {
 		if ($display_dispatch_message == "on") {
 			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation";
 		} else {
-			$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			//======================================
+			//$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			$url_str = "situation.php?screen_id=\" + get_infos_array['screen']['screen_id'];\";";
+			//======================================
 		}
 	?>
 		<script>
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("communication");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("communication");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
-
+			
 			function do_send_api_message() {
 				var errmsg = "";
 				if ($("#frm_text").val() == "") {
@@ -224,7 +233,11 @@ if (is_operator() || is_admin() || is_super()) {
 				$("#send_button").html("<?php print get_text("Wait");?>");
 				$.post("communication.php", $("#message_form").serialize(), function(data) {
 					var get_infos_array = JSON.parse(data);
-					parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+					//======================================
+					//parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+					var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					//======================================
 				})
 				.done(function() {
 					window.location.href="<?php print $url_str;?>";
@@ -258,6 +271,14 @@ if (is_operator() || is_admin() || is_super()) {
 			$(document).ready(function() {
 				load_content();
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					//$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
@@ -323,38 +344,70 @@ if (is_operator() || is_admin() || is_super()) {
 		<script>
 			var select_ticket_api_log_id = 0;
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("communication");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("communication");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
 
 			function refresh_latest_infos_communication() {
 				try {
-					$("#div_silent_requests").html(parent.frames["navigation"].$("#div_silent_requests").html());
+					//======================================
+					/*$("#div_silent_requests").html(parent.frames["navigation"].$("#div_silent_requests").html());
 					$("#div_message").html(parent.frames["navigation"].$("#div_message").html());
 					$("#div_warn_text").html(parent.frames["navigation"].$("#div_warn_text").html());
 					$("#div_auto_ticket").html(parent.frames["navigation"].$("#div_auto_ticket").html());
 					$("#div_requests").html(parent.frames["navigation"].$("#div_requests").html());
 					$("#div_emergency_requests_low").html(parent.frames["navigation"].$("#div_emergency_requests_low").html());
-					$("#div_emergency_requests_high").html(parent.frames["navigation"].$("#div_emergency_requests_high").html());
+					$("#div_emergency_requests_high").html(parent.frames["navigation"].$("#div_emergency_requests_high").html());*/
+					$("#div_silent_requests").html(get_infos_array['requests']['silent']);
+					$("#div_message").html(get_infos_array['requests']['message']);
+					$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
+					$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
+					$("#div_requests").html(get_infos_array['requests']['normal']);
+					$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
+					$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
+					//======================================
 				} catch(e) {
 				}
 			}
 
 			function do_watch() {
-				if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				//======================================
+				//if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
+				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
+					console.log(get_infos_array['screen']['date_time']);
+				//======================================
 					try {
 						if (
-							($("#div_silent_requests").html() != parent.frames["navigation"].$("#div_silent_requests").html()) ||
+							//======================================
+							/*($("#div_silent_requests").html() != parent.frames["navigation"].$("#div_silent_requests").html()) ||
 							($("#div_message").html() != parent.frames["navigation"].$("#div_message").html()) ||
 							($("#div_warn_text").html() != parent.frames["navigation"].$("#div_warn_text").html()) ||
 							($("#div_auto_ticket").html() != parent.frames["navigation"].$("#div_auto_ticket").html()) ||
 							($("#div_requests").html() != parent.frames["navigation"].$("#div_requests").html()) ||
 							($("#div_emergency_requests_low").html() != parent.frames["navigation"].$("#div_emergency_requests_low").html()) ||
-							($("#div_emergency_requests_high").html() != parent.frames["navigation"].$("#div_emergency_requests_high").html())
+							($("#div_emergency_requests_high").html() != parent.frames["navigation"].$("#div_emergency_requests_high").html())*/
+							($("#div_silent_requests").html() != get_infos_array['requests']['silent']) ||
+							($("#div_message").html() != get_infos_array['requests']['message']) ||
+							($("#div_warn_text").html() != get_infos_array['requests']['warn_text']) ||
+							($("#div_auto_ticket").html() != get_infos_array['requests']['auto_ticket']) ||
+							($("#div_requests").html() != get_infos_array['requests']['normal']) ||
+							($("#div_emergency_requests_low").html() != get_infos_array['requests']['emergency_low']) ||
+							($("#div_emergency_requests_high").html() != get_infos_array['requests']['emergency_high'])
+							//======================================
 						) {
 							load_content();
-							parent.frames["navigation"].highlight_button("communication");
+							//======================================
+							//parent.frames["navigation"].highlight_button("communication");
+							var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
 						}
 					} catch (e) {
 					}
@@ -442,7 +495,11 @@ if (is_operator() || is_admin() || is_super()) {
 									api_log_id: select_ticket_api_log_id
 								}, function() {})
 								.done(function() {
-									parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+									//======================================
+									//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+									var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
+									window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+									//======================================
 									var last_call = true;
 									if (last_call) {
 										window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
@@ -452,7 +509,11 @@ if (is_operator() || is_admin() || is_super()) {
 									}
 								});
 							} else {
-								parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+								//======================================
+								//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
+								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								//======================================
 								window.location.href="ticket_edit.php?ticket_id=" + ticket_id;
 							}
 						});
@@ -470,7 +531,11 @@ if (is_operator() || is_admin() || is_super()) {
 								call_progression_datetime: get_infos_array["call_progression_datetime"]
 							}, function() {})
 							.done(function(data) {
-								parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+								//======================================
+								//parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+								var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								//======================================
 								var last_call = false;
 								if (last_call) {
 									window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
@@ -480,7 +545,11 @@ if (is_operator() || is_admin() || is_super()) {
 								alert("error");
 							});
 						} else {
-							parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+							//======================================
+							//parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+							var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
 						}
 					})
 					.fail(function() {
@@ -495,7 +564,11 @@ if (is_operator() || is_admin() || is_super()) {
 						api_log_id: select_ticket_api_log_id
 					}, function() {})
 					.done(function() {
-						parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+						//======================================
+						//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						//======================================
 						var last_call = false;
 						if (last_call) {
 							window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
@@ -509,7 +582,11 @@ if (is_operator() || is_admin() || is_super()) {
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
 						api_log_action + "&ticket_id=" + ticket_id + "&unit_id=" + unit_id).done(function(data) {
 						var get_infos_array = JSON.parse(data);
-						parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+						//======================================
+						//parent.frames["navigation"].show_message(get_infos_array["message"], get_infos_array["appearance"]);
+						var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						//======================================
 						if ((typeof get_infos_array["url"] != "undefined") && (get_infos_array["url"] != null) && (get_infos_array["url"] != "")) {
 							window.location.href = get_infos_array["url"];
 						} else {
@@ -524,6 +601,14 @@ if (is_operator() || is_admin() || is_super()) {
 				load_content();
 				start_watch();
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					//$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>

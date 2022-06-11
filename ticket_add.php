@@ -285,13 +285,24 @@ case "insert":
 			$auto_dispatch_settings = explode(",", get_variable("auto_dispatch"));
 			$auto_dispatch = trim($auto_dispatch_settings[0]);
 		if ((isset ($_POST['frm_do_scheduled'])) && ($_POST['frm_do_scheduled'] == 0) && ($auto_dispatch == 1)) {
-			$url_str = "dispatch.php?ticket_id=" . $_POST['ticket_id'] . "&new_incident=true&screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			//======================================
+			//$url_str = "dispatch.php?ticket_id=" . $_POST['ticket_id'] . "&new_incident=true&screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			$url_str = "dispatch.php?ticket_id=" . $_POST['ticket_id'] . 
+				"&new_incident=true&screen_id=\'" .$_POST["screen_id"] . "\'";
+			//======================================
 		} else {
-			$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			//======================================
+			//$url_str = "situation.php?screen_id=\" + parent.frames['navigation'].$('#div_screen_id').html();\";";
+			$url_str = "situation.php?screen_id=\'" . $_POST["screen_id"] . "\'";
+			//======================================
 		}
 		?>
 	<script>
-		parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+		//======================================
+		//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+		var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
+		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		//======================================
 		window.location.href="<?php print $url_str;?>";
 	</script>
 		<?php
@@ -362,13 +373,21 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
+			var get_infos_array;
+
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[0]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[1]);?> + 0) * 1000;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("add_ticket");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("add_ticket");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
 
@@ -425,14 +444,33 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if (typeof(data) != "undefined") {
-						parent.frames["navigation"].ticket_add_form_data = data;
+					if ((typeof(data) != "undefined") && (data != null)) {
+						//======================================
+						/*parent.frames["navigation"].ticket_add_form_data = data;
 						parent.frames["navigation"].ticket_add_timestamp = Date.now();
-						parent.frames["navigation"].ticket_add_ticket_id = <?php print $ticket_id;?> + 0;
+						parent.frames["navigation"].ticket_add_ticket_id = <?php print $ticket_id;?> + 0;*/
+						var changes_data = {"type":"set_parked_form_data","item":"ticket_add_form_data","action":""};
+						changes_data.ticket_add_form_data = data;
+						//console.log(changes_data);
+						changes_data = JSON.stringify(changes_data);
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_timestamp","action":"' + Date.now() + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_ticket_id","action":"' + <?php print $ticket_id;?> + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						//======================================
 					} else {
-						parent.frames["navigation"].ticket_add_form_data = "";
+						//======================================
+						/*parent.frames["navigation"].ticket_add_form_data = "";
 						parent.frames["navigation"].ticket_add_timestamp = 0;
-						parent.frames["navigation"].ticket_add_ticket_id = 0;
+						parent.frames["navigation"].ticket_add_ticket_id = 0;*/
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_form_data","action":""}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_timestamp","action":"0"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_ticket_id","action":"0"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						//======================================
 					}
 				} catch (e) {
 				}
@@ -441,7 +479,8 @@ default:
 			function get_parked_form_data() {
 				try {
 					var current_timestamp = Date.now();
-					if ((current_timestamp < (parent.frames["navigation"].ticket_add_timestamp + parking_form_data_cache_period)) &&
+					//======================================
+					/*if ((current_timestamp < (parent.frames["navigation"].ticket_add_timestamp + parking_form_data_cache_period)) &&
 						(parent.frames["navigation"].ticket_add_ticket_id == (<?php print $ticket_id;?> + 0))) {
 						if (parent.frames["navigation"].ticket_add_form_data[7]['value'] == 0) {
 							$("#frm_location").val(parent.frames["navigation"].ticket_add_form_data[6]['value']);
@@ -463,9 +502,40 @@ default:
 							$("#scheduled_checkbox").prop("checked", true);
 							do_scheduled();
 							$("#scheduled_date").val(parent.frames["navigation"].ticket_add_form_data[21]['value']);
+						}*/
+					if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['ticket_add_timestamp']) + parseInt(parking_form_data_cache_period))) &&
+						(get_infos_array['parked_form_data']['ticket_add_ticket_id'] == (<?php print $ticket_id;?>))) {
+						var form_content = new Array;
+						form_content['frm_facility_id'] = 0;
+						form_content['scheduled_checkbox'] = "off";
+						for (var key in get_infos_array['parked_form_data']['ticket_add_form_data']) {
+							form_content[get_infos_array['parked_form_data']['ticket_add_form_data'][key]['name']] = get_infos_array['parked_form_data']['ticket_add_form_data'][key]['value'];
 						}
+						if (form_content['frm_facility_id'] == 0) {
+							$("#frm_location").val(form_content['frm_location']);
+						} else {
+							$("#frm_facility_id").val(form_content['frm_facility_id']).change();
+						}
+						$("#frm_phone").val(form_content['frm_phone']);
+						$("#frm_description").val(form_content['frm_description']);
+						$("#frm_contact").val(form_content['frm_contact']);
+						$("#frm_in_types_id").val(form_content['frm_in_types_id']).change();
+						$("#frm_severity").val(form_content['frm_severity']).change();
+						$("#frm_comments").val(form_content['frm_comments']);
+						if ((inc_num_array_0 > 3) && (inc_num_array_0 < 8)) {
+							$("#frm_incident_name").val(form_content['frm_incident_name']);
+						}
+						do_unlock_readonly('problemstart');
+						$("#problemstart").val(form_content['problemstart_input']);
+						if (form_content['scheduled_checkbox'] == "on") {
+							$("#scheduled_checkbox").prop("checked", true);
+							do_scheduled();
+							$("#scheduled_date").val(form_content['scheduled_date_input']);
+						}
+						$("#frm_location").focus();
+					//======================================
 					} else {
-						set_parked_form_data();
+						set_parked_form_data(null);
 					}
 				} catch (e) {
 				}
@@ -484,6 +554,7 @@ default:
 			}
 
 			function do_watch() {
+				//console.log(get_infos_array['parked_form_data']['ticket_add_form_data']);
 				try {
 					if ((
 						($("#frm_location").val().trim().length > 0 && $("#frm_location").val().length > parking_form_data_min_trigger_chars) ||
@@ -493,9 +564,16 @@ default:
 						) && (parking_form_data_min_trigger_chars != 0)
 					) {
 						var new_form_data = $("#ticket_add").serializeArray();
-						if ((JSON.stringify(new_form_data) != JSON.stringify(parent.frames["navigation"].ticket_add_form_data))) {
+						//======================================
+						//if ((JSON.stringify(new_form_data) != JSON.stringify(parent.frames["navigation"].ticket_add_form_data))) {
+						if ((JSON.stringify(new_form_data) != JSON.stringify(get_infos_array['parked_form_data']['ticket_add_form_data']))) {
+							//console.log(get_infos_array['parked_form_data']['ticket_add_form_data']);
+						//======================================
 							set_parked_form_data(new_form_data);
 						}
+					} else {
+						new_form_data = null;
+						set_parked_form_data(new_form_data);
 					}
 				} catch (e) {
 				}
@@ -545,8 +623,10 @@ default:
 				});
 
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				start_polling();
-				get_parked_form_data();
+				//======================================
+				//start_polling();
+				//get_parked_form_data();
+				//======================================
 				if ($("#frm_facility_id").val() == 0) {
 					$("#frm_location").focus();
 				} else {
@@ -557,6 +637,21 @@ default:
 					}
 				}
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					//console.log(get_infos_array["parked_form_data"]["ticket_add_timestamp"]);
+					if (change_situation_first_set == 0) { 
+						start_polling();
+						get_parked_form_data();
+						change_situation_first_set = 1;
+					}
+					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
@@ -572,6 +667,7 @@ default:
 				<input type="hidden" id="frm_lat" name="frm_lat" value="">
 				<input type="hidden" id="frm_lng" name="frm_lng" value="">
 				<input type="hidden" id="incident_type" value=0>
+				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("ticket", $ticket_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("New") . get_table_id($ticket_id) . " - " . get_variable("page_caption");?>

@@ -78,8 +78,13 @@ case "update":
 	unset ($result_old_data, $result, $cl_res_result);
 ?>
 <script>
-	parent.frames["navigation"].show_message ("<?php print get_text("Incident closed");?>", "success");
-	window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	//======================================
+	//parent.frames["navigation"].show_message ("<?php print get_text("Incident closed");?>", "success");
+	//window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Incident closed");?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	window.location.href="situation.php?screen_id="<?php print $_POST['screen_id'];?>;
+	//======================================
 </script>
 	<?php
 	break;
@@ -154,14 +159,21 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
+			var get_infos_array;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[4]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[5]);?> + 0) * 1000;
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 			var current_timestamp = Date.now();
 
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("situation");
+				//======================================
+				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
+				parent.frames["navigation"].highlight_button("situation");*/
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				//======================================
 			} catch(e) {
 			}
 
@@ -192,25 +204,61 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if (typeof(data) != "undefined") {
+					//======================================
+					/*if (typeof(data) != "undefined") {
 						parent.frames["navigation"].ticket_close_form_data[ticket_id] = data;
 						parent.frames["navigation"].ticket_close_timestamp[ticket_id] = Date.now();
 					} else {
 						parent.frames["navigation"].ticket_close_form_data[ticket_id] = (function () {return;})();
 						parent.frames["navigation"].ticket_close_timestamp[ticket_id] = (function () {return;})();
+					}*/
+					if ((typeof(data) != "undefined") && (data != null)) {
+						var changes_data = {"type":"set_parked_form_data","item":"ticket_close_form_data","action":ticket_id};
+						changes_data.ticket_close_form_data = data;
+						//console.log(changes_data);
+						changes_data = JSON.stringify(changes_data);
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ={"type":"set_parked_form_data","item":"ticket_close_timestamp","action":ticket_id,"datetime":Date.now()};
+						//console.log(changes_data);
+						changes_data = JSON.stringify(changes_data);
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					} else {
+						//parent.frames["navigation"].ticket_close_form_data[ticket_id] = (function () {return;})();
+						//parent.frames["navigation"].ticket_close_timestamp[ticket_id] = (function () {return;})();
+						var changes_data = {"type":"set_parked_form_data","item":"ticket_close_delete","action":ticket_id};
+						changes_data = JSON.stringify(changes_data);
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
+					//======================================
 				} catch (e) {
 				}
 			}
 
 			function get_parked_form_data() {
 				try {
-					if (current_timestamp < (parent.frames["navigation"].ticket_close_timestamp[ticket_id] + parking_form_data_cache_period)) {
+					//======================================
+					/*if (current_timestamp < (parent.frames["navigation"].ticket_close_timestamp[ticket_id] + parking_form_data_cache_period)) {
 						$("#frm_synopsis").val(parent.frames["navigation"].ticket_close_form_data[ticket_id][1]['value']);
 						$("#frm_disp").val(parent.frames["navigation"].ticket_close_form_data[ticket_id][3]['value']);
 						$("#problemend").val(parent.frames["navigation"].ticket_close_form_data[ticket_id][5]['value']);
 						do_unlock_readonly("problemend");
+						set_textblock("", frm_disp);*/
+					if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id]) + parseInt(parking_form_data_cache_period)))) {
+						if ((typeof get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] != "undefined") && (get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] != null)) {
+							var form_content = new Array;
+							for (var key in get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id]) {
+								//console.log(key + " " + get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name'] + " " + get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value']);
+								form_content[get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name']] = get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
+							}
+						}
+						//console.log(form_content);
+						$("#frm_synopsis").val(form_content['frm_synopsis']);
+						$("#frm_disp").val(form_content['frm_disp']);
+						do_unlock_readonly("problemend");
+						$("#problemend").val(form_content['problemend_input']);
 						set_textblock("", frm_disp);
+						$("#frm_location").focus();
+					//======================================
 					} else {
 						set_parked_form_data();
 					}
@@ -220,12 +268,20 @@ default:
 
 			function delete_other_old_parked_form_data() {
 				try {
-					var old_parked_data_timestamp_array = parent.frames["navigation"].ticket_close_timestamp;
+					//======================================
+					//var old_parked_data_timestamp_array = parent.frames["navigation"].ticket_close_timestamp;
+					var old_parked_data_timestamp_array = get_infos_array['parked_form_data']['ticket_close_timestamp'];
+					//======================================
 					var i;
 					for (i = 0; i < old_parked_data_timestamp_array.length; i++ ) {
 						if ((typeof(old_parked_data_timestamp_array[i]) != "undefined") && (current_timestamp >= (old_parked_data_timestamp_array[i] + parking_form_data_cache_period))){
-							parent.frames["navigation"].ticket_close_form_data[i] = (function () {return;})();
-							parent.frames["navigation"].ticket_close_timestamp[i] = (function () {return;})();
+							//======================================
+							//parent.frames["navigation"].ticket_close_form_data[i] = (function () {return;})();
+							//parent.frames["navigation"].ticket_close_timestamp[i] = (function () {return;})();
+							var changes_data = {"type":"set_parked_form_data","item":"ticket_close_delete","action":ticket_id};
+							changes_data = JSON.stringify(changes_data);
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
 						}
 					}
 				} catch (e) {
@@ -238,9 +294,12 @@ default:
 						var new_form_data = $("#ticket_close").serializeArray();
 						var ticket_close_form_data = [];
 						try {
-							ticket_close_form_data = parent.frames["navigation"].ticket_close_form_data[ticket_id];
+							//======================================
+							//ticket_close_form_data = parent.frames["navigation"].ticket_close_form_data[ticket_id];
+							ticket_close_form_data = get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id];
+							//======================================
 						} catch (e) {
-							console.log(e);
+							//console.log(e);
 						}
 						if (JSON.stringify(new_form_data) != JSON.stringify(ticket_close_form_data)) {
 							set_parked_form_data(new_form_data);
@@ -274,11 +333,26 @@ default:
 
 				$("#problemend").data("DateTimePicker").minDate(moment("<?php print $row['problemstart'];?>", "YYYY-MM-DD HH:mm:ss"));
 
-				get_parked_form_data();
-				delete_other_old_parked_form_data();
-				start_polling();
+				//get_parked_form_data();
+				//delete_other_old_parked_form_data();
+				//start_polling();
 				$("#frm_disp").focus();
 				<?php show_prevent_browser_back_button();?>
+				//======================================
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					if (change_situation_first_set == 0) { 
+						start_polling();
+						get_parked_form_data();
+						delete_other_old_parked_form_data();
+						change_situation_first_set = 1;
+					}
+					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
@@ -316,6 +390,7 @@ default:
 						<div id="table_left">
 							<form id="ticket_close" name="frm_note" method="post" action="ticket_close.php">
 								<input type="hidden" name="function" value="update">
+								<input type="hidden" name="screen_id" id="screen_id" value="">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 									<tr>
 										<th style="width: 20%; border-top: 0px;"<?php print get_title_str(get_help_text("_synop", true) . $additional_helptext_form_data_parking);?>>
