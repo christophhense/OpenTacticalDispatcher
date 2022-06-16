@@ -397,7 +397,7 @@ default:
 							*/
 							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
 							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
-							($("#div_unit_user").html() == get_infos_array['units_status']['id'])) ||
+							($("#div_unit_id").html() == get_infos_array['units_status']['id'])) ||
 
 							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
 							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
