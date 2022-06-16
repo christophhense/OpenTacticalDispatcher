@@ -291,7 +291,7 @@ if (is_operator() || is_admin() || is_super()) {
 					<?php print get_text("Send message") . " - "  . get_variable("page_caption");?>
 				</div>
 			</div>
-		    <div class="row">
+			<div class="row">
 				<div class="col-md-1">
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
@@ -381,7 +381,6 @@ if (is_operator() || is_admin() || is_super()) {
 				//======================================
 				//if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
 				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
-					console.log(get_infos_array['screen']['date_time']);
 				//======================================
 					try {
 						if (
@@ -415,7 +414,7 @@ if (is_operator() || is_admin() || is_super()) {
 				refresh_latest_infos_communication();
 			}
 
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch();", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -434,7 +433,7 @@ if (is_operator() || is_admin() || is_super()) {
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function load_content() {
 				$.get("communication.php?function=table_left_communication", function(data) {
@@ -598,14 +597,20 @@ if (is_operator() || is_admin() || is_super()) {
 
 			$(document).ready(function() {
 				show_to_top_button("<?php print get_text("To top");?>");
-				load_content();
-				start_watch();
+				//load_content();
+				//start_watch();
 				<?php show_prevent_browser_back_button();?>
 				//======================================
+				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					//$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					if (change_situation_first_set == 0) {
+						load_content();
+						refresh_latest_infos_communication();
+						change_situation_first_set = 1;
+					}
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -613,7 +618,8 @@ if (is_operator() || is_admin() || is_super()) {
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="end_watch();">
+<!-- <body onload="check_frames();" onunload="end_watch();"> -->	
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div style="display: <?php print $display_str;?>;"> requests silent: </div>
 		<div id="div_silent_requests" style="display: <?php print $display_str;?>;"></div>

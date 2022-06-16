@@ -147,7 +147,6 @@ default:
 							var changes_data ={"type":"set_parked_form_data","item":"action_timestamp","action":ticket_id,"datetime":Date.now()};
 							changes_data = JSON.stringify(changes_data);
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							
 						} else {
 							/*parent.frames["navigation"].action_form_data[ticket_id] = (function () {return;})();
 							parent.frames["navigation"].action_timestamp[ticket_id] = (function () {return;})();*/
@@ -237,7 +236,7 @@ default:
 				}
 			}
 
-			var watch_val;
+/*			var watch_val;
 			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
@@ -246,7 +245,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			$(document).ready(function() {
 				$("#asof").datetimepicker({
@@ -270,11 +269,12 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					//console.log(get_infos_array);
 					if (change_situation_first_set == 0) { 
+						//start_polling();
 						get_parked_form_data();
-						start_polling();
 						delete_other_old_parked_form_data();
 						change_situation_first_set = 1;
 					}
+					do_watch();
 					//$("#screen_id").val(get_infos_array['screen']['screen_id']);
 					// can message back using event.source.postMessage(...)
 				});
@@ -492,7 +492,8 @@ case "insert":
 		break;
 	default:
 	?>
-	<body onload="check_frames();" onunload="stop_polling();">
+<!--<body onload="check_frames();" onunload="stop_polling();">  -->
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="add_form" name="add_form" method="post" action="action.php">
 			<input type="hidden" name="back" value="<?php print $back;?>">

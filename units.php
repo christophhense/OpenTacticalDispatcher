@@ -984,7 +984,7 @@ default:
 				refresh_latest_infos_units();
 			}
 
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -1003,7 +1003,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function do_sort_units(sort_order) {
 				$.get("units.php?function=sort&order=" + sort_order)
@@ -1023,9 +1023,10 @@ default:
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
-						start_watch();
+						refresh_latest_infos_units();
 						change_situation_first_set = 1;
 					}
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -1033,7 +1034,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();">
+<!-- 	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();"> -->
+	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');"">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>
 		<div id="div_ticket_latest_id" style="display:<?php print $display_str;?>;"></div>

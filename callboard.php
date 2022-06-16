@@ -341,7 +341,7 @@ case "table":
 			}
 		}
 
-		var watch_val;
+/*		var watch_val;
 
 		function start_polling() {
 			watch_val = window.setInterval("do_watch();", <?php print $auto_poll_time * 100;?>);
@@ -362,7 +362,8 @@ case "table":
 			if (watch_val) {
 				window.clearInterval(watch_val);
 			}
-		}
+		}*/
+
 		function show_callboard() {
 			parent.document.getElementById("callboard").style.height = $("#height_in_pix").html() + "px";
 			parent.window.setIframeHeight();
@@ -597,16 +598,19 @@ case "table":
 				if (event.origin != window.location.origin) return;
 				get_infos_array = JSON.parse(event.data);
 				if (change_situation_first_set == 0) {
-					start_watch();
+					refresh_latest_Infos_callboard();
+					//start_watch();
 					change_situation_first_set = 1;
 				}
+				do_watch();
 				// can message back using event.source.postMessage(...)
 			});
 			//======================================
 		});
 
 	</script>
-	<body onload="check_frames();" onunload="end_watch();">
+<!-- <body onload="check_frames();" onunload="end_watch();"> -->	
+	<body onload="check_frames();" onunload="">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div id="div_ticket_updated" style="display: none;"></div>
 		<div id="div_unit_callprogress_id" style="display: none;"></div>

@@ -732,8 +732,6 @@ foreach ($sound_names_array as $value) {
 
 			function do_logout() {
 				$("#date_time_of_day").html("");
-				clearInterval(client_poll_cycle);
-				client_poll_cycle = null;
 				$("#logged_in").html(NOT_STR);
 				is_initialized = false;
 				$("#buttons").css("display", "none");

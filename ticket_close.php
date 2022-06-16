@@ -83,7 +83,7 @@ case "update":
 	//window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
 	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Incident closed");?>"}';
 	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href="situation.php?screen_id="<?php print $_POST['screen_id'];?>;
+	window.location.href="situation.php?screen_id=<?php print $_POST['screen_id'];?>";
 	//======================================
 </script>
 	<?php
@@ -309,7 +309,7 @@ default:
 				}
 			}
 
-			var watch_val;
+/*			var watch_val;
 			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
@@ -318,7 +318,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			$(document).ready(function() {
 
@@ -344,12 +344,13 @@ default:
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) { 
-						start_polling();
+						//start_polling();
 						get_parked_form_data();
 						delete_other_old_parked_form_data();
+						$("#screen_id").val(get_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
-					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -357,7 +358,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="stop_polling();">
+<!-- <body onload="check_frames();" onunload="stop_polling();"> -->
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">

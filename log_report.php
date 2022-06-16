@@ -194,9 +194,9 @@ default:
 				}
 			}
 
-			var watch_val;
+//			var watch_val;
 			var log;
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -217,7 +217,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function do_watch() {
 				try {
@@ -263,10 +263,11 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					//console.log(get_infos_array);
 					if (change_situation_first_set == 0) {
+						log = get_infos_array['log']['id'];
 						get_parked_form_data();
-						start_watch();
 						change_situation_first_set = 1;
 					}
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -274,7 +275,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="end_watch();">
+<!-- <body onload="check_frames();" onunload="end_watch();"> -->
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">

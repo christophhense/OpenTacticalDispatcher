@@ -334,6 +334,7 @@ default:
 					$("#div_requests").html(get_infos_array['requests']['normal']);
 					//======================================
 				} catch(e) {
+					console.log(e);
 				}
 			}
 
@@ -370,7 +371,11 @@ default:
 							}
 							get_tickets();
 							get_infostring();
-							parent.frames["navigation"].highlight_button("situation");
+							//======================================
+							//parent.frames["navigation"].highlight_button("situation", true)
+							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							//======================================
 						}
 						/*console.log("old: " + $("#div_unit_updated").html());
 						console.log("new: " + get_infos_array['units_status']['update']);
@@ -391,11 +396,11 @@ default:
 							*/
 							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
 							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
-							($("#div_unit_user").html() == get_infos_array['units_status']['user'])) ||
+							($("#div_unit_user").html() == get_infos_array['units_status']['id'])) ||
 
 							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
 							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
-							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['user'])) ||
+							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
 
 							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
 							($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
@@ -413,6 +418,7 @@ default:
 							//======================================
 						}
 					} catch (e) {
+						console.log(e);
 					}
 				}
 				refresh_latest_infos_main();
@@ -436,7 +442,7 @@ default:
 				return errmsg;
 			}
 
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -455,7 +461,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function edit_ticket(ticket_id) {
 				window.location.href = "<?php print (is_guest())? "ticket_report.php" : "ticket_edit.php";?>?ticket_id=" + ticket_id;
@@ -616,9 +622,13 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
 						change_situation("<?php print $current_situation_type;?>");
-						start_watch();
+						//start_watch();
+						refresh_latest_infos_main();
+						//get_units();
 						change_situation_first_set = 1;
 					}
+					//console.log(get_infos_array);
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -627,7 +637,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames(); <?php print $set_regions_control;?> location.href='#top';" onunload="end_watch(); end_blink();">
+<!-- <body onload="check_frames(); <?php print $set_regions_control;?> location.href='#top';" onunload="end_watch(); end_blink();"> -->
+	<body onload="check_frames(); <?php print $set_regions_control;?> location.href='#top';" onunload="end_blink();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 
 		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>

@@ -385,13 +385,9 @@ default:
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
 				//======================================
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						change_situation_first_set = 1;
-					}
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================

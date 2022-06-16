@@ -202,16 +202,16 @@ function show_stats() {
 			Tip($("#application_interface_phone").html().trim().replace(/(\S(.{0,78}\S)?)\s+/g, '$1<br>'));
 		}
 
-		function start_watch() {
+/*		function start_watch() {
 			window.setInterval("set_current_infos();", 500);
-		}
+		}*/
 
 	</script>
 	<div class="panel panel-default" id="table_top" style="padding: 0px;">
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
 			<tr>
 				<th style="width: 30%;"><?php print get_text("Software-Version");?>:</th>
-				<td style="width: 70%;"<?php print get_title_str(get_variable("_version"));?>><?php print get_variable("_version");?></td>
+				<td style="width: 70%;"<?php print get_title_str(get_version());?>><?php print get_version();?></td>
 			</tr>
 			<tr>
 				<th><?php print get_text("Localization");?>:</th>
@@ -235,7 +235,7 @@ function show_stats() {
 			</tr>
 			<tr>
 				<th><?php print get_text("Database");?>:</th>
-				<td<?php print get_title_str($GLOBALS['db_name'] . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info());?>><?php print $GLOBALS['db_name'] . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info();?></td>
+				<td<?php print get_title_str($GLOBALS['db_name'] . " db-scheme-version" . " " . get_variable("_version") . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info());?>><?php print $GLOBALS['db_name'] . " db-scheme-version" . " " . get_variable("_version") . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info() . " ";?></td>
 			</tr>
 			<tr>
 				<th><?php print get_text("Tickets in database");?>:</th>

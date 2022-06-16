@@ -673,7 +673,7 @@ default:
 				refresh_latest_infos();
 			}
 
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch();", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -692,7 +692,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			$(document).ready(function() {
 				$("#problemstart").datetimepicker({
@@ -723,13 +723,15 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					$("#screen_id").val(get_infos_array['screen']['screen_id']);
 					if (change_situation_first_set == 0) { 
 						get_units();
 						get_actions();
-						start_polling();
+						//start_polling();
+						refresh_latest_infos();
+						$("#screen_id").val(get_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -737,7 +739,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="end_watch();">
+<!-- <body onload="check_frames();" onunload="end_watch();"> -->
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
 			<form id="ticket_edit" name="edit" method="post" action="ticket_edit.php">

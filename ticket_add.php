@@ -541,7 +541,7 @@ default:
 				}
 			}
 
-			var watch_val;
+/*			var watch_val;
 			var log;
 			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
@@ -551,7 +551,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function do_watch() {
 				//console.log(get_infos_array['parked_form_data']['ticket_add_form_data']);
@@ -644,11 +644,12 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					//console.log(get_infos_array["parked_form_data"]["ticket_add_timestamp"]);
 					if (change_situation_first_set == 0) { 
-						start_polling();
+						//start_polling();
 						get_parked_form_data();
+						$("#screen_id").val(get_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
-					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -656,7 +657,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="stop_polling();">
+<!-- 	<body onload="check_frames();" onunload="stop_polling();"> -->
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
 			<form id="ticket_add" name="add" method="post" action="ticket_add.php">

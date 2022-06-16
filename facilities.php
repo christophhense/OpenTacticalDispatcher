@@ -776,7 +776,7 @@ default:
 				});
 			}
 
-			var watch_val;
+//			var watch_val;
 			var facility_id;
 			var facility_updated;
 			var facility_user;
@@ -807,8 +807,7 @@ default:
 					try {
 						if (
 							(facility_id != get_infos_array['facilities_status']['id']) ||
-							(facility_updated != get_infos_array['facilities_status']['update']) &&
-							(facility_user == get_infos_array['facilities_status']['id'])
+							(facility_updated != get_infos_array['facilities_status']['update'])
 				//======================================
 						) {
 							get_facilities();
@@ -819,7 +818,7 @@ default:
 				refresh_latest_infos_facilities();
 			}
 
-			function start_polling() {
+/*			function start_polling() {
 				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
 			}
 
@@ -838,7 +837,7 @@ default:
 				if (watch_val) {
 					window.clearInterval(watch_val);
 				}
-			}
+			}*/
 
 			function do_sort_facilities(sort_order) {
 				$.get("facilities.php?function=sort&order=" + sort_order)
@@ -858,9 +857,10 @@ default:
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
-						start_watch();
+						refresh_latest_infos_facilities()
 						change_situation_first_set = 1;
 					}
+					do_watch();
 					// can message back using event.source.postMessage(...)
 				});
 				//======================================
@@ -868,7 +868,8 @@ default:
 
 		</script>
 	</head>
-	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();">
+<!-- <body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();"> -->
+	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">

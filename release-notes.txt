@@ -1,4 +1,4 @@
-@version 22.10.1
+@version 22.04.2
 
 * Tested platforms
 
@@ -7,16 +7,16 @@
 		- Webserver:     lighttpd-1.4.48-1-win64-ssl
 		- PHP:           php-7.2.3-nts-Win32-VC15-x64
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 98.0, Zoom: 120%
-						 Google Chrome 99.0.4844.51, Zoom: 125%
+		- Browser:       Firefox 100.0.2, Zoom: 120%
+						 Google Chrome 102.0.5005.63, Zoom: 125%
 
 	- Ubuntu 20.04 LTS
 		- Database:      10.3.34-MariaDB
 		- Webserver:     Apache/2.4.41
-		- PHP:           8.0.16
+		- PHP:           8.0.19
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 97.0.2, Zoom: 120%
-						 Chromium 99.0.4844.51, Zoom 125%
+		- Browser:       Firefox 100.0.2, Zoom: 120%
+						 Chromium 102.0.5005.115, Zoom 125%
 
 Activities sorted by application function.
 
@@ -136,10 +136,14 @@ Activities sorted by application function.
 * Settings - database and updates - updates
 	NONE
 * Settings - system information
-	NONE
+	CANGE
+		Getting Software-Version from Code.
+		Database-Scheme-Version getting from database displaying in database-info.
 * Installation
 	NONE
 * Configuration wizard
 	NONE
 * Program code and miscellaneous
-	NONE
+	CODE
+	change inter-frame communication to postMessage, cause chromium based
+browsers no longer supports direct access to other iframes.

@@ -136,13 +136,12 @@ default:
 				activate_show_hide_password();
 				<?php show_prevent_browser_back_button();?>
 				//======================================
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						try{start_watch();}catch(e){}
-						change_situation_first_set = 1;
+					try {
+						set_current_infos();
+					} catch(e) {
 					}
 					// can message back using event.source.postMessage(...)
 				});
