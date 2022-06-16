@@ -1,7 +1,8 @@
 <?php
 error_reporting(E_ALL);
-require_once ("./incs/functions.inc.php");
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
+require_once ("./incs/functions.inc.php");
 
 if (ini_get("display_errors") == true) {
 	$auto_poll_time = 50;

@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
