@@ -187,10 +187,10 @@ foreach ($sound_names_array as $value) {
 				}
 				//======================================
 				var first_screen = get_infos_array['screen']['first_screen'];
-				if ((get_infos_array['screen']['date_time'].valueOf() != "") && (get_infos_array['user']['id'] == 0)) {
+				/*if ((get_infos_array['screen']['date_time'].valueOf() != "") && (get_infos_array['user']['id'] == 0)) {
 					parent.frames["main"].$("#time_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_only_format;?>") + " <?php print get_text("o'clock");?>");
 					parent.frames["main"].$("#date_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_only_format;?>"));	
-				}
+				}*/
 				if (get_infos_array['user']['id'] != 0) {
 					var get_infos_array = JSON.parse(data);
 					if (first_screen.valueOf() == "on") {
@@ -500,14 +500,22 @@ foreach ($sound_names_array as $value) {
 				if ($("#show_hide_callboard").val() == 0) {
 					change_class("callboard", "btn btn-xs btn-primary");
 					try {
-						parent.frames["callboard"].show_callboard();
+						//======================================
+						//parent.frames["callboard"].show_callboard();
+						parent.document.getElementById("callboard").style.height = "<?php print get_callboard_height();?>" + "px";
+						parent.window.setIframeHeight();
+						//======================================
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(1);
 				} else {
 					change_class("callboard", "btn btn-xs btn-default");
 					try {
-						parent.frames["callboard"].hide_callboard();
+						//======================================
+						//parent.frames["callboard"].hide_callboard();
+						parent.document.getElementById("callboard").style.height = "0px";
+						parent.window.setIframeHeight();
+						//======================================
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(0);
@@ -853,7 +861,7 @@ foreach ($sound_names_array as $value) {
 			});
 
 			function show_situation() {
-				parent.frames['main'].window.location.href="situation.php?screen_id=" + $('#div_screen_id').html();
+				window.parent.main.location.href="situation.php?screen_id=" + $('#div_screen_id').html();
 			}
 
 		</script>
@@ -1025,22 +1033,22 @@ foreach ($sound_names_array as $value) {
 					<button id="callboard" class="btn btn-xs btn-default"
 						onclick="show_hide_callboard();" style="<?php print $display_callboard_str;?>"><?php print get_text("Board");?></button>
 					<button id="communication" class="btn btn-xs btn-default btn-blink"
-						onclick="parent.frames['main'].window.location.href='communication.php';">
+						onclick="window.parent.main.location.href='communication.php';">
 						<?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
 					</button>				
 					<button id="add_ticket" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='ticket_add.php';"><?php print get_text("New");?></button>
+						onclick="window.parent.main.location.href='ticket_add.php';"><?php print get_text("New");?></button>
 					<button id="log_report" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='log_report.php';"><?php print get_text("Log report");?></button>
+						onclick="window.parent.main.location.href='log_report.php';"><?php print get_text("Log report");?></button>
 					<button id="units" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='units.php';"><?php print get_text("Units");?></button>
+						onclick="window.parent.main.location.href='units.php';"><?php print get_text("Units");?></button>
 					<button id="facilities" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='facilities.php';"><?php print get_text("Facilities");?></button>
+						onclick="window.parent.main.location.href='facilities.php';"><?php print get_text("Facilities");?></button>
 					<button id="reports" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='reports.php';"><?php print get_text("Reports");?></button>
+						onclick="window.parent.main.location.href='reports.php';"><?php print get_text("Reports");?></button>
 					<button id="configuration" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='configuration.php';"><?php print get_text("Configuration");?></button>
+						onclick="window.parent.main.window.location.href='configuration.php';"><?php print get_text("Configuration");?></button>
 				</div>
 				<div class="col-md-3">
 					<div style="float: right;">

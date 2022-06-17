@@ -251,7 +251,9 @@ case "table":
 	}
 	?>
 </table>
-<div id="height_in_pix" style="display: none;"><?php print get_callboard_height();?></div>
+<!-- //====================================== -->
+<!-- <div id="height_in_pix" style="display: none;"><?php print get_callboard_height();?></div> -->
+<!-- //====================================== -->
 	<?php
 		break;
 	default:
@@ -341,7 +343,7 @@ case "table":
 			} catch (e) {
 			}
 		}
-
+		//======================================
 /*		var watch_val;
 
 		function start_polling() {
@@ -363,7 +365,7 @@ case "table":
 			if (watch_val) {
 				window.clearInterval(watch_val);
 			}
-		}*/
+		}
 
 		function show_callboard() {
 			parent.document.getElementById("callboard").style.height = $("#height_in_pix").html() + "px";
@@ -373,8 +375,8 @@ case "table":
 		function hide_callboard() {
 			parent.document.getElementById("callboard").style.height = "0px";
 			parent.window.setIframeHeight();
-		}
-
+		}*/
+//======================================
 		function show_cleared_assigns() {
 			$.get("callboard.php?function=table&cleared_assigns=show", function(data) {
 				$("#callboard").html(data);

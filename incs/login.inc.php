@@ -234,6 +234,16 @@ function do_login($requested_page, $logout = false) {
 				$("#time_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
 				$("#date_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
 				activate_show_hide_password();
+				//======================================
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					$("#time_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
+					$("#date_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_date_format;?>"));
+					// can message back using event.source.postMessage(...)
+				});
+				//======================================
 			});
 
 		</script>
