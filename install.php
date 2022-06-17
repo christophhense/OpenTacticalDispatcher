@@ -128,8 +128,6 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 		$filename = "./incs";
 		if (!is_writable($filename)) {
 			die ("ERROR! Directory '" . $filename . "' is not writable. 'Write' permissions must be corrected for installation.");
-			//==================================================================
-			//==================================================================
 		}
 		$filename = './incs/db_credentials.inc.php';
 		$dir = "./";

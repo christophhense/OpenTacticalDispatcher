@@ -283,14 +283,10 @@ default:
 		<script>
 
 			try {
-				//======================================
-				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("reports");*/
 				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"reports","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				//======================================
 			} catch(e) {
 			}
 
@@ -385,13 +381,10 @@ default:
 				$("#frm_query_text").focus();
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
-				//======================================
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					// can message back using event.source.postMessage(...)
 				});
-				//======================================
 			});
 
 		</script>

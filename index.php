@@ -37,11 +37,7 @@ if (ini_get("display_errors") == true) {
 			var main_height = window.innerHeight - navigation_height - callboard_height - callboard_offset - 10;
 			$("#main").css("height", main_height + "px");
 			try {
-				//======================================
-				//var element_height = parent.frames["navigationbar"].$("#head_line").outerHeight();
 				var element_height = window.parent.navigationbar.$("#head_line").outerHeight();
-				//console.log(element_height);
-				//======================================
 				var min_height = <?php print $framesize;?> + 0;
 				if (element_height < min_height) {
 					element_height = min_height;

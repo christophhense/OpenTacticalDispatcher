@@ -222,13 +222,9 @@ case "update":
 	unset ($_SESSION['active_ticket']);
 	?>
 <script>
-	//======================================
-	//parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
-	//window.location.href="situation.php?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
 	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
 	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 	window.location.href="situation.php?screen_id=" + <?php print $_POST['screen_id'];?>;
-	//======================================
 </script>
 	<?php
 	break;
@@ -551,29 +547,6 @@ default:
 
 			function refresh_latest_infos() {
 				try {
-					//======================================
-					/*unit_id = parent.frames["navigation"].$("#div_unit_id").html();
-					unit_updated = parent.frames["navigation"].$("#div_unit_updated").html();
-					unit_user = parent.frames["navigation"].$("#div_unit_user").html();
-
-					unit_callprogress_id = parent.frames["navigation"].$("#div_unit_callprogress_id").html();
-					unit_callprogress_updated = parent.frames["navigation"].$("#div_unit_callprogress_updated").html();
-					unit_callprogress_user = parent.frames["navigation"].$("#div_unit_callprogress_user").html();
-
-					assign_max_id = parent.frames["navigation"].$("#div_assign_max_id").html();
-					assign_changed_id = parent.frames["navigation"].$("#div_assign_quantity").html();
-					assign_updated = parent.frames["navigation"].$("#div_assign_updated").html();
-					assign_user = parent.frames["navigation"].$("#div_assign_user").html();
-					assign_quantity = parent.frames["navigation"].$("#div_assign_quantity").html();
-
-					action_updated = parent.frames["navigation"].$("#div_action_updated").html();
-
-					ticket_latest_id = parent.frames["navigation"].$("#div_ticket_latest_id").html();
-					ticket_changed_id = parent.frames["navigation"].$("#div_ticket_changed_id").html();
-					ticket_updated = parent.frames["navigation"].$("#div_ticket_updated").html();
-					ticket_user = parent.frames["navigation"].$("#div_ticket_user").html();
-					scheduled = parent.frames["navigation"].$("#div_scheduled").html();*/
-
 					unit_id = get_infos_array['units_status']['id'];
 					unit_updated = get_infos_array['units_status']['update'];
 					unit_user = get_infos_array['units_status']['user'];
@@ -595,30 +568,15 @@ default:
 					ticket_updated = get_infos_array['ticket']['update'];
 					ticket_user = get_infos_array['ticket']['user'];
 					scheduled = get_infos_array['ticket']['scheduled'];
-					//======================================
 				} catch(e) {
 					console.log(e);
 				}
 			}
 
 			function do_watch() {
-				//======================================
-				//if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
 				if (get_infos_array['user']['id'] != 0) {
-				//======================================
 					try {
 						if (
-							//======================================
-							/*((
-								(ticket_latest_id != parent.frames["navigation"].$("#div_ticket_latest_id").html()) ||
-								(ticket_changed_id != parent.frames["navigation"].$("#div_ticket_changed_id").html()) ||
-								(ticket_updated != parent.frames["navigation"].$("#div_ticket_updated").html()) ||
-								(scheduled != parent.frames["navigation"].$("#div_scheduled").html())
-							) && (
-								(parent.frames["navigation"].$("#div_ticket_user").html() != parent.frames["navigation"].$("#div_user_id").html())
-							)) || (
-								(assign_quantity != parent.frames["navigation"].$("#div_assign_quantity").html())
-							)*/
 							((
 								(ticket_latest_id != get_infos_array['ticket']['id_max']) ||
 								(ticket_changed_id != get_infos_array['ticket']['id_changed']) ||
@@ -629,25 +587,12 @@ default:
 							)) || (
 								(assign_quantity != get_infos_array['assign']['quantity'])
 							)
-							//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
 							}
 						}
 						if (
-							//======================================
-							/*(unit_id != parent.frames["navigation"].$("#div_unit_id").html()) ||
-							((unit_updated != parent.frames["navigation"].$("#div_unit_updated").html()) &&
-							(unit_id == parent.frames["navigation"].$("#div_unit_id").html())) ||
-
-							(unit_callprogress_id != parent.frames["navigation"].$("#div_unit_callprogress_id").html()) ||
-							((unit_callprogress_updated != parent.frames["navigation"].$("#div_unit_callprogress_updated").html()) &&
-							(unit_callprogress_id == parent.frames["navigation"].$("#div_unit_callprogress_id").html())) ||
-
-							(assign_max_id != parent.frames["navigation"].$("#div_assign_max_id").html()) ||
-
-							(action_updated != parent.frames["navigation"].$("#div_action_updated").html())*/
 							(unit_id != get_infos_array['units_status']['id']) ||
 							((unit_updated != get_infos_array['units_status']['update']) &&
 							(unit_id == get_infos_array['units_status']['id'])) ||
@@ -659,7 +604,6 @@ default:
 							(assign_max_id != get_infos_array['assign']['id_max']) ||
 
 							(action_updated != get_infos_array['action']['update'])
-							//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
@@ -673,27 +617,6 @@ default:
 				}
 				refresh_latest_infos();
 			}
-
-/*			function start_polling() {
-				watch_val = window.setInterval("do_watch();", <?php print $auto_poll_time * 100;?>);
-			}
-
-			function start_watch() {
-				refresh_latest_infos();
-			<?php
-				if ($auto_refresh_time != 0) {
-			?>
-				window.setTimeout(start_polling(), <?php print $auto_refresh_time * 100;?>);
-			<?php
-				}
-			?>
-			}
-
-			function end_watch() {
-				if (watch_val) {
-					window.clearInterval(watch_val);
-				}
-			}*/
 
 			$(document).ready(function() {
 				$("#problemstart").datetimepicker({
@@ -716,31 +639,23 @@ default:
 				});
 
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				//get_units();
-				//get_actions();
-				//start_polling();
 				<?php show_prevent_browser_back_button();?>
-				//======================================
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) { 
 						get_units();
 						get_actions();
-						//start_polling();
 						refresh_latest_infos();
 						$("#screen_id").val(get_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
 					do_watch();
-					// can message back using event.source.postMessage(...)
 				});
-				//======================================
 			});
 
 		</script>
 	</head>
-<!-- <body onload="check_frames();" onunload="end_watch();"> -->
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">

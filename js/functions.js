@@ -60,17 +60,14 @@ function set_unit_status(unit, status, message) {
 	var url = "set_data.php?" + querystr;
 	
 	$.get(url, function(data) {
-		}) 
-		.done(function() {
-			//======================================
-			//parent.frames["navigation"].show_message(message, "success");
-			var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			get_units();
-			//======================================
-		})
-		.fail(function() {
-			alert("error");
+	}) 
+	.done(function() {
+		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
+		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		get_units();
+	})
+	.fail(function() {
+		alert("error");
 	});
 }
 
@@ -84,17 +81,14 @@ function set_facility_status(fac, status, message) {
 	var url = "set_data.php?" + querystr;
 	
 	$.get(url, function(data) {
-		}) 
-		.done(function() {
-			//======================================
-			//parent.frames["navigation"].show_message(message, "success");
-			var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			get_facilities();
-			//======================================
-		})
-		.fail(function() {
-			alert("error");
+	}) 
+	.done(function() {
+		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
+		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		get_facilities();
+	})
+	.fail(function() {
+		alert("error");
 	});
 }
 
@@ -188,12 +182,9 @@ function do_send_message(select, targets_ids, ticket_id) {
 		break;
 	default:
 	}
-	//======================================
-	//parent.frames["main"].window.location.href = "communication.php?" + parameters;
 	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
 	changes_data = JSON.stringify(changes_data);
 	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	//======================================
 }
 
 function do_severity_protocol(index) {
@@ -324,10 +315,7 @@ function install_default_csv_file(result) {
 		$.post("import.php", "function=" + import_type + "&filename=" + import_file)
 		.done(function(data) {
 			var get_infos_array = JSON.parse(data);
-			//======================================
-			//parent.frames["main"].window.location.href = window.location.href.replace( /[\?#].*|$/, "/configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
 			window.location.href = window.location.href.replace( /[\?#].*|$/, "/configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
-			//======================================
 		})
 		.fail(function() {alert("error");});
 	} else {
@@ -563,10 +551,7 @@ function cancel_button(set_url, set_ticket_id) {
 	if (set_url.valueOf() != "") {
 		url = set_url;
 	}
-	//======================================
-	//url = url + "?screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
 	url = url + "?screen_id=" + get_infos_array['screen']['screen_id'];
-	//======================================
 	if (set_ticket_id.valueOf() != "") {
 		url = url + "&ticket_id=" + set_ticket_id;
 	}
@@ -582,11 +567,8 @@ function do_api_connection_test(periodic, done_message) {
 		}) 
 		.done(function() {
 			if (!periodic) {
-				//======================================
-				//parent.frames["navigation"].show_message(done_message, "info");
 				var changes_data ='{"type":"message","item":"info","action":"' + done_message + '"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				//======================================
 			}
 		})
 		.fail(function() {

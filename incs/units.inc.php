@@ -534,11 +534,8 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 					$.post("set_data.php", "function=assign_reset&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 					})
 					.done(function() {
-						//======================================
-						//parent.frames["navigation"].show_message("<?php print get_text("Assign calls deleted");?>", "success");
 						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						//======================================
 						get_units();
 						hide_infobox_large();
 					})
@@ -562,11 +559,8 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			$.post("set_data.php", "function=assign_delete&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 			})
 			.done(function() {
-				//======================================
-				//parent.frames["navigation"].show_message("<?php print get_text("Assign deleted");?>", "success");
 				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				//======================================
 				get_units();
 				hide_infobox_large();
 			})
@@ -607,14 +601,6 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			e.preventDefault();
 			x = e.clientX;
 			y = e.clientY;
-			//======================================
-			/*y_max = parent.frames["main"].window.innerHeight;
-			y_abs = y + parent.frames["main"].window.pageYOffset;
-			y_abs_max = document.documentElement.scrollHeight;
-			y_oldPageOffset = parent.frames["main"].window.pageYOffset;
-			menue_margin = 10;
-			menue_height = $("#kontext_menue").outerHeight() + menue_margin;
-			if ((x + 10 + $("#kontext_menue").outerWidth()) > parent.frames["main"].window.innerWidth) {*/
 			y_max = window.innerHeight;
 			y_abs = y + window.pageYOffset;
 			y_abs_max = document.documentElement.scrollHeight;
@@ -622,7 +608,6 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			menue_margin = 10;
 			menue_height = $("#kontext_menue").outerHeight() + menue_margin;
 			if ((x + 10 + $("#kontext_menue").outerWidth()) > window.innerWidth) {
-			//======================================
 				x = x - $("#kontext_menue").outerWidth();
 			}
 			if ((y + menue_height) > y_max) {
@@ -685,14 +670,6 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			e.preventDefault();
 			x = e.clientX;
 			y = e.clientY;
-			//======================================
-			/*y_max = parent.frames["main"].window.innerHeight;
-			y_abs = y + parent.frames["main"].window.pageYOffset;
-			y_abs_max = document.documentElement.scrollHeight;
-			y_oldPageOffset = parent.frames["main"].window.pageYOffset;
-			menue_margin = 10;
-			menue_height = $("#unit_status_menue").outerHeight() + menue_margin;
-			if ((x + 10 + $("#unit_status_menue").outerWidth()) > parent.frames["main"].window.innerWidth) {*/
 			y_max = window.innerHeight;
 			y_abs = y + window.pageYOffset;
 			y_abs_max = document.documentElement.scrollHeight;
@@ -700,7 +677,6 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			menue_margin = 10;
 			menue_height = $("#unit_status_menue").outerHeight() + menue_margin;
 			if ((x + 10 + $("#unit_status_menue").outerWidth()) > window.innerWidth) {
-			//======================================
 				x = x - $("#unit_status_menue").outerWidth();
 			}
 			if ((y + menue_height) > y_max) {
@@ -761,10 +737,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				hide_kontext_menue();
 			} else {
 				menue_hide_locked = true;
-				//======================================
-				//y_newPageOffset = parent.frames["main"].window.pageYOffset;
 				y_newPageOffset = window.pageYOffset;
-				//======================================
 				y = y + (y_oldPageOffset - y_newPageOffset);
 				y_oldPageOffset = y_newPageOffset;
 				$("#kontext_menue").css("top", y);
@@ -775,10 +748,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				hide_kontext_menue();
 			} else {
 				menue_hide_locked = true;
-				//======================================
-				//y_newPageOffset = parent.frames["main"].window.pageYOffset;
 				y_newPageOffset = window.pageYOffset;
-				//======================================
 				y = y + (y_oldPageOffset - y_newPageOffset);
 				y_oldPageOffset = y_newPageOffset;
 				$("#unit_status_menue").css("top", y);
@@ -854,15 +824,10 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		if (query_part_str.valueOf() != "") {
 			$.post("set_data.php", "function=call_progression&assign_id=" + assign_id + query_part_str, function(data) {
 				if (data) {
-					//======================================
-					//parent.frames["main"].window.location.href = data;
 					window.location.href = data;
-					//======================================
 				}
 			})
 			.done(function() {
-				//======================================
-				/*parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");*/
 				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			})
@@ -875,19 +840,15 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 	function unit_status_select(unit_id, status_id) {
 		hide_kontext_menue();
 		$.get("set_data.php", "function=unit_status&frm_unit_id=" + unit_id + "&frm_status_id=" + status_id, function(data) {
-			})
-			.done(function() {
-				//======================================
-				/*parent.frames["navigation"].show_message("<?php print get_text("Status update applied");?>", "success");
-				parent.frames["main"].get_units();*/
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				get_units();
-				//======================================
-			})
-			.fail(function() {
-				alert("error");
-			});
+		})
+		.done(function() {
+			var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			get_units();
+		})
+		.fail(function() {
+			alert("error");
+		});
 	}
 
 </script>

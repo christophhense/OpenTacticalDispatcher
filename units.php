@@ -220,14 +220,10 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			try {
-				//======================================
-				/*parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("units");*/
 				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				//======================================
 			} catch(e) {
 			}
 
@@ -301,11 +297,8 @@ default:
 
 			function copy_unit() {
 				$("#function").val("add");
-				//======================================
-				//parent.frames["navigation"].show_message("<?php print get_text("Copied");?>", "success");
 				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				//======================================
 				$("#edit_form").submit();
 			}
 
@@ -316,11 +309,8 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							//======================================
-							//parent.frames["navigation"].show_message("<?php print get_text("Saved and copied");?>", "success");
 							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							//======================================
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -333,11 +323,8 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							//======================================
-							//parent.frames["navigation"].show_message("<?php print get_text("Saved and copied");?>", "success");
 							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							//======================================
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -832,11 +819,8 @@ default:
 	?>
 		<script>
 	<?php if ($caption) { ?>
-			//======================================
-			//parent.frames["navigation"].show_message("<?php print $caption;?>", "success");
 			var changes_data ='{"type":"message","item":"success","action":"<?php print $caption;?>"}';
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			//======================================
 	<?php } ?>
 
 			function edit_assign(assign_id) {
@@ -858,27 +842,6 @@ default:
 
 			function refresh_latest_infos_units() {
 				try {
-					//======================================
-					/*$("#div_ticket_latest_id").html(parent.frames["navigation"].$("#div_ticket_latest_id").html());
-					$("#div_ticket_changed_id").html(parent.frames["navigation"].$("#div_ticket_changed_id").html());
-					$("#div_ticket_updated").html(parent.frames["navigation"].$("#div_ticket_updated").html());
-					$("#div_ticket_user").html(parent.frames["navigation"].$("#div_ticket_user").html());
-
-					$("#div_unit_id").html(parent.frames["navigation"].$("#div_unit_id").html());
-					$("#div_unit_updated").html(parent.frames["navigation"].$("#div_unit_updated").html());
-					$("#div_unit_user").html(parent.frames["navigation"].$("#div_unit_user").html());
-
-					$("#div_unit_callprogress_id").html(parent.frames["navigation"].$("#div_unit_callprogress_id").html());
-					$("#div_unit_callprogress_updated").html(parent.frames["navigation"].$("#div_unit_callprogress_updated").html());
-					$("#div_unit_callprogress_user").html(parent.frames["navigation"].$("#div_unit_callprogress_user").html());
-
-					$("#div_assign_max_id").html(parent.frames["navigation"].$("#div_assign_max_id").html());
-					$("#div_assign_quantity").html(parent.frames["navigation"].$("#div_assign_quantity").html());
-					$("#div_assign_updated").html(parent.frames["navigation"].$("#div_assign_updated").html());
-					$("#div_assign_user").html(parent.frames["navigation"].$("#div_assign_user").html());
-
-					$("#div_scheduled").html(parent.frames["navigation"].$("#div_scheduled").html());*/
-
 					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max']);
 					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
 					$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
@@ -898,7 +861,6 @@ default:
 					$("#div_assign_user").html(get_infos_array['assign']['user']);
 
 					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
-					//======================================
 					if ($("#div_scheduled").text() == "") {
 						$("#div_scheduled").text(0);
 					}
@@ -907,36 +869,6 @@ default:
 			}
 
 			function do_watch() {
-				//======================================
-				/*if (parent.frames["navigation"].$("#div_user_id").html() != 0) {
-					try {
-						if (
-							((
-								($("#div_ticket_latest_id").html() != parent.frames["navigation"].$("#div_ticket_latest_id").html()) ||
-								($("#div_ticket_changed_id").html() != parent.frames["navigation"].$("#div_ticket_changed_id").html()) ||
-								($("#div_ticket_updated").html() != parent.frames["navigation"].$("#div_ticket_updated").html()) ||
-								($("#div_scheduled").html() != parent.frames["navigation"].$("#div_scheduled").html()) ||
-								($("#div_action_updated").html() != parent.frames["navigation"].$("#div_action_updated").html())
-							) && (
-								(parent.frames["navigation"].$("#div_ticket_user").html() != parent.frames["navigation"].$("#div_user_id").html())
-							)) || (
-								($("#div_assign_quantity").html() != parent.frames["navigation"].$("#div_assign_quantity").html())
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-						}
-						if (
-							($("#div_unit_id").html() != parent.frames["navigation"].$("#div_unit_id").html()) ||
-							(($("#div_unit_updated").html() != parent.frames["navigation"].$("#div_unit_updated").html()) &&
-							($("#div_unit_id").html() == parent.frames["navigation"].$("#div_unit_id").html())) ||
-
-							($("#div_unit_callprogress_id").html() != parent.frames["navigation"].$("#div_unit_callprogress_id").html()) ||
-							(($("#div_unit_callprogress_updated").html() != parent.frames["navigation"].$("#div_unit_callprogress_updated").html()) &&
-							($("#div_unit_callprogress_id").html() == parent.frames["navigation"].$("#div_unit_callprogress_id").html())) ||
-
-							($("#div_assign_max_id").html() != parent.frames["navigation"].$("#div_assign_max_id").html())*/
 				if (get_infos_array['user']['id'] != 0) {
 					try {
 						if (
@@ -966,44 +898,19 @@ default:
 							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
 
 							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max'])
-				//======================================
 						) {
 							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
 							}
 							get_units();
-							//======================================
-							//parent.frames["navigation"].highlight_button("situation", true)
 							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							//======================================
 						}
 					} catch (e) {
 					}
 				}
 				refresh_latest_infos_units();
 			}
-
-/*			function start_polling() {
-				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
-			}
-
-			function start_watch() {
-				refresh_latest_infos_units();
-	<?php
-		if ($auto_refresh_time != 0) {
-	?>	
-				window.setTimeout(start_polling(), <?php print $auto_refresh_time * 100;?>);
-	<?php
-		}
-	?>
-			}
-
-			function end_watch() {
-				if (watch_val) {
-					window.clearInterval(watch_val);
-				}
-			}*/
 
 			function do_sort_units(sort_order) {
 				$.get("units.php?function=sort&order=" + sort_order)
@@ -1014,10 +921,8 @@ default:
 
 			$(document).ready(function() {
 				get_units();
-				//start_watch();
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
-				//======================================
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
@@ -1027,14 +932,11 @@ default:
 						change_situation_first_set = 1;
 					}
 					do_watch();
-					// can message back using event.source.postMessage(...)
 				});
-				//======================================
 			});
 
 		</script>
 	</head>
-<!-- 	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();"> -->
 	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');"">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>

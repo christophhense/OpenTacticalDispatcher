@@ -167,7 +167,6 @@ foreach ($sound_names_array as $value) {
 
 			function watch_latest_infos(data) {
 				var get_infos_array = JSON.parse(data);
-				//======================================
 				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
 				get_infos_array.parked_form_data = {"ticket_add_form_data":ticket_add_form_data, 
 					"ticket_add_timestamp":ticket_add_timestamp, 
@@ -179,18 +178,12 @@ foreach ($sound_names_array as $value) {
 					"log_report_form_data":log_report_form_data, 
 					"log_report_timestamp":log_report_timestamp};
 					data_additional = JSON.stringify(get_infos_array);
-					//console.log(get_infos_array);
 				window.parent.main.postMessage(data_additional, window.location.origin);
 				try {
 					window.parent.callboard.postMessage(data_additional, window.location.origin);
 				} catch(e) {
 				}
-				//======================================
 				var first_screen = get_infos_array['screen']['first_screen'];
-				/*if ((get_infos_array['screen']['date_time'].valueOf() != "") && (get_infos_array['user']['id'] == 0)) {
-					parent.frames["main"].$("#time_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_only_format;?>") + " <?php print get_text("o'clock");?>");
-					parent.frames["main"].$("#date_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_only_format;?>"));	
-				}*/
 				if (get_infos_array['user']['id'] != 0) {
 					var get_infos_array = JSON.parse(data);
 					if (first_screen.valueOf() == "on") {
@@ -500,22 +493,16 @@ foreach ($sound_names_array as $value) {
 				if ($("#show_hide_callboard").val() == 0) {
 					change_class("callboard", "btn btn-xs btn-primary");
 					try {
-						//======================================
-						//parent.frames["callboard"].show_callboard();
 						parent.document.getElementById("callboard").style.height = "<?php print get_callboard_height();?>" + "px";
 						parent.window.setIframeHeight();
-						//======================================
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(1);
 				} else {
 					change_class("callboard", "btn btn-xs btn-default");
 					try {
-						//======================================
-						//parent.frames["callboard"].hide_callboard();
 						parent.document.getElementById("callboard").style.height = "0px";
 						parent.window.setIframeHeight();
-						//======================================
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(0);
@@ -767,11 +754,9 @@ foreach ($sound_names_array as $value) {
 
 			$(document).ready(function() {
 				parent.window.setIframeHeight();
-				//======================================
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_changes_array = JSON.parse(event.data);
-					//console.log(get_changes_array);
 					switch (get_changes_array["type"]) {
 					case "button":
 						switch (get_changes_array["action"]) {
@@ -855,9 +840,7 @@ foreach ($sound_names_array as $value) {
 					default:
 					}
 					get_changes_array = "undefined";
-					// can message back using event.source.postMessage(...)
 				});
-				//======================================
 			});
 
 			function show_situation() {
