@@ -104,62 +104,65 @@ foreach ($sound_names_array as $value) {
 
 			function get_reload_flags(input_array) {
 				var reload_tickets_flag = false;
-				if (
-					((
-						(last_infos_array['ticket']['id_max'] != input_array['ticket']['id_max']) ||
-						(last_infos_array['ticket']['id_changed'] != input_array['ticket']['id_changed']) ||
-						(last_infos_array['ticket']['update'] != input_array['ticket']['update']) ||
-						(last_infos_array['ticket']['scheduled'] != input_array['ticket']['scheduled']) ||
-						(last_infos_array['action']['update'] != input_array['action']['update'])
-					)) || (
-						(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
-					)
-				) {
-					if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-						show_assigns(current_unit_id);
-					}
-					reload_tickets_flag = true;
-				}
 				var reload_communication_flag = false;
-				if (
-					(last_infos_array['requests']['silent'] != input_array['requests']['silent']) ||
-					(last_infos_array['requests']['message'] != input_array['requests']['message']) ||
-					(last_infos_array['requests']['warn_text'] != input_array['requests']['warn_text']) ||
-					(last_infos_array['requests']['auto_ticket'] != input_array['requests']['auto_ticket']) ||
-					(last_infos_array['requests']['normal'] != input_array['requests']['normal']) ||
-					(last_infos_array['requests']['emergency_low'] != input_array['requests']['emergency_low']) ||
-					(last_infos_array['requests']['emergency_high'] != input_array['requests']['emergency_high'])
-				) {
-					reload_communication_flag = true;
-				}
 				var reload_units_flag = false;
-				if (
-					(last_infos_array['units_status']['id'] != input_array['units_status']['id']) ||
-					((last_infos_array['units_status']['update'] != input_array['units_status']['update']) &&
-					(last_infos_array['units_status']['id'] == input_array['units_status']['id'])) ||
-
-					(last_infos_array['call_progression']['id'] != input_array['call_progression']['id']) ||
-					((last_infos_array['call_progression']['update'] != input_array['call_progression']['update']) &&
-					(last_infos_array['call_progression']['id'] == input_array['call_progression']['id'])) ||
-
-					(last_infos_array['assign']['id_max'] != input_array['assign']['id_max']) ||
-					(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
-				) {
-					if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-						show_assigns(current_unit_id);
-					}
-					reload_units_flag = true;
-				}
 				var reload_facilities_flag = false;
-				if (
-					(last_infos_array['facilities_status']['id'] != input_array['facilities_status']['id']) ||
-					(last_infos_array['facilities_status']['update'] != input_array['facilities_status']['update'])
-				) {
-					reload_facilities_flag = true;
-				}
 				var reload_log_flag = false;
-				if (last_infos_array['log']['id'] != input_array['log']['id']) {
-					reload_log_flag = true;
+				try {
+					if (
+						((
+							(last_infos_array['ticket']['id_max'] != input_array['ticket']['id_max']) ||
+							(last_infos_array['ticket']['id_changed'] != input_array['ticket']['id_changed']) ||
+							(last_infos_array['ticket']['update'] != input_array['ticket']['update']) ||
+							(last_infos_array['ticket']['scheduled'] != input_array['ticket']['scheduled']) ||
+							(last_infos_array['action']['update'] != input_array['action']['update'])
+						)) || (
+							(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
+						)
+					) {
+						if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
+						reload_tickets_flag = true;
+					}
+					if (
+						(last_infos_array['requests']['silent'] != input_array['requests']['silent']) ||
+						(last_infos_array['requests']['message'] != input_array['requests']['message']) ||
+						(last_infos_array['requests']['warn_text'] != input_array['requests']['warn_text']) ||
+						(last_infos_array['requests']['auto_ticket'] != input_array['requests']['auto_ticket']) ||
+						(last_infos_array['requests']['normal'] != input_array['requests']['normal']) ||
+						(last_infos_array['requests']['emergency_low'] != input_array['requests']['emergency_low']) ||
+						(last_infos_array['requests']['emergency_high'] != input_array['requests']['emergency_high'])
+					) {
+						reload_communication_flag = true;
+					}
+					if (
+						(last_infos_array['units_status']['id'] != input_array['units_status']['id']) ||
+						((last_infos_array['units_status']['update'] != input_array['units_status']['update']) &&
+						(last_infos_array['units_status']['id'] == input_array['units_status']['id'])) ||
+	
+						(last_infos_array['call_progression']['id'] != input_array['call_progression']['id']) ||
+						((last_infos_array['call_progression']['update'] != input_array['call_progression']['update']) &&
+						(last_infos_array['call_progression']['id'] == input_array['call_progression']['id'])) ||
+	
+						(last_infos_array['assign']['id_max'] != input_array['assign']['id_max']) ||
+						(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
+					) {
+						if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
+						reload_units_flag = true;
+					}
+					if (
+						(last_infos_array['facilities_status']['id'] != input_array['facilities_status']['id']) ||
+						(last_infos_array['facilities_status']['update'] != input_array['facilities_status']['update'])
+					) {
+						reload_facilities_flag = true;
+					}
+					if (last_infos_array['log']['id'] != input_array['log']['id']) {
+						reload_log_flag = true;
+					}
+				} catch (e) {
 				}
 				return {"tickets":reload_tickets_flag, 
 					"communication":reload_communication_flag, 
@@ -246,7 +249,6 @@ foreach ($sound_names_array as $value) {
 					"action_timestamp":action_timestamp, 
 					"log_report_form_data":log_report_form_data, 
 					"log_report_timestamp":log_report_timestamp};
-				console.log(get_infos_array['reload_flags']);
 					data_additional = JSON.stringify(get_infos_array);
 				window.parent.main.postMessage(data_additional, window.location.origin);
 				try {

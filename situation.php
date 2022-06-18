@@ -152,11 +152,6 @@ default:
 	if ((!($get_id)) && ((get_num_groups()) && (count(get_allocates($GLOBALS['TYPE_USER'], $_SESSION['user_id'])) > 1))) {
 		$set_regions_control = "set_regions_control('" . get_num_groups() . "');";
 	}
-	if (ini_get("display_errors") == true) {
-		$display_str = "inline";
-	} else {
-		$display_str = "none";
-	}
 	?>
 <!DOCTYPE html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -260,88 +255,6 @@ default:
 				$.get("situation.php?function=table_right&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
 					$("#table_right").html(data);
 				});
-			}
-
-			var watch_val;
-
-			function refresh_latest_infos_main() {
-				try {
-					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max']);
-					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
-					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
-					if ($("#div_scheduled").text() == "") {
-						$("#div_scheduled").text(0);
-					}
-					$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
-					$("#div_ticket_user").html(get_infos_array['ticket']['user']);
-
-					$("#div_unit_id").html(get_infos_array['units_status']['id']);
-					$("#div_unit_updated").html(get_infos_array['units_status']['update']);
-					$("#div_unit_user").html(get_infos_array['units_status']['user']);
-
-					$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
-					$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
-					$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
-
-					$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
-					$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-					$("#div_assign_updated").html(get_infos_array['assign']['update']);
-					$("#div_assign_user").html(get_infos_array['assign']['user']);
-
-					$("#div_action_updated").html(get_infos_array['action']['update']);
-					$("#div_requests").html(get_infos_array['requests']['normal']);
-				} catch(e) {
-					console.log(e);
-				}
-			}
-
-			function do_watch() {
-				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
-					try {
-						if (
-							((
-								($("#div_ticket_latest_id").html() != get_infos_array['ticket']['id_max']) ||
-								($("#div_ticket_changed_id").html() != get_infos_array['ticket']['id_changed']) ||
-								($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
-								($("#div_scheduled").html() != get_infos_array['ticket']['scheduled']) ||
-								($("#div_action_updated").html() != get_infos_array['action']['update'])
-							)) || (
-								($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_tickets();
-							get_infostring();
-							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-						if (
-							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
-							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
-							($("#div_unit_id").html() == get_infos_array['units_status']['id'])) ||
-
-							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
-							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
-							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
-
-							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
-							($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_units();
-							get_infostring();
-							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					} catch (e) {
-						console.log(e);
-					}
-				}
-				refresh_latest_infos_main();
 			}
 
 			function closed_interval_changed() {
@@ -497,10 +410,21 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
 						change_situation("<?php print $current_situation_type;?>");
-						refresh_latest_infos_main();
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					console.log(get_infos_array['reload_flags']);
+					if (get_infos_array['reload_flags']['tickets']) {
+						get_tickets();
+						get_infostring();
+						var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					}
+					if (get_infos_array['reload_flags']['units']) {
+						get_units();
+						get_infostring();
+						var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					}
 				});
 			});
 
@@ -508,43 +432,6 @@ default:
 	</head>
 	<body onload="check_frames(); <?php print $set_regions_control;?> location.href='#top';" onunload="end_blink();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-
-		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>
-		<div id="div_ticket_latest_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_changed_id" style="display:<?php print $display_str;?>;">changed_id: </div>
-		<div id="div_ticket_changed_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_ticket_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_ticket_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_id" style="display:<?php print $display_str;?>;">| unit id: </div>
-		<div id="div_unit_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_callprogress_id" style="display:<?php print $display_str;?>;">| callprogress unit_id: </div>
-		<div id="div_unit_callprogress_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_callprogress_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_callprogress_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_assign_max_id" style="display:<?php print $display_str;?>;">| assign max_id: </div>
-		<div id="div_assign_max_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_quanity" style="display:<?php print $display_str;?>;"> quanity: </div>
-		<div id="div_assign_quantity" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_updated" style="display:<?php print $display_str;?>;"> updated: </div>
-		<div id="div_assign_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_user" style="display:<?php print $display_str;?>;"> user: </div>
-		<div id="div_assign_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="div_action_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="div_requests" style="display:<?php print $display_str;?>;"></div>
-		<div id="div_scheduled" style="display:<?php print $display_str;?>;"></div>
-
 		<div class="container-fluid" id="main_container">
 			<div class="row" style="height: 45px;">
 				<div class="col-md-1"></div>
