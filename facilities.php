@@ -760,7 +760,6 @@ default:
 				});
 			}
 
-//			var watch_val;
 			var facility_id;
 			var facility_updated;
 			var facility_user;
