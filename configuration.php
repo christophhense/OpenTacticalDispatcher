@@ -4272,14 +4272,14 @@ case "updates":
 		$release_list_array[$next_update][VERSION] = $release_list_array[$next_update][ZIP_LINK] = $release_list_array[$next_update][MD5SUM] = "";
 		if (!(array_key_exists(1, $release_list_array)) || ($release_list_array[1][VERSION] != "false")) {
 			foreach ($release_list_array as $key => $value) {
-				if ($release_list_array[$key][VERSION] >= get_variable("_version")) {
-					if ($release_list_array[$key][VERSION] > get_variable("_version")) {
+				if ($release_list_array[$key][VERSION] >= get_version()) {
+					if ($release_list_array[$key][VERSION] > get_version()) {
 						$new_updates = true;
 						if ($next_update == -1) {
 							$next_update = $key;
 						}
 					}
-					if ($release_list_array[$key][VERSION] == get_variable("_version")) {
+					if ($release_list_array[$key][VERSION] == get_version()) {
 						if ($current_version == -1) {
 							$current_version = $key;
 						}
@@ -4687,7 +4687,7 @@ case "updates":
 								
 									<tr>
 										<th style="width: 25%;"><?php print get_text("Current version") . ": ";?></th>
-										<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_variable("_version") . $click_to_show_current_release_notes_str;?></td>
+										<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_version() . $click_to_show_current_release_notes_str;?></td>
 									</tr>
 	<?php
 		if ($new_updates) {

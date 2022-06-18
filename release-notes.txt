@@ -68,7 +68,8 @@ Activities sorted by application function.
 * Settings - user accounts - new
 	NONE
 * Settings - user accounts - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - general - notification sounds
 	NONE
 * Settings - general - General Settings
@@ -80,7 +81,8 @@ Activities sorted by application function.
 * Settings - general - fixmessage
 	NONE
 * Settings - general - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - facilities - put on the same status
 	NONE
 * Settings - facilities - categorie
@@ -88,7 +90,8 @@ Activities sorted by application function.
 * Settings - facilities - status
 	NONE
 * Settings - facilities - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - units - put on the same status
 	NONE
 * Settings - units - categorie
@@ -98,13 +101,15 @@ Activities sorted by application function.
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - incident types - incident types
 	NONE
 * Settings - incident types - default incident types
 	NONE
 * Settings - incident types - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - textblocks - synopsis
 	NONE
 * Settings - textblocks - comments
@@ -122,24 +127,29 @@ Activities sorted by application function.
 * Settings - textblocks - default-textblocks
 	NONE
 * Settings - textblocks - in-/export
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - captions and hints - captions
 	NONE
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-	NONE
+		CHANGE
+		Get current version from programmcode
 * Settings - database and updates - optimize
 	NONE
 * Settings - database and updates - reset
 	NONE
 * Settings - database and updates - updates
-	NONE
+	CHANGE
+		Get current version from programmcode
 * Settings - system information
 	NONE
 * Installation
-	NONE
+		CHANGE
+		Get current version from programmcode
 * Configuration wizard
-	NONE
+		CHANGE
+		Get current version from programmcode
 * Program code and miscellaneous
 	NONE

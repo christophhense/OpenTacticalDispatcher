@@ -677,7 +677,7 @@ function do_api_connection($api_type = "api", $source = "", $destination = "", $
 			$request  = "GET " . $url . " HTTP/1.1\r\n";
 			$request .= "Host: " . $host . "\r\n";
 			$request .= "User-Agent: OpenTacticalDispatcher (" . php_uname() . "; ";
-			$request .= get_variable("_locale") . "; rv: " . get_variable("_version") . ")\r\n";	
+			$request .= get_variable("_locale") . "; rv: " . get_version() . ")\r\n";	
 			$request .= "Connection: Close\r\n\r\n";
 			fwrite($socket, $request);
 			while (!feof($socket)) {

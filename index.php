@@ -71,7 +71,7 @@ if (((count_units_and_facilities_and_users() == 0) && (($first_start == "yes") |
 			<div class="row">
 				<div class="col-md-1"></div>
 				<div class="col-md-10">
-					<?php print get_variable("_version");?>
+					<?php print get_version();?>
 				</div>
 				<div class="col-md-1"></div>
 			</div>
