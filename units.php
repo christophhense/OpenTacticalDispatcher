@@ -811,11 +811,6 @@ default:
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
 	$auto_refresh_time = trim($auto_poll_settings[1]);
-	if (ini_get("display_errors") == true) {
-		$display_str = "inline";
-	} else {
-		$display_str = "none";
-	}
 	?>
 		<script>
 	<?php if ($caption) { ?>

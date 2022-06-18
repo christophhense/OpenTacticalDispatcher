@@ -311,7 +311,7 @@ if (is_operator() || is_admin() || is_super()) {
 					</div>
 				</form>
 				<div class="col-md-1"></div>
-		    </div>
+			</div>
 		</div>
 	</body>
 </html>
@@ -322,11 +322,6 @@ if (is_operator() || is_admin() || is_super()) {
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
 		$auto_refresh_time = trim($auto_poll_settings[1]);
-		if (ini_get("display_errors") == true) {
-			$display_str = "inline";
-		} else {
-			$display_str = "none";
-		}
 	?>
 		<script>
 			var select_ticket_api_log_id = 0;
@@ -336,41 +331,6 @@ if (is_operator() || is_admin() || is_super()) {
 				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch(e) {
-			}
-
-			function refresh_latest_infos_communication() {
-				try {
-					$("#div_silent_requests").html(get_infos_array['requests']['silent']);
-					$("#div_message").html(get_infos_array['requests']['message']);
-					$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
-					$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
-					$("#div_requests").html(get_infos_array['requests']['normal']);
-					$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
-					$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
-				} catch(e) {
-				}
-			}
-
-			function do_watch() {
-				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
-					try {
-						if (
-							($("#div_silent_requests").html() != get_infos_array['requests']['silent']) ||
-							($("#div_message").html() != get_infos_array['requests']['message']) ||
-							($("#div_warn_text").html() != get_infos_array['requests']['warn_text']) ||
-							($("#div_auto_ticket").html() != get_infos_array['requests']['auto_ticket']) ||
-							($("#div_requests").html() != get_infos_array['requests']['normal']) ||
-							($("#div_emergency_requests_low").html() != get_infos_array['requests']['emergency_low']) ||
-							($("#div_emergency_requests_high").html() != get_infos_array['requests']['emergency_high'])
-						) {
-							load_content();
-							var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					} catch (e) {
-					}
-				}
-				refresh_latest_infos_communication();
 			}
 
 			function load_content() {
@@ -516,18 +476,17 @@ if (is_operator() || is_admin() || is_super()) {
 			}
 
 			$(document).ready(function() {
+				load_content();
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
+					if (get_infos_array['reload_flags']['communication']) {
 						load_content();
-						refresh_latest_infos_communication();
-						change_situation_first_set = 1;
+						var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
-					do_watch();
 				});
 			});
 
@@ -535,20 +494,6 @@ if (is_operator() || is_admin() || is_super()) {
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div style="display: <?php print $display_str;?>;"> requests silent: </div>
-		<div id="div_silent_requests" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| message: </div>
-		<div id="div_message" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">|warn-text: </div>
-		<div id="div_warn_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| auto-ticket: </div>
-		<div id="div_auto_ticket" style="display: <?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;">| normal: </div>
-		<div id="div_requests" style="display:<?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;"> | emergency_requests_low: </div>
-		<div id="div_emergency_requests_low" style="display:<?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;"> | emergency_requests_high: </div>
-		<div id="div_emergency_requests_high" style="display:<?php print $display_str;?>;"></div>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">
 				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">

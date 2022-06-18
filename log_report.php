@@ -171,18 +171,7 @@ default:
 				}
 			}
 
-			var log;
-
 			function do_watch() {
-				try {
-					if (get_infos_array['log']['id'] != 0) {
-						if (log != get_infos_array['log']['id']) {
-							load_content();
-							log = get_infos_array['log']['id'];
-						}
-					}
-				} catch (e) {
-				}
 				try {
 					if ($("#frm_comment").val().trim().length > 0 && $("#frm_comment").val().length > parking_form_data_min_trigger_chars && parking_form_data_min_trigger_chars != 0) {
 						var new_form_data = $("#log_form").serializeArray();
@@ -205,9 +194,11 @@ default:
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
-						log = get_infos_array['log']['id'];
 						get_parked_form_data();
 						change_situation_first_set = 1;
+					}
+					if (get_infos_array['reload_flags']['log']) {
+						load_content();
 					}
 					do_watch();
 				});
