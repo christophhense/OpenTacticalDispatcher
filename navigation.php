@@ -1,7 +1,8 @@
 <?php
 error_reporting(E_ALL);
-require_once ("./incs/functions.inc.php");
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
+require_once ("./incs/functions.inc.php");
 
 if (ini_get("display_errors") == true) {
 	$auto_poll_time = 50;
@@ -166,11 +167,23 @@ foreach ($sound_names_array as $value) {
 
 			function watch_latest_infos(data) {
 				var get_infos_array = JSON.parse(data);
-				var first_screen = get_infos_array['screen']['first_screen'];
-				if ((get_infos_array['screen']['date_time'].valueOf() != "") && (get_infos_array['user']['id'] == 0)) {
-					parent.frames["main"].$("#time_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_only_format;?>") + " <?php print get_text("o'clock");?>");
-					parent.frames["main"].$("#date_of_day").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_only_format;?>"));	
+				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
+				get_infos_array.parked_form_data = {"ticket_add_form_data":ticket_add_form_data, 
+					"ticket_add_timestamp":ticket_add_timestamp, 
+					"ticket_add_ticket_id":ticket_add_ticket_id, 
+					"ticket_close_form_data":ticket_close_form_data, 
+					"ticket_close_timestamp":ticket_close_timestamp, 
+					"action_form_data":action_form_data, 
+					"action_timestamp":action_timestamp, 
+					"log_report_form_data":log_report_form_data, 
+					"log_report_timestamp":log_report_timestamp};
+					data_additional = JSON.stringify(get_infos_array);
+				window.parent.main.postMessage(data_additional, window.location.origin);
+				try {
+					window.parent.callboard.postMessage(data_additional, window.location.origin);
+				} catch(e) {
 				}
+				var first_screen = get_infos_array['screen']['first_screen'];
 				if (get_infos_array['user']['id'] != 0) {
 					var get_infos_array = JSON.parse(data);
 					if (first_screen.valueOf() == "on") {
@@ -184,8 +197,8 @@ foreach ($sound_names_array as $value) {
 							format("<?php print $moment_date_only_format . " " . $moment_time_only_format;?>") +
 							" <?php print get_text("o'clock");?>"
 						);
-						parent.frames["navigation"].$("#div_server_time").html(get_infos_array['screen']['date_time']);
-						parent.frames["navigation"].$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						$("#div_server_time").html(get_infos_array['screen']['date_time']);
+						$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
 					}
 					if (
 						(($("#div_api_host_available").html() != get_infos_array['api']['api_host_available']) ||
@@ -480,14 +493,16 @@ foreach ($sound_names_array as $value) {
 				if ($("#show_hide_callboard").val() == 0) {
 					change_class("callboard", "btn btn-xs btn-primary");
 					try {
-						parent.frames["callboard"].show_callboard();
+						parent.document.getElementById("callboard").style.height = "<?php print get_callboard_height();?>" + "px";
+						parent.window.setIframeHeight();
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(1);
 				} else {
 					change_class("callboard", "btn btn-xs btn-default");
 					try {
-						parent.frames["callboard"].hide_callboard();
+						parent.document.getElementById("callboard").style.height = "0px";
+						parent.window.setIframeHeight();
 					} catch (e) {
 					}
 					$("#show_hide_callboard").val(0);
@@ -713,8 +728,6 @@ foreach ($sound_names_array as $value) {
 
 			function do_logout() {
 				$("#date_time_of_day").html("");
-				clearInterval(client_poll_cycle);
-				client_poll_cycle = null;
 				$("#logged_in").html(NOT_STR);
 				is_initialized = false;
 				$("#buttons").css("display", "none");
@@ -737,12 +750,101 @@ foreach ($sound_names_array as $value) {
 				}
 			}
 
+			var get_changes_array;
+
 			$(document).ready(function() {
 				parent.window.setIframeHeight();
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_changes_array = JSON.parse(event.data);
+					switch (get_changes_array["type"]) {
+					case "button":
+						switch (get_changes_array["action"]) {
+						case "highlight":
+							highlight_button(get_changes_array["item"])
+							break;
+						default:
+						}
+						break;
+					case "message":
+						show_message(get_changes_array["action"], get_changes_array["item"]);
+						break;
+					case "div":
+						$("#" + get_changes_array["item"]).html(get_changes_array["action"]);
+						break;
+					case "script":
+						switch (get_changes_array["item"]) {
+						case "main":
+							window.parent.main.location.href=get_changes_array["action"];
+							break;
+						default:
+						}	
+						break;
+					case "function":
+						switch (get_changes_array["item"]) {
+						case "test_audio":
+							test_audio(get_changes_array["action"]);
+							break;
+						case "start_polling":
+							start_polling();
+							break;
+						case "stop_polling":
+							stop_polling();
+							break;
+						case "window_location_reload":
+							window.location.reload();
+							break;
+						default:
+						}
+						break;
+					case "set_parked_form_data":
+						switch (get_changes_array["item"]) {
+						case "ticket_add_form_data":
+							ticket_add_form_data = get_changes_array["ticket_add_form_data"];
+							break;
+						case "ticket_add_timestamp":
+							ticket_add_timestamp = get_changes_array["action"];
+							break;
+						case "ticket_add_ticket_id":
+							ticket_add_ticket_id = get_changes_array["action"];
+							break;
+						case "ticket_close_form_data":
+							ticket_close_form_data[get_changes_array["action"]] = get_changes_array["ticket_close_form_data"];
+							break;
+						case "ticket_close_timestamp":
+							ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+							break;
+						case "ticket_close_delete":
+							ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
+							ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
+							break;
+						case "action_form_data":
+							action_form_data[get_changes_array["action"]] = get_changes_array["action_form_data"];
+							break;
+						case "action_timestamp":
+							action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+							break;
+						case "action_delete":
+							action_form_data[get_changes_array["action"]] = (function () {return;})();
+							action_timestamp[get_changes_array["action"]] = (function () {return;})();
+							break;
+						case "log_report_form_data":
+							log_report_form_data = get_changes_array["log_report_form_data"];
+							break;
+						case "log_report_timestamp":
+							log_report_timestamp = get_changes_array["action"];
+							break;
+						default:
+						}
+						break;
+					default:
+					}
+					get_changes_array = "undefined";
+				});
 			});
 
 			function show_situation() {
-				parent.frames['main'].window.location.href="situation.php?screen_id=" + $('#div_screen_id').html();
+				window.parent.main.location.href="situation.php?screen_id=" + $('#div_screen_id').html();
 			}
 
 		</script>
@@ -914,22 +1016,22 @@ foreach ($sound_names_array as $value) {
 					<button id="callboard" class="btn btn-xs btn-default"
 						onclick="show_hide_callboard();" style="<?php print $display_callboard_str;?>"><?php print get_text("Board");?></button>
 					<button id="communication" class="btn btn-xs btn-default btn-blink"
-						onclick="parent.frames['main'].window.location.href='communication.php';">
+						onclick="window.parent.main.location.href='communication.php';">
 						<?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
 					</button>				
 					<button id="add_ticket" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='ticket_add.php';"><?php print get_text("New");?></button>
+						onclick="window.parent.main.location.href='ticket_add.php';"><?php print get_text("New");?></button>
 					<button id="log_report" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='log_report.php';"><?php print get_text("Log report");?></button>
+						onclick="window.parent.main.location.href='log_report.php';"><?php print get_text("Log report");?></button>
 					<button id="units" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='units.php';"><?php print get_text("Units");?></button>
+						onclick="window.parent.main.location.href='units.php';"><?php print get_text("Units");?></button>
 					<button id="facilities" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='facilities.php';"><?php print get_text("Facilities");?></button>
+						onclick="window.parent.main.location.href='facilities.php';"><?php print get_text("Facilities");?></button>
 					<button id="reports" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='reports.php';"><?php print get_text("Reports");?></button>
+						onclick="window.parent.main.location.href='reports.php';"><?php print get_text("Reports");?></button>
 					<button id="configuration" class="btn btn-xs btn-default"
-						onclick="parent.frames['main'].window.location.href='configuration.php';"><?php print get_text("Configuration");?></button>
+						onclick="window.parent.main.window.location.href='configuration.php';"><?php print get_text("Configuration");?></button>
 				</div>
 				<div class="col-md-3">
 					<div style="float: right;">

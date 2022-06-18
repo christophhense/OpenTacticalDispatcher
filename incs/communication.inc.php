@@ -159,7 +159,7 @@ function update_communication($api_log_id, $api_log_action) {
 		if (db_num_rows($result)) {
 			$row = stripslashes_deep(db_fetch_assoc($result));
 			if (($row['cleared_datetime'] == null) && ($row['cleared_user_id'] == null)) {
-				//=============================================================================================================
+				//======================================
 				//Mark message as processed
 				$who = (array_key_exists('user_id', $_SESSION))? $_SESSION['user_id'] : 0;
 
@@ -169,7 +169,7 @@ function update_communication($api_log_id, $api_log_action) {
 					"WHERE `id` = " . $api_log_id . ";";
 
 				db_query($query, __FILE__, __LINE__);
-				//=============================================================================================================
+				//======================================
 				//Known entity or ITSI? Known unit assigned to ticket? 
 				$unit_id = 0;
 				$unit_handle = "";
@@ -241,7 +241,7 @@ function update_communication($api_log_id, $api_log_action) {
 					unset ($result_source);
 				}
 				unset ($result_unit);
-				//=============================================================================================================
+				//======================================
 				$text = "";
 				switch ($api_log_action) {
 				case "api_log_voice_promt":

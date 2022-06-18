@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -94,12 +95,15 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-
+			var get_infos_array;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[7]);?> + 0) * 1000;
+
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("log_report");
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"log_report","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch(e) {
 			}
 
@@ -111,7 +115,8 @@ default:
 					function() {
 					})
 					.done(function() {
-						parent.frames["navigation"].show_message("<?php print get_text("Saved");?>", "success");
+						var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Saved");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 						document.log_form.reset();
 						set_parked_form_data();
 					});
@@ -131,12 +136,18 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if (typeof(data) != "undefined") {
-						parent.frames["navigation"].log_report_form_data = data;
-						parent.frames["navigation"].log_report_timestamp = Date.now();
+					if ((typeof(data) != "undefined") && (data != null)) {
+						var changes_data = {"type":"set_parked_form_data","item":"log_report_form_data","action":""};
+						changes_data.log_report_form_data = data;
+						changes_data = JSON.stringify(changes_data);
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"' + Date.now() + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					} else {
-						parent.frames["navigation"].log_report_form_data = "";
-						parent.frames["navigation"].log_report_timestamp = 0;
+						var changes_data ='{"type":"set_parked_form_data","item":"log_report_form_data","action":""}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"0"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 				} catch (e) {
 				}
@@ -145,10 +156,14 @@ default:
 			function get_parked_form_data() {
 				try {
 					var current_timestamp = Date.now();
-					if (current_timestamp < (parent.frames["navigation"].log_report_timestamp + parking_form_data_cache_period)) {
-						$("#frm_comment").val(parent.frames["navigation"].log_report_form_data[0]['value']);
-						$("#unit_id").val(parent.frames["navigation"].log_report_form_data[2]['value']).change();
-						$("#facility_id").val(parent.frames["navigation"].log_report_form_data[3]['value']).change();
+					if (parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['log_report_timestamp']) + parseInt(parking_form_data_cache_period))) {
+						var form_content = new Array;
+						for (var key in get_infos_array['parked_form_data']['log_report_form_data']) {
+							form_content[get_infos_array['parked_form_data']['log_report_form_data'][key]['name']] = get_infos_array['parked_form_data']['log_report_form_data'][key]['value'];
+						}
+						$("#frm_comment").val(form_content['frm_comment']);
+						$("#unit_id").val(form_content['unit_id']).change();
+						$("#facility_id").val(form_content['facility_id']).change();
 					} else {
 						set_parked_form_data();
 					}
@@ -156,34 +171,14 @@ default:
 				}
 			}
 
-			var watch_val;
 			var log;
-			function start_polling() {
-				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
-			}
-
-			function start_watch() {
-				try {
-					log = parent.frames["navigation"].$("#div_log").html();
-				} catch(e) {
-				}
-	<?php if ($auto_refresh_time != 0) { ?>
-				window.setTimeout(start_polling(), <?php print $auto_refresh_time * 100;?>);
-	<?php } ?>
-			}
-
-			function end_watch() {
-				if (watch_val) {
-					window.clearInterval(watch_val);
-				}
-			}
 
 			function do_watch() {
 				try {
-					if (parent.frames["navigation"].$("#div_log").html() != 0) {
-						if (log != parent.frames["navigation"].$("#div_log").html()) {
+					if (get_infos_array['log']['id'] != 0) {
+						if (log != get_infos_array['log']['id']) {
 							load_content();
-							log = parent.frames["navigation"].$("#div_log").html();
+							log = get_infos_array['log']['id'];
 						}
 					}
 				} catch (e) {
@@ -191,7 +186,7 @@ default:
 				try {
 					if ($("#frm_comment").val().trim().length > 0 && $("#frm_comment").val().length > parking_form_data_min_trigger_chars && parking_form_data_min_trigger_chars != 0) {
 						var new_form_data = $("#log_form").serializeArray();
-						if ((JSON.stringify(new_form_data) != JSON.stringify(parent.frames["navigation"].log_report_form_data))) {
+						if ((JSON.stringify(new_form_data) != JSON.stringify(get_infos_array['parked_form_data']['log_report_form_data']))) {
 							set_parked_form_data(new_form_data);
 						}
 					}
@@ -201,16 +196,26 @@ default:
 
 			$(document).ready(function() {
 				load_content();
-				start_watch();
 				show_to_top_button("<?php print get_text("To top");?>");
 				get_parked_form_data();
 				$("#frm_comment").focus();
 				<?php show_prevent_browser_back_button();?>
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					if (change_situation_first_set == 0) {
+						log = get_infos_array['log']['id'];
+						get_parked_form_data();
+						change_situation_first_set = 1;
+					}
+					do_watch();
+				});
 			});
 
 		</script>
 	</head>
-	<body onload="check_frames();" onunload="end_watch();">
+	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">

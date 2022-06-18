@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -282,8 +283,10 @@ default:
 		<script>
 
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("reports");
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"reports","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch(e) {
 			}
 
@@ -378,6 +381,10 @@ default:
 				$("#frm_query_text").focus();
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+				});
 			});
 
 		</script>
@@ -406,7 +413,10 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="parent.frames.main.focus(); parent.frames.main.print();"><?php print get_text("Print");?></button>
+									<!-- ====================================== -->
+									<!-- <button type="button" class="btn btn-xs btn-default" onclick="parent.frames.main.focus(); parent.frames.main.print();"><?php print get_text("Print");?></button> -->
+									<button type="button" class="btn btn-xs btn-default" onclick="window.focus(); window.print();"><?php print get_text("Print");?></button>
+									<!-- ====================================== -->
 								</div>
 							</div>
 						</div>

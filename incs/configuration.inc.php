@@ -77,26 +77,26 @@ function show_stats() {
 	<script>
 
 		function set_current_infos() {
-			$("#server_time").html(parent.frames["navigation"].$("#div_server_time_formatted").html());
+			$("#server_time").html(get_infos_array['screen']['date_time']);
 			var current_radio = "<?php print get_text("No filter set.");?>";
-			if (parent.frames["navigation"].$("#div_api_current_radio").html() != "") {
-				current_radio = parent.frames["navigation"].$("#div_api_current_radio").html();
+			if (get_infos_array['api']['current_radio'] != "") {
+				current_radio = get_infos_array['api']['current_radio'];
 			}
 			$("#current_radio").html(current_radio);
-			var available_datetime = moment(parent.frames["navigation"].$("#div_api_host_timestamp_current_state").html(), "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
+			var available_datetime = moment(get_infos_array['api']['api_host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
 			var available_text = "<?php print get_text("Not available since");?>: " + available_datetime;
 			var info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			var text_color = "red";
-			switch (parent.frames["navigation"].$("#div_api_host_available").html()) {
+			switch (get_infos_array['api']['api_host_available']) {
 			case "true":
 				text_color = "black";
 				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (parent.frames["navigation"].$("#div_api_host_text").html() != "") {
-					info_text = "&nbsp;&nbsp;" + parent.frames["navigation"].$("#div_api_host_text").html();
+				if (get_infos_array['api']['api_host_text'] != "") {
+					info_text = "&nbsp;&nbsp;" + get_infos_array['api']['api_host_text'];
 				} else {
 					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
 				}
-				switch (parent.frames["navigation"].$("#div_api_host_code").html()) {
+				switch (get_infos_array['api']['api_host_code']) {
 				case "success":
 					text_color = "green";
 					break;
@@ -121,20 +121,20 @@ function show_stats() {
 			}
 			$("#application_interface").html(available_text + info_text);
 			$("#application_interface").css("color", text_color);
-				available_datetime = moment(parent.frames["navigation"].$("#div_api_phone_host_timestamp_current_state").html(), "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
+			available_datetime = moment(get_infos_array['api']['api_phone_host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
 			available_text = "<?php print get_text("Not available since");?>: " + available_datetime;
 			info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			text_color = "red";
-			switch (parent.frames["navigation"].$("#div_api_phone_host_available").html()) {
+			switch (get_infos_array['api']['api_phone_host_available']) {
 			case "true":
 				text_color = "black";
 				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (parent.frames["navigation"].$("#div_api_phone_host_text").html() != "") {
-					info_text = "&nbsp;&nbsp;" + parent.frames["navigation"].$("#div_api_phone_host_text").html();
+				if (get_infos_array['api']['api_phone_host_text'] != "") {
+					info_text = "&nbsp;&nbsp;" + get_infos_array['api']['api_phone_host_text'];
 				} else {
 					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
 				}
-				switch (parent.frames["navigation"].$("#div_api_phone_host_code").html()) {
+				switch (get_infos_array['api']['api_phone_host_code']) {
 				case "success":
 					text_color = "green";
 					break;
@@ -169,16 +169,12 @@ function show_stats() {
 			Tip($("#application_interface_phone").html().trim().replace(/(\S(.{0,78}\S)?)\s+/g, '$1<br>'));
 		}
 
-		$(function () {
-			window.setInterval("set_current_infos();", 500);
-		});
-
 	</script>
 	<div class="panel panel-default" id="table_top" style="padding: 0px;">
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
 			<tr>
 				<th style="width: 30%;"><?php print get_text("Software-Version");?>:</th>
-				<td style="width: 70%;"<?php print get_title_str(get_variable("_version"));?>><?php print get_variable("_version");?></td>
+				<td style="width: 70%;"<?php print get_title_str(get_version());?>><?php print get_version();?></td>
 			</tr>
 			<tr>
 				<th><?php print get_text("Localization");?>:</th>
@@ -202,7 +198,7 @@ function show_stats() {
 			</tr>
 			<tr>
 				<th><?php print get_text("Database");?>:</th>
-				<td<?php print get_title_str($GLOBALS['db_name'] . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info());?>><?php print $GLOBALS['db_name'] . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info();?></td>
+				<td<?php print get_title_str($GLOBALS['db_name'] . " db-scheme-version" . " " . get_variable("_version") . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info());?>><?php print $GLOBALS['db_name'] . " db-scheme-version" . " " . get_variable("_version") . " on " . $GLOBALS['db_host'] . " running " . db_get_server_info() . " ";?></td>
 			</tr>
 			<tr>
 				<th><?php print get_text("Tickets in database");?>:</th>

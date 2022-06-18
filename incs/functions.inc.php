@@ -3568,6 +3568,7 @@ function is_guest() {
 }
 
 function set_session_expire_time($timeout = "on") {
+	ini_set('session.cookie_samesite', 'Strict');
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];

@@ -193,8 +193,10 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("facilities");
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch(e) {
 			}
 
@@ -242,7 +244,8 @@ default:
 
 			function copy_facility() {
 				$("#function").val("add");
-				parent.frames["navigation"].show_message("<?php print get_text("Copied");?>", "success");
+				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				$("#edit_form").submit();
 			}
 
@@ -253,7 +256,8 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							parent.frames["navigation"].show_message("<?php print get_text("Saved and copied");?>", "success");
+							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -266,7 +270,8 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							parent.frames["navigation"].show_message("<?php print get_text("Saved and copied");?>", "success");
+							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
+							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -742,7 +747,8 @@ default:
 	?>
 		<script>
 	<?php if ($caption) { ?>
-			parent.frames["navigation"].show_message("<?php print $caption;?>", "success");
+			var changes_data ='{"type":"message","item":"success","action":"<?php print $caption;?>"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 	<?php } ?>
 
 			function get_facilities() {
@@ -754,27 +760,26 @@ default:
 				});
 			}
 
-			var watch_val;
+//			var watch_val;
 			var facility_id;
 			var facility_updated;
 			var facility_user;
 
 			function refresh_latest_infos_facilities() {
 				try {
-					facility_id = parent.frames["navigation"].$("#div_facility_id").html();
-					facility_updated = parent.frames["navigation"].$("#div_facility_updated").html();
-					facility_user = parent.frames["navigation"].$("#div_facility_user").html();
+					facility_id = get_infos_array['facilities_status']['id'];
+					facility_updated = get_infos_array['facilities_status']['update'];
+					facility_user = get_infos_array['facilities_status']['user'];
 				} catch(e) {
 				}
 			}
 
 			function do_watch() {
-				if (parent.frames["navigation"].$("#div_facility_id").html() != 0) {
+				if (get_infos_array['facilities_status']['id'] != 0) {
 					try {
 						if (
-							(facility_id != parent.frames["navigation"].$("#div_facility_id").html()) ||
-							(facility_updated != parent.frames["navigation"].$("#div_facility_updated").html()) &&
-							(facility_user == parent.frames["navigation"].$("#div_facility_id").html())
+							(facility_id != get_infos_array['facilities_status']['id']) ||
+							(facility_updated != get_infos_array['facilities_status']['update'])
 						) {
 							get_facilities();
 						}
@@ -784,43 +789,32 @@ default:
 				refresh_latest_infos_facilities();
 			}
 
-			function start_polling() {
-				watch_val = window.setInterval("do_watch()", <?php print $auto_poll_time * 100;?>);
-			}
-
-			function start_watch() {
-				refresh_latest_infos_facilities();
-	<?php
-		if ($auto_refresh_time != 0) {
-	?>	
-				window.setTimeout(start_polling(), <?php print $auto_refresh_time * 100;?>);
-	<?php
-		}
-	?>
-			}
-
-			function end_watch() {
-				if (watch_val) {
-					window.clearInterval(watch_val);
-				}
-			}
-
 			function do_sort_facilities(sort_order) {
 				$.get("facilities.php?function=sort&order=" + sort_order)
-					.done(function() {
+				.done(function() {
 						get_facilities();
 				});
 			}
 
 			$(document).ready(function() {
 				get_facilities();
-				start_watch()
 				show_to_top_button("<?php print get_text("To top");?>");
+				<?php show_prevent_browser_back_button();?>
+				var change_situation_first_set = 0;
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					if (change_situation_first_set == 0) {
+						refresh_latest_infos_facilities()
+						change_situation_first_set = 1;
+					}
+					do_watch();
+				});
 			});
 
 		</script>
 	</head>
-	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');" onunload="end_watch();">
+	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">

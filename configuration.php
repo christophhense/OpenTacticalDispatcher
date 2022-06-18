@@ -64,8 +64,10 @@ default:
 		<script>
 
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("configuration");
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"configuration","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch(e) {
 			}
 
@@ -131,6 +133,14 @@ default:
 			$(document).ready(function() {
 				activate_show_hide_password();
 				<?php show_prevent_browser_back_button();?>
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					try {
+						set_current_infos();
+					} catch(e) {
+					}
+				});
 			});
 
 		</script>
@@ -795,7 +805,7 @@ if (is_super()) {
 foreach ($sound_names_array as $value) {
 	print "<tr" . get_help_text_str($value) . ">";
 	print "<th>" . get_text($value) . ":</th>";
-	print "<td>&nbsp;</td><td><a onclick='parent.frames[\"navigation\"].test_audio(\"" . $value . "\");'>" . get_text("play it") . "</a></td>";
+	print "<td>&nbsp;</td><td><a onclick='window.parent.navigationbar.postMessage(JSON.stringify({\"type\":\"function\",\"item\":\"test_audio\",\"action\":\"" . $value . "\"}), window.location.origin);'>" . get_text("play it") . "</a></td>";
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_" . $value . "' value='" . get_variable("_" . $value) . "'></td>";
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_alter_" . $value . "' value='" . get_variable("_alter_" . $value) . "'></td>";
  	print "\n";;
@@ -5289,7 +5299,8 @@ case "updates":
 					var changes_time = 3;
 					var update_progress_time = update_download_time + unzip_time + changes_time;
 					try {
-						parent.frames["navigation"].stop_polling();
+						var changes_data ='{"type":"function","item":"stop_polling","action":""}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					} catch (e) {
 					}
 					setTimeout(function() {
@@ -5343,17 +5354,19 @@ case "updates":
 										do_update_progression_info_box("hide", "", 0);
 										setTimeout(function() {
 											try {
-												parent.frames["main"].window.location.reload();
+												window.location.reload();
 											} catch (e) {
 											}
 										}, 1000);
 										setTimeout(function() {
 											try {
-												parent.frames["navigation"].window.location.reload();
+												var changes_data ='{"type":"function","item":"window_location_reload","action":""}';
+												window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 											} catch (e) {
 											}
 											try {
-												parent.frames['navigation'].start_polling();
+												var changes_data ='{"type":"function","item":"start_polling","action":""}';
+												window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 											} catch (e) {
 											}
 										}, 1000);

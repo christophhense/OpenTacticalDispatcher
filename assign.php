@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -171,8 +172,9 @@ case "reset":
 	do_receipt_message($row['unit_id']);
 	?>
 <script>
-	parent.frames["navigation"].show_message("<?php print get_text("Assign calls deleted");?>", "success");
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign calls deleted");?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
 </script>
 	<?php
 	break;
@@ -198,8 +200,9 @@ case "delete":
 	do_receipt_message($row['unit_id']);
 	?>
 <script>
-	parent.frames["navigation"].show_message("<?php print get_text("Assign deleted");?>", "success");
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign deleted");?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
 </script>
 	<?php
 	break;
@@ -413,8 +416,9 @@ case "update":
 	}
 	?>
 <script>
-	parent.frames["navigation"].show_message("<?php print get_text("Assign update applied");?>", "success");
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + parent.frames['navigation'].$("#div_screen_id").html();
+	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign update applied");?>"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
 </script>
 	<?php
 	break;
@@ -476,11 +480,14 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("situation");
+				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			} catch (e) {
 			}
 
+			var get_infos_array;
 			var on_scene_fac_lat = new Array();
 			var on_scene_fac_lng = new Array();
 			var on_scene_facility_adress = new Array();
@@ -675,6 +682,11 @@ default:
 				});
 				$("#frm_receiving_location").focus();
 				<?php show_prevent_browser_back_button();?>
+				window.addEventListener("message", function(event) {
+					if (event.origin != window.location.origin) return;
+					get_infos_array = JSON.parse(event.data);
+					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+				});
 			});
 
 		</script>
@@ -724,6 +736,7 @@ default:
 					<input type="hidden" name="function" value="update">
 					<input type="hidden" name="assign_id" value="<?php print $_GET['assign_id'];?>">
 					<input type="hidden" name="frm_ticket_id" value="<?php print $asgn_row['ticket_id'];?>">
+					<input type="hidden" name="screen_id" id="screen_id" value="<?php print $asgn_row['ticket_id'];?>">
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">

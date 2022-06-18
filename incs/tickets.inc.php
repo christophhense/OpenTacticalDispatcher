@@ -1,4 +1,5 @@
 <?php
+ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/units.inc.php");
 
