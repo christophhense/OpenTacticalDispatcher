@@ -83,14 +83,9 @@ default:
 	//========== Screen
 	$json_screen = array ();
 	$json_screen["date_time"] = mysql_datetime();
-<<<<<<< HEAD
-	if (isset ($_SESSION["day_night"])) {
-		$json_screen["day_night"] = $_SESSION["day_night"];
-=======
 	$json_screen["screen_id"] = $_GET["screen_id"];
 	if (isset ($_SESSION['day_night'])) {
 		$json_screen["day_night"] = $_SESSION['day_night'];
->>>>>>> refs/remotes/origin/main
 	} else {
 		$json_screen["day_night"] = "day";
 	}
