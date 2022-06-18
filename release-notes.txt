@@ -1,4 +1,4 @@
-@version 22.04.2
+@version 22.10.1
 
 * Tested platforms
 
@@ -136,14 +136,10 @@ Activities sorted by application function.
 * Settings - database and updates - updates
 	NONE
 * Settings - system information
-	CANGE
-		Getting Software-Version from Code.
-		Database-Scheme-Version getting from database displaying in database-info.
+	NONE
 * Installation
 	NONE
 * Configuration wizard
 	NONE
 * Program code and miscellaneous
-	CODE
-	change inter-frame communication to postMessage, cause chromium based
-browsers no longer supports direct access to other iframes.
+	NONE

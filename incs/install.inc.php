@@ -1,7 +1,7 @@
 <?php
 
 function get_version() {
-	return "22.04.2";
+	return "22.10.1";
 }
 
 function open_database($host, $database, $user, $password) {
