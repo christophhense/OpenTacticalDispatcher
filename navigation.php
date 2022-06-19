@@ -70,8 +70,10 @@ foreach ($sound_names_array as $value) {
 		<script>
 			var last_infos_array = [];
 			var current_button_id = "situation";
+			var day_night_toggle = "night";
 			var NOT_STR = "<?php echo get_text(" *not*");?>";
 			var is_initialized = false;
+			var is_logged_in = false;
 			var client_poll_cycle = null;
 			var highlighted_buttons = new Array();
 			var session_logout_warning_period = <?php print $session_logout_warning;?> + 0;
@@ -170,8 +172,6 @@ foreach ($sound_names_array as $value) {
 					last_infos_array = JSON.parse(data);
 					var get_infos_array = JSON.parse(data);
 
-					$("#div_first_screen").html(get_infos_array['screen']['first_screen'].trim());
-
 					$("#div_user_name").html(get_infos_array['user']['name'].trim());
 					$("#div_user_level").html(get_infos_array['user']['level'].trim());
 
@@ -211,8 +211,6 @@ foreach ($sound_names_array as $value) {
 					$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
 					$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
 
-					$("#div_day_night").html(get_infos_array['screen']['day_night']);
-
 					$("#div_facility_id").html(get_infos_array['facilities_status']['id']);
 					$("#div_facility_updated").html(get_infos_array['facilities_status']['update'])
 					$("#div_facility_user").html(get_infos_array['facilities_status']['user']);
@@ -249,7 +247,6 @@ foreach ($sound_names_array as $value) {
 					window.parent.callboard.postMessage(data_additional, window.location.origin);
 				} catch(e) {
 				}
-				//var first_screen = get_infos_array['screen']['first_screen'];
 				if (get_infos_array['user']['id'] != 0) {
 					var get_infos_array = JSON.parse(data);
 					if (get_infos_array['screen']['first_screen'].valueOf() == "on") {
@@ -263,8 +260,15 @@ foreach ($sound_names_array as $value) {
 							format("<?php print $moment_date_only_format . " " . $moment_time_only_format;?>") +
 							" <?php print get_text("o'clock");?>"
 						);
-						//$("#div_server_time").html(get_infos_array['screen']['date_time']);
-						//$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+					}
+					do_login(get_infos_array['user']['name'], get_infos_array['user']['level']);
+					if (get_infos_array['screen']['day_night'] == "day") {
+						day_night_toggle = "night";
+					} else {
+						day_night_toggle = "day";
+					}
+					if (get_infos_array['screen']['day_night'].valueOf() != last_infos_array['screen']['day_night'].valueOf()) {
+						do_day_night(get_infos_array['screen']['day_night']);
 					}
 					if (
 						//==========================================
@@ -327,26 +331,6 @@ foreach ($sound_names_array as $value) {
 						if (!(current_button_id == get_infos_array['screen']['reset_button'].valueOf())) {
 							highlight_button(get_infos_array['screen']['reset_button'], true);
 						}
-					}
-					//==========================================
-					if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
-					//if (get_infos_array['user']['id'] != last_infos_array['user']['id']) {
-					console.log((parseInt(get_infos_array['user']['id'])) + $("#div_user_id").html());
-					console.log(get_infos_array['user']['id']+last_infos_array['user']['id']);
-						//==========================================
-						do_login(get_infos_array['user']['name'], get_infos_array['user']['level']);
-						if (get_infos_array['screen']['day_night'] == "day") {
-							do_day_night("day");
-						} else {
-							do_day_night("night");
-						}
-					}
-					//==========================================
-					/*if ($("#div_day_night").html() == "") {
-						$("#div_day_night").html(0);*/
-					if ($("#div_day_night").html() == "") {
-						$("#div_day_night").html(0);
-					//==========================================
 					}
 					if (typeof (get_infos_array['screen']['communication']) != "undefined") {
 						var appearance = "default";
@@ -512,16 +496,6 @@ foreach ($sound_names_array as $value) {
 						$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
 						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);*/
 						//==========================================
-					}
-					//==========================================
-					//if (get_infos_array['screen']['day_night'].valueOf() != $("#div_day_night").html()) {
-					if (get_infos_array['screen']['day_night'].valueOf() != $("#div_day_night").html()) {
-					//==========================================
-						if (get_infos_array['screen']['day_night'] == "day") {
-							do_day_night("day");
-						} else {
-							do_day_night("night");
-						}
 					}
 					//==========================================
 					//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
@@ -764,12 +738,6 @@ foreach ($sound_names_array as $value) {
 
 			function do_day_night(day_night_info) {
 				if (day_night_info.valueOf() == "night") {
-					//==========================================
-					/*$("#day_night_toggle").val("day");
-					$("#div_day_night").html("night");*/
-					$("#day_night_toggle").val("day");
-					$("#div_day_night").html("night");
-					//==========================================
 					parent.document.body.style.backgroundColor = "#000000";
 					document.body.style.backgroundColor = "#000000";
 					document.body.style.color = "#FFFFFF";
@@ -794,12 +762,6 @@ foreach ($sound_names_array as $value) {
 					} catch (e) {
 					}
 				} else {
-					//==========================================
-					/*$("#day_night_toggle").val("night");
-					$("#div_day_night").html("day");*/
-					$("#day_night_toggle").val("night");
-					$("#div_day_night").html("day");
-					//==========================================
 					parent.document.body.style.backgroundColor = "#FFFFFF";
 					document.body.style.backgroundColor = "#FFFFFF";
 					document.body.style.color = "#000000";
@@ -843,9 +805,8 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function do_login(user_name, user_level) {
-				if (isNaN(user_level)) {
-					return;
-				}
+				if (is_logged_in) return;
+				if (isNaN(user_level)) return;
 				do_api_connection_test(false, "");
 				if (user_level == 0) {
 					$("#level").html("<?php print get_text("permission_super");?>");
@@ -876,11 +837,13 @@ foreach ($sound_names_array as $value) {
 					$("#facilities").css("display", "none");
 					$("#communication").css("display", "none");
 				}
+				is_logged_in = true;
 				window.parent.callboard.location.href = "callboard.php";
 				window.parent.main.location.href = "situation.php";
 			}
 
 			function do_logout() {
+				if (!is_logged_in) return;
 				$("#date_time_of_day").html("");
 				$("#logged_in").html(NOT_STR);
 				is_initialized = false;
@@ -893,6 +856,8 @@ foreach ($sound_names_array as $value) {
 					parent.frames["callboard"].hide_callboard();
 				} catch (e) {
 				}
+				is_logged_in = false;
+				do_day_night("day");
 				window.parent.callboard.location.href = "callboard.php";
 				window.parent.main.location.href = "situation.php?logout=true";
 				parent.window.document.body.style.backgroundColor = "#FFFFFF";
@@ -904,13 +869,11 @@ foreach ($sound_names_array as $value) {
 				}
 			}
 
-			var get_changes_array;
-
 			$(document).ready(function() {
 				parent.window.setIframeHeight();
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_changes_array = JSON.parse(event.data);
+					var get_changes_array = JSON.parse(event.data);
 					switch (get_changes_array["type"]) {
 					case "button":
 						switch (get_changes_array["action"]) {
@@ -1006,13 +969,6 @@ foreach ($sound_names_array as $value) {
 	<body onload="check_frames(); navigation_init();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
-		<div id="infostr_first_screen" style="display: <?php print $display_str;?>;">first_screen: </div>
-		<div id="div_first_screen" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_server_time" style="display: <?php print $display_str;?>;">server_time: </div>
-		<div id="div_server_time" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_server_time_formatted" style="display: <?php print $display_str;?>;">server_time_formatted: </div>
-		<div id="div_server_time_formatted" style="display: <?php print $display_str;?>;"></div>
 		<!--  ==== for multiuser and development mode ====  -->
 		<div id="infostr_user_id" style="display: <?php print $display_str;?>;">user id: </div>
 		<div id="div_user_id" style="display: <?php print $display_str;?>;"></div>
@@ -1106,9 +1062,6 @@ foreach ($sound_names_array as $value) {
 		<div id="infostr_scheduled" style="display: <?php print $display_str;?>;">| scheduled: </div>
 		<div id="div_scheduled" style="display: <?php print $display_str;?>;"></div>
 
-		<div id="infostr_day_night" style="display: <?php print $display_str;?>;">| day_night: </div>
-		<div id="div_day_night" style="display: <?php print $display_str;?>;"></div>
-
 		<div id="infostr_object_id" style="display: <?php print $display_str;?>;">| object id: </div>
 		<div id="div_facility_id" style="display: <?php print $display_str;?>;"></div>
 		<div id="infostr_object_updated" style="display: <?php print $display_str;?>;">updated: </div>
@@ -1171,7 +1124,7 @@ foreach ($sound_names_array as $value) {
 						onclick="window.parent.main.location.href='communication.php';">
 						<?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
-					</button>				
+					</button>
 					<button id="add_ticket" class="btn btn-xs btn-default"
 						onclick="window.parent.main.location.href='ticket_add.php';"><?php print get_text("New");?></button>
 					<button id="log_report" class="btn btn-xs btn-default"
@@ -1187,10 +1140,10 @@ foreach ($sound_names_array as $value) {
 				</div>
 				<div class="col-md-3">
 					<div style="float: right;">
-						<button<?php print get_help_text_str("toggle_day_night");?> id="day_night_toggle" class="btn btn-xs btn-default" value="night"
-							onclick="send_request('./set_data.php?function=day_night&value=' + this.value, do_day_night);"><?php print get_text("Day / Night");?></button>
+						<button<?php print get_help_text_str("toggle_day_night");?> class="btn btn-xs btn-default" value=""
+							onclick="send_request('./set_data.php?function=day_night&value=' + day_night_toggle, do_day_night);"><?php print get_text("Day / Night");?></button>
 						<button<?php print get_help_text_str("deactivate_timeout");?> id="timeout_button" class="btn btn-xs btn-default"
-							onclick="send_request('set_data.php?function=timeout&value=off', callback_no_timeout);"><?php print get_text("Auto-logout off");?></button>
+							onclick="send_request('./set_data.php?function=timeout&value=off', callback_no_timeout);"><?php print get_text("Auto-logout off");?></button>
 						<button id="logout" class="btn btn-xs btn-default"
 							onclick="do_logout();"><?php print get_text("Logout");?></button>
 					</div>
