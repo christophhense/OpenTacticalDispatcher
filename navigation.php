@@ -249,10 +249,10 @@ foreach ($sound_names_array as $value) {
 					window.parent.callboard.postMessage(data_additional, window.location.origin);
 				} catch(e) {
 				}
-				var first_screen = get_infos_array['screen']['first_screen'];
+				//var first_screen = get_infos_array['screen']['first_screen'];
 				if (get_infos_array['user']['id'] != 0) {
 					var get_infos_array = JSON.parse(data);
-					if (first_screen.valueOf() == "on") {
+					if (get_infos_array['screen']['first_screen'].valueOf() == "on") {
 						primary_screen = true;
 					} else {
 						primary_screen = false;
@@ -263,14 +263,16 @@ foreach ($sound_names_array as $value) {
 							format("<?php print $moment_date_only_format . " " . $moment_time_only_format;?>") +
 							" <?php print get_text("o'clock");?>"
 						);
-						$("#div_server_time").html(get_infos_array['screen']['date_time']);
-						$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						//$("#div_server_time").html(get_infos_array['screen']['date_time']);
+						//$("#div_server_time_formatted").html(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
 					}
 					if (
-						(($("#div_api_host_available").html() != get_infos_array['api']['api_host_available']) ||
-						($("#div_api_phone_host_available").html() != get_infos_array['api']['api_phone_host_available']) ||
+						//==========================================
+						(($("#div_api_host_available").html() != get_infos_array['api']['api_host_available']) || 
+						($("#div_api_phone_host_available").html() != get_infos_array['api']['api_phone_host_available']) || 
+						//==========================================
 						((retry == false) && (keepalive == false))) &&
-						((get_infos_array['api']['api_host_available'] != "null") ||
+						((get_infos_array['api']['api_host_available'] != "null") || 
 						(get_infos_array['api']['api_phone_host_available'] != "null"))
 					) {
 						if (retry != false) {
@@ -283,6 +285,7 @@ foreach ($sound_names_array as $value) {
 							retry = window.setInterval("do_periodic_connection_test();", api_connection_test_retry_time);
 						}
 					}
+					//==========================================
 					$("#div_api_current_radio").html(get_infos_array['api']['current_radio']);
 					$("#div_api_host_available").html(get_infos_array['api']['api_host_available']);
 					$("#div_api_host_code").html(get_infos_array['api']['api_host_code']);
@@ -292,6 +295,7 @@ foreach ($sound_names_array as $value) {
 					$("#div_api_phone_host_code").html(get_infos_array['api']['api_phone_host_code']);
 					$("#div_api_phone_host_text").html(get_infos_array['api']['api_phone_host_text']);
 					$("#div_api_phone_host_timestamp_current_state").html(get_infos_array['api']['api_phone_host_timestamp_current_state']);
+					//==========================================
 					if (session_logout_warning_period != 0) {
 						if (get_infos_array['user']['timeout'].valueOf() == "on") {
 							change_class("timeout_button", "btn btn-xs btn-default");
@@ -324,7 +328,12 @@ foreach ($sound_names_array as $value) {
 							highlight_button(get_infos_array['screen']['reset_button'], true);
 						}
 					}
+					//==========================================
 					if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
+					//if (get_infos_array['user']['id'] != last_infos_array['user']['id']) {
+					console.log((parseInt(get_infos_array['user']['id'])) + $("#div_user_id").html());
+					console.log(get_infos_array['user']['id']+last_infos_array['user']['id']);
+						//==========================================
 						do_login(get_infos_array['user']['name'], get_infos_array['user']['level']);
 						if (get_infos_array['screen']['day_night'] == "day") {
 							do_day_night("day");
@@ -332,8 +341,12 @@ foreach ($sound_names_array as $value) {
 							do_day_night("night");
 						}
 					}
+					//==========================================
+					/*if ($("#div_day_night").html() == "") {
+						$("#div_day_night").html(0);*/
 					if ($("#div_day_night").html() == "") {
 						$("#div_day_night").html(0);
+					//==========================================
 					}
 					if (typeof (get_infos_array['screen']['communication']) != "undefined") {
 						var appearance = "default";
@@ -342,52 +355,106 @@ foreach ($sound_names_array as $value) {
 						}
 						show_communication_message(get_infos_array['screen']['communication'], appearance);
 					}
+					//==========================================
 					if (parseInt(get_infos_array['ticket']['id_max']) > $("#div_ticket_latest_id").html()) {
 						if ((parseInt(get_infos_array['ticket']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['ticket']['id_max']) != 0)) {
+					/*if (get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) {
+						if ((get_infos_array['ticket']['user'] != last_infos_array['ticket']['user']) && (last_infos_array['user']['id'] != 0) && (get_infos_array['ticket']['id_max'] != 0)) {*/
+					//==========================================
 							ticket_signal();
 							do_audio("audio_ticket");
 						}
 					}
+					//==========================================
+					/*if ($("#div_scheduled").html() == "") {
+						$("#div_scheduled").html(0);*/
 					if ($("#div_scheduled").html() == "") {
 						$("#div_scheduled").html(0);
+					//==========================================
 					}
+					//==========================================
+					//if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
 					if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
+					//==========================================
 							ticket_signal();
 							do_audio("audio_ticket");
 					}
-					if ((parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || (get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())) {
-						if ((parseInt(get_infos_array['units_status']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['units_status']['id']) != 0) && (get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)) {
+					//==========================================
+					/*if (
+						(parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || 
+						(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())
+						) {
+						if (
+							(parseInt(get_infos_array['units_status']['user']) != $("#div_user_id").html()) && 
+							($("#div_user_id").html() != "") && (parseInt(get_infos_array['units_status']['id']) != 0) && 
+							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
+							) {*/
+					if (
+						(parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || 
+						(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())
+						) {
+						if (
+							(parseInt(get_infos_array['units_status']['user']) != $("#div_user_id").html()) && 
+							($("#div_user_id").html() != "") && (parseInt(get_infos_array['units_status']['id']) != 0) && 
+							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
+							) {
+					//==========================================
 							do_audio("audio_status");
 							unit_signal();
 						}
 					}
-					if ((parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || (get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())) {
-						if ((parseInt(get_infos_array['call_progression']['user']) != $("#div_user_id").html()) &&
-							($("#div_user_id").html() != "") &&
-							($("#div_unit_callprogress_id").html() != 0) &&
-							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) &&
+					//==========================================
+					/*if (
+						(parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || 
+						(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())
+						) {
+						if ((parseInt(get_infos_array['call_progression']['user']) != $("#div_user_id").html()) && 
+							($("#div_user_id").html() != "") && 
+							($("#div_unit_callprogress_id").html() != 0) && 
+							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && */
+					if (
+						(parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || 
+						(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())
+						) {
+						if ((parseInt(get_infos_array['call_progression']['user']) != $("#div_user_id").html()) && 
+							($("#div_user_id").html() != "") && 
+							($("#div_unit_callprogress_id").html() != 0) && 
+							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && 
+					//==========================================
 							(get_infos_array['call_progression']['progession_changed'].trim() == "true")
 						) {
 							do_audio("audio_status");
 							unit_signal();
 						}
 					}
+					//==========================================
+					/*if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
+						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {*/
 					if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
 						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {
+					//==========================================
 							do_audio("audio_dispatch");
 							unit_signal();
 						}
 					}
-					if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html())  {
+					//==========================================
+					/*if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
+						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {*/
+					if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
 						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {
+					//==========================================
 							do_audio("audio_action");
 							miscellaneous_signal();
 						}
 					}
-					if (((get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['auto_ticket'] +
-						get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high']) !=
-						(parseInt($("#div_message").html()) + parseInt($("#div_warn_text").html()) + parseInt($("#div_auto_ticket").html()) +
-						parseInt($("#div_requests").html()) + parseInt($("#div_emergency_requests_low").html()) + parseInt($("#div_emergency_requests_high").html()))) &&
+					if (((get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['auto_ticket'] + 
+						get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high']) != 
+						//==========================================
+						/*(parseInt($("#div_message").html()) + parseInt($("#div_warn_text").html()) + parseInt($("#div_auto_ticket").html()) + 
+						parseInt($("#div_requests").html()) + parseInt($("#div_emergency_requests_low").html()) + parseInt($("#div_emergency_requests_high").html()))) && */
+						(parseInt($("#div_message").html()) + parseInt($("#div_warn_text").html()) + parseInt($("#div_auto_ticket").html()) + 
+						parseInt($("#div_requests").html()) + parseInt($("#div_emergency_requests_low").html()) + parseInt($("#div_emergency_requests_high").html()))) && 
+						//==========================================
 						(get_infos_array['user']['level'] <= 2)) {
 						if (get_infos_array['requests']['emergency_high'] > $("#div_emergency_requests_high").html()) {
 							do_audio("audio_emergency_high");
@@ -427,55 +494,66 @@ foreach ($sound_names_array as $value) {
 								}
 							}
 						}
-						if ((get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'] +
-							get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {	
+						if ((get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'] + 
+							get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {
 							highlight_button("communication", true);
 						}
+						//==========================================
 						$("#div_message").html(get_infos_array['requests']['message']);
 						$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
 						$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
 						$("#div_requests").html(get_infos_array['requests']['normal']);
 						$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
 						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
+						/*$("#div_message").html(get_infos_array['requests']['message']);
+						$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
+						$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
+						$("#div_requests").html(get_infos_array['requests']['normal']);
+						$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
+						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);*/
+						//==========================================
 					}
+					//==========================================
+					//if (get_infos_array['screen']['day_night'].valueOf() != $("#div_day_night").html()) {
 					if (get_infos_array['screen']['day_night'].valueOf() != $("#div_day_night").html()) {
+					//==========================================
 						if (get_infos_array['screen']['day_night'] == "day") {
 							do_day_night("day");
 						} else {
 							do_day_night("night");
 						}
 					}
+					//==========================================
+					//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
 					$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
+					//==========================================
 					refresh_latest_infos(data);
 				} else {
+					//==========================================
+					/*if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
+						$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!*/
 					if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
 						$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
+					//==========================================
 						refresh_latest_infos(data);
 						do_logout();
 					}
 				}
 			}
 
-			function do_loop_get_latest_infos() {
-				var randomnumber = Math.floor(Math.random() * 99999999);
-				send_request("get_data.php?request=" + randomnumber + "&screen_id=" + $("#div_screen_id").html(), watch_latest_infos);
-			}
-
 			function navigation_init() {
 				$("#logged_in").html("<?php print (array_key_exists('user', $_SESSION))? $_SESSION['user_name'] : get_text(" *not*");?>");
 				$("#level").html("<?php print (array_key_exists('level', $_SESSION))? get_level_text($_SESSION['level']) : get_text(" *na*");?>");
-				try {
-					if (is_initialized) {
-						return;
-					}
-					var randomnumber = Math.floor(Math.random() * 99999999);
-					is_initialized = true;
-					$("#div_screen_id").html(Math.floor(Math.random() * 99999999));
-					send_request("get_data.php?version=" + randomnumber + "&screen_id=" + $("#div_screen_id").html(), refresh_latest_infos);
-					if (client_poll_cycle == null) {
-						client_poll_cycle = window.setInterval("do_loop_get_latest_infos();", <?php print $auto_poll_time * 100;?>);
-					}
-				} catch (e) {
+				if (is_initialized) return;
+				is_initialized = true;
+				last_infos_array['screen'] = {'screen_id':Math.floor(Math.random() * 99999999)};
+				send_request("get_data.php?version=" + Math.floor(Math.random() * 99999999) + 
+					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos);
+				if (client_poll_cycle == null) {
+					client_poll_cycle = window.setInterval(function() {
+						send_request("get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
+							"&screen_id=" + last_infos_array['screen']['screen_id'], watch_latest_infos);
+					}, <?php print $auto_poll_time * 100;?>);
 				}
 			}
 
@@ -496,7 +574,8 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function highlight_button(button_id, only_off) {
-				if ((typeof (only_off) == "undefined") || ((typeof (only_off) != "undefined") && (only_off.valueOf == false))) {
+				if ((typeof (only_off) == "undefined") || 
+					((typeof (only_off) != "undefined") && (only_off.valueOf == false))) {
 					change_class(button_id, "btn btn-xs btn-primary");
 					if (!(current_button_id == button_id)) {
 						change_class(current_button_id, "btn btn-xs btn-default");
@@ -508,7 +587,8 @@ foreach ($sound_names_array as $value) {
 				highlighted_buttons[button_id] = 0;
 				switch (button_id.valueOf()) {
 				case "situation":
-					send_request("set_data.php?function=screen&reset_button=" + button_id.valueOf() + "&screen_id=" + $("#div_screen_id").html(), no_callback);
+					send_request("set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
+						"&screen_id=" + last_infos_array['screen']['screen_id'], no_callback);
 					break;
 				default:
 				}
@@ -684,8 +764,12 @@ foreach ($sound_names_array as $value) {
 
 			function do_day_night(day_night_info) {
 				if (day_night_info.valueOf() == "night") {
+					//==========================================
+					/*$("#day_night_toggle").val("day");
+					$("#div_day_night").html("night");*/
 					$("#day_night_toggle").val("day");
 					$("#div_day_night").html("night");
+					//==========================================
 					parent.document.body.style.backgroundColor = "#000000";
 					document.body.style.backgroundColor = "#000000";
 					document.body.style.color = "#FFFFFF";
@@ -710,8 +794,12 @@ foreach ($sound_names_array as $value) {
 					} catch (e) {
 					}
 				} else {
+					//==========================================
+					/*$("#day_night_toggle").val("night");
+					$("#div_day_night").html("day");*/
 					$("#day_night_toggle").val("night");
 					$("#div_day_night").html("day");
+					//==========================================
 					parent.document.body.style.backgroundColor = "#FFFFFF";
 					document.body.style.backgroundColor = "#FFFFFF";
 					document.body.style.color = "#000000";
@@ -788,8 +876,8 @@ foreach ($sound_names_array as $value) {
 					$("#facilities").css("display", "none");
 					$("#communication").css("display", "none");
 				}
-				parent.frames["callboard"].window.location.href = "callboard.php";
-				parent.frames["main"].window.location.href = "situation.php";
+				window.parent.callboard.location.href = "callboard.php";
+				window.parent.main.location.href = "situation.php";
 			}
 
 			function do_logout() {
@@ -805,8 +893,8 @@ foreach ($sound_names_array as $value) {
 					parent.frames["callboard"].hide_callboard();
 				} catch (e) {
 				}
-				parent.frames["main"].window.location.href = "situation.php?logout=true";
-				parent.frames["callboard"].window.location.href = "callboard.php";
+				window.parent.callboard.location.href = "callboard.php";
+				window.parent.main.location.href = "situation.php?logout=true";
 				parent.window.document.body.style.backgroundColor = "#FFFFFF";
 			}
 
@@ -910,7 +998,7 @@ foreach ($sound_names_array as $value) {
 			});
 
 			function show_situation() {
-				window.parent.main.location.href="situation.php?screen_id=" + $('#div_screen_id').html();
+				window.parent.main.location.href="situation.php?screen_id=" + last_infos_array['screen']['screen_id'];
 			}
 
 		</script>
@@ -918,8 +1006,6 @@ foreach ($sound_names_array as $value) {
 	<body onload="check_frames(); navigation_init();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
-		<div id="infostr_screen_id" style="display: <?php print $display_str;?>;">screen_id: </div>
-		<div id="div_screen_id" style="display: <?php print $display_str;?>;"></div>
 		<div id="infostr_first_screen" style="display: <?php print $display_str;?>;">first_screen: </div>
 		<div id="div_first_screen" style="display: <?php print $display_str;?>;"></div>
 

@@ -178,15 +178,6 @@ default:
 		<script>
 
 			var get_infos_array;
-
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			var report_last = <?php print (trim($report_last_settings[0]) * 60);?> + 0;
 			var start_date = "<?php print $start_date;?>";
 			var end_date = "<?php print $end_date;?>";
@@ -408,6 +399,8 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) {
 						change_situation("<?php print $current_situation_type;?>");
 						change_situation_first_set = 1;
