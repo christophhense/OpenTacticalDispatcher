@@ -339,16 +339,17 @@ foreach ($sound_names_array as $value) {
 						}
 						show_communication_message(get_infos_array['screen']['communication'], appearance);
 					}
-					//==========================================
-					if (parseInt(get_infos_array['ticket']['id_max']) > $("#div_ticket_latest_id").html()) {
-						if ((parseInt(get_infos_array['ticket']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['ticket']['id_max']) != 0)) {
-					/*if (get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) {
-						if ((get_infos_array['ticket']['user'] != last_infos_array['ticket']['user']) && (last_infos_array['user']['id'] != 0) && (get_infos_array['ticket']['id_max'] != 0)) {*/
-					//==========================================
-							ticket_signal();
-							do_audio("audio_ticket");
-						}
+//==========================================
+					//if (parseInt(get_infos_array['ticket']['id_max']) > $("#div_ticket_latest_id").html()) {
+						//if ((parseInt(get_infos_array['ticket']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['ticket']['id_max']) != 0)) {
+					if (
+						(get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) && 
+						(get_infos_array['ticket']['user'] != last_infos_array['user']['id'])
+					) {
+						ticket_signal();
+						do_audio("audio_ticket");
 					}
+//==========================================
 					//==========================================
 					/*if ($("#div_scheduled").html() == "") {
 						$("#div_scheduled").html(0);*/
@@ -360,10 +361,10 @@ foreach ($sound_names_array as $value) {
 					//if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
 					if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
 					//==========================================
-							ticket_signal();
-							do_audio("audio_ticket");
+						ticket_signal();
+						do_audio("audio_ticket");
 					}
-					//==========================================
+//==========================================
 					/*if (
 						(parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || 
 						(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())
@@ -374,20 +375,14 @@ foreach ($sound_names_array as $value) {
 							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
 							) {*/
 					if (
-						(parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || 
-						(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())
-						) {
-						if (
-							(parseInt(get_infos_array['units_status']['user']) != $("#div_user_id").html()) && 
-							($("#div_user_id").html() != "") && (parseInt(get_infos_array['units_status']['id']) != 0) && 
-							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
-							) {
-					//==========================================
-							do_audio("audio_status");
-							unit_signal();
-						}
+						((get_infos_array['units_status']['id'] != last_infos_array['units_status']['id']) || 
+						(get_infos_array['units_status']['update'] != last_infos_array['units_status']['update'])) && 
+						(get_infos_array['units_status']['user'] != last_infos_array['user']['id'])
+					) {
+						do_audio("audio_status");
+						unit_signal();
 					}
-					//==========================================
+//==========================================
 					/*if (
 						(parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || 
 						(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())
@@ -397,40 +392,37 @@ foreach ($sound_names_array as $value) {
 							($("#div_unit_callprogress_id").html() != 0) && 
 							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && */
 					if (
-						(parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || 
-						(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())
-						) {
-						if ((parseInt(get_infos_array['call_progression']['user']) != $("#div_user_id").html()) && 
-							($("#div_user_id").html() != "") && 
-							($("#div_unit_callprogress_id").html() != 0) && 
-							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && 
-					//==========================================
-							(get_infos_array['call_progression']['progession_changed'].trim() == "true")
-						) {
-							do_audio("audio_status");
-							unit_signal();
-						}
+						((get_infos_array['call_progression']['id'] != last_infos_array['call_progression']['id']) || 
+						(get_infos_array['call_progression']['update'] != last_infos_array['call_progression']['update'])) && 
+						(get_infos_array['units_status']['user'] != last_infos_array['user']['id']) && 
+						(get_infos_array['call_progression']['progession_changed'].valueOf() == "true")
+					) {
+						do_audio("audio_status");
+						unit_signal();
 					}
+//==========================================
 					//==========================================
 					/*if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
 						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {*/
-					if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
-						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {
-					//==========================================
-							do_audio("audio_dispatch");
-							unit_signal();
-						}
+					if (
+						(get_infos_array['assign']['quantity'] > last_infos_array['assign']['quantity']) && 
+						(get_infos_array['assign']['user'] != last_infos_array['user']['id'])
+					) {
+						do_audio("audio_dispatch");
+						unit_signal();
 					}
-					//==========================================
+//==========================================
+//==========================================
 					/*if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
 						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {*/
-					if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
-						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {
-					//==========================================
-							do_audio("audio_action");
-							miscellaneous_signal();
-						}
+					if (
+						(get_infos_array['action']['update'] != last_infos_array['action']['update']) && 
+						(get_infos_array['action']['user'] != last_infos_array['user']['id'])
+					) {
+						do_audio("audio_action");
+						miscellaneous_signal();
 					}
+//==========================================
 					if (((get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['auto_ticket'] + 
 						get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high']) != 
 						//==========================================
@@ -497,10 +489,10 @@ foreach ($sound_names_array as $value) {
 						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);*/
 						//==========================================
 					}
-					//==========================================
+//==========================================
 					//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
 					$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
-					//==========================================
+//==========================================
 					refresh_latest_infos(data);
 				} else {
 					//==========================================
@@ -970,8 +962,10 @@ foreach ($sound_names_array as $value) {
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
 		<!--  ==== for multiuser and development mode ====  -->
+<!--  ============================================  -->
 		<div id="infostr_user_id" style="display: <?php print $display_str;?>;">user id: </div>
 		<div id="div_user_id" style="display: <?php print $display_str;?>;"></div>
+<!--  ============================================  -->
 		<div id="infostr_user_name" style="display: <?php print $display_str;?>;">name: </div>
 		<div id="div_user_name" style="display: <?php print $display_str;?>;"></div>
 		<div id="infostr_user_level" style="display: <?php print $display_str;?>;">level: </div>
