@@ -71,6 +71,7 @@ foreach ($sound_names_array as $value) {
 			var last_infos_array = [];
 			var current_button_id = "situation";
 			var day_night_toggle = "night";
+			var show_callboard = false;
 			var NOT_STR = "<?php echo get_text(" *not*");?>";
 			var is_initialized = false;
 			var is_logged_in = false;
@@ -608,14 +609,16 @@ foreach ($sound_names_array as $value) {
 //========== misc
 			//div => variable bool
 			function show_hide_callboard() {
-				if ($("#show_hide_callboard").val() == 0) {
+				//if ($("#show_hide_callboard").val() == 0) {
+				if (show_callboard == false) {
 					change_class("callboard", "btn btn-xs btn-primary");
 					try {
 						parent.document.getElementById("callboard").style.height = "<?php print get_callboard_height();?>" + "px";
 						parent.window.setIframeHeight();
 					} catch (e) {
 					}
-					$("#show_hide_callboard").val(1);
+					//$("#show_hide_callboard").val(1);
+					show_callboard = true;
 				} else {
 					change_class("callboard", "btn btn-xs btn-default");
 					try {
@@ -623,7 +626,8 @@ foreach ($sound_names_array as $value) {
 						parent.window.setIframeHeight();
 					} catch (e) {
 					}
-					$("#show_hide_callboard").val(0);
+					//$("#show_hide_callboard").val(0);
+					show_callboard = false;
 				}
 			}
 
@@ -1168,6 +1172,6 @@ foreach ($sound_names_array as $value) {
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-	 	<input type="hidden" id="show_hide_callboard" value=0>
+<!-- <input type="hidden" id="show_hide_callboard" value=0> -->	
 	</body>
 </html>
