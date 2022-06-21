@@ -247,7 +247,7 @@ foreach ($sound_names_array as $value) {
 					window.parent.callboard.postMessage(data_additional, window.location.origin);
 				} catch(e) {
 				}
-				if (get_infos_array['user']['id'] != 0) {
+				if (get_infos_array['user']['id'] != "0") {
 					var get_infos_array = JSON.parse(data);
 					if (get_infos_array['screen']['first_screen'].valueOf() == "on") {
 						primary_screen = true;
@@ -327,14 +327,14 @@ foreach ($sound_names_array as $value) {
 						$("#timeout_button").css("display", "none");
 						$("#timeout_info").css("display", "none");
 					}
-					if (typeof (get_infos_array['screen']['reset_button']) != "undefined") {
+					if (get_infos_array['screen']['reset_button'] !== undefined) {
 						if (!(current_button_id == get_infos_array['screen']['reset_button'].valueOf())) {
 							highlight_button(get_infos_array['screen']['reset_button'], true);
 						}
 					}
-					if (typeof (get_infos_array['screen']['communication']) != "undefined") {
+					if (get_infos_array['screen']['communication'] !== undefined) {
 						var appearance = "default";
-						if (typeof (get_infos_array['screen']['appearance']) != "undefined") {
+						if (get_infos_array['screen']['appearance'] !== undefined) {
 							appearance = get_infos_array['screen']['appearance'];
 						}
 						show_communication_message(get_infos_array['screen']['communication'], appearance);
@@ -342,7 +342,9 @@ foreach ($sound_names_array as $value) {
 //==========================================
 					//if (parseInt(get_infos_array['ticket']['id_max']) > $("#div_ticket_latest_id").html()) {
 						//if ((parseInt(get_infos_array['ticket']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['ticket']['id_max']) != 0)) {
+					//console.log(get_infos_array['ticket']['id_max'] + last_infos_array['ticket']['id_max']);
 					if (
+						(last_infos_array['ticket'] !== undefined) && 
 						(get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) && 
 						(get_infos_array['ticket']['user'] != last_infos_array['user']['id'])
 					) {
@@ -375,6 +377,7 @@ foreach ($sound_names_array as $value) {
 							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
 							) {*/
 					if (
+						(last_infos_array['units_status'] !== undefined) && 
 						((get_infos_array['units_status']['id'] != last_infos_array['units_status']['id']) || 
 						(get_infos_array['units_status']['update'] != last_infos_array['units_status']['update'])) && 
 						(get_infos_array['units_status']['user'] != last_infos_array['user']['id'])
@@ -392,6 +395,7 @@ foreach ($sound_names_array as $value) {
 							($("#div_unit_callprogress_id").html() != 0) && 
 							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && */
 					if (
+						(last_infos_array['call_progression'] !== undefined) && 
 						((get_infos_array['call_progression']['id'] != last_infos_array['call_progression']['id']) || 
 						(get_infos_array['call_progression']['update'] != last_infos_array['call_progression']['update'])) && 
 						(get_infos_array['units_status']['user'] != last_infos_array['user']['id']) && 
@@ -405,6 +409,7 @@ foreach ($sound_names_array as $value) {
 					/*if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
 						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {*/
 					if (
+						(last_infos_array['assign'] !== undefined) && 
 						(get_infos_array['assign']['quantity'] > last_infos_array['assign']['quantity']) && 
 						(get_infos_array['assign']['user'] != last_infos_array['user']['id'])
 					) {
@@ -416,6 +421,7 @@ foreach ($sound_names_array as $value) {
 					/*if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
 						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {*/
 					if (
+						(last_infos_array['action'] !== undefined) && 
 						(get_infos_array['action']['update'] != last_infos_array['action']['update']) && 
 						(get_infos_array['action']['user'] != last_infos_array['user']['id'])
 					) {
@@ -491,19 +497,19 @@ foreach ($sound_names_array as $value) {
 					}
 //==========================================
 					//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
-					$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
+					//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
 //==========================================
 					refresh_latest_infos(data);
 				} else {
 					//==========================================
 					/*if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
 						$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!*/
-					if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
-						$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
+					//if ((parseInt(get_infos_array['user']['id'])) != $("#div_user_id").html()) {
+						//$("#div_user_id").html(get_infos_array['user']['id']); //muss bleiben!!!
 					//==========================================
 						refresh_latest_infos(data);
 						do_logout();
-					}
+					//}
 				}
 			}
 
@@ -566,7 +572,7 @@ foreach ($sound_names_array as $value) {
 				change_class("situation", "btn btn-xs btn-danger");
 				highlighted_buttons["situation"] = 3;
 			}
-
+//return in gleiche zeile. bug mit 2 screens untersuchen
 			function unit_signal() {				// light the units button and - if not already highlighted_buttons red - the situation button
 				if (highlighted_buttons["situation"] > 2) {
 					return;
@@ -600,7 +606,7 @@ foreach ($sound_names_array as $value) {
 			}
 
 //========== misc
-
+			//div => variable bool
 			function show_hide_callboard() {
 				if ($("#show_hide_callboard").val() == 0) {
 					change_class("callboard", "btn btn-xs btn-primary");
@@ -799,8 +805,11 @@ foreach ($sound_names_array as $value) {
 			function do_login(user_name, user_level) {
 				if (is_logged_in) return;
 				if (isNaN(user_level)) return;
+				send_request("get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
+					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos)
 				do_api_connection_test(false, "");
-				if (user_level == 0) {
+				//==========================================
+				/*if (user_level == 0) {
 					$("#level").html("<?php print get_text("permission_super");?>");
 				} else {
 					if (user_level == 1) {
@@ -814,7 +823,21 @@ foreach ($sound_names_array as $value) {
 							}
 						}
 					}
+				}*/
+				switch (user_level) {
+				case "0":
+					$("#level").html("<?php print get_text("permission_super");?>");
+					break;
+				case "1":
+					$("#level").html("<?php print get_text("permission_admin");?>");
+					break;
+				case "2":
+					$("#level").html("<?php print get_text("permission_operator");?>");
+					break;
+				default:
+					$("#level").html("<?php print get_text("permission_guest");?>");
 				}
+				//==========================================
 				if ((user_name != "") && (typeof (user_name) != "undefined")) {
 					$("#logged_in").html(user_name);
 				}
@@ -962,10 +985,10 @@ foreach ($sound_names_array as $value) {
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
 		<!--  ==== for multiuser and development mode ====  -->
-<!--  ============================================  -->
+<!--  ============================================  
 		<div id="infostr_user_id" style="display: <?php print $display_str;?>;">user id: </div>
 		<div id="div_user_id" style="display: <?php print $display_str;?>;"></div>
-<!--  ============================================  -->
+ ============================================  -->
 		<div id="infostr_user_name" style="display: <?php print $display_str;?>;">name: </div>
 		<div id="div_user_name" style="display: <?php print $display_str;?>;"></div>
 		<div id="infostr_user_level" style="display: <?php print $display_str;?>;">level: </div>

@@ -22,7 +22,7 @@ if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
 }
 if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0)) {
-	$current_user_id = 0;
+	$current_user_id = "0";
 	if (isset ($_SESSION['user_id'])) {
 		$current_user_id = $_SESSION['user_id'];
 	}
