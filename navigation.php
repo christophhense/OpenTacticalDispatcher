@@ -117,7 +117,7 @@ foreach ($sound_names_array as $value) {
 							(last_infos_array['ticket']['id_max'] != input_array['ticket']['id_max']) ||
 							(last_infos_array['ticket']['id_changed'] != input_array['ticket']['id_changed']) ||
 							(last_infos_array['ticket']['update'] != input_array['ticket']['update']) ||
-							(last_infos_array['ticket']['scheduled'] != input_array['ticket']['scheduled']) ||
+							(last_infos_array['ticket']['scheduled'] < input_array['ticket']['scheduled']) ||
 							(last_infos_array['action']['update'] != input_array['action']['update'])
 						)) || (
 							(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
@@ -249,7 +249,6 @@ foreach ($sound_names_array as $value) {
 				} catch(e) {
 				}
 				if (get_infos_array['user']['id'] != "0") {
-					var get_infos_array = JSON.parse(data);
 					if (get_infos_array['screen']['first_screen'].valueOf() == "on") {
 						primary_screen = true;
 					} else {
@@ -340,75 +339,27 @@ foreach ($sound_names_array as $value) {
 						}
 						show_communication_message(get_infos_array['screen']['communication'], appearance);
 					}
-//==========================================
-					//if (parseInt(get_infos_array['ticket']['id_max']) > $("#div_ticket_latest_id").html()) {
-						//if ((parseInt(get_infos_array['ticket']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "") && (parseInt(get_infos_array['ticket']['id_max']) != 0)) {
-					//console.log(get_infos_array['ticket']['id_max'] + last_infos_array['ticket']['id_max']);
 					if (
 						(last_infos_array['ticket'] !== undefined) && 
 						(get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) && 
+						(get_infos_array['ticket']['scheduled'] > last_infos_array['ticket']['scheduled']) && 
 						(get_infos_array['ticket']['user'] != last_infos_array['user']['id'])
 					) {
 						ticket_signal();
 						do_audio("audio_ticket");
 					}
-//==========================================
-					//==========================================
-					/*if ($("#div_scheduled").html() == "") {
-						$("#div_scheduled").html(0);*/
-					if ($("#div_scheduled").html() == "") {
-						$("#div_scheduled").html(0);
-					//==========================================
-					}
-					//==========================================
-					//if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
-					if (get_infos_array['ticket']['scheduled'] > $("#div_scheduled").html()) {
-					//==========================================
-						ticket_signal();
-						do_audio("audio_ticket");
-					}
-//==========================================
-					/*if (
-						(parseInt(get_infos_array['units_status']['id']) != $("#div_unit_id").html()) || 
-						(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html())
-						) {
-						if (
-							(parseInt(get_infos_array['units_status']['user']) != $("#div_user_id").html()) && 
-							($("#div_user_id").html() != "") && (parseInt(get_infos_array['units_status']['id']) != 0) && 
-							(get_infos_array['units_status']['update'].trim() != $("#div_unit_updated").html() != 0)
-							) {*/
 					if (
-						(last_infos_array['units_status'] !== undefined) && 
-						((get_infos_array['units_status']['id'] != last_infos_array['units_status']['id']) || 
-						(get_infos_array['units_status']['update'] != last_infos_array['units_status']['update'])) && 
+						(last_infos_array['units_status'] !== undefined) && (
+							(get_infos_array['units_status']['id'] != last_infos_array['units_status']['id']) || 
+							(get_infos_array['units_status']['update'] != last_infos_array['units_status']['update']) || 
+							((get_infos_array['call_progression']['id'] != last_infos_array['call_progression']['id']) || 
+							(get_infos_array['call_progression']['update'] != last_infos_array['call_progression']['update']) && 
+							(get_infos_array['call_progression']['progession_changed']))) && 
 						(get_infos_array['units_status']['user'] != last_infos_array['user']['id'])
 					) {
 						do_audio("audio_status");
 						unit_signal();
 					}
-//==========================================
-					/*if (
-						(parseInt(get_infos_array['call_progression']['id']) != $("#div_unit_callprogress_id").html()) || 
-						(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html())
-						) {
-						if ((parseInt(get_infos_array['call_progression']['user']) != $("#div_user_id").html()) && 
-							($("#div_user_id").html() != "") && 
-							($("#div_unit_callprogress_id").html() != 0) && 
-							(get_infos_array['call_progression']['update'].trim() != $("#div_unit_callprogress_updated").html()) && */
-					if (
-						(last_infos_array['call_progression'] !== undefined) && 
-						((get_infos_array['call_progression']['id'] != last_infos_array['call_progression']['id']) || 
-						(get_infos_array['call_progression']['update'] != last_infos_array['call_progression']['update'])) && 
-						(get_infos_array['units_status']['user'] != last_infos_array['user']['id']) && 
-						(get_infos_array['call_progression']['progession_changed'].valueOf() == "true")
-					) {
-						do_audio("audio_status");
-						unit_signal();
-					}
-//==========================================
-					//==========================================
-					/*if (get_infos_array['assign']['quantity'].trim() > $("#div_assign_quantity").html()) {
-						if ((parseInt(get_infos_array['assign']['user']) != $("#div_user_id").html()) && ($("#div_assign_quantity").html() != "")) {*/
 					if (
 						(last_infos_array['assign'] !== undefined) && 
 						(get_infos_array['assign']['quantity'] > last_infos_array['assign']['quantity']) && 
@@ -417,10 +368,6 @@ foreach ($sound_names_array as $value) {
 						do_audio("audio_dispatch");
 						unit_signal();
 					}
-//==========================================
-//==========================================
-					/*if (get_infos_array['action']['update'].trim() != $("#div_action_updated").html()) {
-						if ((parseInt(get_infos_array['action']['user']) != $("#div_user_id").html()) && ($("#div_user_id").html() != "")) {*/
 					if (
 						(last_infos_array['action'] !== undefined) && 
 						(get_infos_array['action']['update'] != last_infos_array['action']['update']) && 
@@ -607,9 +554,7 @@ foreach ($sound_names_array as $value) {
 			}
 
 //========== misc
-			//div => variable bool
 			function show_hide_callboard() {
-				//if ($("#show_hide_callboard").val() == 0) {
 				if (show_callboard == false) {
 					change_class("callboard", "btn btn-xs btn-primary");
 					try {
@@ -617,7 +562,6 @@ foreach ($sound_names_array as $value) {
 						parent.window.setIframeHeight();
 					} catch (e) {
 					}
-					//$("#show_hide_callboard").val(1);
 					show_callboard = true;
 				} else {
 					change_class("callboard", "btn btn-xs btn-default");
@@ -626,7 +570,6 @@ foreach ($sound_names_array as $value) {
 						parent.window.setIframeHeight();
 					} catch (e) {
 					}
-					//$("#show_hide_callboard").val(0);
 					show_callboard = false;
 				}
 			}
@@ -812,22 +755,6 @@ foreach ($sound_names_array as $value) {
 				send_request("get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos)
 				do_api_connection_test(false, "");
-				//==========================================
-				/*if (user_level == 0) {
-					$("#level").html("<?php print get_text("permission_super");?>");
-				} else {
-					if (user_level == 1) {
-						$("#level").html("<?php print get_text("permission_admin");?>");
-					} else {
-						if (user_level == 2) {
-							$("#level").html("<?php print get_text("permission_operator");?>");
-						} else {
-							if (user_level == 3) {
-								$("#level").html("<?php print get_text("permission_guest");?>");
-							}
-						}
-					}
-				}*/
 				switch (user_level) {
 				case "0":
 					$("#level").html("<?php print get_text("permission_super");?>");
@@ -841,7 +768,6 @@ foreach ($sound_names_array as $value) {
 				default:
 					$("#level").html("<?php print get_text("permission_guest");?>");
 				}
-				//==========================================
 				if ((user_name != "") && (typeof (user_name) != "undefined")) {
 					$("#logged_in").html(user_name);
 				}
@@ -951,6 +877,7 @@ foreach ($sound_names_array as $value) {
 							ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
 							break;
 						case "ticket_close_delete":
+							//delete brackets from return
 							ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
 							ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
 							break;
@@ -961,6 +888,7 @@ foreach ($sound_names_array as $value) {
 							action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
 							break;
 						case "action_delete":
+							//delete brackets from return
 							action_form_data[get_changes_array["action"]] = (function () {return;})();
 							action_timestamp[get_changes_array["action"]] = (function () {return;})();
 							break;
@@ -989,10 +917,6 @@ foreach ($sound_names_array as $value) {
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
 		<!--  ==== for multiuser and development mode ====  -->
-<!--  ============================================  
-		<div id="infostr_user_id" style="display: <?php print $display_str;?>;">user id: </div>
-		<div id="div_user_id" style="display: <?php print $display_str;?>;"></div>
- ============================================  -->
 		<div id="infostr_user_name" style="display: <?php print $display_str;?>;">name: </div>
 		<div id="div_user_name" style="display: <?php print $display_str;?>;"></div>
 		<div id="infostr_user_level" style="display: <?php print $display_str;?>;">level: </div>
@@ -1172,6 +1096,5 @@ foreach ($sound_names_array as $value) {
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-<!-- <input type="hidden" id="show_hide_callboard" value=0> -->	
 	</body>
 </html>
