@@ -72,7 +72,6 @@ foreach ($sound_names_array as $value) {
 			var current_button_id = "situation";
 			var day_night_toggle = "night";
 			var show_callboard = false;
-			var NOT_STR = "<?php echo get_text(" *not*");?>";
 			var is_initialized = false;
 			var is_logged_in = false;
 			var client_poll_cycle = null;
@@ -140,11 +139,9 @@ foreach ($sound_names_array as $value) {
 						(last_infos_array['units_status']['id'] != input_array['units_status']['id']) ||
 						((last_infos_array['units_status']['update'] != input_array['units_status']['update']) &&
 						(last_infos_array['units_status']['id'] == input_array['units_status']['id'])) ||
-	
 						(last_infos_array['call_progression']['id'] != input_array['call_progression']['id']) ||
 						((last_infos_array['call_progression']['update'] != input_array['call_progression']['update']) &&
 						(last_infos_array['call_progression']['id'] == input_array['call_progression']['id'])) ||
-	
 						(last_infos_array['assign']['id_max'] != input_array['assign']['id_max']) ||
 						(last_infos_array['assign']['quantity'] != input_array['assign']['quantity'])
 					) {
@@ -172,54 +169,9 @@ foreach ($sound_names_array as $value) {
 				try {
 					last_infos_array = JSON.parse(data);
 					var get_infos_array = JSON.parse(data);
-
-//					$("#div_user_name").html(get_infos_array['user']['name'].trim());
-//					$("#div_user_level").html(get_infos_array['user']['level'].trim());
-
-//					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max'].trim());
-//					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
-//					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
-//					$("#div_ticket_updated").html(get_infos_array['ticket']['update'].trim());
-//					$("#div_ticket_user").html(get_infos_array['ticket']['user'].trim());
-					
-//					$("#div_unit_id").html(parseInt(get_infos_array['units_status']['id'].trim()));
-//					$("#div_unit_updated").html(get_infos_array['units_status']['update'].trim());
-//					$("#div_unit_user").html(parseInt(get_infos_array['units_status']['user'].trim()));
-
-//					$("#div_unit_callprogress_id").html(parseInt(get_infos_array['call_progression']['id'].trim()));
-//					$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update'].trim());
-//					$("#div_unit_callprogress_user").html(parseInt(get_infos_array['call_progression']['user'].trim()));
-
-//					$("#div_assign_max_id").html(get_infos_array['assign']['id_max'].trim());
-//					$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-//					$("#div_assign_updated").html(get_infos_array['assign']['update'].trim());
-//					$("#div_assign_user").html(get_infos_array['assign']['user'].trim());
-
-//					$("#div_action_max_id").html(get_infos_array['action']['id_max'].trim());
-//					$("#div_action_changed_id").html(get_infos_array['action']['id_changed']);
-//					$("#div_action_updated").html(get_infos_array['action']['update'].trim());
-//					$("#div_action_user").html(get_infos_array['action']['user'].trim());
-
-//					$("#div_facility_id").html(parseInt(get_infos_array['facilities_status']['id'].trim()));
-//					$("#div_facility_updated").html(get_infos_array['facilities_status']['update'].trim());
-//					$("#div_facility_user").html(parseInt(get_infos_array['facilities_status']['user'].trim()));
-
-					$("#div_silent_requests").html(get_infos_array['requests']['silent']);
-					$("#div_message").html(get_infos_array['requests']['message']);
-					$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
-					$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
-					$("#div_requests").html(get_infos_array['requests']['normal']);
-					$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
-					$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
-
-//					$("#div_facility_id").html(get_infos_array['facilities_status']['id']);
-//					$("#div_facility_updated").html(get_infos_array['facilities_status']['update'])
-//					$("#div_facility_user").html(get_infos_array['facilities_status']['user']);
-
-//					$("#div_log").html(get_infos_array['log']['id']);
-
-					var current_messages = get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['auto_ticket'] +
-						get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'];
+					var current_messages = get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + 
+						get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['normal'] + 
+						get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'];
 					if (current_messages <= 99) {
 						$("#count_messages").html(current_messages);
 					} else {
@@ -341,8 +293,8 @@ foreach ($sound_names_array as $value) {
 					}
 					if (
 						(last_infos_array['ticket'] !== undefined) && 
-						(get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) && 
-						(get_infos_array['ticket']['scheduled'] > last_infos_array['ticket']['scheduled']) && 
+						((get_infos_array['ticket']['id_max'] > last_infos_array['ticket']['id_max']) || 
+						(get_infos_array['ticket']['scheduled'] > last_infos_array['ticket']['scheduled'])) && 
 						(get_infos_array['ticket']['user'] != last_infos_array['user']['id'])
 					) {
 						ticket_signal();
@@ -376,29 +328,27 @@ foreach ($sound_names_array as $value) {
 						do_audio("audio_action");
 						miscellaneous_signal();
 					}
-//==========================================
-					if (((get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['auto_ticket'] + 
-						get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high']) != 
-						//==========================================
-						/*(parseInt($("#div_message").html()) + parseInt($("#div_warn_text").html()) + parseInt($("#div_auto_ticket").html()) + 
-						parseInt($("#div_requests").html()) + parseInt($("#div_emergency_requests_low").html()) + parseInt($("#div_emergency_requests_high").html()))) && */
-						(parseInt($("#div_message").html()) + parseInt($("#div_warn_text").html()) + parseInt($("#div_auto_ticket").html()) + 
-						parseInt($("#div_requests").html()) + parseInt($("#div_emergency_requests_low").html()) + parseInt($("#div_emergency_requests_high").html()))) && 
-						//==========================================
+					if ((last_infos_array['requests'] !== undefined) && 
+						((get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + 
+						get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['normal'] + 
+						get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high']) != 
+						(last_infos_array['requests']['message'] + last_infos_array['requests']['warn_text'] + 
+						last_infos_array['requests']['auto_ticket']) + last_infos_array['requests']['normal'] + 
+						last_infos_array['requests']['emergency_low'] + last_infos_array['requests']['emergency_high']) && 
 						(get_infos_array['user']['level'] <= 2)) {
-						if (get_infos_array['requests']['emergency_high'] > $("#div_emergency_requests_high").html()) {
+						if (get_infos_array['requests']['emergency_high'] > last_infos_array['requests']['emergency_high']) {
 							do_audio("audio_emergency_high");
 						} else {
-							if (get_infos_array['requests']['emergency_low'] > $("#div_emergency_requests_low").html()) {
+							if (get_infos_array['requests']['emergency_low'] > last_infos_array['requests']['emergency_low']) {
 								do_audio("audio_emergency_low");
 							} else {
-								if (get_infos_array['requests']['auto_ticket'] > $("#div_auto_ticket").html()) {
+								if (get_infos_array['requests']['auto_ticket'] > last_infos_array['requests']['auto_ticket']) {
 									do_audio("audio_new_message");
 								} else {
-									if (get_infos_array['requests']['normal'] > $("#div_requests").html()) {
+									if (get_infos_array['requests']['normal'] > last_infos_array['requests']['normal']) {
 										do_audio("audio_call_request");	
 									} else {
-										if (get_infos_array['requests']['message'] > $("#div_message").html()) {
+										if (get_infos_array['requests']['message'] > last_infos_array['requests']['message']) {
 											do_audio("audio_new_message");
 										}
 									}
@@ -428,24 +378,8 @@ foreach ($sound_names_array as $value) {
 							get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {
 							highlight_button("communication", true);
 						}
-						//==========================================
-						$("#div_message").html(get_infos_array['requests']['message']);
-						$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
-						$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
-						$("#div_requests").html(get_infos_array['requests']['normal']);
-						$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
-						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
-						/*$("#div_message").html(get_infos_array['requests']['message']);
-						$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
-						$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
-						$("#div_requests").html(get_infos_array['requests']['normal']);
-						$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
-						$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);*/
-						//==========================================
 					}
-					//refresh_latest_infos(data);
 				} else {
-					//refresh_latest_infos(data);
 					do_logout();
 				}
 				refresh_latest_infos(data);
@@ -506,39 +440,35 @@ foreach ($sound_names_array as $value) {
 
 			function no_callback() {}
 
-			function ticket_signal() {				// red light the button
+			function ticket_signal() {								// red light the button
 				change_class("situation", "btn btn-xs btn-danger");
 				highlighted_buttons["situation"] = 3;
 			}
-//return in gleiche zeile. bug mit 2 screens untersuchen
-			function unit_signal() {				// light the units button and - if not already highlighted_buttons red - the situation button
-				if (highlighted_buttons["situation"] > 2) {
-					return;
-				}									// already highlighted_buttons - possibly red
+
+			function unit_signal() {								// light the units button and - if not already highlighted_buttons red - the situation button
+				if (highlighted_buttons["situation"] > 2) return;	// already highlighted_buttons - possibly red
 				change_class("situation", "btn btn-xs btn-info");
 				highlighted_buttons["situation"] = 2;
 			}
 
-			function miscellaneous_signal() {		// blue light to situation button if not already highlighted_buttons
-				if (highlighted_buttons["situation"] > 0) {
-					return;
-				}									// already highlighted_buttons - possibly red
+			function miscellaneous_signal() {						// blue light to situation button if not already highlighted_buttons
+				if (highlighted_buttons["situation"] > 0) return;	// already highlighted_buttons - possibly red
 				change_class("situation", "btn btn-xs btn-info");
 				highlighted_buttons["situation"] = 1;
 			}
 
 			highlighted_buttons["communication"] = 0;
-			function calls_signal_danger() {				// light the msg button		// already highlighted_buttons - possibly red
+			function calls_signal_danger() {						// light the msg button		// already highlighted_buttons - possibly red
 				change_class("communication", "btn btn-xs btn-danger");
 				highlighted_buttons["communication"] = 3;
 			}
 
-			function calls_signal_info() {					// light the msg button	// already highlighted_buttons - possibly orange
+			function calls_signal_info() {							// light the msg button	// already highlighted_buttons - possibly orange
 				change_class("communication", "btn btn-xs btn-info");
 				highlighted_buttons["communication"] = 2;
 			}
 
-			function calls_signal_warning() {					// light the msg button	// already highlighted_buttons - possibly yellow
+			function calls_signal_warning() {						// light the msg button	// already highlighted_buttons - possibly yellow
 				change_class("communication", "btn btn-xs btn-warning");
 				highlighted_buttons["communication"] = 1;
 			}
@@ -780,17 +710,13 @@ foreach ($sound_names_array as $value) {
 			function do_logout() {
 				if (!is_logged_in) return;
 				$("#date_time_of_day").html("");
-				$("#logged_in").html(NOT_STR);
+				$("#logged_in").html("<?php echo get_text(" *not*");?>");
 				is_initialized = false;
 				$("#buttons").css("display", "none");
 				$("#permission_info").css("display", "none");
 				$("#timeout_info").css("display", "none");
 				$("#day_night").css("display","none");
 				$("#date_time").css("display", "none");
-				/*try {
-					parent.frames["callboard"].hide_callboard();
-				} catch (e) {
-				}*/
 				show_hide_callboard("hide");
 				is_logged_in = false;
 				do_day_night("day");
@@ -868,7 +794,6 @@ foreach ($sound_names_array as $value) {
 							ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
 							break;
 						case "ticket_close_delete":
-							//delete brackets from return
 							ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
 							ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
 							break;
@@ -879,7 +804,6 @@ foreach ($sound_names_array as $value) {
 							action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
 							break;
 						case "action_delete":
-							//delete brackets from return
 							action_form_data[get_changes_array["action"]] = (function () {return;})();
 							action_timestamp[get_changes_array["action"]] = (function () {return;})();
 							break;
@@ -908,74 +832,6 @@ foreach ($sound_names_array as $value) {
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
 		<!--  ==== for multiuser and development mode ====  -->
-<!-- 		<div id="infostr_user_name" style="display: <?php print $display_str;?>;">name: </div>
-		<div id="div_user_name" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_user_level" style="display: <?php print $display_str;?>;">level: </div>
-		<div id="div_user_level" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_ticket_latest_id" style="display: <?php print $display_str;?>;">| ticket latest_id: </div>
-		<div id="div_ticket_latest_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_changed_id" style="display: <?php print $display_str;?>;">changed_id: </div>
-		<div id="div_ticket_changed_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_updated" style="display: <?php print $display_str;?>;">updated: </div>
-		<div id="div_ticket_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_user" style="display: <?php print $display_str;?>;">user: </div>
-		<div id="div_ticket_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_id" style="display: <?php print $display_str;?>;">| unit id: </div>
-		<div id="div_unit_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_unit_updated" style="display: <?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_unit_user" style="display: <?php print $display_str;?>;">user: </div>
-		<div id="div_unit_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_callprogress_id" style="display: <?php print $display_str;?>;">| callprogress unit_id: </div>
-		<div id="div_unit_callprogress_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_updated" style="display: <?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_callprogress_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_user" style="display: <?php print $display_str;?>;">user: </div>
-		<div id="div_unit_callprogress_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_assign_max_id" style="display: <?php print $display_str;?>;">| assign max_id: </div>
-		<div id="div_assign_max_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_assign_quanity" style="display: <?php print $display_str;?>;"> quantity: </div>
-		<div id="div_assign_quantity" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_assign_updated" style="display: <?php print $display_str;?>;"> updated: </div>
-		<div id="div_assign_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_assign_user" style="display: <?php print $display_str;?>;"> user: </div>
-		<div id="div_assign_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_action_max_id" style="display: <?php print $display_str;?>;">| action max_id: </div>
-		<div id="div_action_max_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_action_changed_id" style="display: <?php print $display_str;?>;"> changed_id: </div>
-		<div id="div_action_changed_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_action_updated" style="display: <?php print $display_str;?>;"> updated: </div>
-		<div id="div_action_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_action_user" style="display: <?php print $display_str;?>;"> user: </div>
-		<div id="div_action_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_facility_id" style="display: <?php print $display_str;?>;">| facility id: </div>
-		<div id="div_facility_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_facility_updated" style="display: <?php print $display_str;?>;">updated: </div>
-		<div id="div_facility_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_facility_user" style="display: <?php print $display_str;?>;">user: </div>
-		<div id="div_facility_user" style="display: <?php print $display_str;?>;"></div>-->
-
-		<div style="display: <?php print $display_str;?>;">| requests silent: </div>
-		<div id="div_silent_requests" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| requests message: </div>
-		<div id="div_message" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| requests warn-text: </div>
-		<div id="div_warn_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| requests auto-ticket: </div>
-		<div id="div_auto_ticket" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| normal: </div>
-		<div id="div_requests" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;"> emcy_lo: </div>
-		<div id="div_emergency_requests_low" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;"> emcy_hi: </div>
-		<div id="div_emergency_requests_high" style="display: <?php print $display_str;?>;"></div>
-
 		<div style="display: <?php print $display_str;?>;">| current_radio: </div>
 		<div id="div_api_current_radio" style="display: <?php print $display_str;?>;"></div>
 		<div style="display: <?php print $display_str;?>;">| api_host_available: </div>
@@ -994,25 +850,6 @@ foreach ($sound_names_array as $value) {
 		<div id="div_api_phone_host_text" style="display: <?php print $display_str;?>;"></div>
 		<div style="display: <?php print $display_str;?>;">| api_phone_host_timestamp_current_state: </div>
 		<div id="div_api_phone_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
-
-<!-- 		<div id="infostr_scheduled" style="display: <?php print $display_str;?>;">| scheduled: </div>
-		<div id="div_scheduled" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_object_id" style="display: <?php print $display_str;?>;">| object id: </div>
-		<div id="div_facility_id" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_object_updated" style="display: <?php print $display_str;?>;">updated: </div>
-		<div id="div_facility_updated" style="display: <?php print $display_str;?>;"></div>
-		<div id="infostr_object_user" style="display: <?php print $display_str;?>;">user: </div>
-		<div id="div_facility_user" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="infostr_log" style="display: <?php print $display_str;?>;">| log: </div>
-		<div id="div_log" style="display: <?php print $display_str;?>;"></div>
-
-		<div id="database" style="display: <?php print $display_str;?>;">&nbsp;&nbsp;<?php print get_text("Database");?>:&nbsp;<?php print $GLOBALS['db_name'];?></div>
-		<div style="display: <?php print $display_str;?>;"><?php print "&nbsp;&nbsp;" . get_text("Module"); ?>: </div>
-		<div id="script" style="display: <?php print $display_str;?>;"></div>
-		<div class="btn btn-xs btn-default" onclick="top.location.href='install.php';" style="display: <?php print $display_str;?>;"><?php print "install.php";?></div> -->
-
 		<div id="head_line" class="container-fluid hidden-print">
 			<div class="row">
 				<div class="col-md-1"></div>

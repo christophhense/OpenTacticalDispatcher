@@ -478,7 +478,7 @@ default:
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);	
-		$silent_requests = "0";
+		$silent_requests = 0;
 		if (db_num_rows($result)) {
 			$silent_requests = db_num_rows($result);
 		}
