@@ -212,7 +212,7 @@ foreach ($sound_names_array as $value) {
 					} else {
 						day_night_toggle = "day";
 					}
-					if (get_infos_array['screen']['day_night'].valueOf() != last_infos_array['screen']['day_night'].valueOf()) {
+					if (get_infos_array['screen']['day_night'] != last_infos_array['screen']['day_night']) {
 						do_day_night(get_infos_array['screen']['day_night']);
 					}
 					if ((
@@ -374,11 +374,11 @@ foreach ($sound_names_array as $value) {
 				if (is_initialized) return;
 				is_initialized = true;
 				last_infos_array['screen'] = {'screen_id':Math.floor(Math.random() * 99999999)};
-				send_request("get_data.php?version=" + Math.floor(Math.random() * 99999999) + 
+				send_request("./get_data.php?version=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos);
 				if (client_poll_cycle == null) {
 					client_poll_cycle = window.setInterval(function() {
-						send_request("get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
+						send_request("./get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
 							"&screen_id=" + last_infos_array['screen']['screen_id'], watch_latest_infos);
 					}, <?php print $auto_poll_time * 100;?>);
 				}
@@ -414,7 +414,7 @@ foreach ($sound_names_array as $value) {
 				highlighted_buttons[button_id] = 0;
 				switch (button_id.valueOf()) {
 				case "situation":
-					send_request("set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
+					send_request("./set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
 						"&screen_id=" + last_infos_array['screen']['screen_id'], no_callback);
 					break;
 				default:
@@ -655,7 +655,7 @@ foreach ($sound_names_array as $value) {
 			function do_login(user_name, user_level) {
 				if (is_logged_in) return;
 				if (isNaN(user_level)) return;
-				send_request("get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
+				send_request("./get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos)
 				do_api_connection_test(false, "");
 				switch (user_level) {
@@ -855,8 +855,7 @@ foreach ($sound_names_array as $value) {
 					<button id="callboard" class="btn btn-xs btn-default"
 						onclick="show_hide_callboard();" style="<?php print $display_callboard_str;?>"><?php print get_text("Board");?></button>
 					<button id="communication" class="btn btn-xs btn-default btn-blink"
-						onclick="window.parent.main.location.href='communication.php';">
-						<?php print get_text("Communication");?>
+						onclick="window.parent.main.location.href='communication.php';"><?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
 					</button>
 					<button id="add_ticket" class="btn btn-xs btn-default"
