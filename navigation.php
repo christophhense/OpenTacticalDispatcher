@@ -3,15 +3,8 @@ error_reporting(E_ALL);
 ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
-
-if (ini_get("display_errors") == true) {
-	$auto_poll_time = 50;
-	$display_str = "inline";
-} else {
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
-	$display_str = "none";
-}
+$auto_poll_settings = explode(",", get_variable("auto_poll"));
+$auto_poll_time = trim($auto_poll_settings[0]);
 $ptt_display_settings = explode(",", get_variable("_api_ptt_display_encdg"));
 $ptt_display_time = trim($ptt_display_settings[0]) * 100;
 $ptt_fade_out_time = trim($ptt_display_settings[1]) * 100;
@@ -832,9 +825,6 @@ foreach ($sound_names_array as $value) {
 						<span id="infostring_top" class="label label-success"></span>
 						<span id="communicationstring_top" class="label label-info"></span>
 					</h3>
-					<span style="font-weight:bold; color:red; display:<?php print $display_str;?>"<?php print get_help_text_str("development_mode");?>>
-						<?php print get_text("development mode - do not use for dispatching");?>
-					</span>
 				</div>
 				<div id="date_time" class="col-md-3" style="display: none;">
 					<h3><span id="date_time_of_day" class="label label-clock" style="float: right;"></span></h3>

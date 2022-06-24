@@ -503,12 +503,6 @@ default:
 		<script>
 			$(".nav-pills, .nav-tabs").tabdrop();
 		</script>
-	<?php
-	if (is_super()) {
-		print "<div style='position: fixed; bottom: 70px; left: 20px;'>" . get_text("Time Elapsed") . ": " .
-			round((microtime(true) - $time), 3) . " " . get_text("Seconds") . "</div>";
-	}
-	?>
 		<?php show_infobox();?>
 		<?php show_infobox("large");?>
 	</body>

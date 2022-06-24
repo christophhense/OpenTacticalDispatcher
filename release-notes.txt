@@ -152,4 +152,6 @@ Activities sorted by application function.
 		CHANGE
 		Get current version from programmcode
 * Program code and miscellaneous
-	NONE
+	CHAGE
+		Remove div-containers for storing data in navigation.php
+		Remove developer mode

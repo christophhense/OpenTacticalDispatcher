@@ -198,7 +198,6 @@ INSERT INTO `hints` (`tag`, `hint`) VALUES
 ('db_optimize', 'The records for inserts, feedback, and user settings are reorganized with the OPTIMIZE TABLE function of the database. This is recommended to improve after a long duration of the program to the processing speed of the database.'),
 ('db_reset', 'At this point, reset the database can be to enter a CAPTCHA. CAUTION: When you reinstall all units objects, inserts, feedback i.a. irrevocably deleted.'),
 ('deactivate_timeout', 'Deactivate auto-logout.'),
-('development_mode', 'Developer mode off in \ "php.ini \" with \ "display_errors = Off \".'),
 ('framesize', 'Minimum size of the top frame in pixels. Default: 115'),
 ('flag_unit', 'Last updated Unit'),
 ('flag_ticket', 'Units in the same Ticket'),

@@ -176,18 +176,11 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 				$my_db = "";
 			}
 			$install_checked_str = "";
-			$reset_settings_checked_str = "";
 			$reset_credentials_checked_str = "";
 			if ((isset ($_GET['write_credentials_checked'])) && ($_GET['write_credentials_checked'] == "true")) {
 				$reset_credentials_checked_str = " checked";
 			} else {
-				if (ini_get("display_errors") == true) {
-					
-					$reset_settings_checked_str = " checked";
-				} else {
-					$install_checked_str = " checked";
-					
-				}
+				$install_checked_str = " checked";
 			}
 	?>
 			<form name="install_frm" method="post" action="install.php?install_complete=yes">
@@ -226,7 +219,7 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 										<td>Install Option:</td>
 										<td>
 											<label class="radio-inline"><input type="radio" value="install" name="frm_option"<?php print $install_checked_str;?>>&nbsp;Install database tables new (drop tables if exist)</label><br>
-											<label class="radio-inline"><input type="radio" value="reset_settings" name="frm_option"<?php print $reset_settings_checked_str;?>>&nbsp;Reset settings (do not touch user data)</label><br>
+											<label class="radio-inline"><input type="radio" value="reset_settings" name="frm_option">&nbsp;Reset settings (do not touch user data)</label><br>
 											<label class="radio-inline"><input type="radio" value="write_credentials" name="frm_option"<?php print $reset_credentials_checked_str;?>>&nbsp;Write db-configuration file only</label>
 										</td>
 									</tr>

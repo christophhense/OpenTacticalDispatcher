@@ -198,7 +198,6 @@ INSERT INTO `hints` (`tag`, `hint`) VALUES
 ('db_optimize', 'Die Datensätze für Einsätze, Rückmeldungen, Benutzer und Einstellungen werden mit der OPTIMIZE TABLE-Funktion der Datenbank reorganisiert. Dies ist nach langer Programmlaufzeit empfehlenswert um die Verarbeitungsgeschwindigkeit der Datenbank zu verbessern.'),
 ('db_reset', 'An dieser Stelle kann nach Eingabe eines CAPTCHA die Datenbank zurückgesetzt werden. ACHTUNG: Bei der Neuinstallation werden alle Einheiten, Objekte, Einsätze, Rückmeldungen u.A. unwiederruflich gelöscht.'),
 ('deactivate_timeout', 'Automatisches Abmelden ausschalten.'),
-('development_mode', 'Entwicklermodus abschalten in php.ini durch display_errors=Off.'),
 ('framesize', 'Mindesthöhe der Button-Kopfleiste in Pixeln. Voreinstellung: 115'),
 ('flag_unit', 'Zuletzt aktualisierte Einheit.'),
 ('flag_ticket', 'Einheiten im gleichen Einsatz'),
