@@ -222,15 +222,16 @@ foreach ($sound_names_array as $value) {
 					if (get_infos_array['screen']['day_night'].valueOf() != last_infos_array['screen']['day_night'].valueOf()) {
 						do_day_night(get_infos_array['screen']['day_night']);
 					}
-					if (
-						//==========================================
-						(($("#div_host_available").html() != get_infos_array['api']['host_available']) || 
-						($("#div_phone_host_available").html() != get_infos_array['api']['phone_host_available']) || 
-						//==========================================
-						((retry == false) && (keepalive == false))) &&
-						((get_infos_array['api']['host_available'] != "null") || 
-						(get_infos_array['api']['phone_host_available'] != "null"))
-					) {
+					if ((
+							(last_infos_array['screen']['reset_button'] !== undefined) && (get_infos_array['screen']['reset_button'] !== undefined)
+						) && (
+							(last_infos_array['api']['host_available'] != get_infos_array['api']['host_available']) || 
+							(last_infos_array['api']['phone_host_available'] != get_infos_array['api']['phone_host_available']) || 
+							(retry == false && keepalive == false)
+						) && (
+							(get_infos_array['api']['host_available'] != "null") || 
+							(get_infos_array['api']['phone_host_available'] != "null")
+					)) {
 						if (retry != false) {
 							clearInterval(retry);
 							retry = false;
@@ -241,17 +242,6 @@ foreach ($sound_names_array as $value) {
 							retry = window.setInterval("do_periodic_connection_test();", api_connection_test_retry_time);
 						}
 					}
-					//==========================================
-					$("#div_current_radio").html(get_infos_array['api']['current_radio']);
-					$("#div_host_available").html(get_infos_array['api']['host_available']);
-					$("#div_host_code").html(get_infos_array['api']['host_code']);
-					$("#div_host_text").html(get_infos_array['api']['host_text']);
-					$("#div_host_timestamp_current_state").html(get_infos_array['api']['host_timestamp_current_state']);
-					$("#div_phone_host_available").html(get_infos_array['api']['phone_host_available']);
-					$("#div_phone_host_code").html(get_infos_array['api']['phone_host_code']);
-					$("#div_phone_host_text").html(get_infos_array['api']['phone_host_text']);
-					$("#div_phone_host_timestamp_current_state").html(get_infos_array['api']['phone_host_timestamp_current_state']);
-					//==========================================
 					if (session_logout_warning_period != 0) {
 						if (get_infos_array['user']['timeout'].valueOf() == "on") {
 							change_class("timeout_button", "btn btn-xs btn-default");
@@ -831,25 +821,6 @@ foreach ($sound_names_array as $value) {
 	<body onload="check_frames(); navigation_init();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<?php print $audio_sources_str;?>
-		<!--  ==== for multiuser and development mode ====  -->
-		<div style="display: <?php print $display_str;?>;">| current_radio: </div>
-		<div id="div_current_radio" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| host_available: </div>
-		<div id="div_host_available" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| host_code: </div>
-		<div id="div_host_code" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| host_text: </div>
-		<div id="div_host_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| host_timestamp_current_state: </div>
-		<div id="div_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| phone_host_available: </div>
-		<div id="div_phone_host_available" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| phone_host_code: </div>
-		<div id="div_phone_host_code" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| phone_host_text: </div>
-		<div id="div_phone_host_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| phone_host_timestamp_current_state: </div>
-		<div id="div_phone_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
 		<div id="head_line" class="container-fluid hidden-print">
 			<div class="row">
 				<div class="col-md-1"></div>
