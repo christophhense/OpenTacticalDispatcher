@@ -287,7 +287,7 @@ case "table":
 	<script>
 
 		function show_cleared_assigns() {
-			$.get("callboard.php?function=table&cleared_assigns=show", function(data) {
+			$.get("./callboard.php?function=table&cleared_assigns=show", function(data) {
 				$("#callboard").html(data);
 			});
 			$("#active_assigns_button").css("display", "inline");
@@ -295,7 +295,7 @@ case "table":
 		}
 
 		function hide_cleared_assigns() {
-			$.get("callboard.php?function=table&cleared_assigns=hide", function(data) {
+			$.get("./callboard.php?function=table&cleared_assigns=hide", function(data) {
 				$("#callboard").html(data);
 			});
 			$("#active_assigns_button").css("display", "none");
@@ -303,7 +303,7 @@ case "table":
 		}
 
 		function sort(sort_order) {
-			$.get("callboard.php?function=table&sort_order=" + sort_order, function(data) {
+			$.get("./callboard.php?function=table&sort_order=" + sort_order, function(data) {
 				$("#callboard").html(data);
 			});
 		}
@@ -332,7 +332,7 @@ case "table":
 		}
 
 		function cancel_clicked() {
-			$.get("callboard.php?function=table", function(data) {
+			$.get("./callboard.php?function=table", function(data) {
 				$("#callboard").html(data);
 			});
 			if (active_assigns_button) {
@@ -350,7 +350,7 @@ case "table":
 			var params = "assign_id=" + $("#F" + line_number + "_frm_assign_id").val();
 			params += "&frm_callprogression=" + progression;
 			params += "&function=call_progression";
-			$.post("set_data.php", params, function(data) {
+			$.post("./set_data.php", params, function(data) {
 			})
 			.done(function() {
 				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
@@ -419,7 +419,7 @@ case "table":
 				} else {
 					switch(resp.toLowerCase()) {
 					case "r":
-						$.post("set_data.php", "function=assign_reset&assign_id=" + id)
+						$.post("./set_data.php", "function=assign_reset&assign_id=" + id)
 						.done(function() {
 							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -430,7 +430,7 @@ case "table":
 						break;
 					case "d":
 						if (confirm("<?php print html_entity_decode(get_text('Delete this dispatch record?'));?>")) {
-							$.post("set_data.php", "function=assign_delete&assign_id=" + id)
+							$.post("./set_data.php", "function=assign_delete&assign_id=" + id)
 							.done(function() {
 								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
 								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -485,7 +485,7 @@ case "table":
 	?>
 
 		$(document).ready(function() {
-			$.get("callboard.php?function=table", function(data) {
+			$.get("./callboard.php?function=table", function(data) {
 				$("#callboard").html(data);
 			});
 			var change_situation_first_set = 0;
@@ -496,7 +496,7 @@ case "table":
 					change_situation_first_set = 1;
 				}
 				if (typeof get_infos_array['reload_flags'] != "undefined" && get_infos_array['reload_flags']['units']) {
-					$.get("callboard.php?function=table", function(data) {
+					$.get("./callboard.php?function=table", function(data) {
 						$("#callboard").html(data);
 					});
 				}
