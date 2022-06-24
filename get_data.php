@@ -202,17 +202,17 @@ default:
 		$json_api = array ();
 		$json_api['current_radio'] = $current_radio;
 		$api_availability = get_api_availability("api");
-		$json_api['api_host_available'] = $api_availability['available'];
-		$json_api['api_host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
-		$json_api['api_host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
-		$json_api['api_host_code'] = $api_availability['code'];
-		$json_api['api_host_text'] = $api_availability['text'];
+		$json_api['host_available'] = $api_availability['available'];
+		$json_api['host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
+		$json_api['host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
+		$json_api['host_code'] = $api_availability['code'];
+		$json_api['host_text'] = $api_availability['text'];
 		$api_availability = get_api_availability("phone");
-		$json_api['api_phone_host_available'] = $api_availability['available'];
-		$json_api['api_phone_host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
-		$json_api['api_phone_host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
-		$json_api['api_phone_host_code'] = $api_availability['code'];
-		$json_api['api_phone_host_text'] = $api_availability['text'];
+		$json_api['phone_host_available'] = $api_availability['available'];
+		$json_api['phone_host_timestamp_current_state'] = $api_availability['timestamp_current_state'];
+		$json_api['phone_host_timestamp_last_retry'] = $api_availability['timestamp_last_retry'];
+		$json_api['phone_host_code'] = $api_availability['code'];
+		$json_api['phone_host_text'] = $api_availability['text'];
 		//========== Ticket
 		$where_str = get_allocates_where_str($GLOBALS['TYPE_USER'], $GLOBALS['TYPE_TICKET'], "AND");
 

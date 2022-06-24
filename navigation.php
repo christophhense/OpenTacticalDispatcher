@@ -224,12 +224,12 @@ foreach ($sound_names_array as $value) {
 					}
 					if (
 						//==========================================
-						(($("#div_api_host_available").html() != get_infos_array['api']['api_host_available']) || 
-						($("#div_api_phone_host_available").html() != get_infos_array['api']['api_phone_host_available']) || 
+						(($("#div_host_available").html() != get_infos_array['api']['host_available']) || 
+						($("#div_phone_host_available").html() != get_infos_array['api']['phone_host_available']) || 
 						//==========================================
 						((retry == false) && (keepalive == false))) &&
-						((get_infos_array['api']['api_host_available'] != "null") || 
-						(get_infos_array['api']['api_phone_host_available'] != "null"))
+						((get_infos_array['api']['host_available'] != "null") || 
+						(get_infos_array['api']['phone_host_available'] != "null"))
 					) {
 						if (retry != false) {
 							clearInterval(retry);
@@ -242,15 +242,15 @@ foreach ($sound_names_array as $value) {
 						}
 					}
 					//==========================================
-					$("#div_api_current_radio").html(get_infos_array['api']['current_radio']);
-					$("#div_api_host_available").html(get_infos_array['api']['api_host_available']);
-					$("#div_api_host_code").html(get_infos_array['api']['api_host_code']);
-					$("#div_api_host_text").html(get_infos_array['api']['api_host_text']);
-					$("#div_api_host_timestamp_current_state").html(get_infos_array['api']['api_host_timestamp_current_state']);
-					$("#div_api_phone_host_available").html(get_infos_array['api']['api_phone_host_available']);
-					$("#div_api_phone_host_code").html(get_infos_array['api']['api_phone_host_code']);
-					$("#div_api_phone_host_text").html(get_infos_array['api']['api_phone_host_text']);
-					$("#div_api_phone_host_timestamp_current_state").html(get_infos_array['api']['api_phone_host_timestamp_current_state']);
+					$("#div_current_radio").html(get_infos_array['api']['current_radio']);
+					$("#div_host_available").html(get_infos_array['api']['host_available']);
+					$("#div_host_code").html(get_infos_array['api']['host_code']);
+					$("#div_host_text").html(get_infos_array['api']['host_text']);
+					$("#div_host_timestamp_current_state").html(get_infos_array['api']['host_timestamp_current_state']);
+					$("#div_phone_host_available").html(get_infos_array['api']['phone_host_available']);
+					$("#div_phone_host_code").html(get_infos_array['api']['phone_host_code']);
+					$("#div_phone_host_text").html(get_infos_array['api']['phone_host_text']);
+					$("#div_phone_host_timestamp_current_state").html(get_infos_array['api']['phone_host_timestamp_current_state']);
 					//==========================================
 					if (session_logout_warning_period != 0) {
 						if (get_infos_array['user']['timeout'].valueOf() == "on") {
@@ -833,23 +833,23 @@ foreach ($sound_names_array as $value) {
 		<?php print $audio_sources_str;?>
 		<!--  ==== for multiuser and development mode ====  -->
 		<div style="display: <?php print $display_str;?>;">| current_radio: </div>
-		<div id="div_api_current_radio" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_host_available: </div>
-		<div id="div_api_host_available" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_host_code: </div>
-		<div id="div_api_host_code" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_host_text: </div>
-		<div id="div_api_host_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_host_timestamp_current_state: </div>
-		<div id="div_api_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_phone_host_available: </div>
-		<div id="div_api_phone_host_available" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_phone_host_code: </div>
-		<div id="div_api_phone_host_code" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_phone_host_text: </div>
-		<div id="div_api_phone_host_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| api_phone_host_timestamp_current_state: </div>
-		<div id="div_api_phone_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
+		<div id="div_current_radio" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| host_available: </div>
+		<div id="div_host_available" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| host_code: </div>
+		<div id="div_host_code" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| host_text: </div>
+		<div id="div_host_text" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| host_timestamp_current_state: </div>
+		<div id="div_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| phone_host_available: </div>
+		<div id="div_phone_host_available" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| phone_host_code: </div>
+		<div id="div_phone_host_code" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| phone_host_text: </div>
+		<div id="div_phone_host_text" style="display: <?php print $display_str;?>;"></div>
+		<div style="display: <?php print $display_str;?>;">| phone_host_timestamp_current_state: </div>
+		<div id="div_phone_host_timestamp_current_state" style="display: <?php print $display_str;?>;"></div>
 		<div id="head_line" class="container-fluid hidden-print">
 			<div class="row">
 				<div class="col-md-1"></div>
