@@ -321,7 +321,6 @@ if (is_operator() || is_admin() || is_super()) {
 		set_session_expire_time();
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
-		$auto_refresh_time = trim($auto_poll_settings[1]);
 	?>
 		<script>
 			var select_ticket_api_log_id = 0;

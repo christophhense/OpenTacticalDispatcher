@@ -2749,11 +2749,11 @@ function get_variable($which) {
 		}
 		break;
 	case "auto_poll":
-		$value = "10, 50";
+		$value = "10";
 		$values = explode(",", $variables[$which]);
-		if ((preg_match("/^\s?[0-9]{1,3}\s?,\s?[0-9]{1,4}\s?$/", $variables[$which]) &&
-			($values[0] > 1) && ($values[0] < 99) &&
-			($values[1] > 1) && ($values[1] < 99) && ($values[0] < $values[1]))) {
+		if (preg_match("/^\s?[0-9]{1,3}\s?$/", $variables[$which]) &&
+			$values[0] > 1 && $values[0] < 99
+		) {
 			$value = $variables[$which];
 		}
 		break;

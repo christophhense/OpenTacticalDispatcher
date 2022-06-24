@@ -245,7 +245,6 @@ default:
 	$reported_by_select_array = get_reported_by_select_str("edit");
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 
 	$query = "SELECT *, " .
 		"UNIX_TIMESTAMP(`problemstart`) AS `problemstart2`, " .

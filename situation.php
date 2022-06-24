@@ -118,7 +118,6 @@ default:
 	set_session_expire_time();
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 	$current_situation_type = "tickets_units";
 	$report_last_settings = explode(",", get_variable("report_last"));
 	$start_date = mysql_datetime(time() - trim($report_last_settings[0]) * 60);

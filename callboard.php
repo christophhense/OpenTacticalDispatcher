@@ -260,7 +260,6 @@ case "table":
 		unset ($result);
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
-		$auto_refresh_time = trim($auto_poll_settings[1]);
 		$active_assigns_button_display_str = " style=\"display: none;\"";
 		$cleared_assigns_button_display_str = " style=\"display: inline;\"";
 		if ((isset ($_SESSION['cleared_assigns'])) && ($_SESSION['cleared_assigns'] == "show")) {
