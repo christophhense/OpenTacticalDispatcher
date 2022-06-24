@@ -212,9 +212,9 @@ case "table":
 				if (!($row['unit_id'] == 0)) {
 					unset ($row_type);
 					print "\t<td" . get_title_unit_str($row) . " style='text-align: left; font-weight: bold; " .
-							"font-size: 16px; vertical-align: top;'>" . $strike . "<div style='overflow:hidden; text-overflow:ellipsis;'>" .
-							"<span class='label' style='background-color: " . $row['unit_background_color'] . "; color: " . $row['unit_text_color'] . ";'>" .
-							remove_nls($row['handle']) . "</span></div>" . $strikend . "</td>\n";
+						"font-size: 16px; vertical-align: top;'>" . $strike . "<div style='overflow:hidden; text-overflow:ellipsis;'>" .
+						"<span class='label' style='background-color: " . $row['unit_background_color'] . "; color: " . $row['unit_text_color'] . ";'>" .
+						remove_nls($row['handle']) . "</span></div>" . $strikend . "</td>\n";
 //---------------------------------------------------------------------------------------------------------------------------
 					print get_disp_cell($row['dispatched'], "frm_dispatched", $class, $strike, $strikend, $row['assign_id'], $i);
 					print get_disp_cell($row['responding'], "frm_responding", $class, $strike, $strikend, $row['assign_id'], $i);
@@ -285,40 +285,6 @@ case "table":
 		<script src="./js/functions.js" type="text/javascript"></script>
 	</head>
 	<script>
-
-		function refresh_latest_Infos_callboard() {
-			try {
-				$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
-				$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
-				$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
-				$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
-				$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
-				$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-				$("#div_assign_updated").html(get_infos_array['assign']['update']);
-				$("#div_assign_user").html(get_infos_array['assign']['user']);
-			} catch(e) {
-			}
-		}
-
-		function do_watch() {
-			try {
-				if (get_infos_array['user']['id'] != 0) {
-					if (
-						($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
-						($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) ||
-						($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
-						($("#div_assign_updated").html() != get_infos_array['assign']['update']) ||
-						($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-					) {
-						$.get("callboard.php?function=table", function(data) {
-							$("#callboard").html(data);
-						});
-						refresh_latest_Infos_callboard();
-					}
-				}
-			} catch (e) {
-			}
-		}
 
 		function show_cleared_assigns() {
 			$.get("callboard.php?function=table&cleared_assigns=show", function(data) {
@@ -527,24 +493,19 @@ case "table":
 				if (event.origin != window.location.origin) return;
 				get_infos_array = JSON.parse(event.data);
 				if (change_situation_first_set == 0) {
-					refresh_latest_Infos_callboard();
 					change_situation_first_set = 1;
 				}
-				do_watch();
+				if (typeof get_infos_array['reload_flags'] != "undefined" && get_infos_array['reload_flags']['units']) {
+					$.get("callboard.php?function=table", function(data) {
+						$("#callboard").html(data);
+					});
+				}
 			});
 		});
 
 	</script>
 	<body onload="check_frames();" onunload="">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div id="div_ticket_updated" style="display: none;"></div>
-		<div id="div_unit_callprogress_id" style="display: none;"></div>
-		<div id="div_unit_callprogress_updated" style="display: none;"></div>
-		<div id="div_unit_callprogress_user" style="display: none;"></div>
-		<div id="div_assign_max_id" style="display: none;"></div>
-		<div id="div_assign_quantity" style="display: none;"></div>
-		<div id="div_assign_updated" style="display: none;"></div>
-		<div id="div_assign_user" style="display: none;"></div>
 		<div class="container-fluid" id="main_container">
 			<div class="row">
 				<div class="col-md-1">
