@@ -21,7 +21,8 @@
 Activities sorted by application function.
 
 * Situation
-	NONE
+	BUG
+		Reload scheduled tickets after auto-open
 * Callboard
 	NONE
 * Communication
