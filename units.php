@@ -220,7 +220,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -383,14 +383,14 @@ case "add":
 		$guard_house_id = $_POST['frm_guard_house'];
 	}
 	?>
-	<script>
+		<script>
 
-		$(document).ready(function() {
-			set_cursor_position(frm_handle, $("#frm_handle").val().length);
-			<?php show_prevent_browser_back_button();?>
-		});
+			$(document).ready(function() {
+				set_cursor_position(frm_handle, $("#frm_handle").val().length);
+				<?php show_prevent_browser_back_button();?>
+			});
 
-	</script>
+		</script>
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>

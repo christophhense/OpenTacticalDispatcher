@@ -63,6 +63,7 @@ foreach ($sound_names_array as $value) {
 		<script>
 			var last_infos_array = [];
 			var current_button_id = "situation";
+			var current_main_script = "";
 			var day_night_toggle = "night";
 			var show_callboard = false;
 			var is_initialized = false;
@@ -175,6 +176,7 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function watch_latest_infos(data) {
+				//console.log(current_main_script);
 				var get_infos_array = JSON.parse(data);
 				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
 				get_infos_array.reload_flags = get_reload_flags(get_infos_array);
@@ -731,8 +733,8 @@ foreach ($sound_names_array as $value) {
 					case "message":
 						show_message(get_changes_array["action"], get_changes_array["item"]);
 						break;
-					case "div":
-						$("#" + get_changes_array["item"]).html(get_changes_array["action"]);
+					case "current_script":
+						current_main_script = get_changes_array["action"];
 						break;
 					case "script":
 						switch (get_changes_array["item"]) {
@@ -740,7 +742,7 @@ foreach ($sound_names_array as $value) {
 							window.parent.main.location.href=get_changes_array["action"];
 							break;
 						default:
-						}	
+						}
 						break;
 					case "function":
 						switch (get_changes_array["item"]) {

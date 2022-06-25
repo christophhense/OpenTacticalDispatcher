@@ -372,7 +372,7 @@ default:
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 
 			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);

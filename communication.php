@@ -204,7 +204,7 @@ if (is_operator() || is_admin() || is_super()) {
 	?>
 		<script>
 			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -325,7 +325,7 @@ if (is_operator() || is_admin() || is_super()) {
 		<script>
 			var select_ticket_api_log_id = 0;
 			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
