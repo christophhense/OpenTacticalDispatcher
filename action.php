@@ -85,19 +85,10 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var get_infos_array;
-
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[3]);?> + 0) * 1000;
 			var ticket_id = <?php print $current_ticket_id;?> + 0;
 			var current_timestamp = Date.now();
-
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function validate(form_name) {
 				var errmsg = "";
@@ -217,6 +208,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						delete_other_old_parked_form_data();

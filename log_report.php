@@ -98,14 +98,6 @@ default:
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[7]);?> + 0) * 1000;
 
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"log_report","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			function send_data() {
 				if (log_form.frm_comment.value) {
 					$.post("log_report.php", {
@@ -192,6 +184,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"log_report","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) {
 						get_parked_form_data();
 						change_situation_first_set = 1;

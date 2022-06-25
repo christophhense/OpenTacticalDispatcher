@@ -162,14 +162,6 @@ default:
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 			var current_timestamp = Date.now();
 
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			function validate() {
 				var errmsg = "";
 				var problemstart = "<?php print $problemstart;?>";
@@ -287,6 +279,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						delete_other_old_parked_form_data();

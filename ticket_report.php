@@ -60,22 +60,16 @@ if (is_guest()) {
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<script>
 
-			var get_infos_array;
-
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			$(document).ready(function() {
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				});
 			});
 

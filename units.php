@@ -219,13 +219,6 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function printers() {
 				$.get("units.php?function=printers").done(function(data) {
@@ -388,6 +381,10 @@ case "add":
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
 				<?php show_prevent_browser_back_button();?>
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
 		</script>
@@ -604,6 +601,10 @@ case "edit":
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
 		</script>
@@ -846,6 +847,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"units","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (get_infos_array['reload_flags']['units']) {
 						if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);

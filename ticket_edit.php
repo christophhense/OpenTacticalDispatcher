@@ -334,14 +334,6 @@ default:
 			var get_infos_array;
 			var change_situation_first_set = 0;
 
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			function get_units() {
 				$.get("ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_2").html(data);
@@ -644,6 +636,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_units();
 						get_actions();

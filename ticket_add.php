@@ -370,15 +370,6 @@ default:
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[0]);?> + 0;
 			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[1]);?> + 0) * 1000;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
-
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			var severities = new Array();
 			var protocols = new Array();
 			var reported_by_phone = new Array();
@@ -572,6 +563,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						$("#screen_id").val(get_infos_array['screen']['screen_id']);

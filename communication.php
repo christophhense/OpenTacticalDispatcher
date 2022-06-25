@@ -203,14 +203,7 @@ if (is_operator() || is_admin() || is_super()) {
 		}
 	?>
 		<script>
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-			
+
 			function do_send_api_message() {
 				var errmsg = "";
 				if ($("#frm_text").val() == "") {
@@ -265,6 +258,10 @@ if (is_operator() || is_admin() || is_super()) {
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				});
 			});
 
@@ -324,13 +321,6 @@ if (is_operator() || is_admin() || is_super()) {
 	?>
 		<script>
 			var select_ticket_api_log_id = 0;
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function load_content() {
 				$.get("communication.php?function=table_left_communication", function(data) {
@@ -481,6 +471,10 @@ if (is_operator() || is_admin() || is_super()) {
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (get_infos_array['reload_flags']['communication']) {
 						load_content();
 						var changes_data ='{"type":"button","item":"communication","action":"highlight"}';

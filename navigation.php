@@ -176,7 +176,7 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function watch_latest_infos(data) {
-				//console.log(current_main_script);
+				console.log(current_main_script);
 				var get_infos_array = JSON.parse(data);
 				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
 				get_infos_array.reload_flags = get_reload_flags(get_infos_array);

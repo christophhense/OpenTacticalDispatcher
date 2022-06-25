@@ -192,19 +192,12 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			try {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function do_remove(result) {
 				if (result == true) {
 					edit_form.submit();
 				}
-			}	
+			}
 
 			function validate(theForm) {
 				if (theForm.frm_remove) {
@@ -342,6 +335,10 @@ case "add":
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
 				<?php show_prevent_browser_back_button();?>
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
 		</script>
@@ -547,6 +544,10 @@ case "edit":
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
+				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
 		</script>
@@ -790,7 +791,7 @@ default:
 			function do_sort_facilities(sort_order) {
 				$.get("facilities.php?function=sort&order=" + sort_order)
 				.done(function() {
-						get_facilities();
+					get_facilities();
 				});
 			}
 
@@ -802,6 +803,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					get_infos_array = JSON.parse(event.data);
+					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) {
 						refresh_latest_infos_facilities()
 						change_situation_first_set = 1;
