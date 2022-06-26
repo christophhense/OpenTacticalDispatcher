@@ -330,8 +330,7 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array = [];
-			var change_situation_first_set = 0;
+			var new_infos_array = [];
 			var severities = [];
 			var protocols = [];
 			var reported_by_phone = [];
@@ -518,97 +517,6 @@ default:
 				}
 			}
 
-			var unit_id = 0;
-			var unit_updated = 0;
-			var unit_user = 0;
-			var unit_callprogress_id = 0;
-			var unit_callprogress_updated = 0;
-			var unit_callprogress_user = 0;
-			var assign_max_id = 0;
-			var assign_changed_id = 0;
-			var assign_updated = 0;
-			var assign_user = 0;
-			var assign_quantity = 0;
-			var action_updated = 0;
-			var ticket_latest_id = 0;
-			var ticket_changed_id = 0;
-			var ticket_updated = 0;
-			var ticket_user = 0;
-			var scheduled = 0;
-
-			function refresh_latest_infos() {
-				try {
-					unit_id = get_infos_array['units_status']['id'];
-					unit_updated = get_infos_array['units_status']['update'];
-					unit_user = get_infos_array['units_status']['user'];
-
-					unit_callprogress_id = get_infos_array['call_progression']['id'];
-					unit_callprogress_updated = get_infos_array['call_progression']['update'];
-					unit_callprogress_user = get_infos_array['call_progression']['user'];
-
-					assign_max_id = get_infos_array['assign']['id_max'];
-					assign_changed_id = get_infos_array['assign']['quantity'];
-					assign_updated = get_infos_array['assign']['update'];
-					assign_user = get_infos_array['assign']['user'];
-					assign_quantity = get_infos_array['assign']['quantity'];
-
-					action_updated = get_infos_array['action']['update'];
-
-					ticket_latest_id = get_infos_array['ticket']['id_max'];
-					ticket_changed_id = get_infos_array['ticket']['id_changed'];
-					ticket_updated = get_infos_array['ticket']['update'];
-					ticket_user = get_infos_array['ticket']['user'];
-					scheduled = get_infos_array['ticket']['scheduled'];
-				} catch(e) {
-					console.log(e);
-				}
-			}
-
-			function do_watch() {
-				if (get_infos_array['user']['id'] != 0) {
-					try {
-						if (
-							((
-								(ticket_latest_id != get_infos_array['ticket']['id_max']) ||
-								(ticket_changed_id != get_infos_array['ticket']['id_changed']) ||
-								(ticket_updated != get_infos_array['ticket']['update']) ||
-								(scheduled != get_infos_array['ticket']['scheduled'])
-							) && (
-								(get_infos_array['ticket']['user'] != get_infos_array['user']['id'])
-							)) || (
-								(assign_quantity != get_infos_array['assign']['quantity'])
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-						}
-						if (
-							(unit_id != get_infos_array['units_status']['id']) ||
-							((unit_updated != get_infos_array['units_status']['update']) &&
-							(unit_id == get_infos_array['units_status']['id'])) ||
-
-							(unit_callprogress_id != get_infos_array['call_progression']['id']) ||
-							((unit_callprogress_updated != get_infos_array['call_progression']['update']) &&
-							(unit_callprogress_id == get_infos_array['call_progression']['id'])) ||
-
-							(assign_max_id != get_infos_array['assign']['id_max']) ||
-
-							(action_updated != get_infos_array['action']['update'])
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_units();
-							get_actions();
-						}
-					} catch (e) {
-						console.log(e);
-					}
-				}
-				refresh_latest_infos();
-			}
-
 			$(document).ready(function() {
 				$("#problemstart").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
@@ -630,22 +538,27 @@ default:
 				});
 
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
+
+				get_units();
+				get_actions();
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
+					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					if (change_situation_first_set == 0) { 
+					if (new_infos_array['reload_flags']['units']) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
 						get_units();
-						get_actions();
-						refresh_latest_infos();
-						$("#screen_id").val(get_infos_array['screen']['screen_id']);
-						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (new_infos_array['reload_flags']['actions']) {
+						get_actions();
+					}
 				});
 			});
 

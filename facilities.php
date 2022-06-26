@@ -760,34 +760,6 @@ default:
 				});
 			}
 
-			var facility_id;
-			var facility_updated;
-			var facility_user;
-
-			function refresh_latest_infos_facilities() {
-				try {
-					facility_id = get_infos_array['facilities_status']['id'];
-					facility_updated = get_infos_array['facilities_status']['update'];
-					facility_user = get_infos_array['facilities_status']['user'];
-				} catch(e) {
-				}
-			}
-
-			function do_watch() {
-				if (get_infos_array['facilities_status']['id'] != 0) {
-					try {
-						if (
-							(facility_id != get_infos_array['facilities_status']['id']) ||
-							(facility_updated != get_infos_array['facilities_status']['update'])
-						) {
-							get_facilities();
-						}
-					} catch (e) {
-					}
-				}
-				refresh_latest_infos_facilities();
-			}
-
 			function do_sort_facilities(sort_order) {
 				$.get("facilities.php?function=sort&order=" + sort_order)
 				.done(function() {
@@ -802,16 +774,14 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					if (change_situation_first_set == 0) {
-						refresh_latest_infos_facilities()
-						change_situation_first_set = 1;
+					if (new_infos_array['reload_flags']['facilities']) {
+						get_facilities();
 					}
-					do_watch();
 				});
 			});
 

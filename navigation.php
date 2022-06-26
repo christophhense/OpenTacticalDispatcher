@@ -70,7 +70,7 @@ foreach ($sound_names_array as $value) {
 			var is_initialized = false;
 			var is_logged_in = false;
 			var client_poll_cycle = null;
-			var highlighted_buttons = new Array();
+			var highlighted_buttons = [];
 			var session_logout_warning_period = <?php print $session_logout_warning;?> + 0;
 			var session_logout_warning_reported = false;
 			var ptt_display_time = <?php print $ptt_display_time;?> + 0;
@@ -149,6 +149,7 @@ foreach ($sound_names_array as $value) {
 
 			function get_reload_flags(input_array) {
 				var reload_tickets_flag = false;
+				var reload_actions_flag = false;
 				var reload_communication_flag = false;
 				var reload_units_flag = false;
 				var reload_facilities_flag = false;
@@ -166,6 +167,12 @@ foreach ($sound_names_array as $value) {
 						)
 					) {
 						reload_tickets_flag = true;
+					}
+					if (
+						(last_infos_array['action']['id_max'] != input_array['action']['id_max']) ||
+						(last_infos_array['action']['id_changed'] != input_array['action']['id_changed'])
+					) {
+						reload_actions_flag = true;
 					}
 					if (
 						(last_infos_array['requests']['silent'] != input_array['requests']['silent']) ||
@@ -202,6 +209,7 @@ foreach ($sound_names_array as $value) {
 				} catch (e) {
 				}
 				return {"tickets":reload_tickets_flag, 
+					"actions":reload_actions_flag, 
 					"communication":reload_communication_flag, 
 					"units":reload_units_flag, 
 					"facilities":reload_facilities_flag, 

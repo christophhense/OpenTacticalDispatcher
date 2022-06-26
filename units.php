@@ -852,12 +852,10 @@ default:
 					var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (get_infos_array['reload_flags']['units']) {
-						if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);
 						}
 						get_units();
-						var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 				});
 			});
