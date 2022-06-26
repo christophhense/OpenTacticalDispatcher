@@ -375,7 +375,7 @@ default:
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"reports","action":"highlight"}';
@@ -399,7 +399,7 @@ default:
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">

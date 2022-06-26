@@ -479,7 +479,7 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
+			var new_infos_array;
 			var on_scene_fac_lat = new Array();
 			var on_scene_fac_lng = new Array();
 			var on_scene_facility_adress = new Array();
@@ -676,12 +676,12 @@ default:
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 				});
 			});
 
@@ -700,7 +700,7 @@ default:
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $url_back;?>', '<?php print $ticket_id;?>');" tabindex=9><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $url_back;?>', '<?php print $ticket_id;?>', new_infos_array['screen']['screen_id']);" tabindex=9><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">

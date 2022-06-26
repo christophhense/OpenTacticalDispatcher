@@ -546,13 +546,15 @@ function wait(ms) {
 	}
 }
 
-function cancel_button(set_url, set_ticket_id) {
+function cancel_button(set_url, set_ticket_id, screen_id) {
 	var url = "situation.php";
-	if (set_url.valueOf() != "") {
+	if (set_url !== undefined && set_url.valueOf() != "") {
 		url = set_url;
 	}
-	url = url + "?screen_id=" + get_infos_array['screen']['screen_id'];
-	if (set_ticket_id.valueOf() != "") {
+	if (screen_id !== undefined && screen_id.valueOf() != "") {
+		url = url + "?screen_id=" + screen_id;
+	}
+	if (set_ticket_id !== undefined && set_ticket_id.valueOf() != "") {
 		url = url + "&ticket_id=" + set_ticket_id;
 	}
 	window.location.href = url;

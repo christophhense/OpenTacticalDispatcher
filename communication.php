@@ -455,7 +455,7 @@ if (is_operator() || is_admin() || is_super()) {
 						var get_infos_array = JSON.parse(data);
 						var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						if ((typeof get_infos_array["url"] != "undefined") && (get_infos_array["url"] != null) && (get_infos_array["url"] != "")) {
+						if (( get_infos_array["url"] !== undefined) && (get_infos_array["url"] != null) && (get_infos_array["url"] != "")) {
 							window.location.href = get_infos_array["url"];
 						} else {
 							load_content();
@@ -498,7 +498,7 @@ if (is_operator() || is_admin() || is_super()) {
 					<div id="button_container" class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');;"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', get_infos_array['screen']['screen_id']);;"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>

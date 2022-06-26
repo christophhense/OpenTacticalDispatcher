@@ -4893,7 +4893,7 @@ default:
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');;"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', get_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>

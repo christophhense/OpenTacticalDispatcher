@@ -222,11 +222,11 @@ default:
 
 			function printers() {
 				$.get("units.php?function=printers").done(function(data) {
-					var get_infos_array = JSON.parse(data);
+					var new_infos_array = JSON.parse(data);
 					var message = "";
-					if (get_infos_array.length > 0) {
-						for (var i = 0; i < get_infos_array.length; i++) {
-							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + get_infos_array[i] + "\");'>" + get_infos_array[i] + "</div>";
+					if (new_infos_array.length > 0) {
+						for (var i = 0; i < new_infos_array.length; i++) {
+							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + new_infos_array[i] + "\");'>" + new_infos_array[i] + "</div>";
 						}
 						show_infobox("<?php print get_text("Select printer");?>", message, "select", set_printer);
 					} else {
@@ -846,12 +846,12 @@ default:
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					if (get_infos_array['reload_flags']['units']) {
+					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);
 						}
@@ -875,7 +875,7 @@ default:
 					<div id="button_container" class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 	<?php
