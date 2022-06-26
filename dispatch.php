@@ -471,7 +471,7 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var new_infos_array;
+			var new_infos_array = [];
 			var count_units_checked = 0;
 
 			function unit_clicked(row, unit) {

@@ -222,11 +222,11 @@ default:
 
 			function printers() {
 				$.get("units.php?function=printers").done(function(data) {
-					var new_infos_array = JSON.parse(data);
+					var return_array = JSON.parse(data);
 					var message = "";
-					if (new_infos_array.length > 0) {
-						for (var i = 0; i < new_infos_array.length; i++) {
-							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + new_infos_array[i] + "\");'>" + new_infos_array[i] + "</div>";
+					if (return_array.length > 0) {
+						for (var i = 0; i < return_array.length; i++) {
+							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + return_array[i] + "\");'>" + return_array[i] + "</div>";
 						}
 						show_infobox("<?php print get_text("Select printer");?>", message, "select", set_printer);
 					} else {

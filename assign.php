@@ -479,13 +479,13 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var new_infos_array;
-			var on_scene_fac_lat = new Array();
-			var on_scene_fac_lng = new Array();
-			var on_scene_facility_adress = new Array();
-			var receiving_fac_lat = new Array();
-			var receiving_fac_lng = new Array();
-			var receiving_facility_adress = new Array();
+			var new_infos_array = [];
+			var on_scene_fac_lat = [];
+			var on_scene_fac_lng = [];
+			var on_scene_facility_adress = [];
+			var receiving_fac_lat = [];
+			var receiving_fac_lng = [];
+			var receiving_facility_adress = [];
 
 			<?php print $array_on_scene_str["facility_address"];?>
 

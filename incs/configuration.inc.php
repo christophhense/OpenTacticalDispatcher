@@ -77,26 +77,26 @@ function show_stats() {
 	<script>
 
 		function set_current_infos() {
-			$("#server_time").html(get_infos_array['screen']['date_time']);
+			$("#server_time").html(new_infos_array['screen']['date_time']);
 			var current_radio = "<?php print get_text("No filter set.");?>";
-			if (get_infos_array['api']['current_radio'] != "") {
-				current_radio = get_infos_array['api']['current_radio'];
+			if (new_infos_array['api']['current_radio'] != "") {
+				current_radio = new_infos_array['api']['current_radio'];
 			}
 			$("#current_radio").html(current_radio);
-			var available_datetime = moment(get_infos_array['api']['host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
+			var available_datetime = moment(new_infos_array['api']['host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
 			var available_text = "<?php print get_text("Not available since");?>: " + available_datetime;
 			var info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			var text_color = "red";
-			switch (get_infos_array['api']['host_available']) {
+			switch (new_infos_array['api']['host_available']) {
 			case "true":
 				text_color = "black";
 				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (get_infos_array['api']['host_text'] != "") {
-					info_text = "&nbsp;&nbsp;" + get_infos_array['api']['host_text'];
+				if (new_infos_array['api']['host_text'] != "") {
+					info_text = "&nbsp;&nbsp;" + new_infos_array['api']['host_text'];
 				} else {
 					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
 				}
-				switch (get_infos_array['api']['host_code']) {
+				switch (new_infos_array['api']['host_code']) {
 				case "success":
 					text_color = "green";
 					break;
@@ -121,20 +121,20 @@ function show_stats() {
 			}
 			$("#application_interface").html(available_text + info_text);
 			$("#application_interface").css("color", text_color);
-			available_datetime = moment(get_infos_array['api']['phone_host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
+			available_datetime = moment(new_infos_array['api']['phone_host_timestamp_current_state'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>");
 			available_text = "<?php print get_text("Not available since");?>: " + available_datetime;
 			info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			text_color = "red";
-			switch (get_infos_array['api']['phone_host_available']) {
+			switch (new_infos_array['api']['phone_host_available']) {
 			case "true":
 				text_color = "black";
 				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (get_infos_array['api']['phone_host_text'] != "") {
-					info_text = "&nbsp;&nbsp;" + get_infos_array['api']['phone_host_text'];
+				if (new_infos_array['api']['phone_host_text'] != "") {
+					info_text = "&nbsp;&nbsp;" + new_infos_array['api']['phone_host_text'];
 				} else {
 					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
 				}
-				switch (get_infos_array['api']['phone_host_code']) {
+				switch (new_infos_array['api']['phone_host_code']) {
 				case "success":
 					text_color = "green";
 					break;

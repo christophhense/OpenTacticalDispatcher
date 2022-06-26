@@ -125,7 +125,7 @@ default:
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"configuration","action":"highlight"}';
@@ -4553,11 +4553,11 @@ case "updates":
 							"&update_progress_time=" + update_progress_time + simulate_query_part_download, function(data) {
 						})
 						.done(function(data) {
-							var get_infos_array = JSON.parse(data);
-							if (get_infos_array["result"].valueOf() == "success") {
+							var return_array = JSON.parse(data);
+							if (return_array["result"].valueOf() == "success") {
 								do_update_progression_info_box("download", "finish", update_download_time);
 							} else {
-								console.log(get_infos_array["text"]);
+								console.log(return_array["text"]);
 								do_update_progression_info_box("download", "fail", update_download_time);
 								return;
 							}
@@ -4565,11 +4565,11 @@ case "updates":
 							$.get("update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
 							})
 							.done(function(data) {
-								var get_infos_array = JSON.parse(data);
-								if (get_infos_array["result"].valueOf() == "success") {
+								var return_array = JSON.parse(data);
+								if (return_array["result"].valueOf() == "success") {
 									do_update_progression_info_box("unzip", "finish", unzip_time);
 								} else {
-									console.log(get_infos_array["text"]);
+									console.log(return_array["text"]);
 									do_update_progression_info_box("unzip", "fail", unzip_time);
 									return;
 								}
@@ -4577,11 +4577,11 @@ case "updates":
 								$.get("update.php?function=do_changes" + simulate_query_part_changes, function(data) {
 								})
 								.done(function(data) {
-									var get_infos_array = JSON.parse(data);
-									if (get_infos_array["result"].valueOf() == "success") {
+									var return_array = JSON.parse(data);
+									if (return_array["result"].valueOf() == "success") {
 										do_update_progression_info_box("changes", "finish", changes_time);
 									} else {
-										console.log(get_infos_array["text"]);
+										console.log(return_array["text"]);
 										do_update_progression_info_box("changes", "fail", changes_time);
 										return;
 									}
@@ -4893,7 +4893,7 @@ default:
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', get_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>

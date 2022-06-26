@@ -196,13 +196,13 @@ if (is_operator() || is_admin() || is_super()) {
 		if (isset ($_GET['display_dispatch-message'])) {
 			$display_dispatch_message = $_GET['display_dispatch-message'];
 		}
+		$url_str = "situation.php?screen_id=\" + new_infos_array['screen']['screen_id'];\";";
 		if ($display_dispatch_message == "on") {
 			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation";
-		} else {
-			$url_str = "situation.php?screen_id=\" + get_infos_array['screen']['screen_id'];\";";
 		}
 	?>
 		<script>
+			var new_infos_array = [];
 
 			function do_send_api_message() {
 				var errmsg = "";
@@ -219,8 +219,8 @@ if (is_operator() || is_admin() || is_super()) {
 				$("#send_button").prop("disabled", true);
 				$("#send_button").html("<?php print get_text("Wait");?>");
 				$.post("communication.php", $("#message_form").serialize(), function(data) {
-					var get_infos_array = JSON.parse(data);
-					var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+					var return_array = JSON.parse(data);
+					var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				})
 				.done(function() {
@@ -257,7 +257,7 @@ if (is_operator() || is_admin() || is_super()) {
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
@@ -320,6 +320,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$auto_poll_time = trim($auto_poll_settings[0]);
 	?>
 		<script>
+			var new_infos_array = [];
 			var select_ticket_api_log_id = 0;
 
 			function load_content() {
@@ -402,16 +403,16 @@ if (is_operator() || is_admin() || is_super()) {
 				case "api_log_update_call_progression":
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_update_call_progression")
 						.done(function(data) {
-						var get_infos_array = JSON.parse(data);
-						if (get_infos_array["call_progression"].valueOf() != "") {
+						var return_array = JSON.parse(data);
+						if (return_array["call_progression"].valueOf() != "") {
 							$.post("set_data.php", {
 								function: "call_progression",
-								assign_id: get_infos_array["oldest_assign_id"],
-								frm_callprogression: get_infos_array["call_progression"],
-								call_progression_datetime: get_infos_array["call_progression_datetime"]
+								assign_id: return_array["oldest_assign_id"],
+								frm_callprogression: return_array["call_progression"],
+								call_progression_datetime: return_array["call_progression_datetime"]
 							}, function() {})
 							.done(function(data) {
-								var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+								var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
 								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 								var last_call = false;
 								if (last_call) {
@@ -422,7 +423,7 @@ if (is_operator() || is_admin() || is_super()) {
 								alert("error");
 							});
 						} else {
-							var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+							var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
 							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 						}
 					})
@@ -452,11 +453,11 @@ if (is_operator() || is_admin() || is_super()) {
 				default:
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
 						api_log_action + "&ticket_id=" + ticket_id + "&unit_id=" + unit_id).done(function(data) {
-						var get_infos_array = JSON.parse(data);
-						var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
+						var return_array = JSON.parse(data);
+						var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						if (( get_infos_array["url"] !== undefined) && (get_infos_array["url"] != null) && (get_infos_array["url"] != "")) {
-							window.location.href = get_infos_array["url"];
+						if ((return_array["url"] !== undefined) && (return_array["url"] != null) && (return_array["url"] != "")) {
+							window.location.href = return_array["url"];
 						} else {
 							load_content();
 						}
@@ -470,12 +471,12 @@ if (is_operator() || is_admin() || is_super()) {
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					if (get_infos_array['reload_flags']['communication']) {
+					if (new_infos_array['reload_flags']['communication']) {
 						load_content();
 						var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -498,7 +499,7 @@ if (is_operator() || is_admin() || is_super()) {
 					<div id="button_container" class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', get_infos_array['screen']['screen_id']);;"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);;"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>
