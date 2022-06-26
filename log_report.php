@@ -72,7 +72,9 @@ default:
 	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 	$additional_helptext_form_data_parking_str = "";
 	if (trim($parking_form_data_settings[6]) != 0) {
-		$additional_helptext_form_data_parking_str =  get_title_str(get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[6]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[7]));
+		$additional_helptext_form_data_parking_str =  get_title_str(get_help_text("parked_trigger_chars", true) . ": " . 
+			trim($parking_form_data_settings[6]) . " " . get_help_text("parked_seconds", true) . ": " . 
+			trim($parking_form_data_settings[7]));
 	}
 	?>
 <!doctype html>
@@ -94,9 +96,8 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
+			var new_infos_array = [];
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[7]);?> + 0) * 1000;
 
 			function send_data() {
 				if (log_form.frm_comment.value) {
@@ -127,12 +128,12 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if ((typeof(data) != "undefined") && (data != null)) {
+					if ((data !== undefined) && (data != null)) {
 						var changes_data = {"type":"set_parked_form_data","item":"log_report_form_data","action":""};
 						changes_data.log_report_form_data = data;
 						changes_data = JSON.stringify(changes_data);
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"' + Date.now() + '"}';
+						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":' + Date.now() + '}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					} else {
 						var changes_data ='{"type":"set_parked_form_data","item":"log_report_form_data","action":""}';
@@ -146,29 +147,14 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					var current_timestamp = Date.now();
-					if (parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['log_report_timestamp']) + parseInt(parking_form_data_cache_period))) {
-						var form_content = new Array;
-						for (var key in get_infos_array['parked_form_data']['log_report_form_data']) {
-							form_content[get_infos_array['parked_form_data']['log_report_form_data'][key]['name']] = get_infos_array['parked_form_data']['log_report_form_data'][key]['value'];
+					if (new_infos_array['parked_form_data']['log_report_timestamp'] != 0) {
+						var form_content = [];
+						for (var key in new_infos_array['parked_form_data']['log_report_form_data']) {
+							form_content[new_infos_array['parked_form_data']['log_report_form_data'][key]['name']] = new_infos_array['parked_form_data']['log_report_form_data'][key]['value'];
 						}
 						$("#frm_comment").val(form_content['frm_comment']);
 						$("#unit_id").val(form_content['unit_id']).change();
 						$("#facility_id").val(form_content['facility_id']).change();
-					} else {
-						set_parked_form_data();
-					}
-				} catch (e) {
-				}
-			}
-
-			function do_watch() {
-				try {
-					if ($("#frm_comment").val().trim().length > 0 && $("#frm_comment").val().length > parking_form_data_min_trigger_chars && parking_form_data_min_trigger_chars != 0) {
-						var new_form_data = $("#log_form").serializeArray();
-						if ((JSON.stringify(new_form_data) != JSON.stringify(get_infos_array['parked_form_data']['log_report_form_data']))) {
-							set_parked_form_data(new_form_data);
-						}
 					}
 				} catch (e) {
 				}
@@ -183,7 +169,7 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"log_report","action":"highlight"}';
@@ -192,10 +178,19 @@ default:
 						get_parked_form_data();
 						change_situation_first_set = 1;
 					}
-					if (get_infos_array['reload_flags']['log']) {
+					if (new_infos_array['reload_flags']['log']) {
 						load_content();
 					}
-					do_watch();
+					if (
+						$("#frm_comment").val().trim().length > 0 && 
+						$("#frm_comment").val().length > parking_form_data_min_trigger_chars && 
+						parking_form_data_min_trigger_chars != 0
+					) {
+						var new_form_data = $("#log_form").serializeArray();
+						if ((JSON.stringify(new_form_data) != JSON.stringify(new_infos_array['parked_form_data']['log_report_form_data']))) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 

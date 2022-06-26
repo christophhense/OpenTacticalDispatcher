@@ -16,6 +16,7 @@ $moment_time_only_format = php_to_moment(get_variable("date_format_time_only_clo
 $moment_date_only_format = php_to_moment(get_variable("date_format_date_only_clock"));
 $moment_date_format = php_to_moment(get_variable("date_format"));
 $connection_test_array = get_connection_test_configuration();
+$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 switch ($callboard_enabled) {
 case 0:
 	$display_callboard_str = "display: none;";
@@ -79,15 +80,15 @@ foreach ($sound_names_array as $value) {
 			var retry = false;
 			var keepalive = false;
 			var primary_screen = false;
-			var log_report_form_data = "";
-			var log_report_timestamp = 0;
 			var action_form_data = [];
 			var action_timestamp = [];
+			var ticket_close_form_data = [];
+			var ticket_close_timestamp = [];
 			var ticket_add_form_data = "";
 			var ticket_add_timestamp = 0;
 			var ticket_add_ticket_id = 0;
-			var ticket_close_form_data = [];
-			var ticket_close_timestamp = [];
+			var log_report_form_data = "";
+			var log_report_timestamp = 0;
 			moment.locale("<?php print get_variable("_locale");?>");
 
 			function do_periodic_connection_test() {
@@ -95,6 +96,54 @@ foreach ($sound_names_array as $value) {
 					setTimeout(function () {
 						do_api_connection_test(true, "");
 					}, Math.floor(Math.random() * 9999));
+				}
+			}
+
+			function delete_parked_form_data() {
+				try {
+					for (var i = 0; i < action_timestamp.length; i++) {
+						if (
+							(action_timestamp[i] !== undefined) && 
+							(Date.now() >= (action_timestamp[i] + ((<?php print trim($parking_form_data_settings[3]);?> + 0) * 1000)))
+						) {
+							action_form_data[i] = (function () {return;})();
+							action_timestamp[i] = (function () {return;})();
+						}
+					}
+				} catch (e) {
+				}
+				try {
+					for (var i = 0; i < ticket_close_timestamp.length; i++) {
+						if (
+							(ticket_close_timestamp[i] !== undefined) && 
+							(Date.now() >= (ticket_close_timestamp[i] + ((<?php print trim($parking_form_data_settings[5]);?> + 0) * 1000)))
+						) {
+							ticket_close_form_data[i] = (function () {return;})();
+							ticket_close_timestamp[i] = (function () {return;})();
+						}
+					}
+				} catch (e) {
+				}
+				try {
+					if (
+						(ticket_add_ticket_id != 0) && 
+						(Date.now() >= (ticket_add_timestamp + ((<?php print trim($parking_form_data_settings[1]);?> + 0) * 1000)))
+					) {
+						ticket_add_form_data = "";
+						ticket_add_timestamp = 0;
+						ticket_add_ticket_id = 0;
+					}
+				} catch (e) {
+				}
+				try {
+					if (
+						(log_report_timestamp != 0) && 
+						(Date.now() >= (log_report_timestamp + ((<?php print trim($parking_form_data_settings[7]);?> + 0) * 1000)))
+					) {
+						log_report_form_data = "";
+						log_report_timestamp = 0;
+					}
+				} catch (e) {
 				}
 			}
 
@@ -176,7 +225,7 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function watch_latest_infos(data) {
-				console.log(current_main_script);
+				delete_parked_form_data();
 				var get_infos_array = JSON.parse(data);
 				get_infos_array['screen']['night_color'] = "<?php print get_variable("night_color");?>";
 				get_infos_array.reload_flags = get_reload_flags(get_infos_array);
@@ -218,7 +267,8 @@ foreach ($sound_names_array as $value) {
 						do_day_night(get_infos_array['screen']['day_night']);
 					}
 					if ((
-							(last_infos_array['screen']['reset_button'] !== undefined) && (get_infos_array['screen']['reset_button'] !== undefined)
+							(last_infos_array['screen']['reset_button'] !== undefined) && 
+							(get_infos_array['screen']['reset_button'] !== undefined)
 						) && (
 							(last_infos_array['api']['host_available'] != get_infos_array['api']['host_available']) || 
 							(last_infos_array['api']['phone_host_available'] != get_infos_array['api']['phone_host_available']) || 
@@ -245,12 +295,18 @@ foreach ($sound_names_array as $value) {
 								caption_minute = " <?php print get_text("min");?>";
 							}
 							$("#timeout_info").html("<?php print get_text("Auto-logout in");?> " + get_infos_array['user']['expires'] + caption_minute);
-							if ((get_infos_array['user']['expires'].valueOf() <= session_logout_warning_period) && (session_logout_warning_reported == false)) {
+							if (
+								(get_infos_array['user']['expires'].valueOf() <= session_logout_warning_period) && 
+								(session_logout_warning_reported == false)
+							) {
 								change_class("timeout_info", "alert alert-warning alert-warning-flat");
 								do_audio("audio_default");
 								session_logout_warning_reported = true;
 							}
-							if ((get_infos_array['user']['expires'].valueOf() > session_logout_warning_period) && (session_logout_warning_reported == true)) {
+							if (
+								(get_infos_array['user']['expires'].valueOf() > session_logout_warning_period) && 
+								(session_logout_warning_reported == true)
+							) {
 								change_class("timeout_info", "");
 								session_logout_warning_reported = false;
 							}
@@ -359,8 +415,9 @@ foreach ($sound_names_array as $value) {
 								}
 							}
 						}
-						if ((get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'] + 
-							get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {
+						if ((get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + 
+							get_infos_array['requests']['emergency_high'] + get_infos_array['requests']['auto_ticket'] + 
+							get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {
 							highlight_button("communication", true);
 						}
 					}

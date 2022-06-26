@@ -84,11 +84,9 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
+			var new_infos_array = [];
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[3]);?> + 0) * 1000;
 			var ticket_id = <?php print $current_ticket_id;?> + 0;
-			var current_timestamp = Date.now();
 
 			function validate(form_name) {
 				var errmsg = "";
@@ -118,7 +116,7 @@ default:
 			function set_parked_form_data(data) {
 				try {
 					if (ticket_id != 0) {
-						if ((typeof(data) != "undefined") && (data != null)) {
+						if ((data !== undefined) && (data != null)) {
 							var changes_data = {"type":"set_parked_form_data","item":"action_form_data","action":ticket_id};
 							changes_data.action_form_data = data;
 							changes_data = JSON.stringify(changes_data);
@@ -139,54 +137,21 @@ default:
 			function get_parked_form_data() {
 				try {
 					if (ticket_id != 0) {
-						if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['action_timestamp'][ticket_id]) + parseInt(parking_form_data_cache_period)))) {
-							if ((typeof get_infos_array['parked_form_data']['action_timestamp'][ticket_id] != "undefined") && (get_infos_array['parked_form_data']['action_timestamp'][ticket_id] != null)) {
-								var form_content = new Array;
-								for (var key in get_infos_array['parked_form_data']['action_form_data'][ticket_id]) {
-									form_content[get_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] = get_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
-								}
+						if (
+							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] !== undefined) && 
+							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] != null)
+						) {
+							var form_content = [];
+							for (var key in new_infos_array['parked_form_data']['action_form_data'][ticket_id]) {
+								form_content[new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] = new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
 							}
-							$("#frm_description").val(form_content['frm_description']);
-							$("#frm_unit").val(form_content['frm_unit']).change();
-							do_unlock_readonly("asof");
-							$("#asof").val(form_content['asof_textfield']);
-							set_textblock("", frm_description);
-							$("#frm_description").focus();
-						} else {
-							set_parked_form_data();
 						}
-					}
-				} catch (e) {
-				}
-			}
-
-			function delete_other_old_parked_form_data() {
-				try {
-					var old_parked_data_timestamp_array = get_infos_array['parked_form_data']['action_timestamp'];
-					var i;
-					for (i = 0; i < old_parked_data_timestamp_array.length; i++ ) {
-						if ((typeof(old_parked_data_timestamp_array[i]) != "undefined") && (current_timestamp >= (old_parked_data_timestamp_array[i] + parking_form_data_cache_period))) {
-							var changes_data = {"type":"set_parked_form_data","item":"action_delete","action":ticket_id};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					}
-				} catch (e) {
-				}
-			}
-
-			function do_watch() {
-				try {
-					if ((ticket_id != 0) && ($("#frm_description").val().trim().length > 0) && ($("#frm_description").val().length > parking_form_data_min_trigger_chars) && (parking_form_data_min_trigger_chars != 0)) {
-						var new_form_data = $("#add_form").serializeArray();
-						var action_form_data = [];
-						try {
-							action_form_data = get_infos_array['parked_form_data']['action_form_data'][ticket_id];
-						} catch (e) {
-						}
-						if (JSON.stringify(new_form_data) != JSON.stringify(action_form_data)) {
-							set_parked_form_data(new_form_data);
-						}
+						$("#frm_description").val(form_content['frm_description']);
+						$("#frm_unit").val(form_content['frm_unit']).change();
+						do_unlock_readonly("asof");
+						$("#asof").val(form_content['asof_textfield']);
+						set_textblock("", frm_description);
+						$("#frm_description").focus();
 					}
 				} catch (e) {
 				}
@@ -207,17 +172,31 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
-						delete_other_old_parked_form_data();
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (
+						(ticket_id != 0) && 
+						($("#frm_description").val().trim().length > 0) && 
+						($("#frm_description").val().length > parking_form_data_min_trigger_chars) && 
+						(parking_form_data_min_trigger_chars != 0)
+					) {
+						var new_form_data = $("#add_form").serializeArray();
+						var action_form_data = [];
+						try {
+							action_form_data = new_infos_array['parked_form_data']['action_form_data'][ticket_id];
+						} catch (e) {
+						}
+						if (JSON.stringify(new_form_data) != JSON.stringify(action_form_data)) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 

@@ -2825,7 +2825,7 @@ function get_variable($which) {
 		break;
 	case "parking_form_data":
 		$value = "10, 90, 10, 90, 10, 90, 10, 90";
-		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
+		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
 			$value = remove_nls($variables[$which]);
 		}
 		break;

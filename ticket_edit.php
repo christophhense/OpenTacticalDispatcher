@@ -330,33 +330,31 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-
-			var get_infos_array;
+			var get_infos_array = [];
 			var change_situation_first_set = 0;
+			var severities = [];
+			var protocols = [];
+			var reported_by_phone = [];
+			var fac_lat = [];
+			var fac_lng = [];
+			var facility_adress = [];
+		<?php print get_severity_protocol_array_str();?>
+		<?php print $reported_by_select_array["reported_by_phone"];?>
+		<?php print $incident_location_select_array["facility_address"];?>
+		<?php print $incident_location_select_array["facility_coordinates"];?>
 
 			function get_units() {
 				$.get("ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_2").html(data);
 				});
 			}
-
+	
 			function get_actions() {
 				$.get("ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_3").html(data);
 				});
 			}
 
-			var severities = new Array();
-			var protocols = new Array();
-			var reported_by_phone = new Array();
-			var fac_lat = new Array();
-			var fac_lng = new Array();
-			var facility_adress = new Array();
-		<?php print get_severity_protocol_array_str();?>
-		<?php print $reported_by_select_array["reported_by_phone"];?>
-		<?php print $incident_location_select_array["facility_address"];?>
-		<?php print $incident_location_select_array["facility_coordinates"];?>
-			
 			function validate() {
 				var errmsg = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -638,7 +636,7 @@ default:
 					get_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
+					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_units();

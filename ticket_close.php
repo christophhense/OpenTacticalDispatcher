@@ -156,11 +156,9 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
+			var new_infos_array = [];
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[4]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[5]);?> + 0) * 1000;
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
-			var current_timestamp = Date.now();
 
 			function validate() {
 				var errmsg = "";
@@ -189,7 +187,7 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if ((typeof(data) != "undefined") && (data != null)) {
+					if ((data !== undefined) && (data != null)) {
 						var changes_data = {"type":"set_parked_form_data","item":"ticket_close_form_data","action":ticket_id};
 						changes_data.ticket_close_form_data = data;
 						changes_data = JSON.stringify(changes_data);
@@ -208,11 +206,14 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id]) + parseInt(parking_form_data_cache_period)))) {
-						if ((typeof get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] != "undefined") && (get_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] != null)) {
-							var form_content = new Array;
-							for (var key in get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id]) {
-								form_content[get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name']] = get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
+					if (ticket_id != 0) {
+						if (
+							(new_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] !== undefined) && 
+							(new_infos_array['parked_form_data']['ticket_close_timestamp'][ticket_id] != null)
+						) {
+							var form_content = [];
+							for (var key in new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id]) {
+								form_content[new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name']] = new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
 							}
 						}
 						$("#frm_synopsis").val(form_content['frm_synopsis']);
@@ -221,40 +222,6 @@ default:
 						$("#problemend").val(form_content['problemend_input']);
 						set_textblock("", frm_disp);
 						$("#frm_location").focus();
-					} else {
-						set_parked_form_data();
-					}
-				} catch (e) {
-				}
-			}
-
-			function delete_other_old_parked_form_data() {
-				try {
-					var old_parked_data_timestamp_array = get_infos_array['parked_form_data']['ticket_close_timestamp'];
-					var i;
-					for (i = 0; i < old_parked_data_timestamp_array.length; i++ ) {
-						if ((typeof(old_parked_data_timestamp_array[i]) != "undefined") && (current_timestamp >= (old_parked_data_timestamp_array[i] + parking_form_data_cache_period))) {
-							var changes_data = {"type":"set_parked_form_data","item":"ticket_close_delete","action":ticket_id};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					}
-				} catch (e) {
-				}
-			}
-
-			function do_watch() {
-				try {
-					if (($("#frm_disp").val().trim().length > 0) && ($("#frm_disp").val().length > parking_form_data_min_trigger_chars) && (parking_form_data_min_trigger_chars != 0)) {
-						var new_form_data = $("#ticket_close").serializeArray();
-						var ticket_close_form_data = [];
-						try {
-							ticket_close_form_data = get_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id];
-						} catch (e) {
-						}
-						if (JSON.stringify(new_form_data) != JSON.stringify(ticket_close_form_data)) {
-							set_parked_form_data(new_form_data);
-						}
 					}
 				} catch (e) {
 				}
@@ -278,18 +245,32 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					if (change_situation_first_set == 0) { 
+					if (change_situation_first_set == 0) {
 						get_parked_form_data();
-						delete_other_old_parked_form_data();
-						$("#screen_id").val(get_infos_array['screen']['screen_id']);
+						$("#screen_id").val(new_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (
+						(ticket_id != 0) && 
+						($("#frm_disp").val().trim().length > 0) && 
+						($("#frm_disp").val().length > parking_form_data_min_trigger_chars) && 
+						(parking_form_data_min_trigger_chars != 0)
+					) {
+						var new_form_data = $("#ticket_close").serializeArray();
+						var ticket_close_form_data = [];
+						try {
+							ticket_close_form_data = new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id];
+						} catch (e) {
+						}
+						if (JSON.stringify(new_form_data) != JSON.stringify(ticket_close_form_data)) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 

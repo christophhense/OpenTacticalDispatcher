@@ -365,17 +365,15 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
-
+			var new_infos_array = [];
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[0]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[1]);?> + 0) * 1000;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
-			var severities = new Array();
-			var protocols = new Array();
-			var reported_by_phone = new Array();
-			var fac_lat = new Array();
-			var fac_lng = new Array();
-			var facility_adress = new Array();
+			var severities = [];
+			var protocols = [];
+			var reported_by_phone = [];
+			var fac_lat = [];
+			var fac_lng = [];
+			var facility_adress = [];
 		<?php print get_severity_protocol_array_str();?>
 		<?php print $reported_by_select_array["reported_by_phone"];?>
 		<?php print $incident_location_select_array["facility_address"];?>
@@ -398,12 +396,9 @@ default:
 					errmsg += "<?php print get_text("Invalid problemstart");?><br>";
 				}
 				if (
-					(
-						!moment(scheduled, "YYYY-MM-DD HH:mm:ss").isValid() ||
-						moment(scheduled, "YYYY-MM-DD HH:mm:ss").isBefore(moment(problemstart, "YYYY-MM-DD HH:mm:ss"))
-					) && (
-						$("#frm_do_scheduled").val() == 1
-					)
+					(!moment(scheduled, "YYYY-MM-DD HH:mm:ss").isValid() ||
+					(moment(scheduled, "YYYY-MM-DD HH:mm:ss").isBefore(moment(problemstart, "YYYY-MM-DD HH:mm:ss")))) && 
+					($("#frm_do_scheduled").val() == 1)
 				) {
 					errmsg += "<?php print get_text("Invalid scheduled date");?><br>";
 				}
@@ -428,7 +423,7 @@ default:
 						changes_data.ticket_add_form_data = data;
 						changes_data = JSON.stringify(changes_data);
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_timestamp","action":"' + Date.now() + '"}';
+						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_timestamp","action":' + Date.now() + '}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 						var changes_data ='{"type":"set_parked_form_data","item":"ticket_add_ticket_id","action":"' + <?php print $ticket_id;?> + '"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -446,14 +441,12 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					var current_timestamp = Date.now();
-					if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['ticket_add_timestamp']) + parseInt(parking_form_data_cache_period))) &&
-						(get_infos_array['parked_form_data']['ticket_add_ticket_id'] == (<?php print $ticket_id;?>))) {
-						var form_content = new Array;
+					if (new_infos_array['parked_form_data']['ticket_add_timestamp'] != 0) {
+						var form_content = [];
 						form_content['frm_facility_id'] = 0;
 						form_content['scheduled_checkbox'] = "off";
-						for (var key in get_infos_array['parked_form_data']['ticket_add_form_data']) {
-							form_content[get_infos_array['parked_form_data']['ticket_add_form_data'][key]['name']] = get_infos_array['parked_form_data']['ticket_add_form_data'][key]['value'];
+						for (var key in new_infos_array['parked_form_data']['ticket_add_form_data']) {
+							form_content[new_infos_array['parked_form_data']['ticket_add_form_data'][key]['name']] = new_infos_array['parked_form_data']['ticket_add_form_data'][key]['value'];
 						}
 						if (form_content['frm_facility_id'] == 0) {
 							$("#frm_location").val(form_content['frm_location']);
@@ -477,29 +470,6 @@ default:
 							$("#scheduled_date").val(form_content['scheduled_date_input']);
 						}
 						$("#frm_location").focus();
-					} else {
-						set_parked_form_data(null);
-					}
-				} catch (e) {
-				}
-			}
-
-			function do_watch() {
-				try {
-					if ((
-						($("#frm_location").val().trim().length > 0 && $("#frm_location").val().length > parking_form_data_min_trigger_chars) ||
-						($("#frm_facility_id").val() != 0) ||
-						($("#frm_phone").val().trim().length > 0 && $("#frm_phone").val().length > parking_form_data_min_trigger_chars) ||
-						($("#frm_description").val().trim().length > 0 && $("#frm_description").val().length > parking_form_data_min_trigger_chars)
-						) && (parking_form_data_min_trigger_chars != 0)
-					) {
-						var new_form_data = $("#ticket_add").serializeArray();
-						if ((JSON.stringify(new_form_data) != JSON.stringify(get_infos_array['parked_form_data']['ticket_add_form_data']))) {
-							set_parked_form_data(new_form_data);
-						}
-					} else {
-						new_form_data = null;
-						set_parked_form_data(new_form_data);
 					}
 				} catch (e) {
 				}
@@ -562,17 +532,31 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					var changes_data ='{"type":"button","item":"add_ticket","action":"highlight"}';
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
-						$("#screen_id").val(get_infos_array['screen']['screen_id']);
+						$("#screen_id").val(new_infos_array['screen']['screen_id']);
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (
+						(($("#frm_location").val().trim().length > 0 && 
+							$("#frm_location").val().length > parking_form_data_min_trigger_chars) ||
+						($("#frm_facility_id").val() != 0) ||
+						($("#frm_phone").val().trim().length > 0 && 
+							$("#frm_phone").val().length > parking_form_data_min_trigger_chars) ||
+						($("#frm_description").val().trim().length > 0 && 
+							$("#frm_description").val().length > parking_form_data_min_trigger_chars)) && 
+						(parking_form_data_min_trigger_chars != 0)
+					) {
+						var new_form_data = $("#ticket_add").serializeArray();
+						if ((JSON.stringify(new_form_data) != JSON.stringify(new_infos_array['parked_form_data']['ticket_add_form_data']))) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 
