@@ -383,8 +383,6 @@ case "add":
 				<?php show_prevent_browser_back_button();?>
 				var changes_data ='{"type":"current_script","item":"script","action":"units_add"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
 		</script>
@@ -602,8 +600,6 @@ case "edit":
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
 				var changes_data ='{"type":"current_script","item":"script","action":"units_edit"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			});
 
@@ -840,8 +836,6 @@ default:
 				});
 			}
 			var changes_data ='{"type":"current_script","item":"script","action":"units"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			$(document).ready(function() {
 				get_units();

@@ -317,8 +317,6 @@ case "insert":
 		<script>
 			var changes_data ='{"type":"current_script","item":"script","action":"action_edit"}';
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form method="post" name="edit_form" action="action.php">
@@ -416,8 +414,6 @@ case "insert":
 	<body onload="check_frames();">
 		<script>
 			var changes_data ='{"type":"current_script","item":"script","action":"action_add"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>

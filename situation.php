@@ -223,7 +223,6 @@ default:
 					}
 				});
 			}
-
 			function get_tickets() {
 				$.get("situation.php?function=table_top&screen_id=" + <?php print $screen_id;?>, function(data) {
 					$("#table_top").html(data);
@@ -395,8 +394,6 @@ default:
 
 				var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
 				window.addEventListener("message", function(event) {
@@ -408,7 +405,7 @@ default:
 						}
 						get_tickets();
 						get_infostring();
-						var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+						var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 					if (new_infos_array['reload_flags']['units']) {
@@ -417,7 +414,7 @@ default:
 						}
 						get_units();
 						get_infostring();
-						var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+						var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 				});

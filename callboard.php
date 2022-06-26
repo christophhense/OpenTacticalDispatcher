@@ -488,14 +488,13 @@ case "table":
 			$.get("./callboard.php?function=table", function(data) {
 				$("#callboard").html(data);
 			});
-			var change_situation_first_set = 0;
 			window.addEventListener("message", function(event) {
 				if (event.origin != window.location.origin) return;
-				get_infos_array = JSON.parse(event.data);
-				if (change_situation_first_set == 0) {
-					change_situation_first_set = 1;
-				}
-				if (typeof get_infos_array['reload_flags'] != "undefined" && get_infos_array['reload_flags']['units']) {
+				new_infos_array_callboard = JSON.parse(event.data);
+				if (
+					new_infos_array_callboard['reload_flags'] !== undefined && 
+					new_infos_array_callboard['reload_flags']['units']
+				) {
 					$.get("./callboard.php?function=table", function(data) {
 						$("#callboard").html(data);
 					});

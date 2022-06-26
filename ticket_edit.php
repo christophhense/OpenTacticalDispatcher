@@ -541,8 +541,6 @@ default:
 
 				var changes_data ='{"type":"current_script","item":"script","action":"ticket_edit"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				get_units();
 				get_actions();
 				<?php show_prevent_browser_back_button();?>

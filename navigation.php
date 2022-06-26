@@ -347,8 +347,8 @@ foreach ($sound_names_array as $value) {
 						(get_infos_array['ticket']['scheduled'] > last_infos_array['ticket']['scheduled'])) && 
 						(get_infos_array['ticket']['user'] != last_infos_array['user']['id'])
 					) {
-						ticket_signal();
 						do_audio("audio_ticket");
+						ticket_signal();
 					}
 					if (
 						(last_infos_array['units_status'] !== undefined) && (
@@ -473,7 +473,7 @@ foreach ($sound_names_array as $value) {
 				if ((only_off === undefined) || 
 					((only_off !== undefined) && (only_off.valueOf == false))) {
 					change_class(button_id, "btn btn-xs btn-primary");
-					if (!(current_button_id == button_id)) {
+					if (current_button_id != button_id) {
 						change_class(current_button_id, "btn btn-xs btn-default");
 					}
 					current_button_id = button_id;
@@ -789,19 +789,50 @@ foreach ($sound_names_array as $value) {
 					if (event.origin != window.location.origin) return;
 					var get_changes_array = JSON.parse(event.data);
 					switch (get_changes_array["type"]) {
-					case "button":
-						switch (get_changes_array["action"]) {
-						case "highlight":
-							highlight_button(get_changes_array["item"])
-							break;
-						default:
-						}
-						break;
 					case "message":
 						show_message(get_changes_array["action"], get_changes_array["item"]);
 						break;
 					case "current_script":
 						current_main_script = get_changes_array["action"];
+						switch (current_main_script) {
+						case "situation":
+						case "dispatch":
+						case "ticket_report":
+						case "dispatch_text":
+						case "ticket_edit":
+						case "ticket_close":
+						case "action_add":
+						case "action_edit":
+							highlight_button("situation")
+							break;
+						case "communication_send":
+						case "communication_receive":
+							highlight_button("communication")
+							break;
+						case "ticket_add":
+							highlight_button("add_ticket")
+							break;
+						case "log_report":
+							highlight_button("log_report")
+							break;
+						case "units":
+						case "units_add":
+						case "units_edit":
+							highlight_button("units")
+							break;
+						case "facilities":
+						case "facilities_add":
+						case "facilities_edit":
+							highlight_button("facilities")
+							break;
+						case "reports":
+							highlight_button("reports")
+							break;
+						case "configuration":
+							highlight_button("configuration")
+							break;
+						default:
+						}
 						break;
 					case "script":
 						switch (get_changes_array["item"]) {

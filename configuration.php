@@ -124,8 +124,6 @@ default:
 				activate_show_hide_password();
 				var changes_data ='{"type":"current_script","item":"script","action":"configuration"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"configuration","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

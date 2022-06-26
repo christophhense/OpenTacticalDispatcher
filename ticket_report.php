@@ -24,7 +24,7 @@ if ($function == "dispatch_text") {
 	$page_name = "Dispatch text";
 	$script_name = "dispatch_text";
 	$back_button_lable = get_text("Next Page");
-	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] + ';";
+	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] +'";
 	$back = "situation";
 	if (isset ($_GET['back'])) {
 		$back = $_GET['back'];
@@ -35,7 +35,7 @@ if ($function == "dispatch_text") {
 	}
 }
 if (is_guest()) {
-	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] + ';";
+	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] +'";
 }
 ?>
 <!doctype html>
@@ -64,8 +64,6 @@ if (is_guest()) {
 
 			$(document).ready(function() {
 				var changes_data ='{"type":"current_script","item":"script","action":"<?php print $script_name;?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>

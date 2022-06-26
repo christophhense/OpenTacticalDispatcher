@@ -243,8 +243,6 @@ default:
 				$("#frm_disp").focus();
 				var changes_data ='{"type":"current_script","item":"script","action":"ticket_close"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {

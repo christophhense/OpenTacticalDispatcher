@@ -256,8 +256,6 @@ if (is_operator() || is_admin() || is_super()) {
 				load_content();
 				var changes_data ='{"type":"current_script","item":"script","action":"communication_send"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
@@ -470,16 +468,12 @@ if (is_operator() || is_admin() || is_super()) {
 				show_to_top_button("<?php print get_text("To top");?>");
 				var changes_data ='{"type":"current_script","item":"script","action":"communication_receive"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
 					if (new_infos_array['reload_flags']['communication']) {
 						load_content();
-						var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 				});
 			});

@@ -373,8 +373,6 @@ default:
 				$("#frm_query_text").focus();
 				var changes_data ='{"type":"current_script","item":"script","action":"reports"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"reports","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
