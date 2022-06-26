@@ -789,50 +789,50 @@ default:
 					<?php print get_text("Facilities") . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-1">
-				<div id="button_container" class="container-fluid" style="position: fixed;">
-					<div class="row" style="margin-top: 10px;">
-						<div class="col-md-12">
-							<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+			<div class="row">
+				<div class="col-md-1">
+					<div id="button_container" class="container-fluid" style="position: fixed;">
+						<div class="row" style="margin-top: 10px;">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+							</div>
+						</div>
+		<?php
+		if (is_admin() || is_super()) {
+		?>
+						<div class="row" style="margin-top: 10px;">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-xs btn-default" onClick="window.location.href='facilities.php?function=add';"><?php print get_text("Add Facility");?></button>
+							</div>
+						</div>
+		<?php
+		}
+		?>
+					</div>
+				</div>
+				<div class="col-md-10">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div class="panel-heading" id="table_top" style="padding: 0px;">
+							<?php show_facilities_sortbar();?>
 						</div>
 					</div>
-	<?php
-	if (is_admin() || is_super()) {
-	?>
-					<div class="row" style="margin-top: 10px;">
-						<div class="col-md-12">
-							<button type="button" class="btn btn-xs btn-default" onClick="window.location.href='facilities.php?function=add';"><?php print get_text("Add Facility");?></button>
-						</div>
-					</div>
-	<?php
-	}
-	?>
 				</div>
+				<div class="col-md-1"></div>
 			</div>
-			<div class="col-md-10">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div class="panel-heading" id="table_top" style="padding: 0px;">
-						<?php show_facilities_sortbar();?>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-5">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div id="table_left"></div>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-1"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-1"></div>
-			<div class="col-md-5">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div id="table_left"></div>
+				<div class="col-md-5">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div id="table_right"></div>
+					</div>
 				</div>
+				<div class="col-md-1"></div>
 			</div>
-			<div class="col-md-5">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div id="table_right"></div>
-				</div>
-			</div>
-			<div class="col-md-1"></div>
 		</div>
 	</body>
 </html>
