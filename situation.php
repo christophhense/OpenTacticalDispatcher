@@ -176,7 +176,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 
-			var new_infos_array;
+			var new_infos_array = [];
 			var report_last = <?php print (trim($report_last_settings[0]) * 60);?> + 0;
 			var start_date = "<?php print $start_date;?>";
 			var end_date = "<?php print $end_date;?>";
@@ -225,7 +225,7 @@ default:
 			}
 
 			function get_tickets() {
-				$.get("situation.php?function=table_top&screen_id=" + new_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_top&screen_id=" + <?php print $screen_id;?>, function(data) {
 					$("#table_top").html(data);
 				})
 				.done(function() {
@@ -239,10 +239,10 @@ default:
 			}
 
 			function get_units() {
-				$.get("situation.php?function=table_left&screen_id=" + new_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_left&screen_id=" + <?php print $screen_id;?>, function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("situation.php?function=table_right&screen_id=" + new_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_right&screen_id=" + <?php print $screen_id;?>, function(data) {
 					$("#table_right").html(data);
 				});
 			}
@@ -273,10 +273,10 @@ default:
 				var url = "set_data.php";
 				var params = "";
 				if (type == "start") {
-					params = "function=closed_interval_start&value=" + time + "&screen_id=" + new_infos_array['screen']['screen_id'];
+					params = "function=closed_interval_start&value=" + time + "&screen_id=" + <?php print $screen_id;?>;
 					start_date = time;
 				} else {
-					params = "function=closed_interval_end&value=" + time + "&screen_id=" + new_infos_array['screen']['screen_id'];
+					params = "function=closed_interval_end&value=" + time + "&screen_id=" + <?php print $screen_id;?>;
 					end_date = time;
 				}
 				$.get(url, params)
@@ -288,7 +288,7 @@ default:
 			}
 
 			function change_situation(tab_id) {
-				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + new_infos_array['screen']['screen_id'])
+				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + <?php print $screen_id;?>)
 				.done(function () {
 				})
 				.fail(function () {
@@ -397,15 +397,11 @@ default:
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						change_situation("<?php print $current_situation_type;?>");
-						change_situation_first_set = 1;
-					}
 					if (new_infos_array['reload_flags']['tickets']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);

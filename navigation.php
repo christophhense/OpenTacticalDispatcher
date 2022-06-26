@@ -65,6 +65,7 @@ foreach ($sound_names_array as $value) {
 			var last_infos_array = [];
 			var current_button_id = "situation";
 			var current_main_script = "";
+			var page_screen_id = 0;
 			var day_night_toggle = "night";
 			var show_callboard = false;
 			var is_initialized = false;
@@ -440,7 +441,8 @@ foreach ($sound_names_array as $value) {
 				$("#level").html("<?php print (array_key_exists('level', $_SESSION))? get_level_text($_SESSION['level']) : get_text(" *na*");?>");
 				if (is_initialized) return;
 				is_initialized = true;
-				last_infos_array['screen'] = {'screen_id':Math.floor(Math.random() * 99999999)};
+				page_screen_id = Math.floor(Math.random() * 99999999);
+				last_infos_array['screen'] = {'screen_id':page_screen_id};
 				send_request("./get_data.php?version=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos);
 				if (client_poll_cycle == null) {
@@ -468,8 +470,8 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function highlight_button(button_id, only_off) {
-				if ((typeof (only_off) == "undefined") || 
-					((typeof (only_off) != "undefined") && (only_off.valueOf == false))) {
+				if ((only_off === undefined) || 
+					((only_off !== undefined) && (only_off.valueOf == false))) {
 					change_class(button_id, "btn btn-xs btn-primary");
 					if (!(current_button_id == button_id)) {
 						change_class(current_button_id, "btn btn-xs btn-default");
@@ -481,11 +483,8 @@ foreach ($sound_names_array as $value) {
 				highlighted_buttons[button_id] = 0;
 				switch (button_id.valueOf()) {
 				case "situation":
-					try {
 					send_request("./set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
-						"&screen_id=" + last_infos_array['screen']['screen_id'], no_callback);
-					} catch(e) {
-					}
+						"&screen_id=" + page_screen_id, no_callback);
 					break;
 				default:
 				}
@@ -741,7 +740,7 @@ foreach ($sound_names_array as $value) {
 				default:
 					$("#level").html("<?php print get_text("permission_guest");?>");
 				}
-				if ((user_name != "") && (typeof (user_name) != "undefined")) {
+				if (user_name !== undefined && user_name != "") {
 					$("#logged_in").html(user_name);
 				}
 				$("#buttons").css("display", "block");
