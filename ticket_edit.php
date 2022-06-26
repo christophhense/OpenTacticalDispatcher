@@ -539,6 +539,10 @@ default:
 
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
 
+				var changes_data ='{"type":"current_script","item":"script","action":"ticket_edit"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				get_units();
 				get_actions();
 				<?php show_prevent_browser_back_button();?>
@@ -546,10 +550,6 @@ default:
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
-					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);

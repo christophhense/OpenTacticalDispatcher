@@ -381,7 +381,7 @@ case "add":
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
 				<?php show_prevent_browser_back_button();?>
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"units_add"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -601,7 +601,7 @@ case "edit":
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
+				var changes_data ='{"type":"current_script","item":"script","action":"units_edit"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -839,7 +839,10 @@ default:
 						get_units();
 				});
 			}
-
+			var changes_data ='{"type":"current_script","item":"script","action":"units"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			var changes_data ='{"type":"button","item":"units","action":"highlight"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 			$(document).ready(function() {
 				get_units();
 				show_to_top_button("<?php print get_text("To top");?>");
@@ -847,10 +850,6 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					var changes_data ='{"type":"button","item":"units","action":"highlight"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);

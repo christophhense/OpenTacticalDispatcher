@@ -173,10 +173,6 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					var changes_data ='{"type":"current_script","item":"script","action":"<?php print basename(__FILE__);?>"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-					var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						change_situation_first_set = 1;
@@ -318,6 +314,12 @@ case "insert":
 		$row = stripslashes_deep(db_fetch_array($result));
 	?>
 	<body onload="check_frames();">
+		<script>
+			var changes_data ='{"type":"current_script","item":"script","action":"action_edit"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form method="post" name="edit_form" action="action.php">
 			<input type="hidden" name="function" value="update">
@@ -412,6 +414,12 @@ case "insert":
 	default:
 	?>
 	<body onload="check_frames();">
+		<script>
+			var changes_data ='{"type":"current_script","item":"script","action":"action_add"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
+			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="add_form" name="add_form" method="post" action="action.php">
 			<input type="hidden" name="back" value="<?php print $back;?>">

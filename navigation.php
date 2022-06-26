@@ -481,8 +481,11 @@ foreach ($sound_names_array as $value) {
 				highlighted_buttons[button_id] = 0;
 				switch (button_id.valueOf()) {
 				case "situation":
+					try {
 					send_request("./set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
 						"&screen_id=" + last_infos_array['screen']['screen_id'], no_callback);
+					} catch(e) {
+					}
 					break;
 				default:
 				}
