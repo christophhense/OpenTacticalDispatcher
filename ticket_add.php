@@ -287,7 +287,7 @@ case "insert":
 			$auto_dispatch = trim($auto_dispatch_settings[0]);
 		if ((isset ($_POST['frm_do_scheduled'])) && ($_POST['frm_do_scheduled'] == 0) && ($auto_dispatch == 1)) {
 			$url_str = "dispatch.php?ticket_id=" . $_POST['ticket_id'] . 
-				"&new_incident=true&screen_id=\'" .$_POST["screen_id"] . "\'";
+				"&new_incident=true&screen_id=\'" . $_POST["screen_id"] . "\'";
 		} else {
 			$url_str = "situation.php?screen_id=\'" . $_POST["screen_id"] . "\'";
 		}
