@@ -343,13 +343,13 @@ default:
 		<?php print $incident_location_select_array["facility_coordinates"];?>
 
 			function get_units() {
-				$.get("ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
+				$.get("./ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_2").html(data);
 				});
 			}
 	
 			function get_actions() {
-				$.get("ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
+				$.get("./ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_3").html(data);
 				});
 			}

@@ -319,7 +319,7 @@ default:
 						$("#filter_status").prop("disabled", true);
 						$("#filter_settings").prop("disabled", true);
 					}
-					$.get("reports.php", {
+					$.get("./reports.php", {
 						function: $("#frm_function").val(), start: $("#start_mysql_timestamp").val(), end: $("#end_mysql_timestamp").val(),
 						frm_incident_location: $("#frm_incident_location").val(), frm_incident_facility: $("#frm_incident_facility").val(),
 						frm_receiving_location: $("#frm_receiving_location").val(), frm_receiving_facility: $("#frm_receiving_facility").val(),

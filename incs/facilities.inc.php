@@ -356,7 +356,7 @@ function show_facilities_list($table_side = "left", $split = 0) {
 
 	function facility_status_select(facility_id, status_id) {
 		hide_kontext_menue();
-		$.get("set_data.php", "function=facility_status&frm_facility_id=" + facility_id + "&frm_status_id=" + status_id, function(data) {
+		$.get("./set_data.php", "function=facility_status&frm_facility_id=" + facility_id + "&frm_status_id=" + status_id, function(data) {
 		})
 		.done(function() {
 			var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';

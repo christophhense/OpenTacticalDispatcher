@@ -4547,7 +4547,7 @@ case "updates":
 						}
 						do_update_progression_info_box("show", "", 0);
 						do_update_progression_info_box("download", "start", update_download_time);
-						$.get("configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
+						$.get("./configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
 							"&update_progress_time=" + update_progress_time + simulate_query_part_download, function(data) {
 						})
 						.done(function(data) {
@@ -4560,7 +4560,7 @@ case "updates":
 								return;
 							}
 							do_update_progression_info_box("unzip", "start", unzip_time);
-							$.get("update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
+							$.get("./update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
 							})
 							.done(function(data) {
 								var return_array = JSON.parse(data);
@@ -4572,7 +4572,7 @@ case "updates":
 									return;
 								}
 								do_update_progression_info_box("changes", "start", changes_time);
-								$.get("update.php?function=do_changes" + simulate_query_part_changes, function(data) {
+								$.get("./update.php?function=do_changes" + simulate_query_part_changes, function(data) {
 								})
 								.done(function(data) {
 									var return_array = JSON.parse(data);

@@ -57,8 +57,7 @@ function set_unit_status(unit, status, message) {
 		querystr += "&frm_status_id=" + status;
 		querystr += "&function=unit_status";
 	}
-	var url = "set_data.php?" + querystr;
-	
+	var url = "./set_data.php?" + querystr;
 	$.get(url, function(data) {
 	}) 
 	.done(function() {
@@ -78,8 +77,7 @@ function set_facility_status(fac, status, message) {
 		querystr += "&frm_status_id=" + status;
 		querystr += "&function=facility_status";
 	}
-	var url = "set_data.php?" + querystr;
-	
+	var url = "./set_data.php?" + querystr;
 	$.get(url, function(data) {
 	}) 
 	.done(function() {
@@ -271,7 +269,7 @@ function show_assigns(unit_id) {
 	var info_text_head = "";
 	var info_text_body = "";
 	var info_input = "";
-	$.get("assign.php?function=multiple&unit_id=" + unit_id, function() {
+	$.get("./assign.php?function=multiple&unit_id=" + unit_id, function() {
 	})
 	.done(function(data) {
 		var get_infos_array = JSON.parse(data);
@@ -481,7 +479,7 @@ function show_to_top_button(caption) {
 }
 
 function get_reporting_channel(unit_id, type) {
-	$.get("get_data.php?function=reporting_channel&unit_id=" + unit_id, function(data) {
+	$.get("./get_data.php?function=reporting_channel&unit_id=" + unit_id, function(data) {
 		if (data) {
 			var get_reporting_channel_array = JSON.parse(data);
 			switch (type) {
@@ -565,7 +563,7 @@ function do_api_connection_test(periodic, done_message) {
 	if (periodic) {
 		periodic_parameter = "&periodic=true";
 	}
-		$.get("set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
+		$.get("./set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
 		}) 
 		.done(function() {
 			if (!periodic) {

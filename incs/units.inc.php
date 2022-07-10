@@ -839,7 +839,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 
 	function unit_status_select(unit_id, status_id) {
 		hide_kontext_menue();
-		$.get("set_data.php", "function=unit_status&frm_unit_id=" + unit_id + "&frm_status_id=" + status_id, function(data) {
+		$.get("./set_data.php", "function=unit_status&frm_unit_id=" + unit_id + "&frm_status_id=" + status_id, function(data) {
 		})
 		.done(function() {
 			var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';

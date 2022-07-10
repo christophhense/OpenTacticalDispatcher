@@ -221,7 +221,7 @@ default:
 		<script>
 
 			function printers() {
-				$.get("units.php?function=printers").done(function(data) {
+				$.get("./units.php?function=printers").done(function(data) {
 					var return_array = JSON.parse(data);
 					var message = "";
 					if (return_array.length > 0) {
@@ -821,16 +821,16 @@ default:
 			}
 
 			function get_units() {
-				$.get("units.php?function=table_left", function(data) {
+				$.get("./units.php?function=table_left", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("units.php?function=table_right", function(data) {
+				$.get("./units.php?function=table_right", function(data) {
 					$("#table_right").html(data);
 				});
 			}
 
 			function do_sort_units(sort_order) {
-				$.get("units.php?function=sort&order=" + sort_order)
+				$.get("./units.php?function=sort&order=" + sort_order)
 					.done(function() {
 						get_units();
 				});

@@ -748,16 +748,16 @@ default:
 	<?php } ?>
 
 			function get_facilities() {
-				$.get("facilities.php?function=table_left", function(data) {
+				$.get("./facilities.php?function=table_left", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("facilities.php?function=table_right", function(data) {
+				$.get("./facilities.php?function=table_right", function(data) {
 					$("#table_right").html(data);
 				});
 			}
 
 			function do_sort_facilities(sort_order) {
-				$.get("facilities.php?function=sort&order=" + sort_order)
+				$.get("./facilities.php?function=sort&order=" + sort_order)
 				.done(function() {
 					get_facilities();
 				});

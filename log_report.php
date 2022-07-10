@@ -118,7 +118,7 @@ default:
 			}
 
 			function load_content() {
-				$.get("log_report.php?function=table_bottom&filter_communication=" +
+				$.get("./log_report.php?function=table_bottom&filter_communication=" +
 					$("#filter_communication").is(':checked') + "&filter_status=" +
 					$("#filter_status").is(':checked') + "&filter_settings=" +
 					$("#filter_settings").is(':checked'), function(data) {
