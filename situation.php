@@ -177,6 +177,7 @@ default:
 		<script>
 
 			var new_infos_array = [];
+			var screen_id_main = <?php print $screen_id;?> + 0;
 			var report_last = <?php print (trim($report_last_settings[0]) * 60);?> + 0;
 			var start_date = "<?php print $start_date;?>";
 			var end_date = "<?php print $end_date;?>";
@@ -223,8 +224,9 @@ default:
 					}
 				});
 			}
+
 			function get_tickets() {
-				$.get("situation.php?function=table_top&screen_id=" + <?php print $screen_id;?>, function(data) {
+				$.get("situation.php?function=table_top&screen_id=" + screen_id_main, function(data) {
 					$("#table_top").html(data);
 				})
 				.done(function() {
@@ -233,15 +235,15 @@ default:
 					$("#severity_high").html($("#count_severity_high").html());
 				})
 				.fail(function () {
-					alert("error");	
+					alert("error");
 				});
 			}
 
 			function get_units() {
-				$.get("situation.php?function=table_left&screen_id=" + <?php print $screen_id;?>, function(data) {
+				$.get("situation.php?function=table_left&screen_id=" + screen_id_main, function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("situation.php?function=table_right&screen_id=" + <?php print $screen_id;?>, function(data) {
+				$.get("situation.php?function=table_right&screen_id=" + screen_id_main, function(data) {
 					$("#table_right").html(data);
 				});
 			}
@@ -272,10 +274,10 @@ default:
 				var url = "set_data.php";
 				var params = "";
 				if (type == "start") {
-					params = "function=closed_interval_start&value=" + time + "&screen_id=" + <?php print $screen_id;?>;
+					params = "function=closed_interval_start&value=" + time + "&screen_id=" + screen_id_main;
 					start_date = time;
 				} else {
-					params = "function=closed_interval_end&value=" + time + "&screen_id=" + <?php print $screen_id;?>;
+					params = "function=closed_interval_end&value=" + time + "&screen_id=" + screen_id_main;
 					end_date = time;
 				}
 				$.get(url, params)
@@ -287,7 +289,7 @@ default:
 			}
 
 			function change_situation(tab_id) {
-				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + <?php print $screen_id;?>)
+				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + screen_id_main)
 				.done(function () {
 				})
 				.fail(function () {
@@ -392,21 +394,20 @@ default:
 				$("#closed_interval_end").data("DateTimePicker").
 					minDate(moment($("#closed_interval_start").val(), "<?php print $moment_date_format;?>"));
 
-				var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
+				var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
+				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
+					screen_id_main = new_infos_array['screen']['screen_id'];
 					if (new_infos_array['reload_flags']['tickets']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);
 						}
 						get_tickets();
 						get_infostring();
-						var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
@@ -414,8 +415,6 @@ default:
 						}
 						get_units();
 						get_infostring();
-						var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 					}
 				});
 			});

@@ -65,6 +65,7 @@ foreach ($sound_names_array as $value) {
 			var last_infos_array = [];
 			var current_button_id = "situation";
 			var current_main_script = "";
+			var situation_type = "tickets_units";
 			var page_screen_id = 0;
 			var day_night_toggle = "night";
 			var show_callboard = false;
@@ -221,6 +222,9 @@ foreach ($sound_names_array as $value) {
 				try {
 					last_infos_array = JSON.parse(data);
 					var get_infos_array = JSON.parse(data);
+					if (get_infos_array['screen']['situation_type'] !== undefined) {
+						situation_type = get_infos_array['screen']['situation_type'];
+					}
 					var current_messages = get_infos_array['requests']['message'] + get_infos_array['requests']['warn_text'] + 
 						get_infos_array['requests']['auto_ticket'] + get_infos_array['requests']['normal'] + 
 						get_infos_array['requests']['emergency_low'] + get_infos_array['requests']['emergency_high'];
@@ -329,11 +333,6 @@ foreach ($sound_names_array as $value) {
 						$("#timeout_button").css("display", "none");
 						$("#timeout_info").css("display", "none");
 					}
-					if (get_infos_array['screen']['reset_button'] !== undefined) {
-						if (!(current_button_id == get_infos_array['screen']['reset_button'].valueOf())) {
-							highlight_button(get_infos_array['screen']['reset_button'], true);
-						}
-					}
 					if (get_infos_array['screen']['communication'] !== undefined) {
 						var appearance = "default";
 						if (get_infos_array['screen']['appearance'] !== undefined) {
@@ -424,11 +423,24 @@ foreach ($sound_names_array as $value) {
 								}
 							}
 						}
-						if ((get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + 
+						if (
+							(get_infos_array['requests']['normal'] + get_infos_array['requests']['emergency_low'] + 
 							get_infos_array['requests']['emergency_high'] + get_infos_array['requests']['auto_ticket'] + 
-							get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0) {
+							get_infos_array['requests']['warn_text'] + get_infos_array['requests']['message']) == 0
+						) {
 							highlight_button("communication", true);
 						}
+					}
+					if (get_infos_array['screen']['reset_button'] !== undefined && 
+						current_button_id != get_infos_array['screen']['reset_button']) {
+						console.log("Blinken abschalten");
+						highlight_button(get_infos_array['screen']['reset_button'], true);
+					}
+					if (current_main_script == "situation" && situation_type != "tickets_scheduled" && situation_type != "tickets_closed" && (
+						((get_infos_array['reload_flags']['tickets'] == true) && (situation_type == "tickets_units" || situation_type == "tickets_0")) || 
+						((get_infos_array['reload_flags']['units'] == true) && (situation_type == "tickets_units" || situation_type == "units_0"))
+					)) {
+						highlight_button("situation");
 					}
 				} else {
 					do_logout();
@@ -470,24 +482,22 @@ foreach ($sound_names_array as $value) {
 			}
 
 			function highlight_button(button_id, only_off) {
-				if ((only_off === undefined) || 
-					((only_off !== undefined) && (only_off.valueOf == false))) {
+				if (only_off === undefined || only_off.valueOf == false) {
+					change_class(current_button_id, "btn btn-xs btn-default");
 					change_class(button_id, "btn btn-xs btn-primary");
-					if (current_button_id != button_id) {
-						change_class(current_button_id, "btn btn-xs btn-default");
+					switch (button_id) {
+					case "situation":
+					case "communication":
+						send_request("./set_data.php?function=screen&reset_button=" + button_id + 
+							"&screen_id=" + page_screen_id, no_callback);
+						break;
+					default:
 					}
 					current_button_id = button_id;
 				} else {
 					change_class(button_id, "btn btn-xs btn-default");
 				}
 				highlighted_buttons[button_id] = 0;
-				switch (button_id.valueOf()) {
-				case "situation":
-					send_request("./set_data.php?function=screen&reset_button=" + button_id.valueOf() + 
-						"&screen_id=" + page_screen_id, no_callback);
-					break;
-				default:
-				}
 			}
 
 			function no_callback() {}
@@ -756,7 +766,7 @@ foreach ($sound_names_array as $value) {
 				}
 				is_logged_in = true;
 				window.parent.callboard.location.href = "callboard.php";
-				window.parent.main.location.href = "situation.php";
+				window.parent.main.location.href="situation.php?screen_id=" + last_infos_array['screen']['screen_id'];
 			}
 
 			function do_logout() {

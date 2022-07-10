@@ -110,6 +110,9 @@ default:
 	if (get_variable("_update_progress_time") != "") {
 		$json_screen["update_progress_time"] = get_variable("_update_progress_time");
 	}
+	if (isset ($_SESSION["screen_id_" . $_GET['screen_id']]['situation_type'])) {
+		$json_screen["situation_type"] = $_SESSION["screen_id_" . $_GET['screen_id']]['situation_type'];
+	}
 	//========== User
 	if ((isset ($_SESSION['user_id'])) && ($_SESSION['user_id'] > 0) && ($rows_affected == 1) && ($row['expires'] > mysql_datetime(time()))) {
 		foreach ($_SESSION['reset_button'] as $key => $value) {
