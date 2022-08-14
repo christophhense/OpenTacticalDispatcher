@@ -28,15 +28,18 @@ Activities sorted by application function.
 * Communication
 	NONE
 * Ticket - new
-	NONE
+	CHANGE
+		Form submit with ajax.
 * Ticket - update
-	NONE
+	CHANGE
+		Form submit with ajax.
 * Ticket - dispatch
 	NONE
 * Ticket - report
 	NONE
 * Ticket - close
-	NONE
+	CHANGE
+		Form submit with ajax.
 * Ticket - new action
 	NONE
 * Ticket - update action

@@ -291,13 +291,13 @@ case "insert":
 		} else {
 			$url_str = "situation.php?screen_id=\'" . $_POST["screen_id"] . "\'";
 		}
-		?>
-	<script>
-		var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-		window.location.href="<?php print $url_str;?>";
-	</script>
-		<?php
+		$appearance = "success";
+		//$appearance = "danger";
+		//$appearance = "warning";
+		$message_text = get_text("Saved");
+		//$message_text = get_text("Not saved");
+		//$message_text = get_text("Not all saved");
+		print '{"type":"message","item":"' . $appearance . '","action":"' . $message_text . '"}';
 	}
 	break;
 default:
@@ -366,6 +366,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var new_infos_array = [];
+			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[0]);?> + 0;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 			var severities = [];
@@ -412,7 +413,18 @@ default:
 						$("#scheduled_date_mysql_timestamp").val(scheduled);
 					}
 					set_parked_form_data();
-					$("#ticket_add").submit();
+					$.post("ticket_add.php", $("#ticket_add").serialize())
+					.done(function (data) {
+						window.parent.navigationbar.postMessage(data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					})
+					.fail(function () {
+						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					});
 				}
 			}
 
@@ -538,6 +550,7 @@ default:
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						$("#screen_id").val(new_infos_array['screen']['screen_id']);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
 					if (

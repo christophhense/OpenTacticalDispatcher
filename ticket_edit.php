@@ -220,13 +220,13 @@ case "update":
 	}
 	do_log($GLOBALS[$log_type], $ticket_id, 0, $log_str);
 	unset ($_SESSION['active_ticket']);
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href="situation.php?screen_id=" + <?php print $_POST['screen_id'];?>;
-</script>
-	<?php
+	$appearance = "success";
+	//$appearance = "danger";
+	//$appearance = "warning";
+	$message_text = get_text("Saved");
+	//$message_text = get_text("Not saved");
+	//$message_text = get_text("Not all saved");
+	print '{"type":"message","item":"' . $appearance . '","action":"' . $message_text . '"}';
 	break;
 case "assigns":
 	show_units_list("assigns", 0, 0, $_GET['ticket_id']);
@@ -331,6 +331,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var new_infos_array = [];
+			var screen_id_main = 0;
 			var severities = [];
 			var protocols = [];
 			var reported_by_phone = [];
@@ -409,7 +410,18 @@ default:
 					if ((moment(problemend, "YYYY-MM-DD HH:mm:ss").isValid())) {
 						$("#problemend_mysql_timestamp").val(problemend);
 					}
-					$("#ticket_edit").submit();
+					$.post("ticket_edit.php", $("#ticket_edit").serialize())
+					.done(function (data) {
+						window.parent.navigationbar.postMessage(data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					})
+					.fail(function () {
+						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					});
 				}
 			}
 
@@ -548,6 +560,7 @@ default:
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
+					screen_id_main = new_infos_array['screen']['screen_id'];
 					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 							show_assigns(current_unit_id);
