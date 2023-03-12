@@ -1308,7 +1308,7 @@ function get_current_path($filename) {
 function check_browser() {
 	$browsers = "mozilla msie gecko firefox ";
 	$browsers.= "konqueror safari netscape navigator ";
-	$browsers.= "opera mosaic lynx amaya omniweb chrome chromium edge";
+	$browsers.= "opera mosaic lynx amaya omniweb chrome chromium edge edg";
 	$browsers = explode(" ", $browsers);
 	$user_agent = @strtolower($_SERVER['HTTP_USER_AGENT']);
 	$user_agent_length = strlen($user_agent);
@@ -1328,6 +1328,7 @@ function check_browser() {
 			}
 		}
 	}
+	if ($navigator == "edg") $navigator = "edge";
 	return $navigator . " " . $version;
 }
 
@@ -3489,7 +3490,6 @@ function is_guest() {
 }
 
 function set_session_expire_time($timeout = "on") {
-	ini_set('session.cookie_samesite', 'Strict');
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];

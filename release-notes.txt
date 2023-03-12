@@ -156,6 +156,9 @@ Activities sorted by application function.
 		CHANGE
 		Get current version from programmcode
 * Program code and miscellaneous
-	CHAGE
+	CHANGE
 		Remove div-containers for storing data in navigation.php
 		Remove developer mode
+		Set session.cookie_samesite only at login
+		Set session.cookie_samesite to value "None"
+		add identification for Edge-Browser	
