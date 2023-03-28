@@ -29,21 +29,23 @@ Activities sorted by application function.
 	NONE
 * Ticket - new
 	CHANGE
-		Form submit with ajax.
+		Form submit with ajax
 * Ticket - update
 	CHANGE
-		Form submit with ajax.
+		Form submit with ajax
 * Ticket - report
 	NONE
 * Ticket - close
 	CHANGE
-		Form submit with ajax.
+		Form submit with ajax
 * Ticket - new action
 	CHANGE
-		Form submit with ajax.
+		Form submit with ajax
+	BUGFIX
+		Go back to the right situation-screen
 * Ticket - update action
 	CHANGE
-		Form submit with ajax.
+		Form submit with ajax
 	BUGFIX
 		Go back to ticket instead to situation
 * Ticket - dispatch
