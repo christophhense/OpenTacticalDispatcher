@@ -84,6 +84,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var new_infos_array = [];
+			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
 			var ticket_id = <?php print $current_ticket_id;?> + 0;
 
@@ -108,7 +109,18 @@ default:
 				} else {
 					$("#asof_mysql_timestamp").val(asof);
 					set_parked_form_data();
-					form_name.submit();
+					$.post("action.php", $(form_name).serialize())
+					.done(function (data) {
+						window.parent.navigationbar.postMessage(data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"<?php print $url_back;?>?ticket_id=' + $("#ticket_id").val() + '&screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					})
+					.fail(function () {
+						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						var changes_data ='{"type":"script","item":"main","action":"<?php print $url_back;?>?ticket_id=' + $("#ticket_id").val() + '&screen_id=' + screen_id_main + '"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					});
 				}
 			}
 
@@ -172,6 +184,10 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
+
+					$("#screen_id").val(new_infos_array['screen']['screen_id']);
+					screen_id_main = new_infos_array['screen']['screen_id'];
+					
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						change_situation_first_set = 1;
@@ -243,11 +259,6 @@ case "insert":
 			}
 			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text);
 		}
-	?>
-<script>
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $_POST['ticket_id'];?>;
-</script>
-	<?php
 		break;
 	case "update":
 
@@ -295,11 +306,6 @@ case "insert":
 			$log_text .= get_text("Written") . ": " . format_date(strtotime($row_old_data['datetime'])) . "  ";
 		}
 		do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text);
-	?>
-<script>
-	window.location.href = "ticket_edit.php?ticket_id=" + <?php print $_POST['ticket_id'];?>;
-</script>
-	<?php
 		break;
 	case "edit":
 
@@ -319,9 +325,10 @@ case "insert":
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form method="post" name="edit_form" action="action.php">
+			<input type="hidden" name="back" value="ticket">
 			<input type="hidden" name="function" value="update">
 			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
-			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input type="hidden" id="ticket_id" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("action", $_GET['action_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -419,7 +426,7 @@ case "insert":
 		<form id="add_form" name="add_form" method="post" action="action.php">
 			<input type="hidden" name="back" value="<?php print $back;?>">
 			<input type="hidden" name="function" value="insert">
-			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input type="hidden" id="ticket_id" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">

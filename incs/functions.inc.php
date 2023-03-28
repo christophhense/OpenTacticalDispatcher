@@ -1025,7 +1025,7 @@ function show_actions($ticket_id, $ticket_report = false) {
 			if ($ticket_report) {
 				$onclick_str = "";
 			} else {
-				$onclick_str = " onclick=\"location.href='action.php?ticket_id=" . $ticket_id . "&action_id=" . $row['action_id'] . "&function=edit'\"";
+				$onclick_str = " onclick=\"location.href='action.php?back=ticket&ticket_id=" . $ticket_id . "&action_id=" . $row['action_id'] . "&function=edit'\"";
 			}
 			$temp_date_time = preg_split("/ /", $row['action_updated']);
 			if ($temp_date_time[0] == $day_part_log_time) {

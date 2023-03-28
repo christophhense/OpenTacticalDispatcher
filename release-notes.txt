@@ -33,17 +33,19 @@ Activities sorted by application function.
 * Ticket - update
 	CHANGE
 		Form submit with ajax.
-* Ticket - dispatch
-	NONE
 * Ticket - report
 	NONE
 * Ticket - close
 	CHANGE
 		Form submit with ajax.
 * Ticket - new action
-	NONE
+	CHANGE
+		Form submit with ajax.
 * Ticket - update action
-	NONE
+	CHANGE
+		Form submit with ajax.
+	BUGFIX
+		Go back to ticket instead to situation
 * Ticket - dispatch
 	NONE
 * Ticket - disposition
