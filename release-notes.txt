@@ -62,11 +62,14 @@ Activities sorted by application function.
 * Log report
 	NONE
 * Units - overview
-	NONE
+	CHANGE
+		Remove href
 * Units - new
-	NONE
+	CHANGE
+		Remove href
 * Units - update
-	NONE
+	CHANGE
+		Remove href
 * Facilities - overview
 	NONE
 * Facilities - new

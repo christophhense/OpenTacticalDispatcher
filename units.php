@@ -407,7 +407,7 @@ case "add":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="window.location.href='units.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="goto_window('units.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -631,7 +631,7 @@ case "edit":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="window.location.href='units.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="goto_window('units.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -816,7 +816,7 @@ default:
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=units&assign_id=" + assign_id;
+				goto_window("assign.php?back=units&assign_id=" + assign_id);
 				<?php } ?>
 			}
 
@@ -876,7 +876,7 @@ default:
 	?>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='units.php?function=add';"><?php print get_text("Add Unit");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('units.php?function=add');"><?php print get_text("Add Unit");?></button>
 							</div>
 						</div>
 	<?php

@@ -824,7 +824,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		if (query_part_str.valueOf() != "") {
 			$.post("set_data.php", "function=call_progression&assign_id=" + assign_id + query_part_str, function(data) {
 				if (data) {
-					window.location.href = data;
+					goto_window(data);
 				}
 			})
 			.done(function() {
@@ -891,8 +891,8 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		switch ($function) {
 		case "units":
 			if (is_admin() || is_super()) {
-				$flag_and_edit_col_str = "<td style='text-align: center;'>" . "<span onclick='window.location.href=(\"units.php?function=edit&id=" .
-					$row['unit_id'] . "\")' class='glyphicon glyphicon-pencil' aria-hidden='true' style='font-size: 12px; padding-right: 2px;'></span></td>";
+				$flag_and_edit_col_str = "<td style='text-align: center;'>" . "<span onclick='goto_window(\"units.php?function=edit&id=" .
+					$row['unit_id'] . "\");' class='glyphicon glyphicon-pencil' aria-hidden='true' style='font-size: 12px; padding-right: 2px;'></span></td>";
 			} else {
 				$flag_and_edit_col_str = "<td></td>";
 			}
