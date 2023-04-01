@@ -87,7 +87,7 @@ if (is_guest()) {
 					<div id="button_container" class="container-fluid hidden-print" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='<?php print $back_button_click_str;?>';" tabindex=2><?php print $back_button_lable;?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $back_button_click_str;?>');" tabindex=2><?php print $back_button_lable;?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">

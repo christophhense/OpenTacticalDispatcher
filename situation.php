@@ -211,8 +211,12 @@ default:
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=situation&assign_id=" + assign_id;
+				goto_window("assign.php?back=situation&assign_id=" + assign_id);
 				<?php } ?>
+			}
+
+			function edit_ticket(ticket_id) {
+				goto_window("<?php print (is_guest())? "ticket_report.php" : "ticket_edit.php";?>?ticket_id=" + ticket_id);
 			}
 
 			function get_infostring() {
@@ -263,10 +267,6 @@ default:
 				}
 				get_tickets();
 				return errmsg;
-			}
-
-			function edit_ticket(ticket_id) {
-				window.location.href = "<?php print (is_guest())? "ticket_report.php" : "ticket_edit.php";?>?ticket_id=" + ticket_id;
 			}
 
 			function set_closed_interval(type, time) {

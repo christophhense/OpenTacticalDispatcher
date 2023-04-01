@@ -21,6 +21,8 @@
 Activities sorted by application function.
 
 * Situation
+	CHANGE
+		Remove href
 	BUG
 		Reload scheduled tickets after auto-open
 * Callboard
@@ -33,11 +35,14 @@ Activities sorted by application function.
 * Ticket - update
 	CHANGE
 		Form submit with ajax
+		Remove href
 * Ticket - report
-	NONE
+	CHANGE
+		Remove href
 * Ticket - close
 	CHANGE
 		Form submit with ajax
+		Remove href
 * Ticket - new action
 	CHANGE
 		Form submit with ajax
@@ -49,7 +54,8 @@ Activities sorted by application function.
 	BUGFIX
 		Go back to ticket instead to situation
 * Ticket - dispatch
-	NONE
+	CHANGE
+		Form submit with ajax
 * Ticket - disposition
 	NONE
 * Log report

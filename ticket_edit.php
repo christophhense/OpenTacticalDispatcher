@@ -491,7 +491,7 @@ default:
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=ticket&assign_id=" + assign_id + "&ticket_id=" + <?php print $_GET['ticket_id'];?>;
+				goto_window("assign.php?back=ticket&assign_id=" + assign_id + "&ticket_id=" + <?php print $_GET['ticket_id'];?>);
 				<?php } ?>
 			}
 
@@ -577,7 +577,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="ticket_edit" name="edit" method="post" action="ticket_edit.php">
+			<form id="ticket_edit" name="edit">
 				<input type="hidden" name="function" value="update">
 				<input type="hidden" name="ticket_id" value="<?php print $ticket_id;?>">
 				<input type="hidden" id="frm_lat" name="frm_lat" value="<?php print $lat;?>">
@@ -614,27 +614,27 @@ default:
 							<div style="margin-top: 20px;">
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket'" tabindex=16><?php print get_text("Dispatch text");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket');" tabindex=16><?php print get_text("Dispatch text");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>'" tabindex=15><?php print get_text("Incident Report");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>');" tabindex=15><?php print get_text("Incident Report");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_close.php?ticket_id=<?php print $ticket_id;?>'" tabindex=14><?php print get_text("Close_incident_short");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_close.php?ticket_id=<?php print $ticket_id;?>');" tabindex=14><?php print get_text("Close_incident_short");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>'" tabindex=13><?php print get_text("Add Action");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=13><?php print get_text("Add Action");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='dispatch.php?ticket_id=<?php print $ticket_id;?>'" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('dispatch.php?ticket_id=<?php print $ticket_id;?>');" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
 									</div>
 								</div>
 							</div>

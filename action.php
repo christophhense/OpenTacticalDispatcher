@@ -341,6 +341,7 @@ case "insert":
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>';" tabindex=6><?php print get_text("Cancel");?></button>
+									<!-- cancel_button(set_url, set_ticket_id, screen_id) kann alles zusammen in goto_window?-->
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -350,7 +351,7 @@ case "insert":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="return validate(document.edit_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(document.edit_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -448,7 +449,7 @@ case "insert":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="return validate(document.add_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(document.add_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>

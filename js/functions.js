@@ -544,6 +544,11 @@ function wait(ms) {
 	}
 }
 
+function goto_window(url) {
+	var changes_data ='{"type":"script","item":"main","action":"' + url + '"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
 function cancel_button(set_url, set_ticket_id, screen_id) {
 	var url = "situation.php";
 	if (set_url !== undefined && set_url.valueOf() != "") {
@@ -555,7 +560,7 @@ function cancel_button(set_url, set_ticket_id, screen_id) {
 	if (set_ticket_id !== undefined && set_ticket_id.valueOf() != "") {
 		url = url + "&ticket_id=" + set_ticket_id;
 	}
-	window.location.href = url;
+	goto_window(url);
 }
 
 function do_api_connection_test(periodic, done_message) {
