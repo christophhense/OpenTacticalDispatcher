@@ -169,13 +169,6 @@ case "reset":
 	set_unit_updated($_POST['assign_id']);
 	unset ($result);
 	do_receipt_message($row['unit_id']);
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign calls deleted");?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
-</script>
-	<?php
 	break;
 case "delete":
 
@@ -197,13 +190,6 @@ case "delete":
 	$result = db_query($query, __FILE__, __LINE__);
 	unset ($result);
 	do_receipt_message($row['unit_id']);
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign deleted");?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
-</script>
-	<?php
 	break;
 case "update":
 
@@ -413,13 +399,6 @@ case "update":
 	if ($do_receipt) {
 		do_receipt_message($as_row_old['unit_id']);
 	}
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Assign update applied");?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $ticket_id;?> + "&screen_id=" + <?php print $_POST['screen_id'];?>;
-</script>
-	<?php
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
@@ -479,6 +458,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var new_infos_array = [];
+			var screen_id_main = 0;
 			var on_scene_fac_lat = [];
 			var on_scene_fac_lng = [];
 			var on_scene_facility_adress = [];
@@ -494,7 +474,7 @@ default:
 
 			<?php print $array_receiving_str["facility_coordinates"];?>
 
-			function validate_edit_form() {
+			function validate() {
 				var errmsg = "";
 				if (!(moment($("#dispatched").val(), "<?php print $moment_date_format;?>").isValid())) {
 					errmsg += "<?php print get_text("Invalid dispatched datetime");?><br>";
@@ -536,7 +516,17 @@ default:
 					if ((moment($("#clear").val(), "<?php print $moment_date_format;?>").isValid())) {
 						$("#clear_mysql_timestamp").val(moment($("#clear").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 					}
-					edit_form.submit();
+					$.post("assign.php", $("#edit_form").serialize())
+					.done(function (data) {
+						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign update applied");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
+					})
+					.fail(function () {
+						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("situation.php?screen_id=" + screen_id_main);
+					});
 				}
 			}
 
@@ -585,7 +575,17 @@ default:
 						switch (result.toLowerCase()) {
 						case "r":
 							$("#frm_reset").prop("value", "reset");
-							edit_form.submit();
+							$.post("assign.php", $("#edit_form").serialize())
+							.done(function (data) {
+								var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign calls deleted");?>"}';
+								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
+							})
+							.fail(function () {
+								var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								goto_window("situation.php?screen_id=" + screen_id_main);
+							});
 							break;
 						case "d":
 							if ($("#frm_reset_checkbox").prop("checked") == true) {
@@ -606,7 +606,17 @@ default:
 			function do_delete(result) {
 				if (result == true) {
 					$("#frm_delete").prop("value", "delete");
-					edit_form.submit();
+					$.post("assign.php", $("#edit_form").serialize())
+					.done(function (data) {
+						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign deleted");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
+					})
+					.fail(function () {
+						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("situation.php?screen_id=" + screen_id_main);
+					});
 				} else {
 					$("#frm_reset_checkbox").attr("checked", false);
 				}
@@ -679,6 +689,7 @@ default:
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
+					screen_id_main = new_infos_array['screen']['screen_id'];
 				});
 			});
 
@@ -707,29 +718,29 @@ default:
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="validate_edit_form();" tabindex=7><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=7><?php print get_text("Save");?></button>
 							</div>
 						</div>
 						<div style="margin-top: 20px;">
 							<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='action.php?back=<?php print $back;?>&ticket_id=<?php print $asgn_row['ticket_id'] . "&unit_id=" . $asgn_row['unit_id'];?>'" tabindex=6><?php print get_text("Add Action");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=<?php print $back;?>&ticket_id=<?php print $asgn_row['ticket_id'] . "&unit_id=" . $asgn_row['unit_id'];?>');" tabindex=6><?php print get_text("Add Action");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_edit.php?ticket_id=<?php print $asgn_row['ticket_id'];?>'" tabindex=5><?php print get_text("Incident");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $asgn_row['ticket_id'];?>');" tabindex=5><?php print get_text("Incident");?></button>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<form name="edit_form" action="<?php print basename(__FILE__);?>" method="post" target="main">
+				<form id="edit_form" name="edit_form" action="<?php print basename(__FILE__);?>" method="post" target="main">
 					<input type="hidden" name="frm_by_id" value="<?php print $_SESSION['user_id'];?>">
 					<input type="hidden" name="function" value="update">
 					<input type="hidden" name="assign_id" value="<?php print $_GET['assign_id'];?>">
 					<input type="hidden" name="frm_ticket_id" value="<?php print $asgn_row['ticket_id'];?>">
-					<input type="hidden" name="screen_id" id="screen_id" value="<?php print $asgn_row['ticket_id'];?>">
+					<input type="hidden" name="screen_id" id="screen_id" value="">
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">

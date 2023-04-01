@@ -57,7 +57,8 @@ Activities sorted by application function.
 	CHANGE
 		Form submit with ajax
 * Ticket - disposition
-	NONE
+	CHANGE
+		Form submit with ajax
 * Log report
 	NONE
 * Units - overview
