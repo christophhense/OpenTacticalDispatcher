@@ -73,11 +73,17 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 * Facilities - overview
-	NONE
+	CHANGE
+		Form submit with ajax
+		Remove href
 * Facilities - new
-	NONE
+	CHANGE
+		Form submit with ajax
+		Remove href
 * Facilities - update
-	NONE
+	CHANGE
+		Form submit with ajax
+		Remove href
 * Reports
 	NONE
 * Settings - user accounts - User accounts

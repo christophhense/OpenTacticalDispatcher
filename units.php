@@ -45,7 +45,6 @@ case "insert":
 	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""));
 	print get_text("Saved");
 	exit;
-	//break;
 case "update":
 	set_session_expire_time();
 
@@ -146,7 +145,6 @@ case "update":
 	}
 	print get_text("Saved");
 	exit;
-//	break;
 case "delete":
 	set_session_expire_time();
 
@@ -176,7 +174,6 @@ case "delete":
 	}
 	print $caption;
 	exit;
-	//break;
 default:
 }
 if (isset ($_GET['function'])) {

@@ -391,7 +391,7 @@ function show_facilities_list($table_side = "left", $split = 0) {
 	?>
 	<tr style="height: 35px;">
 		<td style="text-align: center; vertical-align: middle;">
-			<span onclick="window.location.href='facilities.php?function=edit&id=<?php print $row_fac['fac_id'];?>'" class="glyphicon glyphicon-pencil" aria-hidden="true" style="font-size: 12px;"></span>&nbsp;
+			<span onclick="goto_window('facilities.php?function=edit&id=<?php print $row_fac['fac_id'];?>');" class="glyphicon glyphicon-pencil" aria-hidden="true" style="font-size: 12px;"></span>&nbsp;
 		</td>
 	<?php
 		} else {
