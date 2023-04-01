@@ -6,7 +6,6 @@ require_once ("./incs/units.inc.php");
 do_login(basename(__FILE__));
 
 $datetime_now = mysql_datetime();
-$caption = "";
 $function = "";
 
 if (isset ($_POST['function']) && (is_admin() || is_super())) {
@@ -44,8 +43,9 @@ case "insert":
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_UNIT'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
 	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""));
-	$caption = get_text("Saved");
-	break;
+	print get_text("Saved");
+	exit;
+	//break;
 case "update":
 	set_session_expire_time();
 
@@ -131,7 +131,6 @@ case "update":
 			}
 		}
 	}
-	$caption = get_text("Saved");
 	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data));
 	if (!empty ($_POST['frm_status_update'])) {
 
@@ -145,7 +144,9 @@ case "update":
 		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
 		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val);
 	}
-	break;
+	print get_text("Saved");
+	exit;
+//	break;
 case "delete":
 	set_session_expire_time();
 
@@ -162,6 +163,7 @@ case "delete":
 	$result_assigns = db_query($query_assigns, __FILE__, __LINE__);
 	$count_assigns = db_affected_rows($result_assigns);
 	unset ($result_assigns);
+	$caption = "";
 	if ($count_assigns == 0) {
 
 		$query = "DELETE FROM `allocates` " .
@@ -172,8 +174,10 @@ case "delete":
 		$caption = get_text("Deleted");
 		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data));
 	}
-	break;
-	default:
+	print $caption;
+	exit;
+	//break;
+default:
 }
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
@@ -221,7 +225,7 @@ default:
 		<script>
 
 			function printers() {
-				$.get("./units.php?function=printers").done(function(data) {
+				$.get("units.php?function=printers").done(function(data) {
 					var return_array = JSON.parse(data);
 					var message = "";
 					if (return_array.length > 0) {
@@ -247,19 +251,21 @@ default:
 				}
 			}
 
-			function do_remove(result) {
-				if (result == true) {
-					edit_form.submit();
-				}
+			function post_the_form(form_id) {
+				$.post("units.php", $(form_id).serialize())
+				.done(function (data) {
+					var changes_data ='{"type":"message","item":"success","action":"' + data + '"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					goto_window("units.php");
+				})
+				.fail(function () {
+					var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
+					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					goto_window("units.php");
+				});
 			}
 
 			function validate(theForm) {
-				if (theForm.frm_remove) {
-					if (theForm.frm_remove.checked) {
-						show_infobox("<?php print get_text("Please confirm removing");?>", false, theForm.frm_handle.value, do_remove);
-						return;
-					}
-				}
 				theForm.frm_mobile.value = (theForm.frm_mob_disp.checked)? 1 : 0;
 				var errmsg = "";
 				if (theForm.frm_handle.value.trim()=="") {
@@ -284,7 +290,7 @@ default:
 
 			function submit_form(form_name) {
 				if (validate(form_name)) {
-					form_name.submit();
+					post_the_form(form_name);
 				}
 			}
 
@@ -330,7 +336,7 @@ default:
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					$("#edit_form").submit();
+					post_the_form("#edit_form")
 				}
 			}
 
@@ -809,10 +815,6 @@ default:
 	$auto_poll_time = trim($auto_poll_settings[0]);
 	?>
 		<script>
-	<?php if ($caption) { ?>
-			var changes_data ='{"type":"message","item":"success","action":"<?php print $caption;?>"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	<?php } ?>
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
@@ -821,16 +823,16 @@ default:
 			}
 
 			function get_units() {
-				$.get("./units.php?function=table_left", function(data) {
+				$.get("units.php?function=table_left", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("./units.php?function=table_right", function(data) {
+				$.get("units.php?function=table_right", function(data) {
 					$("#table_right").html(data);
 				});
 			}
 
 			function do_sort_units(sort_order) {
-				$.get("./units.php?function=sort&order=" + sort_order)
+				$.get("units.php?function=sort&order=" + sort_order)
 					.done(function() {
 						get_units();
 				});

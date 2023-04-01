@@ -66,9 +66,11 @@ Activities sorted by application function.
 		Remove href
 * Units - new
 	CHANGE
+		Form submit with ajax
 		Remove href
 * Units - update
 	CHANGE
+		Form submit with ajax
 		Remove href
 * Facilities - overview
 	NONE
