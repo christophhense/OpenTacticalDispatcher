@@ -241,11 +241,11 @@ if (is_operator() || is_admin() || is_super()) {
 			}
 
 			function load_content() {
-				$.get("./communication.php?function=table_left_send_message&message_group=<?php print $message_group;?>&" +
+				$.get("communication.php?function=table_left_send_message&message_group=<?php print $message_group;?>&" +
 					"targets_ids=<?php print $targets_ids;?>&target_api_log_id=<?php print $target_api_log_id;?>&ticket_id=<?php print urlencode($ticket_id);?>", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("./communication.php?function=table_right_send_message&message_group=<?php print $message_group;?>&" +
+				$.get("communication.php?function=table_right_send_message&message_group=<?php print $message_group;?>&" +
 					"targets_ids=<?php print $targets_ids;?>&target_api_log_id=<?php print $target_api_log_id;?>&ticket_id=<?php print urlencode($ticket_id);?>", function(data) {
 					$("#table_right").html(data);
 				});
@@ -321,10 +321,10 @@ if (is_operator() || is_admin() || is_super()) {
 			var select_ticket_api_log_id = 0;
 
 			function load_content() {
-				$.get("./communication.php?function=table_left_communication", function(data) {
+				$.get("communication.php?function=table_left_communication", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("./communication.php?function=table_right_communication", function(data) {
+				$.get("communication.php?function=table_right_communication", function(data) {
 					$("#table_right").html(data);
 				});
 				$(document).ready(function() {
@@ -348,19 +348,19 @@ if (is_operator() || is_admin() || is_super()) {
 						show_dispatch_infobox("<?php print get_text("Dispatch to ticket - Select ticket");?>", data);
 					})
 					.done(function() {
-						$.get("./communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_voice_promt").done(function(data) {
+						$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_voice_promt").done(function(data) {
 							load_content();
 						});
 					});
 					break;
 				case "api_log_new_ticket":
-					$.get("./ticket_add.php?function=get_reserved_ticket").done(function(data) {
+					$.get("ticket_add.php?function=get_reserved_ticket").done(function(data) {
 						ticket_id = data.trim();
 					})
 					.done(function() {
 						if (select_ticket_api_log_id == 0) {
 							select_ticket_api_log_id = api_log_id;
-							$.get("./communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_voice_promt").done(function(data) {
+							$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_voice_promt").done(function(data) {
 							});
 							unit_id = 0;
 						}
@@ -383,7 +383,7 @@ if (is_operator() || is_admin() || is_super()) {
 									window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 									var last_call = true;
 									if (last_call) {
-										window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+										goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 									} else {
 										load_content();
 										hide_infobox_large(false);
@@ -392,13 +392,13 @@ if (is_operator() || is_admin() || is_super()) {
 							} else {
 								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
 								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-								window.location.href="ticket_edit.php?ticket_id=" + ticket_id;
+								goto_window("ticket_edit.php?ticket_id=" + ticket_id);
 							}
 						});
 					});
 					break;
 				case "api_log_update_call_progression":
-					$.get("./communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_update_call_progression")
+					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_update_call_progression")
 						.done(function(data) {
 						var return_array = JSON.parse(data);
 						if (return_array["call_progression"].valueOf() != "") {
@@ -413,7 +413,7 @@ if (is_operator() || is_admin() || is_super()) {
 								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 								var last_call = false;
 								if (last_call) {
-									window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+									goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 								}
 							})
 							.fail(function() {
@@ -440,7 +440,7 @@ if (is_operator() || is_admin() || is_super()) {
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 						var last_call = false;
 						if (last_call) {
-							window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+							goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 						} else {
 							load_content();
 							hide_infobox_large(false);
@@ -448,13 +448,13 @@ if (is_operator() || is_admin() || is_super()) {
 					});
 					break;
 				default:
-					$.get("./communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
+					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
 						api_log_action + "&ticket_id=" + ticket_id + "&unit_id=" + unit_id).done(function(data) {
 						var return_array = JSON.parse(data);
 						var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 						if ((return_array["url"] !== undefined) && (return_array["url"] != null) && (return_array["url"] != "")) {
-							window.location.href = return_array["url"];
+							goto_window(return_array["url"]);
 						} else {
 							load_content();
 						}

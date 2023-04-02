@@ -28,7 +28,8 @@ Activities sorted by application function.
 * Callboard
 	NONE
 * Communication
-	NONE
+	CHANGE
+		Remove href
 * Ticket - new
 	CHANGE
 		Form submit with ajax
