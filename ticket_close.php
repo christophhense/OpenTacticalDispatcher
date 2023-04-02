@@ -76,13 +76,6 @@ case "update":
 	$row = db_fetch_assoc($result, __FILE__, __LINE__);
 	do_log($GLOBALS['LOG_INCIDENT_CLOSE'], $_POST['frm_ticket_id'], 0, $log_str);
 	unset ($result_old_data, $result, $cl_res_result);
-	$appearance = "success";
-	//$appearance = "danger";
-	//$appearance = "warning";
-	$message_text = get_text("Saved");
-	//$message_text = get_text("Not saved");
-	//$message_text = get_text("Not all saved");
-	print '{"type":"message","item":"' . $appearance . '","action":"' . $message_text . '"}';
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
@@ -181,17 +174,14 @@ default:
 				} else {
 					$("#problemend_mysql_timestamp").val(problemend);
 					set_parked_form_data();
-					$.post("ticket_close.php", $("#ticket_close").serialize())
+					$.post("ticket_close.php", $("#ticket_close_form").serialize())
 					.done(function (data) {
-						window.parent.navigationbar.postMessage(data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
 					});
 				}
 			}
@@ -199,17 +189,10 @@ default:
 			function set_parked_form_data(data) {
 				try {
 					if ((data !== undefined) && (data != null)) {
-						var changes_data = {"type":"set_parked_form_data","item":"ticket_close_form_data","action":ticket_id};
-						changes_data.ticket_close_form_data = data;
-						changes_data = JSON.stringify(changes_data);
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ={"type":"set_parked_form_data","item":"ticket_close_timestamp","action":ticket_id,"datetime":Date.now()};
-						changes_data = JSON.stringify(changes_data);
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						save_parked_form_data("ticket_close_form_data", "<?php print$_GET['ticket_id'];?>", data);
+						save_parked_form_data("ticket_close_timestamp", "<?php print$_GET['ticket_id'];?>", Date.now());
 					} else {
-						var changes_data = {"type":"set_parked_form_data","item":"ticket_close_delete","action":ticket_id};
-						changes_data = JSON.stringify(changes_data);
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						save_parked_form_data("ticket_close_delete", ticket_id, "");
 					}
 				} catch (e) {
 				}
@@ -224,9 +207,11 @@ default:
 						) {
 							var form_content = [];
 							for (var key in new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id]) {
-								form_content[new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name']] = new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
+								form_content[new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['name']] 
+									= new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
 							}
 						}
+						//console.log(form_content);
 						$("#frm_synopsis").val(form_content['frm_synopsis']);
 						$("#frm_disp").val(form_content['frm_disp']);
 						do_unlock_readonly("problemend");
@@ -252,8 +237,7 @@ default:
 				$("#problemend").data("DateTimePicker").minDate(moment("<?php print $row['problemstart'];?>", "YYYY-MM-DD HH:mm:ss"));
 
 				$("#frm_disp").focus();
-				var changes_data ='{"type":"current_script","item":"script","action":"ticket_close"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("ticket_close");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
@@ -261,7 +245,6 @@ default:
 					new_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
 						get_parked_form_data();
-						$("#screen_id").val(new_infos_array['screen']['screen_id']);
 						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
@@ -271,7 +254,7 @@ default:
 						($("#frm_disp").val().length > parking_form_data_min_trigger_chars) && 
 						(parking_form_data_min_trigger_chars != 0)
 					) {
-						var new_form_data = $("#ticket_close").serializeArray();
+						var new_form_data = $("#ticket_close_form").serializeArray();
 						var ticket_close_form_data = [];
 						try {
 							ticket_close_form_data = new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id];
@@ -304,7 +287,7 @@ default:
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.frm_note.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.ticket_close_form.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
@@ -317,9 +300,8 @@ default:
 				<div class="col-md-5">
 					<div class="panel panel-default" style="padding: 0px;">
 						<div id="table_left">
-							<form id="ticket_close" name="frm_note" method="post" action="ticket_close.php">
+							<form id="ticket_close_form" name="ticket_close_form">
 								<input type="hidden" name="function" value="update">
-								<input type="hidden" name="screen_id" id="screen_id" value="">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 									<tr>
 										<th style="width: 20%; border-top: 0px;"<?php print get_title_str(get_help_text("_synop", true) . $additional_helptext_form_data_parking);?>>
@@ -328,7 +310,7 @@ default:
 										<td style="width: 5%; border-top: 0px;"></td>
 										<td style="width: 75%; border-top: 0px;">
 											<textarea id="frm_synopsis" name="frm_synopsis" class="form-control" cols=56 rows=4><?php print remove_nls($row['description']);?></textarea>
-											<?php print get_textblock_select_str("synopsis", "document.frm_note.frm_synopsis", "", 0, "");?>
+											<?php print get_textblock_select_str("synopsis", "document.ticket_close_form.frm_synopsis", "", 0, "");?>
 										</td>
 									</tr>
 									<tr>
@@ -338,7 +320,7 @@ default:
 										<td></td>
 										<td>
 											<textarea id="frm_disp" name="frm_disp" class="form-control mandatory" cols=56 rows=4 tabindex=1><?php print remove_nls($row['comments']);?></textarea>
-											<?php print get_textblock_select_str("close", "document.frm_note.frm_disp", "", 0, "");?>
+											<?php print get_textblock_select_str("close", "document.ticket_close_form.frm_disp", "", 0, "");?>
 										</td>
 									</tr>
 									<tr>
