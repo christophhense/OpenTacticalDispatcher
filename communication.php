@@ -195,9 +195,9 @@ if (is_operator() || is_admin() || is_super()) {
 		if (isset ($_GET['display_dispatch-message'])) {
 			$display_dispatch_message = $_GET['display_dispatch-message'];
 		}
-		$url_str = "situation.php?screen_id=\" + new_infos_array['screen']['screen_id'];\";";
+		$url_str = "\"situation.php?screen_id=\" + new_infos_array['screen']['screen_id']";
 		if ($display_dispatch_message == "on") {
-			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation";
+			$url_str = "\"ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation\"";
 		}
 	?>
 		<script>
@@ -223,7 +223,7 @@ if (is_operator() || is_admin() || is_super()) {
 					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				})
 				.done(function() {
-					window.location.href="<?php print $url_str;?>";
+					goto_window(<?php print $url_str;?>);
 				})
 				.fail(function() {
 					alert("error");
@@ -235,7 +235,7 @@ if (is_operator() || is_admin() || is_super()) {
 					show_infobox("<?php print get_text("Confirm do not send?");?>", "", false, do_cancel);
 				} else {
 					if (result == true) {
-						window.location.href="<?php print $url_str;?>";
+						goto_window(<?php print $url_str;?>);
 					}
 				}
 			}
