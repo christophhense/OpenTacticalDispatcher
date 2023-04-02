@@ -16,20 +16,9 @@ if (isset ($_GET['unit_id'])) {
 	$unit_id = $_GET['unit_id'];
 	$unit_id_str = "&unit_id=" . $_GET['unit_id'];
 }
-$back = "";
-$url_back = "";
-if (isset ($_GET['back'])) {
-	$back = $_GET['back'];
-}
-if (($back == "") && isset ($_POST['back'])) {
-	$back = $_POST['back'];
-}
-switch ($back) {
-case "ticket":
+$url_back = "situation.php";
+if (isset ($_GET['back']) && $_GET['back'] == "ticket") {
 	$url_back = "ticket_edit.php";
-	break;
-default:
-	$url_back = "situation.php";
 }
 if (isset ($_POST['function'])) {
 	$function = $_POST['function'];
@@ -47,10 +36,6 @@ case "update":
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$current_ticket_id = $_GET['ticket_id'];
-	if ((isset($unit_id) && $unit_id != 0) || ($function != "")) {
-		$current_ticket_id = 0;
-	}
 
 	$query_ticket = "SELECT `problemstart` " .
 		"FROM `tickets` " .
@@ -86,7 +71,7 @@ default:
 			var new_infos_array = [];
 			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
-			var ticket_id = <?php print $current_ticket_id;?> + 0;
+			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate(form_name) {
 				var errmsg = "";
@@ -111,15 +96,12 @@ default:
 					set_parked_form_data();
 					$.post("action.php", $(form_name).serialize())
 					.done(function (data) {
-						window.parent.navigationbar.postMessage(data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"<?php print $url_back;?>?ticket_id=' + $("#ticket_id").val() + '&screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
 					})
 					.fail(function () {
 						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"<?php print $url_back;?>?ticket_id=' + $("#ticket_id").val() + '&screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
 					});
 				}
 			}
@@ -187,7 +169,7 @@ default:
 
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					screen_id_main = new_infos_array['screen']['screen_id'];
-					
+
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
 						change_situation_first_set = 1;
@@ -198,7 +180,7 @@ default:
 						($("#frm_description").val().length > parking_form_data_min_trigger_chars) && 
 						(parking_form_data_min_trigger_chars != 0)
 					) {
-						var new_form_data = $("#add_form").serializeArray();
+						var new_form_data = $("#action_add_form").serializeArray();
 						var action_form_data = [];
 						try {
 							action_form_data = new_infos_array['parked_form_data']['action_form_data'][ticket_id];
@@ -324,11 +306,10 @@ case "insert":
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form method="post" name="edit_form" action="action.php">
-			<input type="hidden" name="back" value="ticket">
+		<form name="action_edit_form">
 			<input type="hidden" name="function" value="update">
 			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
-			<input type="hidden" id="ticket_id" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("action", $_GET['action_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -340,18 +321,17 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>';" tabindex=6><?php print get_text("Cancel");?></button>
-									<!-- cancel_button(set_url, set_ticket_id, screen_id) kann alles zusammen in goto_window?-->
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="action_edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate(document.edit_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_edit_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -368,7 +348,7 @@ case "insert":
 												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print remove_nls($row['description']);?></textarea>
 											</div>
 											<div>
-												<?php print get_textblock_select_str("action", "document.edit_form.frm_description", "", 0, "");?>
+												<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
 											</div>
 											<div>
 												<?php print get_unit_select_str("action", $row['unit_id'], $_GET['ticket_id']);?>
@@ -424,10 +404,9 @@ case "insert":
 			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="add_form" name="add_form" method="post" action="action.php">
-			<input type="hidden" name="back" value="<?php print $back;?>">
+		<form id="action_add_form" name="action_add_form">
 			<input type="hidden" name="function" value="insert">
-			<input type="hidden" id="ticket_id" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -439,17 +418,17 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>'" tabindex=6><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); action_add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate(document.add_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_add_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -466,7 +445,7 @@ case "insert":
 												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1></textarea>
 											</div>
 											<div>
-												<?php print get_textblock_select_str("action", "document.add_form.frm_description", "", 0 ,"");?>
+												<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
 											</div>
 											<div>
 												<?php print get_unit_select_str("action", $unit_id, $_GET['ticket_id']);?>

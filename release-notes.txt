@@ -33,6 +33,8 @@ Activities sorted by application function.
 * Ticket - new
 	CHANGE
 		Form submit with ajax
+		postMessage outsourced to functions
+		cancel-button switched to function goto_window
 * Ticket - update
 	CHANGE
 		Form submit with ajax

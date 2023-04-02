@@ -516,7 +516,7 @@ default:
 					if ((moment($("#clear").val(), "<?php print $moment_date_format;?>").isValid())) {
 						$("#clear_mysql_timestamp").val(moment($("#clear").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 					}
-					$.post("assign.php", $("#edit_form").serialize())
+					$.post("assign.php", $("#assign_form").serialize())
 					.done(function (data) {
 						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign update applied");?>"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -531,7 +531,7 @@ default:
 			}
 
 			function do_reset() {
-				document.edit_form.reset();
+				document.assign_form.reset();
 				var status = ["dispatched", "responding", "on_scene", "facility_enroute", "facility_arrived", "clear"];	
 				for (var i in status) {
 					if ($("#" + status[i] + "_button").attr("checked")) {
@@ -575,7 +575,7 @@ default:
 						switch (result.toLowerCase()) {
 						case "r":
 							$("#frm_reset").prop("value", "reset");
-							$.post("assign.php", $("#edit_form").serialize())
+							$.post("assign.php", $("#assign_form").serialize())
 							.done(function (data) {
 								var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign calls deleted");?>"}';
 								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -606,7 +606,7 @@ default:
 			function do_delete(result) {
 				if (result == true) {
 					$("#frm_delete").prop("value", "delete");
-					$.post("assign.php", $("#edit_form").serialize())
+					$.post("assign.php", $("#assign_form").serialize())
 					.done(function (data) {
 						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign deleted");?>"}';
 						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
@@ -688,7 +688,6 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					screen_id_main = new_infos_array['screen']['screen_id'];
 				});
 			});
@@ -735,12 +734,10 @@ default:
 						</div>
 					</div>
 				</div>
-				<form id="edit_form" name="edit_form" action="<?php print basename(__FILE__);?>" method="post" target="main">
-					<input type="hidden" name="frm_by_id" value="<?php print $_SESSION['user_id'];?>">
+				<form id="assign_form" name="assign_form">
 					<input type="hidden" name="function" value="update">
 					<input type="hidden" name="assign_id" value="<?php print $_GET['assign_id'];?>">
 					<input type="hidden" name="frm_ticket_id" value="<?php print $asgn_row['ticket_id'];?>">
-					<input type="hidden" name="screen_id" id="screen_id" value="">
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">
@@ -863,7 +860,7 @@ default:
 										<td style="width: 5%;"></td>
 										<td colspan=2>
 											<textarea name="frm_comments" class="form-control" cols="45" rows="2" tabindex=3><?php print $asgn_row['assign_comments'];?></textarea>
-											<?php print get_textblock_select_str("assign", "document.edit_form.frm_comments", "", 0, "");?>
+											<?php print get_textblock_select_str("assign", "document.assign_form.frm_comments", "", 0, "");?>
 										</td>
 									</tr>
 							<!--	<tr style="visibility:hidden">

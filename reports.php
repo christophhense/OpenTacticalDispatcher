@@ -318,7 +318,7 @@ default:
 						$("#filter_status").prop("disabled", true);
 						$("#filter_settings").prop("disabled", true);
 					}
-					$.get("./reports.php", {
+					$.get("reports.php", {
 						function: $("#frm_function").val(), start: $("#start_mysql_timestamp").val(), end: $("#end_mysql_timestamp").val(),
 						frm_incident_location: $("#frm_incident_location").val(), frm_incident_facility: $("#frm_incident_facility").val(),
 						frm_receiving_location: $("#frm_receiving_location").val(), frm_receiving_facility: $("#frm_receiving_facility").val(),
@@ -384,7 +384,7 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="select_data" method="post" action="<?php print basename(__FILE__);?>">
+		<form name="reports_form">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -401,15 +401,12 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.select_data.reset(); query_changed();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<!-- ====================================== -->
-									<!-- <button type="button" class="btn btn-xs btn-default" onclick="parent.frames.main.focus(); parent.frames.main.print();"><?php print get_text("Print");?></button> -->
 									<button type="button" class="btn btn-xs btn-default" onclick="window.focus(); window.print();"><?php print get_text("Print");?></button>
-									<!-- ====================================== -->
 								</div>
 							</div>
 						</div>

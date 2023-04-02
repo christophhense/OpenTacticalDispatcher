@@ -303,7 +303,7 @@ function show_assigns(unit_id) {
 	})
 	.fail(function() {
 		alert("error");
-	});	
+	});
 }
 
 var import_type = "";
@@ -545,7 +545,41 @@ function wait(ms) {
 }
 
 function goto_window(url) {
-	var changes_data ='{"type":"script","item":"main","action":"' + url + '"}';
+	var changes_data = '{"type":"script","item":"main","action":"' + url + '"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
+function show_top_notice(appearance, message) {
+	var changes_data = '{"type":"message","item":"' + appearance + '","action":"' + message + '"}';
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
+function save_parked_form_data(form, action, data) {
+	var changes_data = {"type":"set_parked_form_data","item":form,"action":action};
+	if (form == "ticket_add_form_data") {
+		changes_data.ticket_add_form_data = data;
+	}
+	switch (form) {
+	case "ticket_add_form_data":
+		changes_data.ticket_add_form_data = data;
+		break;
+	case "ticket_close_form_data":
+		changes_data.ticket_close_form_data = data;
+		break;
+	case "action_form_data":
+		changes_data.action_form_data = data;
+		break;
+	case "log_report_form_data":
+		changes_data.log_report_form_data = data;
+		break;
+	default:
+	}
+	changes_data = JSON.stringify(changes_data);
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
+function set_window_present(current_script) {
+	var changes_data = '{"type":"current_script","item":"script","action":"' + current_script + '"}';
 	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 }
 
