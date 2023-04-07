@@ -211,7 +211,6 @@ default:
 									= new_infos_array['parked_form_data']['ticket_close_form_data'][ticket_id][key]['value'];
 							}
 						}
-						//console.log(form_content);
 						$("#frm_synopsis").val(form_content['frm_synopsis']);
 						$("#frm_disp").val(form_content['frm_disp']);
 						do_unlock_readonly("problemend");
@@ -224,7 +223,6 @@ default:
 			}
 
 			$(document).ready(function() {
-
 				$("#problemend").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
@@ -233,9 +231,7 @@ default:
 					},
 					sideBySide: true
 				});
-
 				$("#problemend").data("DateTimePicker").minDate(moment("<?php print $row['problemstart'];?>", "YYYY-MM-DD HH:mm:ss"));
-
 				$("#frm_disp").focus();
 				set_window_present("ticket_close");
 				<?php show_prevent_browser_back_button();?>

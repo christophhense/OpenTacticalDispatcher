@@ -495,21 +495,17 @@ default:
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#problemstart").on("dp.change", function (e) {
 					$("#scheduled_date").data("DateTimePicker").minDate(e.date);
 				});
-
 				$("#scheduled_date").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#scheduled_date").on("dp.change", function (e) {
 					$("#problemstart").data("DateTimePicker").maxDate(e.date);
 				});
-
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
 				if ($("#frm_facility_id").val() == 0) {
 					$("#frm_location").focus();
@@ -528,7 +524,6 @@ default:
 					new_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
-						$("#screen_id").val(new_infos_array['screen']['screen_id']);
 						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
@@ -563,7 +558,6 @@ default:
 				<input type="hidden" id="frm_lat" name="frm_lat" value="">
 				<input type="hidden" id="frm_lng" name="frm_lng" value="">
 				<input type="hidden" id="incident_type" value=0>
-				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("ticket", $ticket_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("New") . get_table_id($ticket_id) . " - " . get_variable("page_caption");?>

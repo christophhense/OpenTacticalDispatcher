@@ -522,7 +522,7 @@ default:
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $url_back;?>', '<?php print $_GET['ticket_id'];?>', new_infos_array['screen']['screen_id']);" tabindex=10002><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'];?>&screen_id=' + screen_id_main);" tabindex=10002><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">

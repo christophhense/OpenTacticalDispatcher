@@ -236,9 +236,8 @@ case "update":
 	if (isset ($_POST['clear'])) {
 		$dispatch_part .= "`clear` = " . quote_smart($_POST['clear']);
 		$auto_dispatch_settings = explode(",", get_variable("auto_dispatch"));
-		$auto_last_assign = trim($auto_dispatch_settings[1]);
 		if ($as_row_old['current_assigns'] == 1) {
-			switch ($auto_last_assign) {
+			switch (trim($auto_dispatch_settings[1])) {
 			case 1:
 				$url_back = "ticket_edit.php";
 				break;
@@ -399,6 +398,7 @@ case "update":
 	if ($do_receipt) {
 		do_receipt_message($as_row_old['unit_id']);
 	}
+	print $url_back;
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
@@ -518,13 +518,15 @@ default:
 					}
 					$.post("assign.php", $("#assign_form").serialize())
 					.done(function (data) {
-						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign update applied");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
+						var url_back = "<?php print $url_back;?>";
+						if (data) {
+							url_back = data;
+						}
+						show_top_notice("success", "<?php print get_text("Assign update applied");?>");
+						goto_window(url_back + "?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 						goto_window("situation.php?screen_id=" + screen_id_main);
 					});
 				}
@@ -577,13 +579,11 @@ default:
 							$("#frm_reset").prop("value", "reset");
 							$.post("assign.php", $("#assign_form").serialize())
 							.done(function (data) {
-								var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign calls deleted");?>"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 								goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
 							})
 							.fail(function () {
-								var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice("danger", "<?php print get_text("Error");?>");
 								goto_window("situation.php?screen_id=" + screen_id_main);
 							});
 							break;
@@ -608,13 +608,11 @@ default:
 					$("#frm_delete").prop("value", "delete");
 					$.post("assign.php", $("#assign_form").serialize())
 					.done(function (data) {
-						var changes_data = '{"type":"message","item":"info","action":"<?php print get_text("Assign deleted");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 						goto_window("<?php print $url_back;?>?ticket_id=<?php print $asgn_row['ticket_id'];?>&screen_id=" + screen_id_main);
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 						goto_window("situation.php?screen_id=" + screen_id_main);
 					});
 				} else {
@@ -682,8 +680,7 @@ default:
 					sideBySide: true
 				});
 				$("#frm_receiving_location").focus();
-				var changes_data ='{"type":"current_script","item":"script","action":"assign"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("assign");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
@@ -707,7 +704,7 @@ default:
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $url_back;?>', '<?php print $ticket_id;?>', new_infos_array['screen']['screen_id']);" tabindex=9><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id;?>&screen_id=' + screen_id_main);" tabindex=9><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">

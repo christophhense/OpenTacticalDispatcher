@@ -589,20 +589,6 @@ function set_window_present(current_script) {
 	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 }
 
-function cancel_button(set_url, set_ticket_id, screen_id) {
-	var url = "situation.php";
-	if (set_url !== undefined && set_url.valueOf() != "") {
-		url = set_url;
-	}
-	if (screen_id !== undefined && screen_id.valueOf() != "") {
-		url = url + "?screen_id=" + screen_id;
-	}
-	if (set_ticket_id !== undefined && set_ticket_id.valueOf() != "") {
-		url = url + "&ticket_id=" + set_ticket_id;
-	}
-	goto_window(url);
-}
-
 function do_api_connection_test(periodic, done_message) {
 	var periodic_parameter = "&periodic=false";
 	if (periodic) {

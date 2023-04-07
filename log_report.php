@@ -62,9 +62,15 @@ default:
 	if (isset ($_GET['facility_id'])) {
 		$facility_id = $_GET['facility_id'];
 	}
-	$back = "";
-	if (isset ($_GET['back'])) {
-		$back = $_GET['back'] . ".php";
+	$url_back = "situation.php";
+	switch ($_GET['back']) {
+	case "units":
+		$url_back = "units.php";
+		break;
+	case "facilities":
+		$url_back = "facilities.php";
+		break;
+	default:
 	}
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
@@ -96,6 +102,7 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 			var new_infos_array = [];
+			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
 
 			function send_data() {
@@ -173,6 +180,7 @@ default:
 					new_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
 						get_parked_form_data();
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
 					if (new_infos_array['reload_flags']['log']) {
@@ -206,7 +214,7 @@ default:
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $back;?>', '', new_infos_array['screen']['screen_id']);" tabindex=7><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?screen_id=' + screen_id_main);" tabindex=7><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 	<?php

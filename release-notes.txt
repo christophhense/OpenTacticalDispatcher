@@ -30,6 +30,7 @@ Activities sorted by application function.
 * Communication
 	CHANGE
 		Remove href
+		cancel-button switched to function goto_window
 * Ticket - new
 	CHANGE
 		Form submit with ajax
@@ -43,6 +44,7 @@ Activities sorted by application function.
 	CHANGE
 		Form submit with ajax
 		Remove href
+		cancel-button switched to function goto_window
 * Ticket - report
 	CHANGE
 		Remove href
@@ -68,11 +70,15 @@ Activities sorted by application function.
 * Ticket - disposition
 	CHANGE
 		Form submit with ajax
+		cancel-button switched to function goto_window
+		postMessage outsourced to functions
 * Log report
-	NONE
+	CHANGE
+		cancel-button switched to function goto_window
 * Units - overview
 	CHANGE
 		Remove href
+		cancel-button switched to function goto_window
 * Units - new
 	CHANGE
 		Form submit with ajax
@@ -85,6 +91,7 @@ Activities sorted by application function.
 	CHANGE
 		Form submit with ajax
 		Remove href
+		cancel-button switched to function goto_window
 * Facilities - new
 	CHANGE
 		Form submit with ajax
@@ -94,9 +101,12 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 * Reports
-	NONE
+	CHANGE
+		cancel-button switched to function goto_window
+* Settings - overview
+	CHANGE
+		cancel-button switched to function goto_window
 * Settings - user accounts - User accounts
-	CODE
 	NONE
 * Settings - user accounts - own account
 	NONE
@@ -169,7 +179,7 @@ Activities sorted by application function.
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-		CHANGE
+	CHANGE
 		Get current version from programmcode
 * Settings - database and updates - optimize
 	NONE
@@ -181,10 +191,10 @@ Activities sorted by application function.
 * Settings - system information
 	NONE
 * Installation
-		CHANGE
+	CHANGE
 		Get current version from programmcode
 * Configuration wizard
-		CHANGE
+	CHANGE
 		Get current version from programmcode
 * Program code and miscellaneous
 	CHANGE
@@ -193,3 +203,4 @@ Activities sorted by application function.
 		Set session.cookie_samesite only at login
 		Set session.cookie_samesite to value "None"
 		add identification for Edge-Browser	
+		remove function cancel_button()

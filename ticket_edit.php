@@ -534,22 +534,18 @@ default:
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#problemend").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
 				$("#problemend").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-
 				$("#scheduled_date").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-
 				var changes_data ='{"type":"current_script","item":"script","action":"ticket_edit"}';
 				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
 				get_units();
@@ -558,7 +554,6 @@ default:
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					screen_id_main = new_infos_array['screen']['screen_id'];
 					if (new_infos_array['reload_flags']['units']) {
 						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
@@ -587,7 +582,6 @@ default:
 				<input type="hidden" name="frm_exist_groups" value="<?php print (isset($alloc_groups))? $alloc_groups : 1;?>">
 				<input type="hidden" name="frm_facility_changed" value="0">
 				<input type="hidden" id="incident_type" value="<?php print $row['incident_type_id'];?>">
-				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("ticket", $ticket_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit Ticket") . get_table_id($ticket_id) . " - "  . get_variable("page_caption");?>
@@ -598,7 +592,7 @@ default:
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '', new_infos_array['screen']['screen_id']);" tabindex=19><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);" tabindex=19><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
