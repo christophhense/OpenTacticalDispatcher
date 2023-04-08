@@ -28,7 +28,8 @@ Activities sorted by application function.
 		Reload scheduled tickets after auto-open
 		Repair tooltip for actions
 * Callboard
-	NONE
+	CHANGE
+		postMessage outsourced to functions
 * Communication
 	CHANGE
 		Remove href
