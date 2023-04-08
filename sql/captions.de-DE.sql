@@ -159,7 +159,6 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Logout', 'Abmelden'),
 ('Medium', 'Sofort'),
 ('Mobile', 'Motorisiert'),
-('Module', 'Programmmdatei'),
 ('Name', 'Name'),
 ('Incident type', 'Einsatzstichwort'),
 ('Incident-types inserted', 'Einsatzstichworte gespeichert'),
@@ -753,7 +752,6 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('TOTAL MILES', 'KM Gesamt');
 
 INSERT INTO `captions` (`capt`, `repl`) VALUES
-('Time Elapsed', 'Erzeugen der Seite dauerte'),
 ('Requires a iframes-capable browser.', 'Die Anwendung benötigt einen Browser, der Frames darstellen kann.'),
 ('Total mileage error', 'KM Gesamt-Fehler'),
 ('total', 'Gesamt'),

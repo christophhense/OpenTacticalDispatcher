@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/api.inc.php");
@@ -112,6 +111,9 @@ default:
 	}
 	if (get_variable("_update_progress_time") != "") {
 		$json_screen["update_progress_time"] = get_variable("_update_progress_time");
+	}
+	if (isset ($_SESSION["screen_id_" . $_GET['screen_id']]['situation_type'])) {
+		$json_screen["situation_type"] = $_SESSION["screen_id_" . $_GET['screen_id']]['situation_type'];
 	}
 	//========== User
 	if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0) && ($rows_affected == 1) && ($row["expires"] > mysql_datetime(time()))) {
@@ -481,7 +483,7 @@ default:
 			"AND `cleared_datetime` IS NULL;";
 
 		$result = db_query($query, __FILE__, __LINE__);	
-		$silent_requests = "0";
+		$silent_requests = 0;
 		if (db_num_rows($result)) {
 			$silent_requests = db_num_rows($result);
 		}

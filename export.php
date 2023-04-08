@@ -11,7 +11,7 @@ $delimiter_field = ";";
 if (empty ($_GET['do_export']) || !(is_super())) {
 	exit ();
 } else {
-	$output = "OpenTacticalDispatcher ". get_variable("_version") . "\n" .
+	$output = "OpenTacticalDispatcher ". get_version() . "\n" .
 		"Export-file " . $_GET['do_export'] . "\n\n";
 	$filename = "";
 	$filename_suffix = "-" . date("YmdHis", time()) . ".csv";

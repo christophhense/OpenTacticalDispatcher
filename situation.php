@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/tickets.inc.php");
@@ -118,7 +117,6 @@ default:
 	set_session_expire_time();
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 	$current_situation_type = "tickets_units";
 	$report_last_settings = explode(",", get_variable("report_last"));
 	$start_date = mysql_datetime(time() - trim($report_last_settings[0]) * 60);
@@ -152,11 +150,6 @@ default:
 	if ((!($get_id)) && ((get_num_groups()) && (count(get_allocates($GLOBALS['TYPE_USER'], $_SESSION['user_id'])) > 1))) {
 		$set_regions_control = "set_regions_control('" . get_num_groups() . "');";
 	}
-	if (ini_get("display_errors") == true) {
-		$display_str = "inline";
-	} else {
-		$display_str = "none";
-	}
 	?>
 <!DOCTYPE html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -182,16 +175,8 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 
-			var get_infos_array;
-
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
+			var new_infos_array = [];
+			var screen_id_main = <?php print $screen_id;?> + 0;
 			var report_last = <?php print (trim($report_last_settings[0]) * 60);?> + 0;
 			var start_date = "<?php print $start_date;?>";
 			var end_date = "<?php print $end_date;?>";
@@ -226,8 +211,12 @@ default:
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=situation&assign_id=" + assign_id;
+				goto_window("assign.php?back=situation&assign_id=" + assign_id);
 				<?php } ?>
+			}
+
+			function edit_ticket(ticket_id) {
+				goto_window("<?php print (is_guest())? "ticket_report.php" : "ticket_edit.php";?>?ticket_id=" + ticket_id);
 			}
 
 			function get_infostring() {
@@ -240,7 +229,7 @@ default:
 			}
 
 			function get_tickets() {
-				$.get("situation.php?function=table_top&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_top&screen_id=" + screen_id_main, function(data) {
 					$("#table_top").html(data);
 				})
 				.done(function() {
@@ -249,99 +238,17 @@ default:
 					$("#severity_high").html($("#count_severity_high").html());
 				})
 				.fail(function () {
-					alert("error");	
+					alert("error");
 				});
 			}
 
 			function get_units() {
-				$.get("situation.php?function=table_left&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_left&screen_id=" + screen_id_main, function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("situation.php?function=table_right&screen_id=" + get_infos_array['screen']['screen_id'], function(data) {
+				$.get("situation.php?function=table_right&screen_id=" + screen_id_main, function(data) {
 					$("#table_right").html(data);
 				});
-			}
-
-			var watch_val;
-
-			function refresh_latest_infos_main() {
-				try {
-					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max']);
-					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
-					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
-					if ($("#div_scheduled").text() == "") {
-						$("#div_scheduled").text(0);
-					}
-					$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
-					$("#div_ticket_user").html(get_infos_array['ticket']['user']);
-
-					$("#div_unit_id").html(get_infos_array['units_status']['id']);
-					$("#div_unit_updated").html(get_infos_array['units_status']['update']);
-					$("#div_unit_user").html(get_infos_array['units_status']['user']);
-
-					$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
-					$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
-					$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
-
-					$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
-					$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-					$("#div_assign_updated").html(get_infos_array['assign']['update']);
-					$("#div_assign_user").html(get_infos_array['assign']['user']);
-
-					$("#div_action_updated").html(get_infos_array['action']['update']);
-					$("#div_requests").html(get_infos_array['requests']['normal']);
-				} catch(e) {
-					console.log(e);
-				}
-			}
-
-			function do_watch() {
-				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
-					try {
-						if (
-							((
-								($("#div_ticket_latest_id").html() != get_infos_array['ticket']['id_max']) ||
-								($("#div_ticket_changed_id").html() != get_infos_array['ticket']['id_changed']) ||
-								($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
-								($("#div_scheduled").html() != get_infos_array['ticket']['scheduled']) ||
-								($("#div_action_updated").html() != get_infos_array['action']['update'])
-							)) || (
-								($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_tickets();
-							get_infostring();
-							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-						if (
-							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
-							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
-							($("#div_unit_id").html() == get_infos_array['units_status']['id'])) ||
-
-							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
-							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
-							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
-
-							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
-							($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_units();
-							get_infostring();
-							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					} catch (e) {
-						console.log(e);
-					}
-				}
-				refresh_latest_infos_main();
 			}
 
 			function closed_interval_changed() {
@@ -362,18 +269,14 @@ default:
 				return errmsg;
 			}
 
-			function edit_ticket(ticket_id) {
-				window.location.href = "<?php print (is_guest())? "ticket_report.php" : "ticket_edit.php";?>?ticket_id=" + ticket_id;
-			}
-
 			function set_closed_interval(type, time) {
 				var url = "set_data.php";
 				var params = "";
 				if (type == "start") {
-					params = "function=closed_interval_start&value=" + time + "&screen_id=" + get_infos_array['screen']['screen_id'];
+					params = "function=closed_interval_start&value=" + time + "&screen_id=" + screen_id_main;
 					start_date = time;
 				} else {
-					params = "function=closed_interval_end&value=" + time + "&screen_id=" + get_infos_array['screen']['screen_id'];
+					params = "function=closed_interval_end&value=" + time + "&screen_id=" + screen_id_main;
 					end_date = time;
 				}
 				$.get(url, params)
@@ -385,7 +288,7 @@ default:
 			}
 
 			function change_situation(tab_id) {
-				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + get_infos_array['screen']['screen_id'])
+				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + screen_id_main)
 				.done(function () {
 				})
 				.fail(function () {
@@ -394,12 +297,12 @@ default:
 				$("#" + tab_id).addClass("active");
 				if (tab_id == "tickets_closed") {
 					if (start_date.valueOf() == "0") {
-						$("#closed_interval_start").val(moment(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").subtract(report_last, "seconds")).format("<?php print $moment_date_format;?>"));
-						$("#closed_interval_start_mysql").val(moment(get_infos_array['screen']['date_time']).subtract(report_last, "seconds"));
+						$("#closed_interval_start").val(moment(moment(new_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").subtract(report_last, "seconds")).format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_start_mysql").val(moment(new_infos_array['screen']['date_time']).subtract(report_last, "seconds"));
 					}
 					if (end_date.valueOf() == "0") {
-						$("#closed_interval_end").val(moment(get_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
-						$("#closed_interval_end_mysql").val(get_infos_array['screen']['date_time']);
+						$("#closed_interval_end").val(moment(new_infos_array['screen']['date_time'], "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+						$("#closed_interval_end_mysql").val(new_infos_array['screen']['date_time']);
 					}
 					closed_interval_changed();
 					$("#severity_counts").css("display", "none");
@@ -490,17 +393,27 @@ default:
 				$("#closed_interval_end").data("DateTimePicker").
 					minDate(moment($("#closed_interval_start").val(), "<?php print $moment_date_format;?>"));
 
+				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
-				var change_situation_first_set = 0;
+				set_window_present("situation");
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						change_situation("<?php print $current_situation_type;?>");
-						refresh_latest_infos_main();
-						change_situation_first_set = 1;
+					new_infos_array = JSON.parse(event.data);
+					screen_id_main = new_infos_array['screen']['screen_id'];
+					if (new_infos_array['reload_flags']['tickets']) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
+						get_tickets();
+						get_infostring();
 					}
-					do_watch();
+					if (new_infos_array['reload_flags']['units']) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
+						get_units();
+						get_infostring();
+					}
 				});
 			});
 
@@ -508,43 +421,6 @@ default:
 	</head>
 	<body onload="check_frames(); <?php print $set_regions_control;?> location.href='#top';" onunload="end_blink();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-
-		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>
-		<div id="div_ticket_latest_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_changed_id" style="display:<?php print $display_str;?>;">changed_id: </div>
-		<div id="div_ticket_changed_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_ticket_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_ticket_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_id" style="display:<?php print $display_str;?>;">| unit id: </div>
-		<div id="div_unit_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_callprogress_id" style="display:<?php print $display_str;?>;">| callprogress unit_id: </div>
-		<div id="div_unit_callprogress_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_callprogress_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_callprogress_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_assign_max_id" style="display:<?php print $display_str;?>;">| assign max_id: </div>
-		<div id="div_assign_max_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_quanity" style="display:<?php print $display_str;?>;"> quanity: </div>
-		<div id="div_assign_quantity" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_updated" style="display:<?php print $display_str;?>;"> updated: </div>
-		<div id="div_assign_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_user" style="display:<?php print $display_str;?>;"> user: </div>
-		<div id="div_assign_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="div_action_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="div_requests" style="display:<?php print $display_str;?>;"></div>
-		<div id="div_scheduled" style="display:<?php print $display_str;?>;"></div>
-
 		<div class="container-fluid" id="main_container">
 			<div class="row" style="height: 45px;">
 				<div class="col-md-1"></div>
@@ -618,12 +494,6 @@ default:
 		<script>
 			$(".nav-pills, .nav-tabs").tabdrop();
 		</script>
-	<?php
-	if (is_super()) {
-		print "<div style='position: fixed; bottom: 70px; left: 20px;'>" . get_text("Time Elapsed") . ": " .
-			round((microtime(true) - $time), 3) . " " . get_text("Seconds") . "</div>";
-	}
-	?>
 		<?php show_infobox();?>
 		<?php show_infobox("large");?>
 	</body>

@@ -158,7 +158,6 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Logout', 'Logout'),
 ('Medium', 'Medium'),
 ('Mobile', 'Mobile'),
-('Module', 'Module'),
 ('Name', 'Name'),
 ('Incident type', 'Incident type'),
 ('Incident-types inserted', 'Incident-types inserted'),
@@ -751,7 +750,6 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('TOTAL MILES', 'TOTAL MILES');
 
 INSERT INTO `captions` (`capt`, `repl`) VALUES
-('Time Elapsed', 'Time Elapsed'),
 ('Requires a iframes-capable browser.', 'Requires a iframes-capable browser.'),
 ('Total mileage error', 'Total mileage error'),
 ('total', 'total'),

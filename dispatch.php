@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/api.inc.php");
@@ -66,7 +65,7 @@ function show_units($ticket_id, $show_all_units = false) {
 		<tr style="vertical-align: bottom;">
 			<th style="border-top: 0px;"></th>
 			<th style="border-top: 0px; text-align: center;">
-				<input type="checkbox" name="display_dispatch-message" tabindex=<?php print $i;?>>
+				<input type="checkbox" id="display_dispatch-message" name="display_dispatch-message" tabindex=<?php print $i;?>>
 			</th>
 			<th colspan=2 style="border-top: 0px; text-align: left;"<?php print get_help_text_str("_reports_dispatch_message");?>><?php print get_text("Display dispatch-message for printing");?></th>
 			<th style="border-top: 0px;"></th>
@@ -412,22 +411,6 @@ case "insert":
 		}
 	}
 	unset ($result);
-	$units_ids = urlencode(implode(",", array_unique($unit_id)));
-	$display_dispatch_message = "off";
-	if (isset ($_POST['display_dispatch-message'])) {
-		$display_dispatch_message = $_POST['display_dispatch-message'];
-	}
-	if ($send_dispatch_message) {
-		$url_str = "communication.php?function=send_message&message_group=unit_ticket&targets_ids=" .
-			$units_ids . "&ticket_id=" . $_POST['frm_ticket_id'] . "&display_dispatch-message=" .
-					$display_dispatch_message . "&screen_id=\'" . $_POST["screen_id"] . "\'";
-	} else {
-		if ($display_dispatch_message == "on") {
-			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $_POST['frm_ticket_id'] . "&back=situation";
-		} else {
-			$url_str = "situation.php?screen_id=\'" . $_POST["screen_id"] . "\'";
-		}
-	}
 	$message_text = get_text("Saved");
 	$appearance = "success";
 	if ($failed_dispatch > 0) {
@@ -439,13 +422,7 @@ case "insert":
 			$appearance = "warning";
 		}
 	}
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"<?php print $appearance;?>","action":"<?php print $message_text;?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href="<?php print $url_str;?>";
-</script>
-	<?php
+	print '{"0":{"type":"message","item":"' . $appearance . '","action":"' . $message_text . '"},"1":{"id_array":"' . urlencode(implode(",", array_unique($unit_id))) . '","send_message":"' . $send_dispatch_message . '"}}';
 	break;
 default:
 	$url_back = "ticket_edit.php";
@@ -471,17 +448,8 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-
-			var get_infos_array;
-			
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
+			var new_infos_array = [];
+			var screen_id_main = 0;
 			var count_units_checked = 0;
 
 			function unit_clicked(row, unit) {
@@ -498,16 +466,38 @@ default:
 				if (count_units_checked == 0) {
 					show_infobox("<?php print get_text("Please select units, or cancel");?>");
 				} else {
-					document.dispatch_form.submit();
+					var display_dispatchmessage = "off";
+					if ($("#display_dispatch-message").is(':checked') == true) display_dispatchmessage = "on";
+					$.post("dispatch.php", $("#dispatch_form").serialize())
+					.done(function (data) {
+						data = JSON.parse(data);
+						show_top_notice(data['0']['item'], data['0']['action']);
+						if (data['1']['send_message']) {
+							goto_window("communication.php?function=send_message&message_group=unit_ticket&targets_ids=" + 
+								data['1']['id_array'] + "&ticket_id=" + $("#ticket_id").val() + "&display_dispatch-message=" + 
+								display_dispatchmessage + "&screen_id=" + screen_id_main);
+						} else {
+							if (display_dispatchmessage == "on") {
+								goto_window("ticket_report.php?function=dispatch_text&ticket_id=" + $("#ticket_id").val() + "&back=situation");
+							} else {
+								goto_window("situation.php?screen_id=" + screen_id_main);
+							}
+						}
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
+					});
 				}
 			}
 
 			$(document).ready(function() {
+				set_window_present("dispatch");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					$("#screen_id").val(get_infos_array['screen']['screen_id']);
+					new_infos_array = JSON.parse(event.data);
+					screen_id_main = new_infos_array['screen']['screen_id'];
 				});
 			});
 
@@ -516,10 +506,9 @@ default:
 	<body onload="check_frames();" >
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form name="dispatch_form" method="post" action="<?php print basename( __FILE__);?>">
+			<form id="dispatch_form">
 				<input type="hidden" name="function" value="insert">
-				<input type="hidden" name="screen_id" id="screen_id" value="">
-				<input type="hidden" name="frm_ticket_id" value="<?php print $_GET['ticket_id']; ?>">
+				<input type="hidden" id="ticket_id" name="frm_ticket_id" value="<?php print $_GET['ticket_id']; ?>">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Dispatch Units") . " - "  . get_variable("page_caption");?>
@@ -530,7 +519,7 @@ default:
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $url_back;?>', '<?php print $_GET['ticket_id'];?>');" tabindex=10002><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'];?>&screen_id=' + screen_id_main);" tabindex=10002><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">

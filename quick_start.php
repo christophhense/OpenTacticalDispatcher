@@ -303,7 +303,7 @@ switch ($function) {
 			<div class="row">
 				<div class="col-md-1"></div>
 				<div class="col-md-10">
-					<?php print get_variable("_version");?>
+					<?php print get_version();?>
 				</div>
 				<div class="col-md-1"></div>
 			</div>
@@ -431,7 +431,7 @@ case "insert":
 			<div class="row">
 				<div class="col-md-1"></div>
 				<div class="col-md-10">
-					<?php print get_variable("_version");?>
+					<?php print get_version();?>
 				</div>
 				<div class="col-md-1"></div>
 			</div>
@@ -483,7 +483,7 @@ case "first_start":
 			<div class="row">
 				<div class="col-md-1"></div>
 				<div class="col-md-10">
-					<?php print get_variable("_version");?>
+					<?php print get_version();?>
 				</div>
 				<div class="col-md-1"></div>
 			</div>

@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -196,21 +195,14 @@ if (is_operator() || is_admin() || is_super()) {
 		if (isset ($_GET['display_dispatch-message'])) {
 			$display_dispatch_message = $_GET['display_dispatch-message'];
 		}
+		$url_str = "\"situation.php?screen_id=\" + new_infos_array['screen']['screen_id']";
 		if ($display_dispatch_message == "on") {
-			$url_str = "ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation";
-		} else {
-			$url_str = "situation.php?screen_id=\" + get_infos_array['screen']['screen_id'];\";";
+			$url_str = "\"ticket_report.php?function=dispatch_text&ticket_id=" . $ticket_id . "&back=situation\"";
 		}
 	?>
 		<script>
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-			
+			var new_infos_array = [];
+
 			function do_send_api_message() {
 				var errmsg = "";
 				if ($("#frm_text").val() == "") {
@@ -226,12 +218,11 @@ if (is_operator() || is_admin() || is_super()) {
 				$("#send_button").prop("disabled", true);
 				$("#send_button").html("<?php print get_text("Wait");?>");
 				$.post("communication.php", $("#message_form").serialize(), function(data) {
-					var get_infos_array = JSON.parse(data);
-					var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					var return_array = JSON.parse(data);
+					show_top_notice(return_array["appearance"], return_array["message"]);
 				})
 				.done(function() {
-					window.location.href="<?php print $url_str;?>";
+					goto_window(<?php print $url_str;?>);
 				})
 				.fail(function() {
 					alert("error");
@@ -243,7 +234,7 @@ if (is_operator() || is_admin() || is_super()) {
 					show_infobox("<?php print get_text("Confirm do not send?");?>", "", false, do_cancel);
 				} else {
 					if (result == true) {
-						window.location.href="<?php print $url_str;?>";
+						goto_window(<?php print $url_str;?>);
 					}
 				}
 			}
@@ -261,10 +252,11 @@ if (is_operator() || is_admin() || is_super()) {
 
 			$(document).ready(function() {
 				load_content();
+				set_window_present("communication_send");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 				});
 			});
 
@@ -293,14 +285,14 @@ if (is_operator() || is_admin() || is_super()) {
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_send_api_message(document.message_form);" tabindex=8>
+								<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_send_api_message();" tabindex=8>
 									<?php print get_text("Send");?>
 								</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<form id="message_form" name="message_form" method="post" action="communication.php">
+				<form id="message_form" name="message_form">
 					<input type="hidden" name="function" value="update_send_message">
 					<input type="hidden" name="display_dispatch-message" value="<?php print $display_dispatch_message;?>">
 					<div class="col-md-5">
@@ -311,7 +303,7 @@ if (is_operator() || is_admin() || is_super()) {
 					</div>
 				</form>
 				<div class="col-md-1"></div>
-		    </div>
+			</div>
 		</div>
 	</body>
 </html>
@@ -321,57 +313,10 @@ if (is_operator() || is_admin() || is_super()) {
 		set_session_expire_time();
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
-		$auto_refresh_time = trim($auto_poll_settings[1]);
-		if (ini_get("display_errors") == true) {
-			$display_str = "inline";
-		} else {
-			$display_str = "none";
-		}
 	?>
 		<script>
+			var new_infos_array = [];
 			var select_ticket_api_log_id = 0;
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
-			function refresh_latest_infos_communication() {
-				try {
-					$("#div_silent_requests").html(get_infos_array['requests']['silent']);
-					$("#div_message").html(get_infos_array['requests']['message']);
-					$("#div_warn_text").html(get_infos_array['requests']['warn_text']);
-					$("#div_auto_ticket").html(get_infos_array['requests']['auto_ticket']);
-					$("#div_requests").html(get_infos_array['requests']['normal']);
-					$("#div_emergency_requests_low").html(get_infos_array['requests']['emergency_low']);
-					$("#div_emergency_requests_high").html(get_infos_array['requests']['emergency_high']);
-				} catch(e) {
-				}
-			}
-
-			function do_watch() {
-				if ((typeof get_infos_array != "undefined") && (get_infos_array['user']['id'] != 0)) {
-					try {
-						if (
-							($("#div_silent_requests").html() != get_infos_array['requests']['silent']) ||
-							($("#div_message").html() != get_infos_array['requests']['message']) ||
-							($("#div_warn_text").html() != get_infos_array['requests']['warn_text']) ||
-							($("#div_auto_ticket").html() != get_infos_array['requests']['auto_ticket']) ||
-							($("#div_requests").html() != get_infos_array['requests']['normal']) ||
-							($("#div_emergency_requests_low").html() != get_infos_array['requests']['emergency_low']) ||
-							($("#div_emergency_requests_high").html() != get_infos_array['requests']['emergency_high'])
-						) {
-							load_content();
-							var changes_data ='{"type":"button","item":"communication","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					} catch (e) {
-					}
-				}
-				refresh_latest_infos_communication();
-			}
 
 			function load_content() {
 				$.get("communication.php?function=table_left_communication", function(data) {
@@ -397,7 +342,7 @@ if (is_operator() || is_admin() || is_super()) {
 				switch (api_log_action) {
 				case "api_log_select_ticket":
 					select_ticket_api_log_id = api_log_id;
-					$.get("communication.php?function=infobox_large_ticket_select&unit_id=" + unit_id, function(data) {
+					$.get("./communication.php?function=infobox_large_ticket_select&unit_id=" + unit_id, function(data) {
 						show_dispatch_infobox("<?php print get_text("Dispatch to ticket - Select ticket");?>", data);
 					})
 					.done(function() {
@@ -432,20 +377,18 @@ if (is_operator() || is_admin() || is_super()) {
 									api_log_id: select_ticket_api_log_id
 								}, function() {})
 								.done(function() {
-									var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-									window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+									show_top_notice("success", "<?php print get_text("Saved");?>");
 									var last_call = true;
 									if (last_call) {
-										window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+										goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 									} else {
 										load_content();
 										hide_infobox_large(false);
 									}
 								});
 							} else {
-								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-								window.location.href="ticket_edit.php?ticket_id=" + ticket_id;
+								show_top_notice("success", "<?php print get_text("Saved");?>");
+								goto_window("ticket_edit.php?ticket_id=" + ticket_id);
 							}
 						});
 					});
@@ -453,28 +396,26 @@ if (is_operator() || is_admin() || is_super()) {
 				case "api_log_update_call_progression":
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=api_log_update_call_progression")
 						.done(function(data) {
-						var get_infos_array = JSON.parse(data);
-						if (get_infos_array["call_progression"].valueOf() != "") {
+						var return_array = JSON.parse(data);
+						if (return_array["call_progression"].valueOf() != "") {
 							$.post("set_data.php", {
 								function: "call_progression",
-								assign_id: get_infos_array["oldest_assign_id"],
-								frm_callprogression: get_infos_array["call_progression"],
-								call_progression_datetime: get_infos_array["call_progression_datetime"]
+								assign_id: return_array["oldest_assign_id"],
+								frm_callprogression: return_array["call_progression"],
+								call_progression_datetime: return_array["call_progression_datetime"]
 							}, function() {})
 							.done(function(data) {
-								var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice(return_array["appearance"], return_array["message"]);
 								var last_call = false;
 								if (last_call) {
-									window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+									goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 								}
 							})
 							.fail(function() {
 								alert("error");
 							});
 						} else {
-							var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice(return_array["appearance"], return_array["message"]);
 						}
 					})
 					.fail(function() {
@@ -489,11 +430,10 @@ if (is_operator() || is_admin() || is_super()) {
 						api_log_id: select_ticket_api_log_id
 					}, function() {})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
 						var last_call = false;
 						if (last_call) {
-							window.location.href="ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id;
+							goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
 						} else {
 							load_content();
 							hide_infobox_large(false);
@@ -503,11 +443,10 @@ if (is_operator() || is_admin() || is_super()) {
 				default:
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
 						api_log_action + "&ticket_id=" + ticket_id + "&unit_id=" + unit_id).done(function(data) {
-						var get_infos_array = JSON.parse(data);
-						var changes_data ='{"type":"message","item":"' + get_infos_array["appearance"] + '","action":"' + get_infos_array["message"] + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						if ((typeof get_infos_array["url"] != "undefined") && (get_infos_array["url"] != null) && (get_infos_array["url"] != "")) {
-							window.location.href = get_infos_array["url"];
+						var return_array = JSON.parse(data);
+						show_top_notice(return_array["appearance"], return_array["message"]);
+						if ((return_array["url"] !== undefined) && (return_array["url"] != null) && (return_array["url"] != "")) {
+							goto_window(return_array["url"]);
 						} else {
 							load_content();
 						}
@@ -516,18 +455,16 @@ if (is_operator() || is_admin() || is_super()) {
 			}
 
 			$(document).ready(function() {
+				load_content();
 				show_to_top_button("<?php print get_text("To top");?>");
+				set_window_present("communication_receive");
 				<?php show_prevent_browser_back_button();?>
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
+					new_infos_array = JSON.parse(event.data);
+					if (new_infos_array['reload_flags']['communication']) {
 						load_content();
-						refresh_latest_infos_communication();
-						change_situation_first_set = 1;
 					}
-					do_watch();
 				});
 			});
 
@@ -535,20 +472,6 @@ if (is_operator() || is_admin() || is_super()) {
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div style="display: <?php print $display_str;?>;"> requests silent: </div>
-		<div id="div_silent_requests" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| message: </div>
-		<div id="div_message" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">|warn-text: </div>
-		<div id="div_warn_text" style="display: <?php print $display_str;?>;"></div>
-		<div style="display: <?php print $display_str;?>;">| auto-ticket: </div>
-		<div id="div_auto_ticket" style="display: <?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;">| normal: </div>
-		<div id="div_requests" style="display:<?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;"> | emergency_requests_low: </div>
-		<div id="div_emergency_requests_low" style="display:<?php print $display_str;?>;"></div>
-		<div style="display:<?php print $display_str;?>;"> | emergency_requests_high: </div>
-		<div id="div_emergency_requests_high" style="display:<?php print $display_str;?>;"></div>
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">
 				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -560,7 +483,7 @@ if (is_operator() || is_admin() || is_super()) {
 					<div id="button_container" class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');;"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>

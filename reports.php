@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -282,14 +281,6 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"reports","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			function query_changed() {
 				var errmsg = "";
 				if ((moment($("#start").val(), "<?php print $moment_date_format;?>").isValid())) {
@@ -379,11 +370,12 @@ default:
 
 				show_to_top_button("<?php print get_text("To top");?>");
 				$("#frm_query_text").focus();
+				set_window_present("reports");
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 				});
 			});
 
@@ -391,7 +383,7 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="select_data" method="post" action="<?php print basename(__FILE__);?>">
+		<form name="reports_form">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -403,20 +395,17 @@ default:
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.select_data.reset(); query_changed();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<!-- ====================================== -->
-									<!-- <button type="button" class="btn btn-xs btn-default" onclick="parent.frames.main.focus(); parent.frames.main.print();"><?php print get_text("Print");?></button> -->
 									<button type="button" class="btn btn-xs btn-default" onclick="window.focus(); window.print();"><?php print get_text("Print");?></button>
-									<!-- ====================================== -->
 								</div>
 							</div>
 						</div>
@@ -499,7 +488,7 @@ default:
 								</tr>
 								<tr<?php print get_help_text_str("_reports_incident_type");?> style="height: 45px;">
 									<th><?php print get_text("Incident type");?>:</th>
-									<td><?php print get_incident_type_select_str("report", "frm_in_types_id");?></td>
+									<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id");?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
 									<th><?php print get_text("Unit");?>:</th>

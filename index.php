@@ -1,14 +1,7 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
-
-if (ini_get("display_errors") == true) {
-	$framesize = intval(get_variable("framesize") + 50);
-} else {
-	$framesize = intval(get_variable("framesize"));
-}
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -38,7 +31,7 @@ if (ini_get("display_errors") == true) {
 			$("#main").css("height", main_height + "px");
 			try {
 				var element_height = window.parent.navigationbar.$("#head_line").outerHeight();
-				var min_height = <?php print $framesize;?> + 0;
+				var min_height = <?php print intval(get_variable("framesize"));?> + 0;
 				if (element_height < min_height) {
 					element_height = min_height;
 				}
@@ -71,7 +64,7 @@ if (((count_units_and_facilities_and_users() == 0) && (($first_start == "yes") |
 			<div class="row">
 				<div class="col-md-1"></div>
 				<div class="col-md-10">
-					<?php print get_variable("_version");?>
+					<?php print get_version();?>
 				</div>
 				<div class="col-md-1"></div>
 			</div>
@@ -112,7 +105,7 @@ if (((count_units_and_facilities_and_users() == 0) && (($first_start == "yes") |
 		}
 	</style>
 	<body onresize="setIframeHeight();">
-		<iframe id="navigationbar" name="navigationbar" src="navigation.php" scrolling="no" frameborder="0" style="width: 100%; height: <?php print $framesize;?>px; overflow: hidden;">
+		<iframe id="navigationbar" name="navigationbar" src="navigation.php" scrolling="no" frameborder="0" style="width: 100%; height: <?php print intval(get_variable("framesize"));?>px; overflow: hidden;">
 			<?php print get_text("Requires a iframes-capable browser.");?>
 		</iframe>
 		<iframe id="callboard" name="callboard" src="callboard.php" scrolling="auto" frameborder="0" style="width: 100%; height: 0px;">

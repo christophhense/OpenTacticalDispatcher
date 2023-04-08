@@ -1085,7 +1085,7 @@ function show_actions($ticket_id, $ticket_report = false) {
 			if ($ticket_report) {
 				$onclick_str = "";
 			} else {
-				$onclick_str = " onclick=\"location.href='action.php?ticket_id=" . $ticket_id . "&action_id=" . $row['action_id'] . "&function=edit'\"";
+				$onclick_str = " onclick=\"location.href='action.php?back=ticket&ticket_id=" . $ticket_id . "&action_id=" . $row['action_id'] . "&function=edit'\"";
 			}
 			$temp_date_time = preg_split("/ /", $row['action_updated']);
 			if ($temp_date_time[0] == $day_part_log_time) {
@@ -1368,7 +1368,7 @@ function get_current_path($filename) {
 function check_browser() {
 	$browsers = "mozilla msie gecko firefox ";
 	$browsers.= "konqueror safari netscape navigator ";
-	$browsers.= "opera mosaic lynx amaya omniweb chrome chromium edge";
+	$browsers.= "opera mosaic lynx amaya omniweb chrome chromium edge edg";
 	$browsers = explode(" ", $browsers);
 	$user_agent = @strtolower($_SERVER['HTTP_USER_AGENT']);
 	$user_agent_length = strlen($user_agent);
@@ -1388,6 +1388,7 @@ function check_browser() {
 			}
 		}
 	}
+	if ($navigator == "edg") $navigator = "edge";
 	return $navigator . " " . $version;
 }
 
@@ -2294,7 +2295,7 @@ function get_guard_house_select_str($select_type = "unit", $guard_house_id = 0) 
 	return get_select_str($query, "frm_guard_house", "frm_guard_house" ,$class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
 }
 
-function get_incident_type_select_str($select_type = "add", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
+function get_incident_type_select_str($select_type = "ticket_add_form", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2304,7 +2305,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "add":
+	case "ticket_add_form":
 		$option_0 = get_text("Select");
 
 		$query = "SELECT `id` AS `option_value`, " .
@@ -2322,7 +2323,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 		$no_elements = get_text("No data");	
 		$tabindex = "8";
 		break;
-	case "edit":
+	case "ticket_edit_form":
 		if ($selected_inc_type == 0) {
 			$option_0 = get_text("Select");
 		}
@@ -2343,7 +2344,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 		$no_elements = get_text("No data");
 		$tabindex = "8";
 		break;
-	case "report":
+	case "reports_form":
 		$option_0 = get_text("Select");
 
 		$query = "SELECT `id` AS `option_value`, " .
@@ -2378,7 +2379,7 @@ function get_severity_protocol_array_str() {
 	return $severities_str . $protocols_str;
 }
 
-function get_priority_select_str($select_type = "add", $form_name = "frm_severity", $selected_severity = 0) {
+function get_priority_select_str($select_type = "ticket_add_form", $form_name = "frm_severity", $selected_severity = 0) {
 	$return_str = "";
 	$where_str = "";
 	$onchange_str = "";
@@ -2387,12 +2388,12 @@ function get_priority_select_str($select_type = "add", $form_name = "frm_severit
 	$selected_high_str = "";
 	$bgcolor = "#0000FF";
 	switch ($select_type) {
-	case "add":
+	case "ticket_add_form":
 		$selected_normal_str = " selected";
 		$bgcolor = "#0000FF";
 		$onchange_str = "do_set_severity(this.selectedIndex); do_inc_name(this.options[selectedIndex].value.trim());";
 		break;
-	case "edit":
+	case "ticket_edit_form":
 		switch ($selected_severity) {
 		case $GLOBALS['SEVERITY_NORMAL']:
 			$selected_normal_str = " selected";
@@ -2698,17 +2699,17 @@ function get_incident_location_select_str($function, $facility_id) {
 	$return_array["facility_coordinates"] = "\n";
 	$tabindex_str = "";
 	switch ($function) {
-	case "add":
+	case "ticket_add_form":
 		$onchange_str = " onchange=\"do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
 		$tabindex_str = " tabindex=2";
 		break;
-	case "edit":
-		$onchange_str = " onchange=\"document.edit.frm_facility_changed.value = parseInt(document.edit.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
+	case "ticket_edit_form":
+		$onchange_str = " onchange=\"document.ticket_edit_form.frm_facility_changed.value = parseInt(document.ticket_edit_form.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
 		$tabindex_str = " tabindex=2";
 		break;
 	default:
 	}
-	if (($facility_id != null) || ($function == "add")) {
+	if (($facility_id != null) || ($function == "ticket_add_form")) {
 
 		$query_facilities = "SELECT DISTINCT " .
 			"`f`.`id` AS `fac_id`, " .
@@ -2749,7 +2750,7 @@ function get_incident_location_select_str($function, $facility_id) {
 					$return_array["select_str"] .= "<optgroup label='" . $group_caption . "'>\n";
 				}
 				$selected_str = "";
-				if (($facility_id == $row_facility['fac_id']) && ($function == "edit")) {
+				if (($facility_id == $row_facility['fac_id']) && ($function == "ticket_edit_form")) {
 					$selected_str = " SELECTED ";
 				}
 				$return_array["select_str"] .= "<option value=" . $row_facility['fac_id'] . " " . $selected_str . ">" . remove_nls($row_facility['handle']) . "</option>";			
@@ -2828,11 +2829,11 @@ function get_variable($which) {
 		}
 		break;
 	case "auto_poll":
-		$value = "10, 50";
+		$value = "10";
 		$values = explode(",", $variables[$which]);
-		if ((preg_match("/^\s?[0-9]{1,3}\s?,\s?[0-9]{1,4}\s?$/", $variables[$which]) &&
-			($values[0] > 1) && ($values[0] < 99) &&
-			($values[1] > 1) && ($values[1] < 99) && ($values[0] < $values[1]))) {
+		if (preg_match("/^\s?[0-9]{1,3}\s?$/", $variables[$which]) &&
+			$values[0] > 1 && $values[0] < 99
+		) {
 			$value = $variables[$which];
 		}
 		break;
@@ -2904,7 +2905,7 @@ function get_variable($which) {
 		break;
 	case "parking_form_data":
 		$value = "10, 90, 10, 90, 10, 90, 10, 90";
-		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
+		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
 			$value = remove_nls($variables[$which]);
 		}
 		break;
@@ -3568,7 +3569,6 @@ function is_guest() {
 }
 
 function set_session_expire_time($timeout = "on") {
-	ini_set('session.cookie_samesite', 'Strict');
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];
@@ -4218,7 +4218,7 @@ function get_title_action_str($row) {
 		$title_action .= "<nobr>" . get_text("No actions.") . "</nobr><br>";
 		$no_action = true;
 	}
-	return array ($title_action, $no_action);
+	return array ($title_action, get_nowrap_title_str($title_action), $no_action);
 }
 
 function get_title_dispatched_str($row) {
@@ -4246,7 +4246,7 @@ function get_title_dispatched_str($row) {
 		$title_unit .= "<span style=\'white-space: pre;\'>" . get_text("No assigned Responder.") . "</span><br>";
 		$blink = true;
 	}
-	return array ($title_unit, get_nowrap_title_str($title_unit), $blink);	
+	return array ($title_unit, get_nowrap_title_str($title_unit), $blink);
 }
 
 function get_table_id($id) {

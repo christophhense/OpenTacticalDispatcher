@@ -9,7 +9,7 @@ SET time_zone = "+01:00";
 
 INSERT INTO `settings` (`name`, `value`) VALUES
 ('auto_dispatch', '1, 1, 1'),
-('auto_poll', '10, 50'),
+('auto_poll', '10'),
 ('callboard', '0, 80, 35, 80, 300'),
 ('closed_interval', '0, 1440'),
 ('date_format', 'd.m.Y H:i:s'),

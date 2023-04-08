@@ -6,7 +6,6 @@ require_once ("./incs/units.inc.php");
 do_login(basename(__FILE__));
 
 $datetime_now = mysql_datetime();
-$caption = "";
 $function = "";
 
 if (isset ($_POST['function']) && (is_admin() || is_super())) {
@@ -44,8 +43,8 @@ case "insert":
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_UNIT'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
 	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""));
-	$caption = get_text("Saved");
-	break;
+	print get_text("Saved");
+	exit;
 case "update":
 	set_session_expire_time();
 
@@ -131,7 +130,6 @@ case "update":
 			}
 		}
 	}
-	$caption = get_text("Saved");
 	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data));
 	if (!empty ($_POST['frm_status_update'])) {
 
@@ -145,7 +143,8 @@ case "update":
 		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
 		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val);
 	}
-	break;
+	print get_text("Saved");
+	exit;
 case "delete":
 	set_session_expire_time();
 
@@ -162,6 +161,7 @@ case "delete":
 	$result_assigns = db_query($query_assigns, __FILE__, __LINE__);
 	$count_assigns = db_affected_rows($result_assigns);
 	unset ($result_assigns);
+	$caption = "";
 	if ($count_assigns == 0) {
 
 		$query = "DELETE FROM `allocates` " .
@@ -172,8 +172,9 @@ case "delete":
 		$caption = get_text("Deleted");
 		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data));
 	}
-	break;
-	default:
+	print $caption;
+	exit;
+default:
 }
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
@@ -219,21 +220,14 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"units","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function printers() {
 				$.get("units.php?function=printers").done(function(data) {
-					var get_infos_array = JSON.parse(data);
+					var return_array = JSON.parse(data);
 					var message = "";
-					if (get_infos_array.length > 0) {
-						for (var i = 0; i < get_infos_array.length; i++) {
-							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + get_infos_array[i] + "\");'>" + get_infos_array[i] + "</div>";
+					if (return_array.length > 0) {
+						for (var i = 0; i < return_array.length; i++) {
+							message += "<div style='font-weight: bold;' onclick='hide_infobox(\"" + return_array[i] + "\");'>" + return_array[i] + "</div>";
 						}
 						show_infobox("<?php print get_text("Select printer");?>", message, "select", set_printer);
 					} else {
@@ -254,19 +248,19 @@ default:
 				}
 			}
 
-			function do_remove(result) {
-				if (result == true) {
-					edit_form.submit();
-				}
+			function post_the_form(form_id) {
+				$.post("units.php", $(form_id).serialize())
+				.done(function (data) {
+					show_top_notice("success", data);
+					goto_window("units.php");
+				})
+				.fail(function () {
+					show_top_notice("danger", "<?php print get_text("Error");?>");
+					goto_window("units.php");
+				});
 			}
 
 			function validate(theForm) {
-				if (theForm.frm_remove) {
-					if (theForm.frm_remove.checked) {
-						show_infobox("<?php print get_text("Please confirm removing");?>", false, theForm.frm_handle.value, do_remove);
-						return;
-					}
-				}
 				theForm.frm_mobile.value = (theForm.frm_mob_disp.checked)? 1 : 0;
 				var errmsg = "";
 				if (theForm.frm_handle.value.trim()=="") {
@@ -291,14 +285,13 @@ default:
 
 			function submit_form(form_name) {
 				if (validate(form_name)) {
-					form_name.submit();
+					post_the_form(form_name);
 				}
 			}
 
 			function copy_unit() {
 				$("#function").val("add");
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 				$("#edit_form").submit();
 			}
 
@@ -309,8 +302,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -323,8 +315,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -337,7 +328,7 @@ default:
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					$("#edit_form").submit();
+					post_the_form("#edit_form")
 				}
 			}
 
@@ -383,14 +374,15 @@ case "add":
 		$guard_house_id = $_POST['frm_guard_house'];
 	}
 	?>
-	<script>
+		<script>
 
-		$(document).ready(function() {
-			set_cursor_position(frm_handle, $("#frm_handle").val().length);
-			<?php show_prevent_browser_back_button();?>
-		});
+			$(document).ready(function() {
+				set_cursor_position(frm_handle, $("#frm_handle").val().length);
+				<?php show_prevent_browser_back_button();?>
+				set_window_present("units_add");
+			});
 
-	</script>
+		</script>
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
@@ -412,7 +404,7 @@ case "add":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="window.location.href='units.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="goto_window('units.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -604,6 +596,7 @@ case "edit":
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
+				set_window_present("units_edit");
 			});
 
 		</script>
@@ -634,7 +627,7 @@ case "edit":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="window.location.href='units.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=19 onclick="goto_window('units.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -810,22 +803,12 @@ case "printers":
 default:
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
-	if (ini_get("display_errors") == true) {
-		$display_str = "inline";
-	} else {
-		$display_str = "none";
-	}
 	?>
 		<script>
-	<?php if ($caption) { ?>
-			var changes_data ='{"type":"message","item":"success","action":"<?php print $caption;?>"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	<?php } ?>
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=units&assign_id=" + assign_id;
+				goto_window("assign.php?back=units&assign_id=" + assign_id);
 				<?php } ?>
 			}
 
@@ -838,100 +821,26 @@ default:
 				});
 			}
 
-			var watch_val;
-
-			function refresh_latest_infos_units() {
-				try {
-					$("#div_ticket_latest_id").html(get_infos_array['ticket']['id_max']);
-					$("#div_ticket_changed_id").html(get_infos_array['ticket']['id_changed']);
-					$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
-					$("#div_ticket_user").html(get_infos_array['ticket']['user']);
-
-					$("#div_unit_id").html(get_infos_array['units_status']['id']);
-					$("#div_unit_updated").html(get_infos_array['units_status']['update']);
-					$("#div_unit_user").html(get_infos_array['units_status']['user']);
-
-					$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
-					$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
-					$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
-
-					$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
-					$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-					$("#div_assign_updated").html(get_infos_array['assign']['update']);
-					$("#div_assign_user").html(get_infos_array['assign']['user']);
-
-					$("#div_scheduled").html(get_infos_array['ticket']['scheduled']);
-					if ($("#div_scheduled").text() == "") {
-						$("#div_scheduled").text(0);
-					}
-				} catch(e) {
-				}
-			}
-
-			function do_watch() {
-				if (get_infos_array['user']['id'] != 0) {
-					try {
-						if (
-							((
-								($("#div_ticket_latest_id").html() != get_infos_array['ticket']['id_max']) ||
-								($("#div_ticket_changed_id").html() != get_infos_array['ticket']['id_changed']) ||
-								($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
-								($("#div_scheduled").html() != get_infos_array['ticket']['scheduled']) ||
-								($("#div_action_updated").html() != get_infos_array['action']['update'])
-							) && (
-								(get_infos_array['ticket']['user'] != get_infos_array['user']['id'])
-							)) || (
-								($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-						}
-						if (
-							($("#div_unit_id").html() != get_infos_array['units_status']['id']) ||
-							(($("#div_unit_updated").html() != get_infos_array['units_status']['update']) &&
-							($("#div_unit_id").html() == get_infos_array['units_status']['id'])) ||
-
-							($("#div_unit_callprogress_id").html() != get_infos_array['call_progression']['id']) ||
-							(($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) &&
-							($("#div_unit_callprogress_id").html() == get_infos_array['call_progression']['id'])) ||
-
-							($("#div_assign_max_id").html() != get_infos_array['assign']['id_max'])
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_units();
-							var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					} catch (e) {
-					}
-				}
-				refresh_latest_infos_units();
-			}
-
 			function do_sort_units(sort_order) {
 				$.get("units.php?function=sort&order=" + sort_order)
 					.done(function() {
 						get_units();
 				});
 			}
-
+			set_window_present("units");
 			$(document).ready(function() {
 				get_units();
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
-				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						refresh_latest_infos_units();
-						change_situation_first_set = 1;
+					new_infos_array = JSON.parse(event.data);
+					if (new_infos_array['reload_flags']['units']) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
+						get_units();
 					}
-					do_watch();
 				});
 			});
 
@@ -939,40 +848,6 @@ default:
 	</head>
 	<body onload="check_frames(); set_regions_control('<?php print get_num_groups();?>');"">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div id="infostr_ticket_latest_id" style="display:<?php print $display_str;?>;">| ticket latest_id: </div>
-		<div id="div_ticket_latest_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_changed_id" style="display:<?php print $display_str;?>;">changed_id: </div>
-		<div id="div_ticket_changed_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_ticket_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_ticket_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_ticket_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_id" style="display:<?php print $display_str;?>;">| unit id: </div>
-		<div id="div_unit_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_unit_callprogress_id" style="display:<?php print $display_str;?>;">| callprogress unit_id: </div>
-		<div id="div_unit_callprogress_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_updated" style="display:<?php print $display_str;?>;">updated: </div>
-		<div id="div_unit_callprogress_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_unit_callprogress_user" style="display:<?php print $display_str;?>;">user: </div>
-		<div id="div_unit_callprogress_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="infostr_assign_max_id" style="display:<?php print $display_str;?>;">| assign max_id: </div>
-		<div id="div_assign_max_id" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_quanity" style="display:<?php print $display_str;?>;"> quanity: </div>
-		<div id="div_assign_quantity" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_updated" style="display:<?php print $display_str;?>;"> updated: </div>
-		<div id="div_assign_updated" style="display:<?php print $display_str;?>;"></div>
-		<div id="infostr_assign_user" style="display:<?php print $display_str;?>;"> user: </div>
-		<div id="div_assign_user" style="display:<?php print $display_str;?>;"></div>
-
-		<div id="div_scheduled" style="display:<?php print $display_str;?>;"></div>
-
 		<div class="container-fluid" id="main_container">
 			<div class="row infostring">
 				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -984,7 +859,7 @@ default:
 					<div id="button_container" class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 	<?php
@@ -992,7 +867,7 @@ default:
 	?>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='units.php?function=add';"><?php print get_text("Add Unit");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('units.php?function=add');"><?php print get_text("Add Unit");?></button>
 							</div>
 						</div>
 	<?php

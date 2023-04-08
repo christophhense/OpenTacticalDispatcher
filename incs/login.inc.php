@@ -3,7 +3,7 @@ require_once ("api.inc.php");
 
 function do_logout() {
 	global $hide_dispatched, $hide_status_groups;
-	ini_set('session.cookie_samesite', 'Strict');
+	@ini_set('session.cookie_samesite', 'None');
 	@session_start();
 
 	$query = "UPDATE `users` " .
@@ -49,7 +49,6 @@ function do_login($requested_page, $logout = false) {
 	if (!get_working_in_development_environement()) {
 		db_query('SET sql_mode = "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"', __FILE__, __LINE__);
 	}
-	ini_set('session.cookie_samesite', 'Strict');
 	@session_start();
 	$datetime_now = mysql_datetime();
 	if ((!(isset ($_SESSION['user_id']))) || (!(is_not_expired($_SESSION['user_id']))) || ($logout == true)) {

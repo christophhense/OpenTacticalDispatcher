@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
@@ -17,20 +16,9 @@ if (isset ($_GET['unit_id'])) {
 	$unit_id = $_GET['unit_id'];
 	$unit_id_str = "&unit_id=" . $_GET['unit_id'];
 }
-$back = "";
-$url_back = "";
-if (isset ($_GET['back'])) {
-	$back = $_GET['back'];
-}
-if (($back == "") && isset ($_POST['back'])) {
-	$back = $_POST['back'];
-}
-switch ($back) {
-case "ticket":
+$url_back = "situation.php";
+if (isset ($_GET['back']) && $_GET['back'] == "ticket") {
 	$url_back = "ticket_edit.php";
-	break;
-default:
-	$url_back = "situation.php";
 }
 if (isset ($_POST['function'])) {
 	$function = $_POST['function'];
@@ -48,10 +36,6 @@ case "update":
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$current_ticket_id = $_GET['ticket_id'];
-	if ((isset($unit_id) && $unit_id != 0) || ($function != "")) {
-		$current_ticket_id = 0;
-	}
 
 	$query_ticket = "SELECT `problemstart` " .
 		"FROM `tickets` " .
@@ -84,20 +68,10 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
-
+			var new_infos_array = [];
+			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[3]);?> + 0) * 1000;
-			var ticket_id = <?php print $current_ticket_id;?> + 0;
-			var current_timestamp = Date.now();
-
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
+			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate(form_name) {
 				var errmsg = "";
@@ -120,25 +94,26 @@ default:
 				} else {
 					$("#asof_mysql_timestamp").val(asof);
 					set_parked_form_data();
-					form_name.submit();
+					$.post("action.php", $(form_name).serialize())
+					.done(function (data) {
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
+					});
 				}
 			}
 
 			function set_parked_form_data(data) {
 				try {
-					if (ticket_id != 0) {
-						if ((typeof(data) != "undefined") && (data != null)) {
-							var changes_data = {"type":"set_parked_form_data","item":"action_form_data","action":ticket_id};
-							changes_data.action_form_data = data;
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							var changes_data ={"type":"set_parked_form_data","item":"action_timestamp","action":ticket_id,"datetime":Date.now()};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					if ((ticket_id != 0)  && ("<?php print $function;?>" != "edit")) {
+						if ((data !== undefined) && (data != null)) {
+							save_parked_form_data("action_form_data", ticket_id, data);
+							save_parked_form_data("action_timestamp", ticket_id, Date.now());
 						} else {
-							var changes_data = {"type":"set_parked_form_data","item":"action_delete","action":ticket_id};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							save_parked_form_data("action_delete", ticket_id, "");
 						}
 					}
 				} catch (e) {
@@ -147,55 +122,23 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					if (ticket_id != 0) {
-						if ((parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['action_timestamp'][ticket_id]) + parseInt(parking_form_data_cache_period)))) {
-							if ((typeof get_infos_array['parked_form_data']['action_timestamp'][ticket_id] != "undefined") && (get_infos_array['parked_form_data']['action_timestamp'][ticket_id] != null)) {
-								var form_content = new Array;
-								for (var key in get_infos_array['parked_form_data']['action_form_data'][ticket_id]) {
-									form_content[get_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] = get_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
-								}
+					if ((ticket_id != 0)  && ("<?php print $function;?>" != "edit")) {
+						if (
+							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] !== undefined) && 
+							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] != null)
+						) {
+							var form_content = [];
+							for (var key in new_infos_array['parked_form_data']['action_form_data'][ticket_id]) {
+								form_content[new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] 
+									= new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
 							}
-							$("#frm_description").val(form_content['frm_description']);
-							$("#frm_unit").val(form_content['frm_unit']).change();
-							do_unlock_readonly("asof");
-							$("#asof").val(form_content['asof_textfield']);
-							set_textblock("", frm_description);
-							$("#frm_description").focus();
-						} else {
-							set_parked_form_data();
 						}
-					}
-				} catch (e) {
-				}
-			}
-
-			function delete_other_old_parked_form_data() {
-				try {
-					var old_parked_data_timestamp_array = get_infos_array['parked_form_data']['action_timestamp'];
-					var i;
-					for (i = 0; i < old_parked_data_timestamp_array.length; i++ ) {
-						if ((typeof(old_parked_data_timestamp_array[i]) != "undefined") && (current_timestamp >= (old_parked_data_timestamp_array[i] + parking_form_data_cache_period))) {
-							var changes_data = {"type":"set_parked_form_data","item":"action_delete","action":ticket_id};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						}
-					}
-				} catch (e) {
-				}
-			}
-
-			function do_watch() {
-				try {
-					if ((ticket_id != 0) && ($("#frm_description").val().trim().length > 0) && ($("#frm_description").val().length > parking_form_data_min_trigger_chars) && (parking_form_data_min_trigger_chars != 0)) {
-						var new_form_data = $("#add_form").serializeArray();
-						var action_form_data = [];
-						try {
-							action_form_data = get_infos_array['parked_form_data']['action_form_data'][ticket_id];
-						} catch (e) {
-						}
-						if (JSON.stringify(new_form_data) != JSON.stringify(action_form_data)) {
-							set_parked_form_data(new_form_data);
-						}
+						$("#frm_description").val(form_content['frm_description']);
+						$("#frm_unit").val(form_content['frm_unit']).change();
+						do_unlock_readonly("asof");
+						$("#asof").val(form_content['asof_textfield']);
+						set_textblock("", frm_description);
+						$("#frm_description").focus();
 					}
 				} catch (e) {
 				}
@@ -216,13 +159,31 @@ default:
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
+
+					$("#screen_id").val(new_infos_array['screen']['screen_id']);
+					screen_id_main = new_infos_array['screen']['screen_id'];
+
 					if (change_situation_first_set == 0) { 
 						get_parked_form_data();
-						delete_other_old_parked_form_data();
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (
+						(ticket_id != 0) && 
+						($("#frm_description").val().trim().length > 0) && 
+						($("#frm_description").val().length > parking_form_data_min_trigger_chars) && 
+						(parking_form_data_min_trigger_chars != 0)
+					) {
+						var new_form_data = $("#action_add_form").serializeArray();
+						var action_form_data = [];
+						try {
+							action_form_data = new_infos_array['parked_form_data']['action_form_data'][ticket_id];
+						} catch (e) {
+						}
+						if (JSON.stringify(new_form_data) != JSON.stringify(action_form_data)) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 
@@ -274,11 +235,6 @@ case "insert":
 			}
 			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text);
 		}
-	?>
-<script>
-	window.location.href = "<?php print $url_back;?>?ticket_id=" + <?php print $_POST['ticket_id'];?>;
-</script>
-	<?php
 		break;
 	case "update":
 
@@ -326,11 +282,6 @@ case "insert":
 			$log_text .= get_text("Written") . ": " . format_date(strtotime($row_old_data['datetime'])) . "  ";
 		}
 		do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text);
-	?>
-<script>
-	window.location.href = "ticket_edit.php?ticket_id=" + <?php print $_POST['ticket_id'];?>;
-</script>
-	<?php
 		break;
 	case "edit":
 
@@ -344,8 +295,11 @@ case "insert":
 		$row = stripslashes_deep(db_fetch_array($result));
 	?>
 	<body onload="check_frames();">
+		<script>
+			set_window_present("action_edit");
+		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form method="post" name="edit_form" action="action.php">
+		<form name="action_edit_form">
 			<input type="hidden" name="function" value="update">
 			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
 			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
@@ -360,17 +314,17 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>';" tabindex=6><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="action_edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="return validate(document.edit_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_edit_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -387,7 +341,7 @@ case "insert":
 												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print remove_nls($row['description']);?></textarea>
 											</div>
 											<div>
-												<?php print get_textblock_select_str("action", "document.edit_form.frm_description", "", 0, "");?>
+												<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
 											</div>
 											<div>
 												<?php print get_unit_select_str("action", $row['unit_id'], $_GET['ticket_id']);?>
@@ -438,9 +392,11 @@ case "insert":
 	default:
 	?>
 	<body onload="check_frames();">
+		<script>
+			set_window_present("action_add");
+		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="add_form" name="add_form" method="post" action="action.php">
-			<input type="hidden" name="back" value="<?php print $back;?>">
+		<form id="action_add_form" name="action_add_form">
 			<input type="hidden" name="function" value="insert">
 			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
@@ -454,17 +410,17 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>'" tabindex=6><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); action_add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="return validate(document.add_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_add_form);" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -481,7 +437,7 @@ case "insert":
 												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1></textarea>
 											</div>
 											<div>
-												<?php print get_textblock_select_str("action", "document.add_form.frm_description", "", 0 ,"");?>
+												<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
 											</div>
 											<div>
 												<?php print get_unit_select_str("action", $unit_id, $_GET['ticket_id']);?>

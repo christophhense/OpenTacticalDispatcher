@@ -6,7 +6,6 @@ require_once ("./incs/facilities.inc.php");
 do_login(basename(__FILE__));
 
 $datetime_now = mysql_datetime();
-$caption = "";
 $function = "";
 
 if (isset ($_POST['function']) && (is_admin() || is_super())) {
@@ -53,8 +52,8 @@ case "insert":
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_FACILITY'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
 	do_log($GLOBALS['LOG_FACILITY_ADD'], 0, 0, get_facility_edit_log_text("add", $new_id, $_POST, ""), $new_id);
-	$caption = get_text("Saved");
-	break;
+	print get_text("Saved");
+	exit;
 case "update":
 	set_session_expire_time();
 
@@ -128,7 +127,6 @@ case "update":
 			}
 		}
 	}
-	$caption = get_text("Saved");
 	$log_text = get_text("TBL_ID") . ": #" . $_POST['frm_id'];
 	do_log($GLOBALS['LOG_FACILITY_CHANGE'], 0, 0, get_facility_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id']);
 	if (!empty ($_POST['frm_status_update'])) {
@@ -143,7 +141,8 @@ case "update":
 		$fac_status_upd_val = $row_fac_status['status_name'] . ", " . $row_fac_status['description'];
 		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_POST['frm_id']);
 	}
-	break;
+	print get_text("Saved");
+	exit;
 case "delete":
 
 	$query = "SELECT * FROM `facilities` WHERE `id`= " . $_POST['frm_id'] . ";";
@@ -156,10 +155,10 @@ case "delete":
 		"AND `type` = " . $GLOBALS['TYPE_FACILITY'] . ";";
 
 	$result = db_query($query, __FILE__, __LINE__);
-	$caption = get_text("Deleted");
 	$log_text = get_text("TBL_ID") . ": #" . $_POST['frm_id'];
 	do_log($GLOBALS['LOG_FACILITY_DELETED'], 0, 0, get_facility_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id']);
-	break;
+	print get_text("Deleted");
+	exit;
 default:
 }
 if (isset ($_GET['function'])) {
@@ -192,29 +191,20 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"facilities","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
+
+			function post_the_form(form_id) {
+				$.post("facilities.php", $(form_id).serialize())
+				.done(function (data) {
+					show_top_notice("success", data);
+					goto_window("facilities.php");
+				})
+				.fail(function () {
+					show_top_notice("danger", "<?php print get_text("Error");?>");
+					goto_window("facilities.php");
+				});
 			}
 
-			function do_remove(result) {
-				if (result == true) {
-					edit_form.submit();
-				}
-			}	
-
 			function validate(theForm) {
-				if (theForm.frm_remove) {
-					if (theForm.frm_remove.checked) {
-						if (theForm.frm_remove.checked) {
-							show_infobox("<?php print get_text("Please confirm removing");?>", false, theForm.frm_handle.value, do_remove);
-							return;
-						}
-					}
-				}
 				var errmsg = "";
 				if (theForm.frm_handle.value.trim() == "") {
 					errmsg += "<?php print get_text("Facility HANDLE is required."). "<br>";?>";
@@ -238,14 +228,13 @@ default:
 
 			function submit_form(form_name) {
 				if (validate(form_name)) {
-					form_name.submit();
+					post_the_form(form_name);
 				}
 			}
 
 			function copy_facility() {
 				$("#function").val("add");
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#edit_form").submit();
 			}
 
@@ -256,8 +245,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -270,8 +258,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -284,7 +271,7 @@ default:
 			function do_remove_facility(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					$("#edit_form").submit();
+					post_the_form("#edit_form");
 				}
 			}
 
@@ -341,6 +328,7 @@ case "add":
 
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
+				set_window_present("facilities_add");
 				<?php show_prevent_browser_back_button();?>
 			});
 
@@ -365,7 +353,7 @@ case "add":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="window.location.href='facilities.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -546,6 +534,7 @@ case "edit":
 	
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
+				set_window_present("facilities_edit");
 				<?php show_prevent_browser_back_button();?>
 			});
 
@@ -574,7 +563,7 @@ case "edit":
 						<div class="container-fluid" style="position: fixed; z-index: 1000;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="window.location.href='facilities.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -743,72 +732,37 @@ case "table_right":
 default:
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 	?>
 		<script>
-	<?php if ($caption) { ?>
-			var changes_data ='{"type":"message","item":"success","action":"<?php print $caption;?>"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	<?php } ?>
 
 			function get_facilities() {
-				$.get("facilities.php?function=table_left", function(data) {
+				$.get("./facilities.php?function=table_left", function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("facilities.php?function=table_right", function(data) {
+				$.get("./facilities.php?function=table_right", function(data) {
 					$("#table_right").html(data);
 				});
 			}
 
-//			var watch_val;
-			var facility_id;
-			var facility_updated;
-			var facility_user;
-
-			function refresh_latest_infos_facilities() {
-				try {
-					facility_id = get_infos_array['facilities_status']['id'];
-					facility_updated = get_infos_array['facilities_status']['update'];
-					facility_user = get_infos_array['facilities_status']['user'];
-				} catch(e) {
-				}
-			}
-
-			function do_watch() {
-				if (get_infos_array['facilities_status']['id'] != 0) {
-					try {
-						if (
-							(facility_id != get_infos_array['facilities_status']['id']) ||
-							(facility_updated != get_infos_array['facilities_status']['update'])
-						) {
-							get_facilities();
-						}
-					} catch (e) {
-					}
-				}
-				refresh_latest_infos_facilities();
-			}
-
 			function do_sort_facilities(sort_order) {
-				$.get("facilities.php?function=sort&order=" + sort_order)
+				$.get("./facilities.php?function=sort&order=" + sort_order)
 				.done(function() {
-						get_facilities();
+					get_facilities();
 				});
 			}
 
 			$(document).ready(function() {
 				get_facilities();
 				show_to_top_button("<?php print get_text("To top");?>");
+				set_window_present("facilities");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) {
-						refresh_latest_infos_facilities()
-						change_situation_first_set = 1;
+					new_infos_array = JSON.parse(event.data);
+					if (new_infos_array['reload_flags']['facilities']) {
+						get_facilities();
 					}
-					do_watch();
 				});
 			});
 
@@ -822,50 +776,50 @@ default:
 					<?php print get_text("Facilities") . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-1">
-				<div id="button_container" class="container-fluid" style="position: fixed;">
-					<div class="row" style="margin-top: 10px;">
-						<div class="col-md-12">
-							<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');"><?php print get_text("Cancel");?></button>
+			<div class="row">
+				<div class="col-md-1">
+					<div id="button_container" class="container-fluid" style="position: fixed;">
+						<div class="row" style="margin-top: 10px;">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+							</div>
+						</div>
+		<?php
+		if (is_admin() || is_super()) {
+		?>
+						<div class="row" style="margin-top: 10px;">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-xs btn-default" onClick="goto_window('facilities.php?function=add');"><?php print get_text("Add Facility");?></button>
+							</div>
+						</div>
+		<?php
+		}
+		?>
+					</div>
+				</div>
+				<div class="col-md-10">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div class="panel-heading" id="table_top" style="padding: 0px;">
+							<?php show_facilities_sortbar();?>
 						</div>
 					</div>
-	<?php
-	if (is_admin() || is_super()) {
-	?>
-					<div class="row" style="margin-top: 10px;">
-						<div class="col-md-12">
-							<button type="button" class="btn btn-xs btn-default" onClick="window.location.href='facilities.php?function=add';"><?php print get_text("Add Facility");?></button>
-						</div>
-					</div>
-	<?php
-	}
-	?>
 				</div>
+				<div class="col-md-1"></div>
 			</div>
-			<div class="col-md-10">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div class="panel-heading" id="table_top" style="padding: 0px;">
-						<?php show_facilities_sortbar();?>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-5">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div id="table_left"></div>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-1"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-1"></div>
-			<div class="col-md-5">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div id="table_left"></div>
+				<div class="col-md-5">
+					<div class="panel panel-default" style="padding: 0px;">
+						<div id="table_right"></div>
+					</div>
 				</div>
+				<div class="col-md-1"></div>
 			</div>
-			<div class="col-md-5">
-				<div class="panel panel-default" style="padding: 0px;">
-					<div id="table_right"></div>
-				</div>
-			</div>
-			<div class="col-md-1"></div>
 		</div>
 	</body>
 </html>

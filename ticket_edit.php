@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/units.inc.php");
@@ -220,13 +219,6 @@ case "update":
 	}
 	do_log($GLOBALS[$log_type], $ticket_id, 0, $log_str);
 	unset ($_SESSION['active_ticket']);
-	?>
-<script>
-	var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-	window.location.href="situation.php?screen_id=" + <?php print $_POST['screen_id'];?>;
-</script>
-	<?php
 	break;
 case "assigns":
 	show_units_list("assigns", 0, 0, $_GET['ticket_id']);
@@ -242,10 +234,9 @@ case "actions":
 default:
 	set_session_expire_time();
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$reported_by_select_array = get_reported_by_select_str("edit");
+	$reported_by_select_array = get_reported_by_select_str("ticket_edit_form");
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 
 	$query = "SELECT *, " .
 		"UNIX_TIMESTAMP(`problemstart`) AS `problemstart2`, " .
@@ -305,9 +296,8 @@ default:
 	}
 	$lat = $row['lat'];
 	$lng = $row['lng'];
-	$incident_location_select_array = get_incident_location_select_str("edit", $row['facility_id']);
+	$incident_location_select_array = get_incident_location_select_str("ticket_edit_form", $row['facility_id']);
 	$auto_ticket_settings = get_auto_ticket_configuration("settings");
-	
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -331,39 +321,31 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-
-			var get_infos_array;
-			var change_situation_first_set = 0;
-
-			try {
-				parent.frames["navigation"].$("#script").html("<?php print basename(__FILE__);?>");
-				parent.frames["navigation"].highlight_button("situation");
-			} catch(e) {
-			}
+			var new_infos_array = [];
+			var screen_id_main = 0;
+			var severities = [];
+			var protocols = [];
+			var reported_by_phone = [];
+			var fac_lat = [];
+			var fac_lng = [];
+			var facility_adress = [];
+		<?php print get_severity_protocol_array_str();?>
+		<?php print $reported_by_select_array["reported_by_phone"];?>
+		<?php print $incident_location_select_array["facility_address"];?>
+		<?php print $incident_location_select_array["facility_coordinates"];?>
 
 			function get_units() {
 				$.get("ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_2").html(data);
 				});
 			}
-
+	
 			function get_actions() {
 				$.get("ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_3").html(data);
 				});
 			}
 
-			var severities = new Array();
-			var protocols = new Array();
-			var reported_by_phone = new Array();
-			var fac_lat = new Array();
-			var fac_lng = new Array();
-			var facility_adress = new Array();
-		<?php print get_severity_protocol_array_str();?>
-		<?php print $reported_by_select_array["reported_by_phone"];?>
-		<?php print $incident_location_select_array["facility_address"];?>
-		<?php print $incident_location_select_array["facility_coordinates"];?>
-			
 			function validate() {
 				var errmsg = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -419,7 +401,15 @@ default:
 					if ((moment(problemend, "YYYY-MM-DD HH:mm:ss").isValid())) {
 						$("#problemend_mysql_timestamp").val(problemend);
 					}
-					$("#ticket_edit").submit();
+					$.post("ticket_edit.php", $("#ticket_edit_form").serialize())
+					.done(function (data) {
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
+					});
 				}
 			}
 
@@ -490,13 +480,13 @@ default:
 
 			function edit_assign(assign_id) {
 				<?php if (is_operator() || is_admin() || is_super()) { ?>
-				window.location.href="assign.php?back=ticket&assign_id=" + assign_id + "&ticket_id=" + <?php print $_GET['ticket_id'];?>;
+				goto_window("assign.php?back=ticket&assign_id=" + assign_id + "&ticket_id=" + <?php print $_GET['ticket_id'];?>);
 				<?php } ?>
 			}
 
 			function do_reset_form() {
 				var default_severity = <?php print $row['severity'];?> + 0;		//+0 against syntax error, in case of DB-row==null
-				document.edit.reset();
+				document.ticket_edit_form.reset();
 				switch (default_severity) {
 				case 2:
 					$("#frm_severity").css({"background-color": "#FF0000"});	//Red
@@ -527,130 +517,41 @@ default:
 				}
 			}
 
-			var unit_id = 0;
-			var unit_updated = 0;
-			var unit_user = 0;
-			var unit_callprogress_id = 0;
-			var unit_callprogress_updated = 0;
-			var unit_callprogress_user = 0;
-			var assign_max_id = 0;
-			var assign_changed_id = 0;
-			var assign_updated = 0;
-			var assign_user = 0;
-			var assign_quantity = 0;
-			var action_updated = 0;
-			var ticket_latest_id = 0;
-			var ticket_changed_id = 0;
-			var ticket_updated = 0;
-			var ticket_user = 0;
-			var scheduled = 0;
-
-			function refresh_latest_infos() {
-				try {
-					unit_id = get_infos_array['units_status']['id'];
-					unit_updated = get_infos_array['units_status']['update'];
-					unit_user = get_infos_array['units_status']['user'];
-
-					unit_callprogress_id = get_infos_array['call_progression']['id'];
-					unit_callprogress_updated = get_infos_array['call_progression']['update'];
-					unit_callprogress_user = get_infos_array['call_progression']['user'];
-
-					assign_max_id = get_infos_array['assign']['id_max'];
-					assign_changed_id = get_infos_array['assign']['quantity'];
-					assign_updated = get_infos_array['assign']['update'];
-					assign_user = get_infos_array['assign']['user'];
-					assign_quantity = get_infos_array['assign']['quantity'];
-
-					action_updated = get_infos_array['action']['update'];
-
-					ticket_latest_id = get_infos_array['ticket']['id_max'];
-					ticket_changed_id = get_infos_array['ticket']['id_changed'];
-					ticket_updated = get_infos_array['ticket']['update'];
-					ticket_user = get_infos_array['ticket']['user'];
-					scheduled = get_infos_array['ticket']['scheduled'];
-				} catch(e) {
-					console.log(e);
-				}
-			}
-
-			function do_watch() {
-				if (get_infos_array['user']['id'] != 0) {
-					try {
-						if (
-							((
-								(ticket_latest_id != get_infos_array['ticket']['id_max']) ||
-								(ticket_changed_id != get_infos_array['ticket']['id_changed']) ||
-								(ticket_updated != get_infos_array['ticket']['update']) ||
-								(scheduled != get_infos_array['ticket']['scheduled'])
-							) && (
-								(get_infos_array['ticket']['user'] != get_infos_array['user']['id'])
-							)) || (
-								(assign_quantity != get_infos_array['assign']['quantity'])
-							)
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-						}
-						if (
-							(unit_id != get_infos_array['units_status']['id']) ||
-							((unit_updated != get_infos_array['units_status']['update']) &&
-							(unit_id == get_infos_array['units_status']['id'])) ||
-
-							(unit_callprogress_id != get_infos_array['call_progression']['id']) ||
-							((unit_callprogress_updated != get_infos_array['call_progression']['update']) &&
-							(unit_callprogress_id == get_infos_array['call_progression']['id'])) ||
-
-							(assign_max_id != get_infos_array['assign']['id_max']) ||
-
-							(action_updated != get_infos_array['action']['update'])
-						) {
-							if ((typeof current_unit_id != "undefined") && (current_unit_id > 0)) {
-								show_assigns(current_unit_id);
-							}
-							get_units();
-							get_actions();
-						}
-					} catch (e) {
-						console.log(e);
-					}
-				}
-				refresh_latest_infos();
-			}
-
 			$(document).ready(function() {
 				$("#problemstart").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#problemend").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
 				$("#problemend").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-
 				$("#scheduled_date").datetimepicker({
 					locale: '<?php print get_variable("_locale");?>',
 					format: '<?php print $moment_date_format;?>',
 					sideBySide: true
 				});
-
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
+				set_window_present("ticket_edit");
+				get_units();
+				get_actions();
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					if (change_situation_first_set == 0) { 
+					new_infos_array = JSON.parse(event.data);
+					screen_id_main = new_infos_array['screen']['screen_id'];
+					if (new_infos_array['reload_flags']['units']) {
+						if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
+							show_assigns(current_unit_id);
+						}
 						get_units();
-						get_actions();
-						refresh_latest_infos();
-						$("#screen_id").val(get_infos_array['screen']['screen_id']);
-						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (new_infos_array['reload_flags']['actions']) {
+						get_actions();
+					}
 				});
 			});
 
@@ -659,7 +560,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="ticket_edit" name="edit" method="post" action="ticket_edit.php">
+			<form id="ticket_edit_form" name="ticket_edit_form">
 				<input type="hidden" name="function" value="update">
 				<input type="hidden" name="ticket_id" value="<?php print $ticket_id;?>">
 				<input type="hidden" id="frm_lat" name="frm_lat" value="<?php print $lat;?>">
@@ -669,7 +570,6 @@ default:
 				<input type="hidden" name="frm_exist_groups" value="<?php print (isset($alloc_groups))? $alloc_groups : 1;?>">
 				<input type="hidden" name="frm_facility_changed" value="0">
 				<input type="hidden" id="incident_type" value="<?php print $row['incident_type_id'];?>">
-				<input type="hidden" name="screen_id" id="screen_id" value="">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("ticket", $ticket_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit Ticket") . get_table_id($ticket_id) . " - "  . get_variable("page_caption");?>
@@ -680,7 +580,7 @@ default:
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');" tabindex=19><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);" tabindex=19><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -696,27 +596,27 @@ default:
 							<div style="margin-top: 20px;">
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket'" tabindex=16><?php print get_text("Dispatch text");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket');" tabindex=16><?php print get_text("Dispatch text");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_report.php?ticket_id=<?php print $ticket_id;?>'" tabindex=15><?php print get_text("Incident Report");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>');" tabindex=15><?php print get_text("Incident Report");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='ticket_close.php?ticket_id=<?php print $ticket_id;?>'" tabindex=14><?php print get_text("Close_incident_short");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_close.php?ticket_id=<?php print $ticket_id;?>');" tabindex=14><?php print get_text("Close_incident_short");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>'" tabindex=13><?php print get_text("Add Action");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=13><?php print get_text("Add Action");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='dispatch.php?ticket_id=<?php print $ticket_id;?>'" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('dispatch.php?ticket_id=<?php print $ticket_id;?>');" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
 									</div>
 								</div>
 							</div>
@@ -745,7 +645,7 @@ default:
 										<th colspan=2<?php print get_help_text_str("_synop");?>><?php print get_text("Synopsis");?>:</th>
 										<td>
 											<textarea name="frm_description" class="form-control" tabindex=4 cols=48 rows=3 ><?php print remove_nls($row['ticket_description']);?></textarea>
-											<?php print get_textblock_select_str("synopsis", "document.edit.frm_description", "", 0, "");?>
+											<?php print get_textblock_select_str("synopsis", "document.ticket_edit_form.frm_description", "", 0, "");?>
 										</td>
 									</tr>
 									<tr>
@@ -763,10 +663,10 @@ default:
 										</th>
 										<td>
 											<div style="float:left; width: 55%;">
-												<?php print get_incident_type_select_str("edit", "frm_in_types_id", $row['incident_type_id']);?>
+												<?php print get_incident_type_select_str("ticket_edit_form", "frm_in_types_id", $row['incident_type_id']);?>
 											</div>
 											<div style="float:right; width: 40%;">
-												<?php print get_priority_select_str("edit", "frm_severity", $row['severity']);?>
+												<?php print get_priority_select_str("ticket_edit_form", "frm_severity", $row['severity']);?>
 											</div>
 										</td>
 									</tr>	
@@ -776,7 +676,7 @@ default:
 										</th>
 										<td>
 											<textarea id="frm_comments" name="frm_comments" class="form-control" cols=48 rows=3 tabindex=9><?php print remove_nls($row['comments']);?></textarea>
-											<?php print get_textblock_select_str("description", "document.edit.frm_comments", "", 0, "");?>
+											<?php print get_textblock_select_str("description", "document.ticket_edit_form.frm_comments", "", 0, "");?>
 										</td>
 									</tr>
 									<tr style="height: 45px;">
@@ -818,7 +718,7 @@ default:
 											<span id="lock_frm_status" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_disabled('frm_status');"></span>
 										</td>
 										<td>
-											<?php print get_ticket_status_select_str("edit", "frm_status", "", $row['ticket_status']);?>
+											<?php print get_ticket_status_select_str("ticket_edit_form", "frm_status", "", $row['ticket_status']);?>
 											<input type="hidden" id="submit_frm_status" name="frm_status" value="">
 										</td>
 									</tr>

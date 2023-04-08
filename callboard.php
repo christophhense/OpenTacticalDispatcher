@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -212,9 +211,9 @@ case "table":
 				if (!($row['unit_id'] == 0)) {
 					unset ($row_type);
 					print "\t<td" . get_title_unit_str($row) . " style='text-align: left; font-weight: bold; " .
-							"font-size: 16px; vertical-align: top;'>" . $strike . "<div style='overflow:hidden; text-overflow:ellipsis;'>" .
-							"<span class='label' style='background-color: " . $row['unit_background_color'] . "; color: " . $row['unit_text_color'] . ";'>" .
-							remove_nls($row['handle']) . "</span></div>" . $strikend . "</td>\n";
+						"font-size: 16px; vertical-align: top;'>" . $strike . "<div style='overflow:hidden; text-overflow:ellipsis;'>" .
+						"<span class='label' style='background-color: " . $row['unit_background_color'] . "; color: " . $row['unit_text_color'] . ";'>" .
+						remove_nls($row['handle']) . "</span></div>" . $strikend . "</td>\n";
 //---------------------------------------------------------------------------------------------------------------------------
 					print get_disp_cell($row['dispatched'], "frm_dispatched", $class, $strike, $strikend, $row['assign_id'], $i);
 					print get_disp_cell($row['responding'], "frm_responding", $class, $strike, $strikend, $row['assign_id'], $i);
@@ -260,7 +259,6 @@ case "table":
 		unset ($result);
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
-		$auto_refresh_time = trim($auto_poll_settings[1]);
 		$active_assigns_button_display_str = " style=\"display: none;\"";
 		$cleared_assigns_button_display_str = " style=\"display: inline;\"";
 		if ((isset ($_SESSION['cleared_assigns'])) && ($_SESSION['cleared_assigns'] == "show")) {
@@ -286,40 +284,6 @@ case "table":
 		<script src="./js/functions.js" type="text/javascript"></script>
 	</head>
 	<script>
-
-		function refresh_latest_Infos_callboard() {
-			try {
-				$("#div_ticket_updated").html(get_infos_array['ticket']['update']);
-				$("#div_unit_callprogress_id").html(get_infos_array['call_progression']['id']);
-				$("#div_unit_callprogress_updated").html(get_infos_array['call_progression']['update']);
-				$("#div_unit_callprogress_user").html(get_infos_array['call_progression']['user']);
-				$("#div_assign_max_id").html(get_infos_array['assign']['id_max']);
-				$("#div_assign_quantity").html(get_infos_array['assign']['quantity']);
-				$("#div_assign_updated").html(get_infos_array['assign']['update']);
-				$("#div_assign_user").html(get_infos_array['assign']['user']);
-			} catch(e) {
-			}
-		}
-
-		function do_watch() {
-			try {
-				if (get_infos_array['user']['id'] != 0) {
-					if (
-						($("#div_ticket_updated").html() != get_infos_array['ticket']['update']) ||
-						($("#div_unit_callprogress_updated").html() != get_infos_array['call_progression']['update']) ||
-						($("#div_assign_max_id").html() != get_infos_array['assign']['id_max']) ||
-						($("#div_assign_updated").html() != get_infos_array['assign']['update']) ||
-						($("#div_assign_quantity").html() != get_infos_array['assign']['quantity'])
-					) {
-						$.get("callboard.php?function=table", function(data) {
-							$("#callboard").html(data);
-						});
-						refresh_latest_Infos_callboard();
-					}
-				}
-			} catch (e) {
-			}
-		}
 
 		function show_cleared_assigns() {
 			$.get("callboard.php?function=table&cleared_assigns=show", function(data) {
@@ -388,8 +352,7 @@ case "table":
 			$.post("set_data.php", params, function(data) {
 			})
 			.done(function() {
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
 				alert("error");
@@ -456,8 +419,7 @@ case "table":
 					case "r":
 						$.post("set_data.php", "function=assign_reset&assign_id=" + id)
 						.done(function() {
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 						})
 						.fail(function() {
 							alert("error");
@@ -467,8 +429,7 @@ case "table":
 						if (confirm("<?php print html_entity_decode(get_text('Delete this dispatch record?'));?>")) {
 							$.post("set_data.php", "function=assign_delete&assign_id=" + id)
 							.done(function() {
-								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 							})
 							.fail(function() {
 								alert("error");
@@ -488,21 +449,15 @@ case "table":
 		}
 
 		function assign_edit(id) {
-			var changes_data ={"type":"script","item":"main","action":"assign.php?assign_id=" + id};
-			changes_data = JSON.stringify(changes_data);
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			goto_window("assign.php?assign_id=" + id);
 		}
 
 		function ticket_view(id) {
-			var changes_data ={"type":"script","item":"main","action":"ticket_report.php?ticket_id=" + id};
-			changes_data = JSON.stringify(changes_data);
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			goto_window("ticket_report.php?ticket_id=" + id);
 		}
 
 		function ticket_edit(id) {
-			var changes_data ={"type":"script","item":"main","action":"ticket_edit.php?ticket_id=" + id};
-			changes_data = JSON.stringify(changes_data);
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			goto_window("ticket_edit.php?ticket_id=" + id);
 		}
 
 	<?php
@@ -523,29 +478,23 @@ case "table":
 			$.get("callboard.php?function=table", function(data) {
 				$("#callboard").html(data);
 			});
-			var change_situation_first_set = 0;
 			window.addEventListener("message", function(event) {
 				if (event.origin != window.location.origin) return;
-				get_infos_array = JSON.parse(event.data);
-				if (change_situation_first_set == 0) {
-					refresh_latest_Infos_callboard();
-					change_situation_first_set = 1;
+				new_infos_array_callboard = JSON.parse(event.data);
+				if (
+					new_infos_array_callboard['reload_flags'] !== undefined && 
+					new_infos_array_callboard['reload_flags']['units']
+				) {
+					$.get("callboard.php?function=table", function(data) {
+						$("#callboard").html(data);
+					});
 				}
-				do_watch();
 			});
 		});
 
 	</script>
 	<body onload="check_frames();" onunload="">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div id="div_ticket_updated" style="display: none;"></div>
-		<div id="div_unit_callprogress_id" style="display: none;"></div>
-		<div id="div_unit_callprogress_updated" style="display: none;"></div>
-		<div id="div_unit_callprogress_user" style="display: none;"></div>
-		<div id="div_assign_max_id" style="display: none;"></div>
-		<div id="div_assign_quantity" style="display: none;"></div>
-		<div id="div_assign_updated" style="display: none;"></div>
-		<div id="div_assign_user" style="display: none;"></div>
 		<div class="container-fluid" id="main_container">
 			<div class="row">
 				<div class="col-md-1">

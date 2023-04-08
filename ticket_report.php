@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
@@ -18,11 +17,13 @@ if (isset ($_GET['function'])) {
 }
 $page_function = "show_ticket";
 $page_name = "Incident Report";
+$script_name = "ticket_report";
 if ($function == "dispatch_text") {
 	$page_function = "show_dispatch_text";
 	$page_name = "Dispatch text";
+	$script_name = "dispatch_text";
 	$back_button_lable = get_text("Next Page");
-	$back_button_click_str = "situation.php?screen_id=' + get_infos_array['screen']['screen_id'] + ';";
+	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] +'";
 	$back = "situation";
 	if (isset ($_GET['back'])) {
 		$back = $_GET['back'];
@@ -33,7 +34,7 @@ if ($function == "dispatch_text") {
 	}
 }
 if (is_guest()) {
-	$back_button_click_str = "situation.php?screen_id=' + get_infos_array['screen']['screen_id'] + ';";
+	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] +'";
 }
 ?>
 <!doctype html>
@@ -60,22 +61,13 @@ if (is_guest()) {
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<script>
 
-			var get_infos_array;
-
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"situation","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			$(document).ready(function() {
+				set_window_present("<?php print $script_name;?>");
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 				});
 			});
 
@@ -94,7 +86,7 @@ if (is_guest()) {
 					<div id="button_container" class="container-fluid hidden-print" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='<?php print $back_button_click_str;?>';" tabindex=2><?php print $back_button_lable;?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $back_button_click_str;?>');" tabindex=2><?php print $back_button_lable;?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">

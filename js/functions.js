@@ -50,48 +50,6 @@ function call_progression_timer() {
 	}
 }
 
-function set_unit_status(unit, status, message) {
-	var querystr = "";
-	if (unit > 0) {
-		querystr = "frm_unit_id=" + unit;
-		querystr += "&frm_status_id=" + status;
-		querystr += "&function=unit_status";
-	}
-	var url = "set_data.php?" + querystr;
-	
-	$.get(url, function(data) {
-	}) 
-	.done(function() {
-		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-		get_units();
-	})
-	.fail(function() {
-		alert("error");
-	});
-}
-
-function set_facility_status(fac, status, message) {
-	var querystr = "";
-	if (fac > 0) {
-		querystr = "frm_facility_id=" + fac;
-		querystr += "&frm_status_id=" + status;
-		querystr += "&function=facility_status";
-	}
-	var url = "set_data.php?" + querystr;
-	
-	$.get(url, function(data) {
-	}) 
-	.done(function() {
-		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-		get_facilities();
-	})
-	.fail(function() {
-		alert("error");
-	});
-}
-
 String.prototype.trim = function () {
 	return this.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1");
 };
@@ -150,43 +108,6 @@ function set_textblock(text, field_name) {
 	set_cursor_position(field_name, textlength);
 }
 
-function do_send_message(select, targets_ids, ticket_id) {
-	var parameters = "";
-	switch (select) {
-	case "unit_all":
-		parameters = "function=send_message&message_group=unit_all";
-		break;
-	case "unit_service":
-		parameters = "function=send_message&message_group=unit_service&targets_ids=" + targets_ids;
-		break;
-	case "unit_ticket":
-		parameters = "function=send_message&message_group=unit_ticket&targets_ids=" + targets_ids + "&ticket_id=" + ticket_id;
-		break;
-	case "unit_tickets":
-		parameters = "function=send_message&message_group=unit_tickets";
-		break;
-	case "unit":
-		parameters = "function=send_message&message_group=unit&targets_ids=" + targets_ids;
-		break;
-	case "facility_all":
-		parameters = "function=send_message&message_group=facility_all";
-		break;
-	case "facility":
-		parameters = "function=send_message&message_group=facility&targets_ids=" + targets_ids;
-		break;
-	case "user_all":
-		parameters = "function=send_message&message_group=user_all";
-		break;
-	case "user":
-		parameters = "function=send_message&message_group=user&targets_ids=" + targets_ids;
-		break;
-	default:
-	}
-	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
-	changes_data = JSON.stringify(changes_data);
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-}
-
 function do_severity_protocol(index) {
 	if (($("#incident_type").val() == 0) && (index != 0)) {
 		$("#frm_severity").val(severities[index]).change();
@@ -226,13 +147,13 @@ function do_facility_to_ticket_location(index) {
 function set_reported_by_infos(select, text, phone) {
 	$("#frm_contact").val(text);
 	switch (select) {
-	case "edit":
+	case "ticket_edit_form":
 		$("#frm_phone").val(phone);	//overwrite_with_content_or_blank
 		break;
 	case "none":
 		if (phone.trim().length !== 0) $("#frm_phone").val(phone);	//overwrite_only_with_content
 		break;
-	case "add":
+	case "ticket_add_form":
 	default:
 		var phone_form_content = $("#frm_phone").val();
 		if ((phone_form_content.trim().length !== 0) && (phone.trim().length !== 0)) phone_form_content = phone_form_content + ', ';
@@ -305,7 +226,7 @@ function show_assigns(unit_id) {
 	})
 	.fail(function() {
 		alert("error");
-	});	
+	});
 }
 
 var import_type = "";
@@ -546,16 +467,48 @@ function wait(ms) {
 	}
 }
 
-function cancel_button(set_url, set_ticket_id) {
-	var url = "situation.php";
-	if (set_url.valueOf() != "") {
-		url = set_url;
+function send_post_message(changes_data) {
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
+function goto_window(url) {
+	var changes_data = '{"type":"script","item":"main","action":"' + url + '"}';
+	send_post_message(changes_data);
+}
+
+function show_top_notice(appearance, message) {
+	var changes_data = '{"type":"message","item":"' + appearance + '","action":"' + message + '"}';
+	send_post_message(changes_data);
+}
+
+function save_parked_form_data(form, action, data) {
+	var changes_data = {"type":"set_parked_form_data","item":form,"action":action};
+	switch (form) {
+	case "ticket_add_form_data":
+		changes_data.ticket_add_form_data = data;
+		break;
+	case "ticket_close_form_data":
+		changes_data.ticket_close_form_data = data;
+		break;
+	case "action_form_data":
+		changes_data.action_form_data = data;
+		break;
+	case "ticket_close_timestamp":
+	case "action_timestamp":
+		changes_data.datetime = data;
+		break;
+	case "log_report_form_data":
+		changes_data.log_report_form_data = data;
+		break;
+	default:
 	}
-	url = url + "?screen_id=" + get_infos_array['screen']['screen_id'];
-	if (set_ticket_id.valueOf() != "") {
-		url = url + "&ticket_id=" + set_ticket_id;
-	}
-	window.location.href = url;
+	changes_data = JSON.stringify(changes_data);
+	send_post_message(changes_data);
+}
+
+function set_window_present(current_script) {
+	var changes_data = '{"type":"current_script","item":"script","action":"' + current_script + '"}';
+	send_post_message(changes_data);
 }
 
 function do_api_connection_test(periodic, done_message) {
@@ -567,8 +520,8 @@ function do_api_connection_test(periodic, done_message) {
 		}) 
 		.done(function() {
 			if (!periodic) {
-				var changes_data ='{"type":"message","item":"info","action":"' + done_message + '"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
+				send_post_message(changes_data);
 			}
 		})
 		.fail(function() {
@@ -576,14 +529,50 @@ function do_api_connection_test(periodic, done_message) {
 	});
 }
 
+function do_send_message(select, targets_ids, ticket_id) {
+	var parameters = "";
+	switch (select) {
+	case "unit_all":
+		parameters = "function=send_message&message_group=unit_all";
+		break;
+	case "unit_service":
+		parameters = "function=send_message&message_group=unit_service&targets_ids=" + targets_ids;
+		break;
+	case "unit_ticket":
+		parameters = "function=send_message&message_group=unit_ticket&targets_ids=" + targets_ids + "&ticket_id=" + ticket_id;
+		break;
+	case "unit_tickets":
+		parameters = "function=send_message&message_group=unit_tickets";
+		break;
+	case "unit":
+		parameters = "function=send_message&message_group=unit&targets_ids=" + targets_ids;
+		break;
+	case "facility_all":
+		parameters = "function=send_message&message_group=facility_all";
+		break;
+	case "facility":
+		parameters = "function=send_message&message_group=facility&targets_ids=" + targets_ids;
+		break;
+	case "user_all":
+		parameters = "function=send_message&message_group=user_all";
+		break;
+	case "user":
+		parameters = "function=send_message&message_group=user&targets_ids=" + targets_ids;
+		break;
+	default:
+	}
+	var changes_data = '{"type":"script","item":"main","action":"communication.php?' + parameters + '"}';
+	send_post_message(changes_data);
+}
+
 function prevent_browser_back_button() {
 	/*
 	if (window.history && window.history.pushState) {
 		window.history.pushState("forward", null, "./#forward");
 		$(window).on("popstate", function(event) {
-			console.log("event");
+			console.log("popstate event");
 			if ((typeof (document.location) != "undefined") && (document.location.toString().charAt(0).charAt(document.location.toString().charAt(0).length - 1) != "#")) {
-				parent.frames["main"].location.href="situation.php?screen_id=" + parent.frames["navigation"].$("#div_screen_id").html();
+				goto_window("situation.php?screen_id=" + screen_id_main);
 			}
 		});
 	}

@@ -63,14 +63,6 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"configuration","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
-
 			function in_array(ary, val) {
 				for (var i = 0; i < ary.length; i++) {
 					if(ary[i] == val) {
@@ -132,10 +124,11 @@ default:
 
 			$(document).ready(function() {
 				activate_show_hide_password();
+				set_window_present("configuration");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					try {
 						set_current_infos();
 					} catch(e) {
@@ -5033,14 +5026,14 @@ case "updates":
 		$release_list_array[$next_update][VERSION] = $release_list_array[$next_update][ZIP_LINK] = $release_list_array[$next_update][MD5SUM] = "";
 		if (!(array_key_exists(1, $release_list_array)) || ($release_list_array[1][VERSION] != "false")) {
 			foreach ($release_list_array as $key => $value) {
-				if ($release_list_array[$key][VERSION] >= get_variable("_version")) {
-					if ($release_list_array[$key][VERSION] > get_variable("_version")) {
+				if ($release_list_array[$key][VERSION] >= get_version()) {
+					if ($release_list_array[$key][VERSION] > get_version()) {
 						$new_updates = true;
 						if ($next_update == -1) {
 							$next_update = $key;
 						}
 					}
-					if ($release_list_array[$key][VERSION] == get_variable("_version")) {
+					if ($release_list_array[$key][VERSION] == get_version()) {
 						if ($current_version == -1) {
 							$current_version = $key;
 						}
@@ -5314,39 +5307,39 @@ case "updates":
 						}
 						do_update_progression_info_box("show", "", 0);
 						do_update_progression_info_box("download", "start", update_download_time);
-						$.get("configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
+						$.get("./configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
 							"&update_progress_time=" + update_progress_time + simulate_query_part_download, function(data) {
 						})
 						.done(function(data) {
-							var get_infos_array = JSON.parse(data);
-							if (get_infos_array["result"].valueOf() == "success") {
+							var return_array = JSON.parse(data);
+							if (return_array["result"].valueOf() == "success") {
 								do_update_progression_info_box("download", "finish", update_download_time);
 							} else {
-								console.log(get_infos_array["text"]);
+								console.log(return_array["text"]);
 								do_update_progression_info_box("download", "fail", update_download_time);
 								return;
 							}
 							do_update_progression_info_box("unzip", "start", unzip_time);
-							$.get("update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
+							$.get("./update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
 							})
 							.done(function(data) {
-								var get_infos_array = JSON.parse(data);
-								if (get_infos_array["result"].valueOf() == "success") {
+								var return_array = JSON.parse(data);
+								if (return_array["result"].valueOf() == "success") {
 									do_update_progression_info_box("unzip", "finish", unzip_time);
 								} else {
-									console.log(get_infos_array["text"]);
+									console.log(return_array["text"]);
 									do_update_progression_info_box("unzip", "fail", unzip_time);
 									return;
 								}
 								do_update_progression_info_box("changes", "start", changes_time);
-								$.get("update.php?function=do_changes" + simulate_query_part_changes, function(data) {
+								$.get("./update.php?function=do_changes" + simulate_query_part_changes, function(data) {
 								})
 								.done(function(data) {
-									var get_infos_array = JSON.parse(data);
-									if (get_infos_array["result"].valueOf() == "success") {
+									var return_array = JSON.parse(data);
+									if (return_array["result"].valueOf() == "success") {
 										do_update_progression_info_box("changes", "finish", changes_time);
 									} else {
-										console.log(get_infos_array["text"]);
+										console.log(return_array["text"]);
 										do_update_progression_info_box("changes", "fail", changes_time);
 										return;
 									}
@@ -5448,7 +5441,7 @@ case "updates":
 								
 									<tr>
 										<th style="width: 25%;"><?php print get_text("Current version") . ": ";?></th>
-										<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_variable("_version") . $click_to_show_current_release_notes_str;?></td>
+										<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_version() . $click_to_show_current_release_notes_str;?></td>
 									</tr>
 	<?php
 		if ($new_updates) {
@@ -5660,7 +5653,7 @@ default:
 					<div class="container-fluid" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('', '');;"><?php print get_text("Cancel");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
 					</div>

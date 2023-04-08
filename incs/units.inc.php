@@ -534,8 +534,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 					$.post("set_data.php", "function=assign_reset&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 					})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 						get_units();
 						hide_infobox_large();
 					})
@@ -559,8 +558,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			$.post("set_data.php", "function=assign_delete&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 			})
 			.done(function() {
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 				get_units();
 				hide_infobox_large();
 			})
@@ -824,12 +822,11 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		if (query_part_str.valueOf() != "") {
 			$.post("set_data.php", "function=call_progression&assign_id=" + assign_id + query_part_str, function(data) {
 				if (data) {
-					window.location.href = data;
+					goto_window(data);
 				}
 			})
 			.done(function() {
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
 				alert("error");
@@ -842,8 +839,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		$.get("set_data.php", "function=unit_status&frm_unit_id=" + unit_id + "&frm_status_id=" + status_id, function(data) {
 		})
 		.done(function() {
-			var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			get_units();
 		})
 		.fail(function() {
@@ -891,8 +887,8 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		switch ($function) {
 		case "units":
 			if (is_admin() || is_super()) {
-				$flag_and_edit_col_str = "<td style='text-align: center;'>" . "<span onclick='window.location.href=(\"units.php?function=edit&id=" .
-					$row['unit_id'] . "\")' class='glyphicon glyphicon-pencil' aria-hidden='true' style='font-size: 12px; padding-right: 2px;'></span></td>";
+				$flag_and_edit_col_str = "<td style='text-align: center;'>" . "<span onclick='goto_window(\"units.php?function=edit&id=" .
+					$row['unit_id'] . "\");' class='glyphicon glyphicon-pencil' aria-hidden='true' style='font-size: 12px; padding-right: 2px;'></span></td>";
 			} else {
 				$flag_and_edit_col_str = "<td></td>";
 			}

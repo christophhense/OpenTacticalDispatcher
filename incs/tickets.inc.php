@@ -1,5 +1,4 @@
 <?php
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/units.inc.php");
 
@@ -94,7 +93,7 @@ function show_ticketlist($function = "", $screen_id = 0, $unit_id = 0) {
 		case "tickets_open":
 			$where_str = "WHERE (`tickets`.`status` = '" . $GLOBALS['STATUS_OPEN'] . "' " .
 				"OR (`tickets`.`status` = '" . $GLOBALS['STATUS_SCHEDULED'] . "' " .
-				"AND `tickets`.`booked_date` <= (NOW() + INTERVAL " . $hide_booked . " MINUTE)) " .
+				"AND `tickets`.`booked_date` <= (NOW() + INTERVAL " . $hide_booked * 60 . " SECOND)) " .
 				"OR (`tickets`.`status` = '" . $GLOBALS['STATUS_CLOSED'] . "'  " .
 				"AND `tickets`.`problemend` >= '" . $time_back . "') " .
 				"OR (`tickets`.`status` = '" . $GLOBALS['STATUS_SCHEDULED'] . "' " .
@@ -103,7 +102,7 @@ function show_ticketlist($function = "", $screen_id = 0, $unit_id = 0) {
 			break;
 		case "tickets_scheduled":
 			$where_str = "WHERE (`tickets`.`status`='" . $GLOBALS['STATUS_SCHEDULED'] . "' " .
-				"AND `tickets`.`booked_date` >= (NOW() + INTERVAL " . $hide_booked . " MINUTE)) " . $allocates_where_str . "";
+				"AND `tickets`.`booked_date` > (NOW() + INTERVAL " . $hide_booked * 60 . " SECOND)) " . $allocates_where_str . "";
 			$order_str = "ORDER BY `severity` DESC, `booked_date` ASC, `tickets`.`datetime` DESC,`status` DESC,`tickets`.`id` ASC";
 			break;
 		case "tickets_closed":
@@ -225,7 +224,7 @@ function show_ticketlist($function = "", $screen_id = 0, $unit_id = 0) {
 			$title_ticket .= $title_units_str[0];
 		}
 		$title_action_str = get_title_action_str($row);
-		if (!$title_action_str[1]) {
+		if (!$title_action_str[2]) {
 			$title_ticket .= "------------------------------<br>";
 			$title_ticket .= get_text("Actions") . ":<br>";
 			$title_ticket .= $title_action_str[0];

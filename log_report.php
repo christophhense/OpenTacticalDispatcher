@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-ini_set('session.cookie_samesite', 'Strict');
 @session_start();
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
@@ -65,15 +64,26 @@ default:
 	}
 	$back = "";
 	if (isset ($_GET['back'])) {
-		$back = $_GET['back'] . ".php";
+		$back = $_GET['back'];
+	}
+	$url_back = "situation.php";
+	switch ($back) {
+	case "units":
+		$url_back = "units.php";
+		break;
+	case "facilities":
+		$url_back = "facilities.php";
+		break;
+	default:
 	}
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
-	$auto_refresh_time = trim($auto_poll_settings[1]);
 	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 	$additional_helptext_form_data_parking_str = "";
 	if (trim($parking_form_data_settings[6]) != 0) {
-		$additional_helptext_form_data_parking_str =  get_title_str(get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[6]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[7]));
+		$additional_helptext_form_data_parking_str =  get_title_str(get_help_text("parked_trigger_chars", true) . ": " . 
+			trim($parking_form_data_settings[6]) . " " . get_help_text("parked_seconds", true) . ": " . 
+			trim($parking_form_data_settings[7]));
 	}
 	?>
 <!doctype html>
@@ -95,17 +105,9 @@ default:
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
-			var get_infos_array;
+			var new_infos_array = [];
+			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
-			var parking_form_data_cache_period = (<?php print trim($parking_form_data_settings[7]);?> + 0) * 1000;
-
-			try {
-				var changes_data ='{"type":"div","item":"script","action":"<?php print basename(__FILE__);?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-				var changes_data ='{"type":"button","item":"log_report","action":"highlight"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-			} catch(e) {
-			}
 
 			function send_data() {
 				if (log_form.frm_comment.value) {
@@ -115,8 +117,7 @@ default:
 					function() {
 					})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Saved");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
 						document.log_form.reset();
 						set_parked_form_data();
 					});
@@ -126,7 +127,7 @@ default:
 			}
 
 			function load_content() {
-				$.get("log_report.php?function=table_bottom&filter_communication=" +
+				$.get("./log_report.php?function=table_bottom&filter_communication=" +
 					$("#filter_communication").is(':checked') + "&filter_status=" +
 					$("#filter_status").is(':checked') + "&filter_settings=" +
 					$("#filter_settings").is(':checked'), function(data) {
@@ -136,18 +137,12 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if ((typeof(data) != "undefined") && (data != null)) {
-						var changes_data = {"type":"set_parked_form_data","item":"log_report_form_data","action":""};
-						changes_data.log_report_form_data = data;
-						changes_data = JSON.stringify(changes_data);
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"' + Date.now() + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					if ((data !== undefined) && (data != null)) {
+						save_parked_form_data("log_report_form_data", "", data);
+						save_parked_form_data("log_report_timestamp", Date.now(), "");
 					} else {
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_form_data","action":""}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"0"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						save_parked_form_data("log_report_form_data", "", "");
+						save_parked_form_data("log_report_timestamp", "0", "");
 					}
 				} catch (e) {
 				}
@@ -155,40 +150,14 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					var current_timestamp = Date.now();
-					if (parseInt(current_timestamp) < (parseInt(get_infos_array['parked_form_data']['log_report_timestamp']) + parseInt(parking_form_data_cache_period))) {
-						var form_content = new Array;
-						for (var key in get_infos_array['parked_form_data']['log_report_form_data']) {
-							form_content[get_infos_array['parked_form_data']['log_report_form_data'][key]['name']] = get_infos_array['parked_form_data']['log_report_form_data'][key]['value'];
+					if (new_infos_array['parked_form_data']['log_report_timestamp'] != 0) {
+						var form_content = [];
+						for (var key in new_infos_array['parked_form_data']['log_report_form_data']) {
+							form_content[new_infos_array['parked_form_data']['log_report_form_data'][key]['name']] = new_infos_array['parked_form_data']['log_report_form_data'][key]['value'];
 						}
 						$("#frm_comment").val(form_content['frm_comment']);
 						$("#unit_id").val(form_content['unit_id']).change();
 						$("#facility_id").val(form_content['facility_id']).change();
-					} else {
-						set_parked_form_data();
-					}
-				} catch (e) {
-				}
-			}
-
-			var log;
-
-			function do_watch() {
-				try {
-					if (get_infos_array['log']['id'] != 0) {
-						if (log != get_infos_array['log']['id']) {
-							load_content();
-							log = get_infos_array['log']['id'];
-						}
-					}
-				} catch (e) {
-				}
-				try {
-					if ($("#frm_comment").val().trim().length > 0 && $("#frm_comment").val().length > parking_form_data_min_trigger_chars && parking_form_data_min_trigger_chars != 0) {
-						var new_form_data = $("#log_form").serializeArray();
-						if ((JSON.stringify(new_form_data) != JSON.stringify(get_infos_array['parked_form_data']['log_report_form_data']))) {
-							set_parked_form_data(new_form_data);
-						}
 					}
 				} catch (e) {
 				}
@@ -199,17 +168,30 @@ default:
 				show_to_top_button("<?php print get_text("To top");?>");
 				get_parked_form_data();
 				$("#frm_comment").focus();
+				set_window_present("log_report");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
+					new_infos_array = JSON.parse(event.data);
 					if (change_situation_first_set == 0) {
-						log = get_infos_array['log']['id'];
 						get_parked_form_data();
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
-					do_watch();
+					if (new_infos_array['reload_flags']['log']) {
+						load_content();
+					}
+					if (
+						$("#frm_comment").val().trim().length > 0 && 
+						$("#frm_comment").val().length > parking_form_data_min_trigger_chars && 
+						parking_form_data_min_trigger_chars != 0
+					) {
+						var new_form_data = $("#log_form").serializeArray();
+						if ((JSON.stringify(new_form_data) != JSON.stringify(new_infos_array['parked_form_data']['log_report_form_data']))) {
+							set_parked_form_data(new_form_data);
+						}
+					}
 				});
 			});
 
@@ -228,7 +210,7 @@ default:
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="cancel_button('<?php print $back;?>', '');" tabindex=7><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?screen_id=' + screen_id_main);" tabindex=7><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 	<?php
