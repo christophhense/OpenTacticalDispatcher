@@ -1,5 +1,3 @@
-ALTER TABLE `captions` CHANGE `client_address` `client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address';
-ALTER TABLE `hints` CHANGE `client_address` `client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address';
 CREATE TABLE IF NOT EXISTS `presentation` (
 	`id` int(8) NOT NULL AUTO_INCREMENT,
 	`tab_id` int(8) NOT NULL,
