@@ -92,14 +92,17 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 		cancel-button switched to function goto_window
+		postMessage outsourced to functions
 * Facilities - new
 	CHANGE
 		Form submit with ajax
 		Remove href
+		postMessage outsourced to functions
 * Facilities - update
 	CHANGE
 		Form submit with ajax
 		Remove href
+		postMessage outsourced to functions
 * Reports
 	CHANGE
 		cancel-button switched to function goto_window

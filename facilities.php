@@ -195,13 +195,11 @@ default:
 			function post_the_form(form_id) {
 				$.post("facilities.php", $(form_id).serialize())
 				.done(function (data) {
-					var changes_data ='{"type":"message","item":"success","action":"' + data + '"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					show_top_notice("success", data);
 					goto_window("facilities.php");
 				})
 				.fail(function () {
-					var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 					goto_window("facilities.php");
 				});
 			}
@@ -236,8 +234,7 @@ default:
 
 			function copy_facility() {
 				$("#function").val("add");
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#edit_form").submit();
 			}
 
@@ -248,8 +245,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -262,8 +258,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -333,8 +328,7 @@ case "add":
 
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
-				var changes_data ='{"type":"current_script","item":"script","action":"facilities_add"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("facilities_add");
 				<?php show_prevent_browser_back_button();?>
 			});
 
@@ -540,8 +534,7 @@ case "edit":
 	
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
-				var changes_data ='{"type":"current_script","item":"script","action":"facilities_edit"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("facilities_edit");
 				<?php show_prevent_browser_back_button();?>
 			});
 
@@ -761,8 +754,7 @@ default:
 			$(document).ready(function() {
 				get_facilities();
 				show_to_top_button("<?php print get_text("To top");?>");
-				var changes_data ='{"type":"current_script","item":"script","action":"facilities"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("facilities");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
