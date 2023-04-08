@@ -529,6 +529,29 @@ function control_polling(control) {
 	send_post_message(changes_data);
 }
 
+function send_test_audio(sound) {
+	var changes_data = '{"type":"function","item":"test_audio","action":"' + sound + '"}';
+	send_post_message(changes_data);
+}
+
+function reload_callboard() {
+	var changes_data = '{"type":"script","item":"callboard","action":""}';
+	send_post_message(changes_data);
+}
+
+function reload_window() {
+	var changes_data = '{"type":"function","item":"window_location_reload","action":""}';
+	send_post_message(changes_data);
+}
+
+function control_polling(control) {
+	var changes_data = '{"type":"function","item":"stop_polling","action":""}';
+	if (control == "start") {
+		var changes_data = '{"type":"function","item":"start_polling","action":""}';
+	}
+	send_post_message(changes_data);
+}
+
 function do_api_connection_test(periodic, done_message) {
 	var periodic_parameter = "&periodic=false";
 	if (periodic) {

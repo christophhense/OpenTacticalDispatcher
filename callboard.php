@@ -504,7 +504,7 @@ case "table":
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<button class="btn btn-xs btn-default" type="button" id="refresh_button" onclick="window.location.reload();" style="display: inline;"><?php print get_text("Refresh");?></button>
+								<button class="btn btn-xs btn-default" type="button" id="refresh_button" onclick="reload_callboard();" style="display: inline;"><?php print get_text("Refresh");?></button>
 	<?php
 		if (is_super() || is_admin() || is_operator()) {
 	?>

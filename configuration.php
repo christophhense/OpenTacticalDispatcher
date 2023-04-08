@@ -796,7 +796,7 @@ if (is_super()) {
 foreach ($sound_names_array as $value) {
 	print "<tr" . get_help_text_str($value) . ">";
 	print "<th>" . get_text($value) . ":</th>";
-	print "<td>&nbsp;</td><td><a onclick='test_audio(\"" . $value . "\");'>" . get_text("play it") . "</a></td>";//
+	print "<td>&nbsp;</td><td><a onclick='send_test_audio(\"" . $value . "\");'>" . get_text("play it") . "</a></td>";//
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_" . $value . "' value='" . get_variable("_" . $value) . "'></td>";
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_alter_" . $value . "' value='" . get_variable("_alter_" . $value) . "'></td>";
  	print "\n";;
