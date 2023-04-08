@@ -62,8 +62,12 @@ default:
 	if (isset ($_GET['facility_id'])) {
 		$facility_id = $_GET['facility_id'];
 	}
+	$back = "";
+	if (isset ($_GET['back'])) {
+		$back = $_GET['back'];
+	}
 	$url_back = "situation.php";
-	switch ($_GET['back']) {
+	switch ($back) {
 	case "units":
 		$url_back = "units.php";
 		break;

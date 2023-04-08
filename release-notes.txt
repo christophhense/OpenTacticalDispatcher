@@ -25,6 +25,7 @@ Activities sorted by application function.
 		Remove href
 	BUG
 		Reload scheduled tickets after auto-open
+		Repair tooltip for actions
 * Callboard
 	NONE
 * Communication
@@ -45,6 +46,8 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 		cancel-button switched to function goto_window
+		postMessage outsourced to functions
+		Rename form to ticket_edit_form
 * Ticket - report
 	CHANGE
 		Remove href

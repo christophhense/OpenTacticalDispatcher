@@ -4139,7 +4139,7 @@ function get_title_action_str($row) {
 		$title_action .= "<nobr>" . get_text("No actions.") . "</nobr><br>";
 		$no_action = true;
 	}
-	return array ($title_action, $no_action);
+	return array ($title_action, get_nowrap_title_str($title_action), $no_action);
 }
 
 function get_title_dispatched_str($row) {
@@ -4167,7 +4167,7 @@ function get_title_dispatched_str($row) {
 		$title_unit .= "<span style=\'white-space: pre;\'>" . get_text("No assigned Responder.") . "</span><br>";
 		$blink = true;
 	}
-	return array ($title_unit, get_nowrap_title_str($title_unit), $blink);	
+	return array ($title_unit, get_nowrap_title_str($title_unit), $blink);
 }
 
 function get_table_id($id) {

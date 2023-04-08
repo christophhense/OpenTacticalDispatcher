@@ -220,7 +220,7 @@ default:
 			}
 
 			function get_infostring() {
-				$.get("./situation.php?function=infostring_middle", function(data) {
+				$.get("situation.php?function=infostring_middle", function(data) {
 					if (data != "") {
 						end_blink();
 						start_blink(data);
@@ -229,7 +229,7 @@ default:
 			}
 
 			function get_tickets() {
-				$.get("./situation.php?function=table_top&screen_id=" + screen_id_main, function(data) {
+				$.get("situation.php?function=table_top&screen_id=" + screen_id_main, function(data) {
 					$("#table_top").html(data);
 				})
 				.done(function() {
@@ -243,10 +243,10 @@ default:
 			}
 
 			function get_units() {
-				$.get("./situation.php?function=table_left&screen_id=" + screen_id_main, function(data) {
+				$.get("situation.php?function=table_left&screen_id=" + screen_id_main, function(data) {
 					$("#table_left").html(data);
 				});
-				$.get("./situation.php?function=table_right&screen_id=" + screen_id_main, function(data) {
+				$.get("situation.php?function=table_right&screen_id=" + screen_id_main, function(data) {
 					$("#table_right").html(data);
 				});
 			}
@@ -270,7 +270,7 @@ default:
 			}
 
 			function set_closed_interval(type, time) {
-				var url = "./set_data.php";
+				var url = "set_data.php";
 				var params = "";
 				if (type == "start") {
 					params = "function=closed_interval_start&value=" + time + "&screen_id=" + screen_id_main;
@@ -288,7 +288,7 @@ default:
 			}
 
 			function change_situation(tab_id) {
-				$.get("./set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + screen_id_main)
+				$.get("set_data.php", "function=situation_type&value=" + tab_id + "&screen_id=" + screen_id_main)
 				.done(function () {
 				})
 				.fail(function () {

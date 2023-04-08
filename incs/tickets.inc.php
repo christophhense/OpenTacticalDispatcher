@@ -224,7 +224,7 @@ function show_ticketlist($function = "", $screen_id = 0, $unit_id = 0) {
 			$title_ticket .= $title_units_str[0];
 		}
 		$title_action_str = get_title_action_str($row);
-		if (!$title_action_str[1]) {
+		if (!$title_action_str[2]) {
 			$title_ticket .= "------------------------------<br>";
 			$title_ticket .= get_text("Actions") . ":<br>";
 			$title_ticket .= $title_action_str[0];

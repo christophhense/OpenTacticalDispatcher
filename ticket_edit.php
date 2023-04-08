@@ -219,13 +219,6 @@ case "update":
 	}
 	do_log($GLOBALS[$log_type], $ticket_id, 0, $log_str);
 	unset ($_SESSION['active_ticket']);
-	$appearance = "success";
-	//$appearance = "danger";
-	//$appearance = "warning";
-	$message_text = get_text("Saved");
-	//$message_text = get_text("Not saved");
-	//$message_text = get_text("Not all saved");
-	print '{"type":"message","item":"' . $appearance . '","action":"' . $message_text . '"}';
 	break;
 case "assigns":
 	show_units_list("assigns", 0, 0, $_GET['ticket_id']);
@@ -305,7 +298,6 @@ default:
 	$lng = $row['lng'];
 	$incident_location_select_array = get_incident_location_select_str("edit", $row['facility_id']);
 	$auto_ticket_settings = get_auto_ticket_configuration("settings");
-	
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -343,13 +335,13 @@ default:
 		<?php print $incident_location_select_array["facility_coordinates"];?>
 
 			function get_units() {
-				$.get("./ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
+				$.get("ticket_edit.php?function=assigns&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_2").html(data);
 				});
 			}
 	
 			function get_actions() {
-				$.get("./ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
+				$.get("ticket_edit.php?function=actions&ticket_id=<?php print $ticket_id;?>", function(data) {
 					$("#table_right_3").html(data);
 				});
 			}
@@ -409,17 +401,14 @@ default:
 					if ((moment(problemend, "YYYY-MM-DD HH:mm:ss").isValid())) {
 						$("#problemend_mysql_timestamp").val(problemend);
 					}
-					$.post("ticket_edit.php", $("#ticket_edit").serialize())
+					$.post("ticket_edit.php", $("#ticket_edit_form").serialize())
 					.done(function (data) {
-						window.parent.navigationbar.postMessage(data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
 					});
 				}
 			}
@@ -546,8 +535,7 @@ default:
 					sideBySide: true
 				});
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				var changes_data ='{"type":"current_script","item":"script","action":"ticket_edit"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("ticket_edit");
 				get_units();
 				get_actions();
 				<?php show_prevent_browser_back_button();?>
@@ -572,7 +560,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="ticket_edit" name="edit">
+			<form id="ticket_edit_form" name="edit">
 				<input type="hidden" name="function" value="update">
 				<input type="hidden" name="ticket_id" value="<?php print $ticket_id;?>">
 				<input type="hidden" id="frm_lat" name="frm_lat" value="<?php print $lat;?>">
