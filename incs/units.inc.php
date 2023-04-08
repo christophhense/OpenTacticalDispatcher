@@ -534,8 +534,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 					$.post("set_data.php", "function=assign_reset&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 					})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign calls deleted");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 						get_units();
 						hide_infobox_large();
 					})
@@ -559,8 +558,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			$.post("set_data.php", "function=assign_delete&assign_id=" + $("#callprogression_assign_id").html(), function(data) {
 			})
 			.done(function() {
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Assign deleted");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 				get_units();
 				hide_infobox_large();
 			})
@@ -828,8 +826,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				}
 			})
 			.done(function() {
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
 				alert("error");
@@ -842,8 +839,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		$.get("set_data.php", "function=unit_status&frm_unit_id=" + unit_id + "&frm_status_id=" + status_id, function(data) {
 		})
 		.done(function() {
-			var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Status update applied");?>"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			get_units();
 		})
 		.fail(function() {

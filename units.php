@@ -251,13 +251,11 @@ default:
 			function post_the_form(form_id) {
 				$.post("units.php", $(form_id).serialize())
 				.done(function (data) {
-					var changes_data ='{"type":"message","item":"success","action":"' + data + '"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					show_top_notice("success", data);
 					goto_window("units.php");
 				})
 				.fail(function () {
-					var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 					goto_window("units.php");
 				});
 			}
@@ -293,8 +291,7 @@ default:
 
 			function copy_unit() {
 				$("#function").val("add");
-				var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Copied");?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 				$("#edit_form").submit();
 			}
 
@@ -305,8 +302,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#add_form").submit();
 						})
 						.fail(function() {
@@ -319,8 +315,7 @@ default:
 						})
 						.done(function() {
 							$("#function").val("add");
-							var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved and copied");?>"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#edit_form").submit();
 						})
 						.fail(function() {
@@ -384,8 +379,7 @@ case "add":
 			$(document).ready(function() {
 				set_cursor_position(frm_handle, $("#frm_handle").val().length);
 				<?php show_prevent_browser_back_button();?>
-				var changes_data ='{"type":"current_script","item":"script","action":"units_add"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("units_add");
 			});
 
 		</script>
@@ -602,8 +596,7 @@ case "edit":
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				<?php show_prevent_browser_back_button();?>
-				var changes_data ='{"type":"current_script","item":"script","action":"units_edit"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("units_edit");
 			});
 
 		</script>
@@ -834,8 +827,7 @@ default:
 						get_units();
 				});
 			}
-			var changes_data ='{"type":"current_script","item":"script","action":"units"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			set_window_present("units");
 			$(document).ready(function() {
 				get_units();
 				show_to_top_button("<?php print get_text("To top");?>");

@@ -48,6 +48,7 @@ Activities sorted by application function.
 * Ticket - report
 	CHANGE
 		Remove href
+		postMessage outsourced to functions
 * Ticket - close
 	CHANGE
 		Form submit with ajax
@@ -79,14 +80,17 @@ Activities sorted by application function.
 	CHANGE
 		Remove href
 		cancel-button switched to function goto_window
+		postMessage outsourced to functions
 * Units - new
 	CHANGE
 		Form submit with ajax
 		Remove href
+		postMessage outsourced to functions
 * Units - update
 	CHANGE
 		Form submit with ajax
 		Remove href
+		postMessage outsourced to functions
 * Facilities - overview
 	CHANGE
 		Form submit with ajax

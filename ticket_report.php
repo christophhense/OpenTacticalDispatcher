@@ -62,8 +62,7 @@ if (is_guest()) {
 		<script>
 
 			$(document).ready(function() {
-				var changes_data ='{"type":"current_script","item":"script","action":"<?php print $script_name;?>"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("<?php print $script_name;?>");
 				show_to_top_button("<?php print get_text("To top");?>");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
