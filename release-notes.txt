@@ -218,3 +218,4 @@ Activities sorted by application function.
 		Set session.cookie_samesite to value "None"
 		add identification for Edge-Browser	
 		remove function cancel_button()
+		Change the number of characters in db-table captions and hints to save IPv6.
