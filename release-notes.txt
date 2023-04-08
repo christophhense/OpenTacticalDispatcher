@@ -130,7 +130,8 @@ Activities sorted by application function.
 	CHANGE
 		Get current version from programmcode
 * Settings - general - notification sounds
-	NONE
+	CHANGE
+		postMessage outsourced to functions
 * Settings - general - General Settings
 	NONE
 * Settings - general - ticket name
@@ -202,6 +203,7 @@ Activities sorted by application function.
 * Settings - database and updates - updates
 	CHANGE
 		Get current version from programmcode
+		postMessage outsourced to functions
 * Settings - system information
 	NONE
 * Installation
