@@ -37,10 +37,7 @@ Activities sorted by application function.
 		Form submit with ajax
 		postMessage outsourced to functions
 		cancel-button switched to function goto_window
-<<<<<<< Upstream, based on origin/main
-=======
 		Rename form to ticket_add_form
->>>>>>> e558f77 postMessage outsourced to functions, code cleaned up
 * Ticket - update
 	CHANGE
 		Form submit with ajax

@@ -2300,7 +2300,7 @@ function get_severity_protocol_array_str() {
 	return $severities_str . $protocols_str;
 }
 
-function get_priority_select_str($select_type = "add", $form_name = "frm_severity", $selected_severity = 0) {
+function get_priority_select_str($select_type = "ticket_add_form", $form_name = "frm_severity", $selected_severity = 0) {
 	$return_str = "";
 	$where_str = "";
 	$onchange_str = "";
@@ -2309,12 +2309,12 @@ function get_priority_select_str($select_type = "add", $form_name = "frm_severit
 	$selected_high_str = "";
 	$bgcolor = "#0000FF";
 	switch ($select_type) {
-	case "add":
+	case "ticket_add_form":
 		$selected_normal_str = " selected";
 		$bgcolor = "#0000FF";
 		$onchange_str = "do_set_severity(this.selectedIndex); do_inc_name(this.options[selectedIndex].value.trim());";
 		break;
-	case "edit":
+	case "ticket_edit_form":
 		switch ($selected_severity) {
 		case $GLOBALS['SEVERITY_NORMAL']:
 			$selected_normal_str = " selected";

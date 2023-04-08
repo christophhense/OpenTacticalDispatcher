@@ -566,12 +566,9 @@ function save_parked_form_data(form, action, data) {
 	case "ticket_close_form_data":
 		changes_data.ticket_close_form_data = data;
 		break;
-<<<<<<< Upstream, based on origin/main
-=======
 	case "ticket_close_timestamp":
 		changes_data.datetime = data;
 		break;
->>>>>>> e558f77 postMessage outsourced to functions, code cleaned up
 	case "action_form_data":
 		changes_data.action_form_data = data;
 		break;

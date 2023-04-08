@@ -627,7 +627,7 @@ default:
 											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id");?>
 										</div>
 										<div style="float:right; width: 44%;">
-											<?php print get_priority_select_str("add", "frm_severity", 0);?>
+											<?php print get_priority_select_str("ticket_add_form", "frm_severity", 0);?>
 										</div>
 										</td>
 									</tr>
