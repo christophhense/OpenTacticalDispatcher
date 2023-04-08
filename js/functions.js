@@ -483,9 +483,6 @@ function show_top_notice(appearance, message) {
 
 function save_parked_form_data(form, action, data) {
 	var changes_data = {"type":"set_parked_form_data","item":form,"action":action};
-	if (form == "ticket_add_form_data") {
-		changes_data.ticket_add_form_data = data;
-	}
 	switch (form) {
 	case "ticket_add_form_data":
 		changes_data.ticket_add_form_data = data;
@@ -493,11 +490,12 @@ function save_parked_form_data(form, action, data) {
 	case "ticket_close_form_data":
 		changes_data.ticket_close_form_data = data;
 		break;
-	case "ticket_close_timestamp":
-		changes_data.datetime = data;
-		break;
 	case "action_form_data":
 		changes_data.action_form_data = data;
+		break;
+	case "ticket_close_timestamp":
+	case "action_timestamp":
+		changes_data.datetime = data;
 		break;
 	case "log_report_form_data":
 		changes_data.log_report_form_data = data;

@@ -96,11 +96,11 @@ default:
 					set_parked_form_data();
 					$.post("action.php", $(form_name).serialize())
 					.done(function (data) {
+						show_top_notice("success", "<?php print get_text("Saved");?>");
 						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
 					});
 				}
@@ -108,19 +108,12 @@ default:
 
 			function set_parked_form_data(data) {
 				try {
-					if (ticket_id != 0) {
+					if ((ticket_id != 0)  && ("<?php print $function;?>" != "edit")) {
 						if ((data !== undefined) && (data != null)) {
-							var changes_data = {"type":"set_parked_form_data","item":"action_form_data","action":ticket_id};
-							changes_data.action_form_data = data;
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-							var changes_data ={"type":"set_parked_form_data","item":"action_timestamp","action":ticket_id,"datetime":Date.now()};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							save_parked_form_data("action_form_data", ticket_id, data);
+							save_parked_form_data("action_timestamp", ticket_id, Date.now());
 						} else {
-							var changes_data = {"type":"set_parked_form_data","item":"action_delete","action":ticket_id};
-							changes_data = JSON.stringify(changes_data);
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							save_parked_form_data("action_delete", ticket_id, "");
 						}
 					}
 				} catch (e) {
@@ -129,14 +122,15 @@ default:
 
 			function get_parked_form_data() {
 				try {
-					if (ticket_id != 0) {
+					if ((ticket_id != 0)  && ("<?php print $function;?>" != "edit")) {
 						if (
 							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] !== undefined) && 
 							(new_infos_array['parked_form_data']['action_timestamp'][ticket_id] != null)
 						) {
 							var form_content = [];
 							for (var key in new_infos_array['parked_form_data']['action_form_data'][ticket_id]) {
-								form_content[new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] = new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
+								form_content[new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['name']] 
+									= new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
 							}
 						}
 						$("#frm_description").val(form_content['frm_description']);
@@ -302,8 +296,7 @@ case "insert":
 	?>
 	<body onload="check_frames();">
 		<script>
-			var changes_data ='{"type":"current_script","item":"script","action":"action_edit"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			set_window_present("action_edit");
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form name="action_edit_form">
@@ -400,8 +393,7 @@ case "insert":
 	?>
 	<body onload="check_frames();">
 		<script>
-			var changes_data ='{"type":"current_script","item":"script","action":"action_add"}';
-			window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+			set_window_present("action_add");
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="action_add_form" name="action_add_form">
