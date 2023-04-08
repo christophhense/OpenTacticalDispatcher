@@ -402,7 +402,7 @@ function show_to_top_button(caption) {
 }
 
 function get_reporting_channel(unit_id, type) {
-	$.get("./get_data.php?function=reporting_channel&unit_id=" + unit_id, function(data) {
+	$.get("get_data.php?function=reporting_channel&unit_id=" + unit_id, function(data) {
 		if (data) {
 			var get_reporting_channel_array = JSON.parse(data);
 			switch (type) {
@@ -493,12 +493,13 @@ function save_parked_form_data(form, action, data) {
 	case "action_form_data":
 		changes_data.action_form_data = data;
 		break;
-	case "ticket_close_timestamp":
-	case "action_timestamp":
-		changes_data.datetime = data;
-		break;
 	case "log_report_form_data":
 		changes_data.log_report_form_data = data;
+		break;
+	case "ticket_close_timestamp":
+	case "action_timestamp":
+	//case "log_report_timestamp":
+		changes_data.datetime = data;
 		break;
 	default:
 	}

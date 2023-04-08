@@ -80,6 +80,7 @@ Activities sorted by application function.
 * Log report
 	CHANGE
 		cancel-button switched to function goto_window
+		postMessage outsourced to functions
 * Units - overview
 	CHANGE
 		Remove href

@@ -117,8 +117,7 @@ default:
 					function() {
 					})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"info","action":"<?php print get_text("Saved");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
 						document.log_form.reset();
 						set_parked_form_data();
 					});
@@ -139,17 +138,11 @@ default:
 			function set_parked_form_data(data) {
 				try {
 					if ((data !== undefined) && (data != null)) {
-						var changes_data = {"type":"set_parked_form_data","item":"log_report_form_data","action":""};
-						changes_data.log_report_form_data = data;
-						changes_data = JSON.stringify(changes_data);
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":' + Date.now() + '}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						save_parked_form_data("log_report_form_data", "", data);
+						save_parked_form_data("log_report_timestamp", Date.now(), "");
 					} else {
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_form_data","action":""}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"set_parked_form_data","item":"log_report_timestamp","action":"0"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						save_parked_form_data("log_report_form_data", "", "");
+						save_parked_form_data("log_report_timestamp", "0", "");
 					}
 				} catch (e) {
 				}
@@ -175,8 +168,7 @@ default:
 				show_to_top_button("<?php print get_text("To top");?>");
 				get_parked_form_data();
 				$("#frm_comment").focus();
-				var changes_data ='{"type":"current_script","item":"script","action":"log_report"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("log_report");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
 				window.addEventListener("message", function(event) {
