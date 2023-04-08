@@ -50,6 +50,10 @@ function call_progression_timer() {
 	}
 }
 
+function send_post_message(changes_data) {
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
 function set_unit_status(unit, status, message) {
 	var querystr = "";
 	if (unit > 0) {
@@ -62,7 +66,7 @@ function set_unit_status(unit, status, message) {
 	}) 
 	.done(function() {
 		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		send_post_message(changes_data);
 		get_units();
 	})
 	.fail(function() {
@@ -82,7 +86,7 @@ function set_facility_status(fac, status, message) {
 	}) 
 	.done(function() {
 		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+		send_post_message(changes_data);
 		get_facilities();
 	})
 	.fail(function() {
@@ -182,7 +186,7 @@ function do_send_message(select, targets_ids, ticket_id) {
 	}
 	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
 	changes_data = JSON.stringify(changes_data);
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	send_post_message(changes_data);
 }
 
 function do_severity_protocol(index) {
@@ -546,12 +550,12 @@ function wait(ms) {
 
 function goto_window(url) {
 	var changes_data = '{"type":"script","item":"main","action":"' + url + '"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	send_post_message(changes_data);
 }
 
 function show_top_notice(appearance, message) {
 	var changes_data = '{"type":"message","item":"' + appearance + '","action":"' + message + '"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	send_post_message(changes_data);
 }
 
 function save_parked_form_data(form, action, data) {
@@ -578,12 +582,12 @@ function save_parked_form_data(form, action, data) {
 	default:
 	}
 	changes_data = JSON.stringify(changes_data);
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	send_post_message(changes_data);
 }
 
 function set_window_present(current_script) {
 	var changes_data = '{"type":"current_script","item":"script","action":"' + current_script + '"}';
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+	send_post_message(changes_data);
 }
 
 function do_api_connection_test(periodic, done_message) {
@@ -596,7 +600,7 @@ function do_api_connection_test(periodic, done_message) {
 		.done(function() {
 			if (!periodic) {
 				var changes_data ='{"type":"message","item":"info","action":"' + done_message + '"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				send_post_message(changes_data);
 			}
 		})
 		.fail(function() {
