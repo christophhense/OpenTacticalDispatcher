@@ -23,6 +23,7 @@ Activities sorted by application function.
 * Situation
 	CHANGE
 		Remove href
+		postMessage outsourced to functions
 	BUG
 		Reload scheduled tickets after auto-open
 		Repair tooltip for actions
@@ -68,6 +69,7 @@ Activities sorted by application function.
 * Ticket - dispatch
 	CHANGE
 		Form submit with ajax
+		postMessage outsourced to functions
 * Ticket - disposition
 	CHANGE
 		Form submit with ajax
@@ -111,6 +113,7 @@ Activities sorted by application function.
 	CHANGE
 		cancel-button switched to function goto_window
 		Rename form to reports_form
+		postMessage outsourced to functions
 * Settings - overview
 	CHANGE
 		cancel-button switched to function goto_window

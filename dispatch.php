@@ -471,7 +471,7 @@ default:
 					$.post("dispatch.php", $("#dispatch_form").serialize())
 					.done(function (data) {
 						data = JSON.parse(data);
-						window.parent.navigationbar.postMessage(JSON.stringify(data['0']), window.location.origin);
+						show_top_notice(data['0']['item'], data['0']['action']);
 						if (data['1']['send_message']) {
 							goto_window("communication.php?function=send_message&message_group=unit_ticket&targets_ids=" + 
 								data['1']['id_array'] + "&ticket_id=" + $("#ticket_id").val() + "&display_dispatch-message=" + 
@@ -485,17 +485,14 @@ default:
 						}
 					})
 					.fail(function () {
-						var changes_data ='{"type":"message","item":"danger","action":"<?php print get_text("Error");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-						var changes_data ='{"type":"script","item":"main","action":"situation.php?screen_id=' + screen_id_main + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("situation.php?screen_id=" + screen_id_main);
 					});
 				}
 			}
 
 			$(document).ready(function() {
-				var changes_data ='{"type":"current_script","item":"script","action":"dispatch"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("dispatch");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

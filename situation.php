@@ -395,8 +395,7 @@ default:
 
 				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
-				var changes_data ='{"type":"current_script","item":"script","action":"situation"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("situation");
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);

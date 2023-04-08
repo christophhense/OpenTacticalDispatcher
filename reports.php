@@ -370,8 +370,7 @@ default:
 
 				show_to_top_button("<?php print get_text("To top");?>");
 				$("#frm_query_text").focus();
-				var changes_data ='{"type":"current_script","item":"script","action":"reports"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("reports");
 				query_changed();
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
