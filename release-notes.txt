@@ -117,6 +117,7 @@ Activities sorted by application function.
 		cancel-button switched to function goto_window
 		Rename form to reports_form
 		postMessage outsourced to functions
+		Get caption from Log report into <table>
 * Settings - overview
 	CHANGE
 		cancel-button switched to function goto_window
