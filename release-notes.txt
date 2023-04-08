@@ -67,7 +67,8 @@ Activities sorted by application function.
 * Settings - user accounts - in-/export
 	NONE
 * Settings - general - notification sounds
-	NONE
+	CHANGE
+		postMessage outsourced to functions
 * Settings - general - General Settings
 	NONE
 * Settings - general - ticket name
