@@ -247,9 +247,10 @@ case "log_report":
 	}
 	?>
 	<?php print show_day_night_style();?>
-	<div style="text-align: center; height: 50px;"><h3><strong><?php print get_text("Log report");?></strong></h3></div>
 	<div class="panel panel-default" style="padding: 0px;">
+		<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;"><tr><th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Log report");?></strong></h3></th></tr></table>
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
+			<tr style="height: 10px;"><th  colspan=6></th></tr>
 			<?php show_log_report("reports", $start_date, $end_date , $where, $_SESSION["reports_filter"]);?>
 		</table>
 	</div>
