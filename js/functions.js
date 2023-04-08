@@ -50,50 +50,6 @@ function call_progression_timer() {
 	}
 }
 
-function send_post_message(changes_data) {
-	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
-}
-
-function set_unit_status(unit, status, message) {
-	var querystr = "";
-	if (unit > 0) {
-		querystr = "frm_unit_id=" + unit;
-		querystr += "&frm_status_id=" + status;
-		querystr += "&function=unit_status";
-	}
-	var url = "set_data.php?" + querystr;
-	$.get(url, function(data) {
-	}) 
-	.done(function() {
-		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		send_post_message(changes_data);
-		get_units();
-	})
-	.fail(function() {
-		alert("error");
-	});
-}
-
-function set_facility_status(fac, status, message) {
-	var querystr = "";
-	if (fac > 0) {
-		querystr = "frm_facility_id=" + fac;
-		querystr += "&frm_status_id=" + status;
-		querystr += "&function=facility_status";
-	}
-	var url = "set_data.php?" + querystr;
-	$.get(url, function(data) {
-	}) 
-	.done(function() {
-		var changes_data ='{"type":"message","item":"info","action":"' + message + '"}';
-		send_post_message(changes_data);
-		get_facilities();
-	})
-	.fail(function() {
-		alert("error");
-	});
-}
-
 String.prototype.trim = function () {
 	return this.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1");
 };
@@ -150,43 +106,6 @@ function set_textblock(text, field_name) {
 	field_name.focus();	
 	var textlength = field_name.value.length;
 	set_cursor_position(field_name, textlength);
-}
-
-function do_send_message(select, targets_ids, ticket_id) {
-	var parameters = "";
-	switch (select) {
-	case "unit_all":
-		parameters = "function=send_message&message_group=unit_all";
-		break;
-	case "unit_service":
-		parameters = "function=send_message&message_group=unit_service&targets_ids=" + targets_ids;
-		break;
-	case "unit_ticket":
-		parameters = "function=send_message&message_group=unit_ticket&targets_ids=" + targets_ids + "&ticket_id=" + ticket_id;
-		break;
-	case "unit_tickets":
-		parameters = "function=send_message&message_group=unit_tickets";
-		break;
-	case "unit":
-		parameters = "function=send_message&message_group=unit&targets_ids=" + targets_ids;
-		break;
-	case "facility_all":
-		parameters = "function=send_message&message_group=facility_all";
-		break;
-	case "facility":
-		parameters = "function=send_message&message_group=facility&targets_ids=" + targets_ids;
-		break;
-	case "user_all":
-		parameters = "function=send_message&message_group=user_all";
-		break;
-	case "user":
-		parameters = "function=send_message&message_group=user&targets_ids=" + targets_ids;
-		break;
-	default:
-	}
-	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
-	changes_data = JSON.stringify(changes_data);
-	send_post_message(changes_data);
 }
 
 function do_severity_protocol(index) {
@@ -548,6 +467,10 @@ function wait(ms) {
 	}
 }
 
+function send_post_message(changes_data) {
+	window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+}
+
 function goto_window(url) {
 	var changes_data = '{"type":"script","item":"main","action":"' + url + '"}';
 	send_post_message(changes_data);
@@ -608,6 +531,43 @@ function do_api_connection_test(periodic, done_message) {
 	});
 }
 
+function do_send_message(select, targets_ids, ticket_id) {
+	var parameters = "";
+	switch (select) {
+	case "unit_all":
+		parameters = "function=send_message&message_group=unit_all";
+		break;
+	case "unit_service":
+		parameters = "function=send_message&message_group=unit_service&targets_ids=" + targets_ids;
+		break;
+	case "unit_ticket":
+		parameters = "function=send_message&message_group=unit_ticket&targets_ids=" + targets_ids + "&ticket_id=" + ticket_id;
+		break;
+	case "unit_tickets":
+		parameters = "function=send_message&message_group=unit_tickets";
+		break;
+	case "unit":
+		parameters = "function=send_message&message_group=unit&targets_ids=" + targets_ids;
+		break;
+	case "facility_all":
+		parameters = "function=send_message&message_group=facility_all";
+		break;
+	case "facility":
+		parameters = "function=send_message&message_group=facility&targets_ids=" + targets_ids;
+		break;
+	case "user_all":
+		parameters = "function=send_message&message_group=user_all";
+		break;
+	case "user":
+		parameters = "function=send_message&message_group=user&targets_ids=" + targets_ids;
+		break;
+	default:
+	}
+	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
+	changes_data = JSON.stringify(changes_data);
+	send_post_message(changes_data);
+}
+
 function prevent_browser_back_button() {
 	/*
 	if (window.history && window.history.pushState) {
@@ -615,7 +575,7 @@ function prevent_browser_back_button() {
 		$(window).on("popstate", function(event) {
 			console.log("popstate event");
 			if ((typeof (document.location) != "undefined") && (document.location.toString().charAt(0).charAt(document.location.toString().charAt(0).length - 1) != "#")) {
-				window.parent.main.location.href="situation.php?screen_id=" + last_infos_array['screen']['screen_id'];
+				goto_window("situation.php?screen_id=" + screen_id_main);
 			}
 		});
 	}
