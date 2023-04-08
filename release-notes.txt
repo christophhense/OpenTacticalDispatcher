@@ -30,8 +30,6 @@ Activities sorted by application function.
 	NONE
 * Ticket - update
 	NONE
-* Ticket - dispatch
-	NONE
 * Ticket - report
 	NONE
 * Ticket - close
@@ -61,7 +59,6 @@ Activities sorted by application function.
 * Reports
 	NONE
 * Settings - user accounts - User accounts
-	CODE
 	NONE
 * Settings - user accounts - own account
 	NONE
