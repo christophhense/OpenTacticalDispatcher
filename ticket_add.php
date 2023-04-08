@@ -295,8 +295,8 @@ default:
 		$additional_helptext_form_data_parking = " " . get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[0]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[1]);
 	}
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$incident_location_select_array = get_incident_location_select_str("add", 0);
-	$reported_by_select_array = get_reported_by_select_str("add");
+	$incident_location_select_array = get_incident_location_select_str("ticket_add_form", 0);
+	$reported_by_select_array = get_reported_by_select_str("ticket_add_form");
 	$inc_num_array = unserialize(base64_decode(get_variable("_inc_num")));
 	if (strpos(get_variable("_inc_num"), "{") > 0) {
 		$inc_num_array = unserialize(get_variable("_inc_num"));
@@ -624,7 +624,7 @@ default:
 										</th>
 										<td>
 										<div style="float:left; width: 55%;">
-											<?php print get_incident_type_select_str("add", "frm_in_types_id");?>
+											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id");?>
 										</div>
 										<div style="float:right; width: 44%;">
 											<?php print get_priority_select_str("add", "frm_severity", 0);?>

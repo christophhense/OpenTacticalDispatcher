@@ -2216,7 +2216,7 @@ function get_guard_house_select_str($select_type = "unit", $guard_house_id = 0) 
 	return get_select_str($query, "frm_guard_house", "frm_guard_house" ,$class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
 }
 
-function get_incident_type_select_str($select_type = "add", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
+function get_incident_type_select_str($select_type = "ticket_add_form", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2226,7 +2226,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "add":
+	case "ticket_add_form":
 		$option_0 = get_text("Select");
 
 		$query = "SELECT `id` AS `option_value`, " .
@@ -2244,7 +2244,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 		$no_elements = get_text("No data");	
 		$tabindex = "8";
 		break;
-	case "edit":
+	case "ticket_edit_form":
 		if ($selected_inc_type == 0) {
 			$option_0 = get_text("Select");
 		}
@@ -2265,7 +2265,7 @@ function get_incident_type_select_str($select_type = "add", $form_name = "frm_in
 		$no_elements = get_text("No data");
 		$tabindex = "8";
 		break;
-	case "report":
+	case "reports_form":
 		$option_0 = get_text("Select");
 
 		$query = "SELECT `id` AS `option_value`, " .
@@ -2620,17 +2620,17 @@ function get_incident_location_select_str($function, $facility_id) {
 	$return_array["facility_coordinates"] = "\n";
 	$tabindex_str = "";
 	switch ($function) {
-	case "add":
+	case "ticket_add_form":
 		$onchange_str = " onchange=\"do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
 		$tabindex_str = " tabindex=2";
 		break;
-	case "edit":
-		$onchange_str = " onchange=\"document.edit.frm_facility_changed.value = parseInt(document.edit.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
+	case "ticket_edit_form":
+		$onchange_str = " onchange=\"document.ticket_edit_form.frm_facility_changed.value = parseInt(document.ticket_edit_form.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
 		$tabindex_str = " tabindex=2";
 		break;
 	default:
 	}
-	if (($facility_id != null) || ($function == "add")) {
+	if (($facility_id != null) || ($function == "ticket_add_form")) {
 
 		$query_facilities = "SELECT DISTINCT " .
 			"`f`.`id` AS `fac_id`, " .
@@ -2671,7 +2671,7 @@ function get_incident_location_select_str($function, $facility_id) {
 					$return_array["select_str"] .= "<optgroup label='" . $group_caption . "'>\n";
 				}
 				$selected_str = "";
-				if (($facility_id == $row_facility['fac_id']) && ($function == "edit")) {
+				if (($facility_id == $row_facility['fac_id']) && ($function == "ticket_edit_form")) {
 					$selected_str = " SELECTED ";
 				}
 				$return_array["select_str"] .= "<option value=" . $row_facility['fac_id'] . " " . $selected_str . ">" . remove_nls($row_facility['handle']) . "</option>";			

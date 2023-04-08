@@ -489,7 +489,7 @@ default:
 								</tr>
 								<tr<?php print get_help_text_str("_reports_incident_type");?> style="height: 45px;">
 									<th><?php print get_text("Incident type");?>:</th>
-									<td><?php print get_incident_type_select_str("report", "frm_in_types_id");?></td>
+									<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id");?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
 									<th><?php print get_text("Unit");?>:</th>

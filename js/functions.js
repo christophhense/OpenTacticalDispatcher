@@ -224,13 +224,13 @@ function do_facility_to_ticket_location(index) {
 function set_reported_by_infos(select, text, phone) {
 	$("#frm_contact").val(text);
 	switch (select) {
-	case "edit":
+	case "ticket_edit_form":
 		$("#frm_phone").val(phone);	//overwrite_with_content_or_blank
 		break;
 	case "none":
 		if (phone.trim().length !== 0) $("#frm_phone").val(phone);	//overwrite_only_with_content
 		break;
-	case "add":
+	case "ticket_add_form":
 	default:
 		var phone_form_content = $("#frm_phone").val();
 		if ((phone_form_content.trim().length !== 0) && (phone.trim().length !== 0)) phone_form_content = phone_form_content + ', ';

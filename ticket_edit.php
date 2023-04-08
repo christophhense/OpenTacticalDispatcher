@@ -234,7 +234,7 @@ case "actions":
 default:
 	set_session_expire_time();
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$reported_by_select_array = get_reported_by_select_str("edit");
+	$reported_by_select_array = get_reported_by_select_str("ticket_edit_form");
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
 
@@ -296,7 +296,7 @@ default:
 	}
 	$lat = $row['lat'];
 	$lng = $row['lng'];
-	$incident_location_select_array = get_incident_location_select_str("edit", $row['facility_id']);
+	$incident_location_select_array = get_incident_location_select_str("ticket_edit_form", $row['facility_id']);
 	$auto_ticket_settings = get_auto_ticket_configuration("settings");
 	?>
 <!doctype html>
@@ -486,7 +486,7 @@ default:
 
 			function do_reset_form() {
 				var default_severity = <?php print $row['severity'];?> + 0;		//+0 against syntax error, in case of DB-row==null
-				document.edit.reset();
+				document.ticket_edit_form.reset();
 				switch (default_severity) {
 				case 2:
 					$("#frm_severity").css({"background-color": "#FF0000"});	//Red
@@ -560,7 +560,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="ticket_edit_form" name="edit">
+			<form id="ticket_edit_form" name="ticket_edit_form">
 				<input type="hidden" name="function" value="update">
 				<input type="hidden" name="ticket_id" value="<?php print $ticket_id;?>">
 				<input type="hidden" id="frm_lat" name="frm_lat" value="<?php print $lat;?>">
@@ -645,7 +645,7 @@ default:
 										<th colspan=2<?php print get_help_text_str("_synop");?>><?php print get_text("Synopsis");?>:</th>
 										<td>
 											<textarea name="frm_description" class="form-control" tabindex=4 cols=48 rows=3 ><?php print remove_nls($row['ticket_description']);?></textarea>
-											<?php print get_textblock_select_str("synopsis", "document.edit.frm_description", "", 0, "");?>
+											<?php print get_textblock_select_str("synopsis", "document.ticket_edit_form.frm_description", "", 0, "");?>
 										</td>
 									</tr>
 									<tr>
@@ -663,10 +663,10 @@ default:
 										</th>
 										<td>
 											<div style="float:left; width: 55%;">
-												<?php print get_incident_type_select_str("edit", "frm_in_types_id", $row['incident_type_id']);?>
+												<?php print get_incident_type_select_str("ticket_edit_form", "frm_in_types_id", $row['incident_type_id']);?>
 											</div>
 											<div style="float:right; width: 40%;">
-												<?php print get_priority_select_str("edit", "frm_severity", $row['severity']);?>
+												<?php print get_priority_select_str("ticket_edit_form", "frm_severity", $row['severity']);?>
 											</div>
 										</td>
 									</tr>	
@@ -676,7 +676,7 @@ default:
 										</th>
 										<td>
 											<textarea id="frm_comments" name="frm_comments" class="form-control" cols=48 rows=3 tabindex=9><?php print remove_nls($row['comments']);?></textarea>
-											<?php print get_textblock_select_str("description", "document.edit.frm_comments", "", 0, "");?>
+											<?php print get_textblock_select_str("description", "document.ticket_edit_form.frm_comments", "", 0, "");?>
 										</td>
 									</tr>
 									<tr style="height: 45px;">
@@ -718,7 +718,7 @@ default:
 											<span id="lock_frm_status" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_disabled('frm_status');"></span>
 										</td>
 										<td>
-											<?php print get_ticket_status_select_str("edit", "frm_status", "", $row['ticket_status']);?>
+											<?php print get_ticket_status_select_str("ticket_edit_form", "frm_status", "", $row['ticket_status']);?>
 											<input type="hidden" id="submit_frm_status" name="frm_status" value="">
 										</td>
 									</tr>

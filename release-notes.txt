@@ -106,6 +106,7 @@ Activities sorted by application function.
 * Reports
 	CHANGE
 		cancel-button switched to function goto_window
+		Rename form to reports_form
 * Settings - overview
 	CHANGE
 		cancel-button switched to function goto_window
