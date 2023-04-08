@@ -821,6 +821,9 @@ foreach ($sound_names_array as $value) {
 					break;
 				case "script":
 					switch (get_changes_array["item"]) {
+					case "callboard":
+						window.parent.callboard.location.href="callboard.php";
+						break;
 					case "main":
 						window.parent.main.location.href=get_changes_array["action"];
 						break;
