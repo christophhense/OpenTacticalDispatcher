@@ -91,11 +91,13 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
+		Change formname to units_add_form
 * Units - update
 	CHANGE
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
+		Change formname to units_edit_form
 * Facilities - overview
 	CHANGE
 		Form submit with ajax
@@ -107,11 +109,13 @@ Activities sorted by application function.
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
+		Change formname to facilities_add_form
 * Facilities - update
 	CHANGE
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
+		Change formname to facilities_edit_form
 * Reports
 	CHANGE
 		cancel-button switched to function goto_window

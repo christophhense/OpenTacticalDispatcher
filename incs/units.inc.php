@@ -159,7 +159,7 @@ function show_unit_status_select($unit_status, $num_of_tickets = 0, $multi = 1) 
 				$result_selected_unit_status = db_query($query_selected_unit_status, __FILE__, __LINE__);
 				$row_selected_unit_status = stripslashes_deep(db_fetch_assoc($result_selected_unit_status));
 				$style_str = " style=' background-color: " . $row_selected_unit_status['bg_color'] . "; color: " . $row_selected_unit_status['text_color'] . ";'";
-				$frm_status_updated_str = " document.edit_form.frm_status_update.value='1';";
+				$frm_status_updated_str = " document.units_edit_form.frm_status_update.value='1';";
 				unset ($result_selected_unit_status);
 			}
 		}
