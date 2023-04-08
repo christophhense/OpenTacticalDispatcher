@@ -219,8 +219,7 @@ if (is_operator() || is_admin() || is_super()) {
 				$("#send_button").html("<?php print get_text("Wait");?>");
 				$.post("communication.php", $("#message_form").serialize(), function(data) {
 					var return_array = JSON.parse(data);
-					var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
-					window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+					show_top_notice(return_array["appearance"], return_array["message"]);
 				})
 				.done(function() {
 					goto_window(<?php print $url_str;?>);
@@ -253,8 +252,7 @@ if (is_operator() || is_admin() || is_super()) {
 
 			$(document).ready(function() {
 				load_content();
-				var changes_data ='{"type":"current_script","item":"script","action":"communication_send"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("communication_send");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
@@ -379,8 +377,7 @@ if (is_operator() || is_admin() || is_super()) {
 									api_log_id: select_ticket_api_log_id
 								}, function() {})
 								.done(function() {
-									var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-									window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+									show_top_notice("success", "<?php print get_text("Saved");?>");
 									var last_call = true;
 									if (last_call) {
 										goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
@@ -390,8 +387,7 @@ if (is_operator() || is_admin() || is_super()) {
 									}
 								});
 							} else {
-								var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice("success", "<?php print get_text("Saved");?>");
 								goto_window("ticket_edit.php?ticket_id=" + ticket_id);
 							}
 						});
@@ -409,8 +405,7 @@ if (is_operator() || is_admin() || is_super()) {
 								call_progression_datetime: return_array["call_progression_datetime"]
 							}, function() {})
 							.done(function(data) {
-								var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
-								window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+								show_top_notice(return_array["appearance"], return_array["message"]);
 								var last_call = false;
 								if (last_call) {
 									goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
@@ -420,8 +415,7 @@ if (is_operator() || is_admin() || is_super()) {
 								alert("error");
 							});
 						} else {
-							var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
-							window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+							show_top_notice(return_array["appearance"], return_array["message"]);
 						}
 					})
 					.fail(function() {
@@ -436,8 +430,7 @@ if (is_operator() || is_admin() || is_super()) {
 						api_log_id: select_ticket_api_log_id
 					}, function() {})
 					.done(function() {
-						var changes_data ='{"type":"message","item":"success","action":"<?php print get_text("Saved");?>"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice("success", "<?php print get_text("Saved");?>");
 						var last_call = false;
 						if (last_call) {
 							goto_window("ticket_edit.php?ticket_id=" + ticket_id + "&unit_id=" + unit_id);
@@ -451,8 +444,7 @@ if (is_operator() || is_admin() || is_super()) {
 					$.get("communication.php?function=update_communication&api_log_id=" + api_log_id + "&api_log_action=" + 
 						api_log_action + "&ticket_id=" + ticket_id + "&unit_id=" + unit_id).done(function(data) {
 						var return_array = JSON.parse(data);
-						var changes_data ='{"type":"message","item":"' + return_array["appearance"] + '","action":"' + return_array["message"] + '"}';
-						window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+						show_top_notice(return_array["appearance"], return_array["message"]);
 						if ((return_array["url"] !== undefined) && (return_array["url"] != null) && (return_array["url"] != "")) {
 							goto_window(return_array["url"]);
 						} else {
@@ -465,8 +457,7 @@ if (is_operator() || is_admin() || is_super()) {
 			$(document).ready(function() {
 				load_content();
 				show_to_top_button("<?php print get_text("To top");?>");
-				var changes_data ='{"type":"current_script","item":"script","action":"communication_receive"}';
-				window.parent.navigationbar.postMessage(changes_data, window.location.origin);
+				set_window_present("communication_receive");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

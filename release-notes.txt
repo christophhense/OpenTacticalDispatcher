@@ -34,6 +34,7 @@ Activities sorted by application function.
 	CHANGE
 		Remove href
 		cancel-button switched to function goto_window
+		postMessage outsourced to functions
 * Ticket - new
 	CHANGE
 		Form submit with ajax
