@@ -220,15 +220,8 @@ default:
 				}
 				if (errmsg != "") {
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
-					return false;
 				} else {
-					return true;
-				}
-			}
-
-			function submit_form(form_name) {
-				if (validate(form_name)) {
-					post_the_form(form_name);
+					post_the_form(theForm);
 				}
 			}
 
@@ -364,7 +357,7 @@ case "add":
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">	
-										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_form(document.facilities_add_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="validate(document.facilities_add_form);"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
@@ -577,7 +570,7 @@ case "edit":
 									<?php if ($copy_button == true) { ?>
 										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="copy_facility();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_form(document.facilities_edit_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="validate(document.facilities_edit_form);"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
