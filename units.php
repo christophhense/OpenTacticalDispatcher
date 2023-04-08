@@ -292,31 +292,31 @@ default:
 			function copy_unit() {
 				$("#function").val("add");
 				show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
-				$("#edit_form").submit();
+				$("#units_edit_form").submit();
 			}
 
 			function save_and_copy_unit(add) {
 				if (add) {
-					if (validate(add_form)) {
-						$.post("units.php", $("#add_form").serialize(), function(data) {
+					if (validate(units_add_form)) {
+						$.post("units.php", $("#units_add_form").serialize(), function(data) {
 						})
 						.done(function() {
 							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#add_form").submit();
+							$("#units_add_form").submit();
 						})
 						.fail(function() {
 							alert("error");
 						});	
 					}
 				} else {
-					if (validate(edit_form)) {
-						$.post("units.php", $("#edit_form").serialize(), function(data) {
+					if (validate(units_edit_form)) {
+						$.post("units.php", $("#units_edit_form").serialize(), function(data) {
 						})
 						.done(function() {
 							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#edit_form").submit();
+							$("#units_edit_form").submit();
 						})
 						.fail(function() {
 							alert("error");
@@ -328,7 +328,7 @@ default:
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					post_the_form("#edit_form")
+					post_the_form("#units_edit_form")
 				}
 			}
 
@@ -387,7 +387,7 @@ case "add":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="add_form" name="add_form" method="post" action="<?php echo basename(__FILE__);?>">
+			<form id="units_add_form" name="units_add_form" method="post" action="<?php echo basename(__FILE__);?>">
 				<input type="hidden" id="function" name="function" value="insert">
 				<input type="hidden" name="frm_group[]" value="1">
 				<input type="hidden" name="frm_lat" value="">
@@ -409,13 +409,13 @@ case "add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.add_form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.units_add_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.add_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.units_add_form);"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
@@ -604,7 +604,7 @@ case "edit":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form method="post" id="edit_form" name="edit_form" action="<?php echo basename(__FILE__);?>">
+			<form method="post" id="units_edit_form" name="units_edit_form" action="<?php echo basename(__FILE__);?>">
 				<input type="hidden" id="function" name="function" value="update">
 				<input type="hidden" name="frm_un_status_last" value="<?php print $row['unit_status_id'];?>"></input>
 				<input type="hidden" name="frm_group[]" value="1">
@@ -632,7 +632,7 @@ case "edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.edit_form.reset(); this.form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.units_edit_form.reset(); this.form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -641,7 +641,7 @@ case "edit":
 									<?php if ($copy_button == true) { ?>
 										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="copy_unit();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.edit_form);"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.units_edit_form);"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"<?php print $edit_disabled_str;?>>
 											<span class="caret"></span>
 										</button>
