@@ -493,13 +493,12 @@ function save_parked_form_data(form, action, data) {
 	case "action_form_data":
 		changes_data.action_form_data = data;
 		break;
-	case "log_report_form_data":
-		changes_data.log_report_form_data = data;
-		break;
 	case "ticket_close_timestamp":
 	case "action_timestamp":
-	//case "log_report_timestamp":
 		changes_data.datetime = data;
+		break;
+	case "log_report_form_data":
+		changes_data.log_report_form_data = data;
 		break;
 	default:
 	}
@@ -521,7 +520,7 @@ function do_api_connection_test(periodic, done_message) {
 		}) 
 		.done(function() {
 			if (!periodic) {
-				var changes_data ='{"type":"message","item":"info","action":"' + done_message + '"}';
+				var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
 				send_post_message(changes_data);
 			}
 		})
@@ -562,8 +561,7 @@ function do_send_message(select, targets_ids, ticket_id) {
 		break;
 	default:
 	}
-	var changes_data ={"type":"script","item":"main","action":"communication.php?" + parameters};
-	changes_data = JSON.stringify(changes_data);
+	var changes_data = '{"type":"script","item":"main","action":"communication.php?' + parameters + '"}';
 	send_post_message(changes_data);
 }
 
