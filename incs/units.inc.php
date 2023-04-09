@@ -539,7 +539,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 						hide_infobox_large();
 					})
 					.fail(function() {
-						alert("error");
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 					});
 					break;
 				case "d":
@@ -563,7 +563,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				hide_infobox_large();
 			})
 			.fail(function() {
-				alert("error");
+				show_top_notice("danger", "<?php print get_text("Error");?>");
 			});
 		}
 	}
@@ -829,7 +829,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
-				alert("error");
+				show_top_notice("danger", "<?php print get_text("Error");?>");
 			});
 		}
 	}
@@ -843,7 +843,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 			get_units();
 		})
 		.fail(function() {
-			alert("error");
+			show_top_notice("danger", "<?php print get_text("Error");?>");
 		});
 	}
 

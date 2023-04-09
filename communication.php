@@ -225,7 +225,7 @@ if (is_operator() || is_admin() || is_super()) {
 					goto_window(<?php print $url_str;?>);
 				})
 				.fail(function() {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -412,14 +412,14 @@ if (is_operator() || is_admin() || is_super()) {
 								}
 							})
 							.fail(function() {
-								alert("error");
+								show_top_notice("danger", "<?php print get_text("Error");?>");
 							});
 						} else {
 							show_top_notice(return_array["appearance"], return_array["message"]);
 						}
 					})
 					.fail(function() {
-						alert("error");
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 					});
 					break;
 				case "api_log_new_dispatch":

@@ -238,7 +238,7 @@ default:
 					$("#severity_high").html($("#count_severity_high").html());
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -283,7 +283,7 @@ default:
 				.done(function () {
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -292,7 +292,7 @@ default:
 				.done(function () {
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 				$("#" + tab_id).addClass("active");
 				if (tab_id == "tickets_closed") {
