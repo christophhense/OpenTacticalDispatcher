@@ -248,7 +248,7 @@ default:
 				}
 			}
 
-			function post_the_form(form_id) {
+			function send_form_with_post(form_id) {
 				$.post("units.php", $(form_id).serialize())
 				.done(function (data) {
 					show_top_notice("success", data);
@@ -323,14 +323,14 @@ default:
 
 			function submit_form(form) {
 				if (validate(form)) {
-					post_the_form(form);
+					send_form_with_post(form);
 				}
 			}
 
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					post_the_form("#units_edit_form")
+					send_form_with_post("#units_edit_form")
 				}
 			}
 
