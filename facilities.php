@@ -207,16 +207,16 @@ default:
 			function validate(theForm) {
 				var errmsg = "";
 				if (theForm.frm_handle.value.trim() == "") {
-					errmsg += "<?php print get_text("Facility HANDLE is required."). "<br>";?>";
+					errmsg += "<?php print get_text("Facility HANDLE is required.");?><br>";
 				}
 				if (theForm.frm_name.value.trim() == "") {
-					errmsg += "<?php print get_text("Facility NAME is required.") . "<br>";?>";
+					errmsg += "<?php print get_text("Facility NAME is required.");?><br>";
 				}
 				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value == 0) {
-					errmsg += "<?php print get_text("Facility type selection is required."). "<br>";?>";
+					errmsg += "<?php print get_text("Facility type selection is required.");?><br>";
 				}
 				if (theForm.frm_status_id.options[theForm.frm_status_id.selectedIndex].value == 0) {
-					errmsg += "<?php print get_text("Facility STATUS is required."). "<br>";?>";
+					errmsg += "<?php print get_text("Facility STATUS is required.");?><br>";
 				}
 				if (errmsg != "") {
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
@@ -533,7 +533,7 @@ case "edit":
 	}
 	?>
 		<script>
-	
+
 			$(document).ready(function() {
 				set_cursor_position(frm_name, $("#frm_name").val().length);
 				set_window_present("facilities_edit");
