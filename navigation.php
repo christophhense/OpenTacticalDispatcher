@@ -535,14 +535,6 @@ foreach ($sound_names_array as $value) {
 			}
 
 //========== misc
-			function send_request(url, callback) {
-				$.get(url, function (data) {callback(data);})
-				.done()
-				.fail(function () {
-					alert("error: send_request(" + url + ", " + callback + ")");
-				});
-			}
-
 			function show_message(message, appearance) {
 				switch (appearance) {
 				case "primary":
@@ -565,6 +557,14 @@ foreach ($sound_names_array as $value) {
 				}
 				$("#infostring_top").html(message);
 				setTimeout("$('#infostring_top').html('');", 1500);
+			}
+
+			function send_request(url, callback) {
+				$.get(url, function (data) {callback(data);})
+				.done()
+				.fail(function () {
+					show_message("No Server Connection", "danger");
+				});
 			}
 
 			var communication_message_timeout = null;
