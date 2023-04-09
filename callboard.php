@@ -355,7 +355,7 @@ case "table":
 				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
-				alert("error");
+				show_top_notice("danger", "<?php print get_text("Error");?>");
 			});	
 		}
 
@@ -422,7 +422,7 @@ case "table":
 							show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
 						});	
 						break;
 					case "d":
@@ -432,7 +432,7 @@ case "table":
 								show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 							})
 							.fail(function() {
-								alert("error");
+								show_top_notice("danger", "<?php print get_text("Error");?>");
 							});
 						}
 						break;

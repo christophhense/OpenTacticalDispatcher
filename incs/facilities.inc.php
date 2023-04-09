@@ -363,7 +363,7 @@ function show_facilities_list($table_side = "left", $split = 0) {
 			get_facilities();
 		})
 		.fail(function() {
-			alert("error");
+			show_top_notice("danger", "<?php print get_text("Error");?>");
 		});
 	}
 

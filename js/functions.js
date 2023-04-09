@@ -225,7 +225,7 @@ function show_assigns(unit_id) {
 		}
 	})
 	.fail(function() {
-		alert("error");
+		show_top_notice("danger", "Error");
 	});
 }
 
@@ -238,7 +238,9 @@ function install_default_csv_file(result) {
 			var get_infos_array = JSON.parse(data);
 			window.location.href = window.location.href.replace( /[\?#].*|$/, "/configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
 		})
-		.fail(function() {alert("error");});
+		.fail(function() {
+			show_top_notice("danger", "Error");
+		});
 	} else {
 		import_file = "";
 	}
@@ -566,7 +568,7 @@ function do_api_connection_test(periodic, done_message) {
 			}
 		})
 		.fail(function() {
-			alert("error");
+			show_top_notice("danger", "Error");
 	});
 }
 

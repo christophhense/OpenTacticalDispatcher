@@ -236,8 +236,12 @@ if ($default_textblocks != "") {
 			function insert_incident_types () {
 				if ($("#install_default-incident-types").prop("checked") == true) {
 					$.post("import.php", "function=default-incident-types&filename=<?php print $default_incident_types_file;?>")
-					.done(function() {return;})
-					.fail(function() {alert("error");});
+					.done(function() {
+						return;
+					})
+					.fail(function() {
+						alert("error");
+					});
 					$("#frm_install_default-incident-types").val("yes");
 				} else {
 					return;
