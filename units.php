@@ -277,15 +277,16 @@ default:
 				}
 				if (errmsg != "") {
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+					return false;
 				} else {
-					post_the_form(theForm);
+					return true;
 				}
 			}
 
 			function copy_unit() {
+				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#function").val("add");
-				show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
-				$("#units_edit_form").submit();
+				goto_window("units.php?" +  $.param($("#units_edit_form").serializeArray()));
 			}
 
 			function save_and_copy_unit(add) {
@@ -294,12 +295,13 @@ default:
 						$.post("units.php", $("#units_add_form").serialize(), function(data) {
 						})
 						.done(function() {
-							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#units_add_form").submit();
+							$("#function").val("add");
+							goto_window("units.php?" +  $.param($("#units_add_form").serializeArray()));
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
+							goto_window("units.php");
 						});	
 					}
 				} else {
@@ -307,14 +309,21 @@ default:
 						$.post("units.php", $("#units_edit_form").serialize(), function(data) {
 						})
 						.done(function() {
-							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#units_edit_form").submit();
+							$("#function").val("add");
+							goto_window("units.php?" +  $.param($("#units_edit_form").serializeArray()));
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
+							goto_window("units.php");
 						});
 					}
+				}
+			}
+
+			function submit_form(form) {
+				if (validate(form)) {
+					post_the_form(form);
 				}
 			}
 
@@ -408,7 +417,7 @@ case "add":
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="validate(document.units_add_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.units_add_form);"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
@@ -427,13 +436,13 @@ case "add":
 									<tr>
 										<th style="border-top: 0px;"<?php print get_help_text_str("_ResHand");?>><?php print get_text("Unit handle");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
 										<td style="border-top: 0px;" colspan=3>
-											<input type="text" id="frm_handle" name="frm_handle" class="form-control mandatory" tabindex=1 value="<?php if (isset ($_POST['frm_handle'])) {print $_POST['frm_handle'];}?>">
+											<input type="text" id="frm_handle" name="frm_handle" class="form-control mandatory" tabindex=1 value="<?php if (isset ($_GET['frm_handle'])) {print $_GET['frm_handle'];}?>">
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResName");?>><?php print get_text("Unit name");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
 										<td colspan=3>
-											<input type="text" name="frm_name" class="form-control mandatory" tabindex=2 value="<?php if (isset ($_POST['frm_name'])) {print $_POST['frm_name'];}?>">
+											<input type="text" name="frm_name" class="form-control mandatory" tabindex=2 value="<?php if (isset ($_GET['frm_name'])) {print $_GET['frm_name'];}?>">
 										</td>
 									</tr>
 									<tr>
@@ -443,7 +452,7 @@ case "add":
 										</th>
 										<td colspan=3>
 											<div>
-												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_POST['frm_smsg_id'])) {print $_POST['frm_smsg_id'];}?></textarea>
+												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_GET['frm_smsg_id'])) {print $_GET['frm_smsg_id'];}?></textarea>
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
@@ -454,7 +463,7 @@ case "add":
 										<th<?php print $help_text_phone;?>><?php print get_text("Cellular phone");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="text" id="frm_phone" name="frm_phone" class="form-control" tabindex=6 value="<?php if (isset ($_POST['frm_phone'])) {print $_POST['frm_phone'];}?>">
+												<input type="text" id="frm_phone" name="frm_phone" class="form-control" tabindex=6 value="<?php if (isset ($_GET['frm_phone'])) {print $_GET['frm_phone'];}?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_phone");?>
@@ -465,7 +474,7 @@ case "add":
 										<th<?php print get_help_text_str("_ResConV");?>><?php print get_text("Email");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="email" id="frm_unit_email" name="frm_unit_email" class="form-control" tabindex=8 value="<?php if (isset ($_POST['frm_unit_email'])) {print $_POST['frm_unit_email'];}?>">
+												<input type="email" id="frm_unit_email" name="frm_unit_email" class="form-control" tabindex=8 value="<?php if (isset ($_GET['frm_unit_email'])) {print $_GET['frm_unit_email'];}?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_email");?>
@@ -512,19 +521,19 @@ case "add":
 									<tr>
 										<th<?php print get_help_text_str("_ResDesc");?>><?php print get_text("Description");?>:</th>
 										<td colspan=3>
-											<textarea name="frm_descr" class="form-control" tabindex=15 rows=2><?php if (isset ($_POST['frm_descr'])) {print $_POST['frm_descr'];}?></textarea>
+											<textarea name="frm_descr" class="form-control" tabindex=15 rows=2><?php if (isset ($_GET['frm_descr'])) {print $_GET['frm_descr'];}?></textarea>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResCapa");?>><?php print get_text("Capability");?>:</th>
 										<td colspan=3>
-											<textarea name="frm_capab" class="form-control"  tabindex=16 rows=2><?php if (isset ($_POST['frm_capab'])) {print $_POST['frm_capab'];}?></textarea>
+											<textarea name="frm_capab" class="form-control"  tabindex=16 rows=2><?php if (isset ($_GET['frm_capab'])) {print $_GET['frm_capab'];}?></textarea>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResConN");?>><?php print get_text("Contact name");?>:</th>
 										<td colspan=3>
-											<input type="text" name="frm_contact_name" class="form-control" tabindex=17 value="<?php if (isset ($_POST['frm_contact_name'])) {print $_POST['frm_contact_name'];}?>">
+											<input type="text" name="frm_contact_name" class="form-control" tabindex=17 value="<?php if (isset ($_GET['frm_contact_name'])) {print $_GET['frm_contact_name'];}?>">
 										</td>
 									</tr>
 									<tr>
@@ -634,7 +643,7 @@ case "edit":
 									<?php if ($copy_button == true) { ?>
 										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="copy_unit();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="validate(document.units_edit_form);"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.units_edit_form);"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"<?php print $edit_disabled_str;?>>
 											<span class="caret"></span>
 										</button>
