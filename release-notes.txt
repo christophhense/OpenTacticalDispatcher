@@ -20,6 +20,9 @@
 
 Activities sorted by application function.
 
+* Navigation
+	CHANGE
+		Change popup to top notice Danger No Server Connection
 * Situation
 	CHANGE
 		Remove href
@@ -92,24 +95,28 @@ Activities sorted by application function.
 		Remove href
 		postMessage outsourced to functions
 		Change formname to units_add_form
+		Copy und save with ajax
 * Units - update
 	CHANGE
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
 		Change formname to units_edit_form
+		Copy und save with ajax
 * Facilities - overview
 	CHANGE
 		Form submit with ajax
 		Remove href
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
+		Copy und save with ajax
 * Facilities - new
 	CHANGE
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
 		Change formname to facilities_add_form
+		Copy und save with ajax
 * Facilities - update
 	CHANGE
 		Form submit with ajax
