@@ -360,20 +360,20 @@ case "sort":
 	break;
 case "add":
 	$unit_type_id = 0;
-	if (isset ($_POST['frm_type'])) {
-		$unit_type_id = $_POST['frm_type'];
+	if (isset ($_GET['frm_type'])) {
+		$unit_type_id = $_GET['frm_type'];
 	}
 	$unit_status_id = 0;
-	if (isset ($_POST['frm_un_status_id'])) {
-		$unit_status_id = $_POST['frm_un_status_id'];
+	if (isset ($_GET['frm_un_status_id'])) {
+		$unit_status_id = $_GET['frm_un_status_id'];
 	}
 	$multi_dispachable = 1;
-	if (isset ($_POST['frm_multi'])) {
-		$multi_dispachable = $_POST['frm_multi'];
+	if (isset ($_GET['frm_multi'])) {
+		$multi_dispachable = $_GET['frm_multi'];
 	}
 	$guard_house_id = 0;
-	if (isset ($_POST['frm_guard_house'])) {
-		$guard_house_id = $_POST['frm_guard_house'];
+	if (isset ($_GET['frm_guard_house'])) {
+		$guard_house_id = $_GET['frm_guard_house'];
 	}
 	?>
 		<script>
@@ -508,7 +508,7 @@ case "add":
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResStat");?>><?php print get_text("Status");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
-										<td colspan=3><?php show_unit_status_select(0, 0, 1);?></td>
+										<td colspan=3><?php show_unit_status_select($unit_status_id, 0, 1);?></td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResMult");?>><?php print get_text("Dispatchable");?>:</th>

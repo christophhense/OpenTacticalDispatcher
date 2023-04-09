@@ -318,12 +318,12 @@ case "sort":
 	break;
 case "add":
 	$unit_type_id = 0;
-	if (isset ($_POST['frm_type'])) {
-		$unit_type_id =  $_POST['frm_type'];
+	if (isset ($_GET['frm_type'])) {
+		$unit_type_id =  $_GET['frm_type'];
 	}
 	$frm_status_id = 0;
-	if (isset ($_POST['frm_status_id'])) {
-		$frm_status_id =  $_POST['frm_status_id'];
+	if (isset ($_GET['frm_status_id'])) {
+		$frm_status_id =  $_GET['frm_status_id'];
 	}
 	?>
 		<script>
