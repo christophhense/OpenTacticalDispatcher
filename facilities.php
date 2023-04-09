@@ -339,7 +339,7 @@ case "add":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="facilities_add_form" name="facilities_add_form" method="post" action="<?php echo basename(__FILE__);?>">
+			<form id="facilities_add_form" name="facilities_add_form">
 				<input type="hidden" id="function" name="function" value="insert">
 				<input type="hidden" name="frm_group[]" value="1">
 				<input type="hidden" name="frm_lat" value="<?php if (isset ($_GET['frm_lat'])) {print $_GET['frm_lat'];}?>">
@@ -545,7 +545,7 @@ case "edit":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form method="post" id="facilities_edit_form" name="facilities_edit_form" action="<?php echo basename(__FILE__);?>">
+			<form id="facilities_edit_form" name="facilities_edit_form">
 				<input type="hidden" id="function" name="function" value="update">
 				<input type="hidden" name="frm_group[]" value="1">
 				<input type="hidden" name="frm_id" value="<?php print $_GET['id'];?>">

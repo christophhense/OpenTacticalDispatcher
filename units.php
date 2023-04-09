@@ -389,7 +389,7 @@ case "add":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="units_add_form" name="units_add_form" method="post" action="<?php echo basename(__FILE__);?>">
+			<form id="units_add_form" name="units_add_form">
 				<input type="hidden" id="function" name="function" value="insert">
 				<input type="hidden" name="frm_group[]" value="1">
 				<input type="hidden" name="frm_lat" value="">
@@ -606,7 +606,7 @@ case "edit":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form method="post" id="units_edit_form" name="units_edit_form" action="<?php echo basename(__FILE__);?>">
+			<form id="units_edit_form" name="units_edit_form">
 				<input type="hidden" id="function" name="function" value="update">
 				<input type="hidden" name="frm_un_status_last" value="<?php print $row['unit_status_id'];?>"></input>
 				<input type="hidden" name="frm_group[]" value="1">
