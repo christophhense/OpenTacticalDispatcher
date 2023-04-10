@@ -281,7 +281,7 @@ default:
 				show_infobox("<?php print get_text("Please confirm removing");?>", false, "", do_remove_facility);
 				return;
 			}
-			
+
 		</script>
 	<?php
 }
@@ -377,7 +377,7 @@ case "add":
 								</div>
 							</div>
 						</div>
-					</div>	
+					</div>
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">
