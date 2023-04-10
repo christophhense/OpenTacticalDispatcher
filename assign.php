@@ -475,27 +475,27 @@ default:
 			<?php print $array_receiving_str["facility_coordinates"];?>
 
 			function validate() {
-				var errmsg = "";
+				var error_message = "";
 				if (!(moment($("#dispatched").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "<?php print get_text("Invalid dispatched datetime");?><br>";
+					error_message += "<?php print get_text("Invalid dispatched datetime");?><br>";
 				}
 				if (!(moment($("#responding").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "<?php print get_text("Invalid responding datetime");?><br>";
+					error_message += "<?php print get_text("Invalid responding datetime");?><br>";
 				}
 				if (!(moment($("#on_scene").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "<?php print get_text("Invalid on-scene datetime");?><br>";
+					error_message += "<?php print get_text("Invalid on-scene datetime");?><br>";
 				}
 				if (!(moment($("#facility_enroute").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "<?php print get_text("Invalid facility-enroute datetime");?><br>";
+					error_message += "<?php print get_text("Invalid facility-enroute datetime");?><br>";
 				}
 				if (!(moment($("#facility_arrived").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "\t<?php print get_text("Invalid facility-arrived datetime");?><br>";
+					error_message += "\t<?php print get_text("Invalid facility-arrived datetime");?><br>";
 				}
 				if (!(moment($("#clear").val(), "<?php print $moment_date_format;?>").isValid())) {
-					errmsg += "<?php print get_text("Invalid clear datetime");?><br>";
+					error_message += "<?php print get_text("Invalid clear datetime");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					if ((moment($("#dispatched").val(), "<?php print $moment_date_format;?>").isValid())) {

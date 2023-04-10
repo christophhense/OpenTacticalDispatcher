@@ -262,21 +262,21 @@ default:
 
 			function validate(theForm) {
 				theForm.frm_mobile.value = (theForm.frm_mob_disp.checked)? 1 : 0;
-				var errmsg = "";
+				var error_message = "";
 				if (theForm.frm_handle.value.trim()=="") {
-					errmsg += "<?php print get_text("Unit HANDLE is required.");?><br>";
+					error_message += "<?php print get_text("Unit HANDLE is required.");?><br>";
 				}
 				if (theForm.frm_name.value.trim()=="") {
-					errmsg += "<?php print get_text("Unit NAME is required.");?><br>";
+					error_message += "<?php print get_text("Unit NAME is required.");?><br>";
 				}
 				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value==0) {
-					errmsg += "<?php print get_text("Unit type selection is required.");?><br>";
+					error_message += "<?php print get_text("Unit type selection is required.");?><br>";
 				}	
 				if (theForm.frm_un_status_id.options[theForm.frm_un_status_id.selectedIndex].value==0) {
-					errmsg += "<?php print get_text("Units STATUS is required.");?><br>";
+					error_message += "<?php print get_text("Units STATUS is required.");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					return true;
