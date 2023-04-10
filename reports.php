@@ -283,19 +283,19 @@ default:
 		<script>
 
 			function query_changed() {
-				var errmsg = "";
+				var error_message = "";
 				if ((moment($("#start").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#start_mysql_timestamp").val(moment($("#start").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
 				if ((moment($("#end").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#end_mysql_timestamp").val(moment($("#end").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					if ($("#frm_incident_facility").val() > 0) {

@@ -154,7 +154,7 @@ default:
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate() {
-				var errmsg = "";
+				var error_message = "";
 				var problemstart = "<?php print $problemstart;?>";
 				var problemend = moment($("#problemend").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
@@ -163,13 +163,13 @@ default:
 					moment(problemend, "YYYY-MM-DD HH:mm:ss").isAfter(moment(datetime_now, "YYYY-MM-DD HH:mm:ss").add(1, 'm')) ||
 					moment(problemend, "YYYY-MM-DD HH:mm:ss").isBefore(moment(problemstart, "YYYY-MM-DD HH:mm:ss"))
 				) {
-					errmsg += "<?php print get_text('Invalid problemend');?><br>";
+					error_message += "<?php print get_text('Invalid problemend');?><br>";
 				}
 				if ($("#frm_disp").val().trim().length == 0) {
-					errmsg += "<?php print get_text("Disposition is required");?><br>";
+					error_message += "<?php print get_text("Disposition is required");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					$("#problemend_mysql_timestamp").val(problemend);

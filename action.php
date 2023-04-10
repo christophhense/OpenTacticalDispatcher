@@ -74,22 +74,22 @@ default:
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate(form_name) {
-				var errmsg = "";
+				var error_message = "";
 				var written = $("#written").val();
 				var asof = moment($("#asof").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
 				if ($("#frm_description").val() == "") {
-					errmsg += "<?php print get_text("ActionDescription is required");?><br>";
+					error_message += "<?php print get_text("ActionDescription is required");?><br>";
 				}
 				if (
 					!moment(asof, "YYYY-MM-DD HH:mm:ss").isValid() ||
 					moment(asof, "YYYY-MM-DD HH:mm:ss").isAfter(moment(datetime_now, "YYYY-MM-DD HH:mm:ss").add(1, 'm')) ||
 					moment(asof, "YYYY-MM-DD HH:mm:ss").isBefore(moment(written, "YYYY-MM-DD HH:mm:ss"))
 				) {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					$("#asof_mysql_timestamp").val(asof);

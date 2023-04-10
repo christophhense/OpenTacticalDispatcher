@@ -205,21 +205,21 @@ default:
 			}
 
 			function validate(theForm) {
-				var errmsg = "";
+				var error_message = "";
 				if (theForm.frm_handle.value.trim() == "") {
-					errmsg += "<?php print get_text("Facility HANDLE is required.");?><br>";
+					error_message += "<?php print get_text("Facility HANDLE is required.");?><br>";
 				}
 				if (theForm.frm_name.value.trim() == "") {
-					errmsg += "<?php print get_text("Facility NAME is required.");?><br>";
+					error_message += "<?php print get_text("Facility NAME is required.");?><br>";
 				}
 				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value == 0) {
-					errmsg += "<?php print get_text("Facility type selection is required.");?><br>";
+					error_message += "<?php print get_text("Facility type selection is required.");?><br>";
 				}
 				if (theForm.frm_status_id.options[theForm.frm_status_id.selectedIndex].value == 0) {
-					errmsg += "<?php print get_text("Facility STATUS is required.");?><br>";
+					error_message += "<?php print get_text("Facility STATUS is required.");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					return true;
