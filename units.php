@@ -260,19 +260,19 @@ default:
 				});
 			}
 
-			function validate(theForm) {
-				theForm.frm_mobile.value = (theForm.frm_mob_disp.checked)? 1 : 0;
+			function validate(unit_form) {
+				unit_form.frm_mobile.value = (unit_form.frm_mob_disp.checked)? 1 : 0;
 				var error_message = "";
-				if (theForm.frm_handle.value.trim()=="") {
+				if (unit_form.frm_handle.value.trim()=="") {
 					error_message += "<?php print get_text("Unit HANDLE is required.");?><br>";
 				}
-				if (theForm.frm_name.value.trim()=="") {
+				if (unit_form.frm_name.value.trim()=="") {
 					error_message += "<?php print get_text("Unit NAME is required.");?><br>";
 				}
-				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value==0) {
+				if (unit_form.frm_type.options[unit_form.frm_type.selectedIndex].value==0) {
 					error_message += "<?php print get_text("Unit type selection is required.");?><br>";
 				}	
-				if (theForm.frm_un_status_id.options[theForm.frm_un_status_id.selectedIndex].value==0) {
+				if (unit_form.frm_un_status_id.options[unit_form.frm_un_status_id.selectedIndex].value==0) {
 					error_message += "<?php print get_text("Units STATUS is required.");?><br>";
 				}
 				if (error_message != "") {
@@ -321,9 +321,9 @@ default:
 				}
 			}
 
-			function submit_form(form) {
-				if (validate(form)) {
-					send_form_with_post(form);
+			function submit_form(unit_form) {
+				if (validate(unit_form)) {
+					send_form_with_post(unit_form);
 				}
 			}
 

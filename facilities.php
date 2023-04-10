@@ -204,18 +204,18 @@ default:
 				});
 			}
 
-			function validate(theForm) {
+			function validate(facility_form) {
 				var error_message = "";
-				if (theForm.frm_handle.value.trim() == "") {
+				if (facility_form.frm_handle.value.trim() == "") {
 					error_message += "<?php print get_text("Facility HANDLE is required.");?><br>";
 				}
-				if (theForm.frm_name.value.trim() == "") {
+				if (facility_form.frm_name.value.trim() == "") {
 					error_message += "<?php print get_text("Facility NAME is required.");?><br>";
 				}
-				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value == 0) {
+				if (facility_form.frm_type.options[facility_form.frm_type.selectedIndex].value == 0) {
 					error_message += "<?php print get_text("Facility type selection is required.");?><br>";
 				}
-				if (theForm.frm_status_id.options[theForm.frm_status_id.selectedIndex].value == 0) {
+				if (facility_form.frm_status_id.options[facility_form.frm_status_id.selectedIndex].value == 0) {
 					error_message += "<?php print get_text("Facility STATUS is required.");?><br>";
 				}
 				if (error_message != "") {
@@ -264,9 +264,9 @@ default:
 				}
 			}
 
-			function submit_form(form) {
-				if (validate(form)) {
-					send_form_with_post(form);
+			function submit_form(facility_form) {
+				if (validate(facility_form)) {
+					send_form_with_post(facility_form);
 				}
 			}
 
