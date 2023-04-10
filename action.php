@@ -164,7 +164,7 @@ default:
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					screen_id_main = new_infos_array['screen']['screen_id'];
 
-					if (change_situation_first_set == 0) { 
+					if (change_situation_first_set == 0) {
 						get_parked_form_data();
 						change_situation_first_set = 1;
 					}
@@ -299,7 +299,7 @@ case "insert":
 			set_window_present("action_edit");
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="action_edit_form">
+		<form id="action_edit_form" name="action_edit_form">
 			<input type="hidden" name="function" value="update">
 			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
 			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
@@ -424,7 +424,7 @@ case "insert":
 								</div>
 							</div>
 						</div>
-					</div>	
+					</div>
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">

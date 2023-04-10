@@ -384,7 +384,7 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="reports_form">
+		<form id="reports_form" name="reports_form">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
