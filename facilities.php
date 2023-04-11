@@ -229,7 +229,7 @@ default:
 			function copy_facility() {
 				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#function").val("add");
-				goto_window("facilities.php?" +  $.param($("#facilities_edit_form").serializeArray()));
+				goto_window("facilities.php?" + $.param($("#facilities_edit_form").serializeArray()));
 			}
 
 			function save_and_copy_facility(add) {
@@ -240,7 +240,7 @@ default:
 						.done(function() {
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#function").val("add");
-							goto_window("facilities.php?" +  $.param($("#facilities_add_form").serializeArray()));
+							goto_window("facilities.php?" + $.param($("#facilities_add_form").serializeArray()));
 						})
 						.fail(function() {
 							show_top_notice("danger", "<?php print get_text("Error");?>");
@@ -254,7 +254,7 @@ default:
 						.done(function() {
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
 							$("#function").val("add");
-							goto_window("facilities.php?" +  $.param($("#facilities_edit_form").serializeArray()));
+							goto_window("facilities.php?" + $.param($("#facilities_edit_form").serializeArray()));
 						})
 						.fail(function() {
 							show_top_notice("danger", "<?php print get_text("Error");?>");
