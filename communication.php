@@ -204,15 +204,15 @@ if (is_operator() || is_admin() || is_super()) {
 			var new_infos_array = [];
 
 			function do_send_api_message() {
-				var errmsg = "";
+				var error_message = "";
 				if ($("#frm_text").val() == "") {
-					errmsg += "<?php print get_text("Message text required");?><br>";
+					error_message += "<?php print get_text("Message text required");?><br>";
 				}
 				if (!(($("#select_all").prop("checked")) || ($("#select_all").prop("indeterminate")) || ($("#additional_receiver_0_checkbox_0").prop("checked")))) {
-					errmsg += "<?php print get_text("No receiver available");?><br>";
+					error_message += "<?php print get_text("No receiver available");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				}
 				$("#send_button").prop("disabled", true);
@@ -225,7 +225,7 @@ if (is_operator() || is_admin() || is_super()) {
 					goto_window(<?php print $url_str;?>);
 				})
 				.fail(function() {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -412,14 +412,14 @@ if (is_operator() || is_admin() || is_super()) {
 								}
 							})
 							.fail(function() {
-								alert("error");
+								show_top_notice("danger", "<?php print get_text("Error");?>");
 							});
 						} else {
 							show_top_notice(return_array["appearance"], return_array["message"]);
 						}
 					})
 					.fail(function() {
-						alert("error");
+						show_top_notice("danger", "<?php print get_text("Error");?>");
 					});
 					break;
 				case "api_log_new_dispatch":

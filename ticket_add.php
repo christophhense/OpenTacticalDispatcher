@@ -367,30 +367,30 @@ default:
 		<?php print $incident_location_select_array["facility_coordinates"];?>
 
 			function validate() {
-				var errmsg = "";
+				var error_message = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemstart = moment($("#problemstart").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				if ($("#frm_contact").val() == "") {
-					errmsg += "<?php print get_text("Reported-by is required");?><br>";
+					error_message += "<?php print get_text("Reported-by is required");?><br>";
 				}
 				if ($("#frm_in_types_id").val() == 0) {
-					errmsg += "<?php print get_text("Incident type is required");?><br>";
+					error_message += "<?php print get_text("Incident type is required");?><br>";
 				}
 				if (($("#frm_incident_name").val() == "") && ("<?php print $inc_name_class;?>"  == " mandatory")) {
-					errmsg += "<?php print get_text("Incident name is required");?><br>";
+					error_message += "<?php print get_text("Incident name is required");?><br>";
 				}
 				if (!moment(problemstart, "YYYY-MM-DD HH:mm:ss").isValid()) {
-					errmsg += "<?php print get_text("Invalid problemstart");?><br>";
+					error_message += "<?php print get_text("Invalid problemstart");?><br>";
 				}
 				if (
 					(!moment(scheduled, "YYYY-MM-DD HH:mm:ss").isValid() ||
 					(moment(scheduled, "YYYY-MM-DD HH:mm:ss").isBefore(moment(problemstart, "YYYY-MM-DD HH:mm:ss")))) && 
 					($("#frm_do_scheduled").val() == 1)
 				) {
-					errmsg += "<?php print get_text("Invalid scheduled date");?><br>";
+					error_message += "<?php print get_text("Invalid scheduled date");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					$("#frm_phone").val($("#frm_phone").val().replace(/[^0-9\+\/\-\*\s#,]/g, ""));

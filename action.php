@@ -74,22 +74,22 @@ default:
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate(form_name) {
-				var errmsg = "";
+				var error_message = "";
 				var written = $("#written").val();
 				var asof = moment($("#asof").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
 				if ($("#frm_description").val() == "") {
-					errmsg += "<?php print get_text("ActionDescription is required");?><br>";
+					error_message += "<?php print get_text("ActionDescription is required");?><br>";
 				}
 				if (
 					!moment(asof, "YYYY-MM-DD HH:mm:ss").isValid() ||
 					moment(asof, "YYYY-MM-DD HH:mm:ss").isAfter(moment(datetime_now, "YYYY-MM-DD HH:mm:ss").add(1, 'm')) ||
 					moment(asof, "YYYY-MM-DD HH:mm:ss").isBefore(moment(written, "YYYY-MM-DD HH:mm:ss"))
 				) {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					$("#asof_mysql_timestamp").val(asof);
@@ -164,7 +164,7 @@ default:
 					$("#screen_id").val(new_infos_array['screen']['screen_id']);
 					screen_id_main = new_infos_array['screen']['screen_id'];
 
-					if (change_situation_first_set == 0) { 
+					if (change_situation_first_set == 0) {
 						get_parked_form_data();
 						change_situation_first_set = 1;
 					}
@@ -299,7 +299,7 @@ case "insert":
 			set_window_present("action_edit");
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="action_edit_form">
+		<form id="action_edit_form" name="action_edit_form">
 			<input type="hidden" name="function" value="update">
 			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
 			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
@@ -424,7 +424,7 @@ case "insert":
 								</div>
 							</div>
 						</div>
-					</div>	
+					</div>
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">

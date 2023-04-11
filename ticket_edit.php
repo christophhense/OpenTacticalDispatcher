@@ -347,25 +347,25 @@ default:
 			}
 
 			function validate() {
-				var errmsg = "";
+				var error_message = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemstart = moment($("#problemstart").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemend = moment($("#problemend").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
 				if (($("#frm_status").val() == <?php print $GLOBALS['STATUS_CLOSED'];?>) && ($("#frm_comments").val() == "")) {
-					errmsg += "<?php print get_text("Closed ticket requires disposition data");?><br>";
+					error_message += "<?php print get_text("Closed ticket requires disposition data");?><br>";
 				}
 				if ($("#frm_contact").val() == "") {
-					errmsg += "<?php print get_text("Reported-by is required");?><br>";
+					error_message += "<?php print get_text("Reported-by is required");?><br>";
 				}
 				if ($("#frm_in_types_id").val() == 0)	{
-					errmsg += "<?php print get_text("Incident type is required");?><br>";
+					error_message += "<?php print get_text("Incident type is required");?><br>";
 				}
 				if (($("#frm_incident_name").val() == "") && ("<?php print $inc_name_readonly_or_tabindex_str;?>"  == " readonly")) {
-					errmsg += "<?php print get_text("Incident name is required");?><br>";
+					error_message += "<?php print get_text("Incident name is required");?><br>";
 				}
 				if (!moment(problemstart, "YYYY-MM-DD HH:mm:ss").isValid()) {
-					errmsg += "<?php print get_text("Invalid problemstart");?><br>";
+					error_message += "<?php print get_text("Invalid problemstart");?><br>";
 				}
 				if (
 					(
@@ -375,7 +375,7 @@ default:
 						$("#frm_status").val() == <?php print $GLOBALS['STATUS_SCHEDULED'];?>
 					)
 				) {
-					errmsg += "<?php print get_text("Invalid scheduled date");?><br>";
+					error_message += "<?php print get_text("Invalid scheduled date");?><br>";
 				}
 				if (
 					(
@@ -386,10 +386,10 @@ default:
 						$("#frm_status").val() == <?php print $GLOBALS['STATUS_CLOSED'];?>
 					)
 				) {
-					errmsg += "<?php print get_text("Invalid problemend");?><br>";
+					error_message += "<?php print get_text("Invalid problemend");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					$("#submit_frm_status").val($("#frm_status").val());

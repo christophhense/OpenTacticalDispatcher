@@ -225,7 +225,7 @@ function show_assigns(unit_id) {
 		}
 	})
 	.fail(function() {
-		alert("error");
+		show_top_notice("danger", "Error");
 	});
 }
 
@@ -238,7 +238,9 @@ function install_default_csv_file(result) {
 			var get_infos_array = JSON.parse(data);
 			window.location.href = window.location.href.replace( /[\?#].*|$/, "/configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
 		})
-		.fail(function() {alert("error");});
+		.fail(function() {
+			show_top_notice("danger", "Error");
+		});
 	} else {
 		import_file = "";
 	}
@@ -511,8 +513,13 @@ function set_window_present(current_script) {
 	send_post_message(changes_data);
 }
 
-function test_audio(sound) {
+function send_test_audio(sound) {
 	var changes_data = '{"type":"function","item":"test_audio","action":"' + sound + '"}';
+	send_post_message(changes_data);
+}
+
+function reload_callboard() {
+	var changes_data = '{"type":"script","item":"callboard","action":""}';
 	send_post_message(changes_data);
 }
 
@@ -543,7 +550,7 @@ function do_api_connection_test(periodic, done_message) {
 			}
 		})
 		.fail(function() {
-			alert("error");
+			show_top_notice("danger", "Error");
 	});
 }
 

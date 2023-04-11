@@ -86,12 +86,12 @@ default:
 					show_infobox("<?php print get_text("Please confirm removing");?>", $("#frm_user").val(), false, do_delete_user);
 					return false;
 				}
-				var errmsg = "";
+				var error_message = "";
 				if ($("#frm_user").val() == "")	{
-					errmsg += "<?php print html_entity_decode(get_text('UserID is required.'));?><br>";
+					error_message += "<?php print html_entity_decode(get_text('UserID is required.'));?><br>";
 				}
 				if ((theForm.frm_func.value=="a") && (theForm.frm_user.value.length > 0) && (in_array(ary_users, theForm.frm_user.value.trim())) && (theForm.frm_user.value != "")) {
-					errmsg += "<?php print html_entity_decode(get_text('UserID duplicates existing one.'));?><br>";
+					error_message += "<?php print html_entity_decode(get_text('UserID duplicates existing one.'));?><br>";
 				}
 				var got_level = false;
 				for (i = 0; i < theForm.frm_level.length; i++) {
@@ -100,19 +100,19 @@ default:
 					}
 				}
 				if (!got_level) {
-					errmsg += "<?php print get_text("User LEVEL is required.");?><br>";
+					error_message += "<?php print get_text("User LEVEL is required.");?><br>";
 				}	
 				if (theForm.frm_passwd.value != theForm.frm_passwd_confirm.value) {
-					errmsg += "<?php print get_text("Passwd and confirmation must match.");?><br>";
+					error_message += "<?php print get_text("Passwd and confirmation must match.");?><br>";
 				}
 				if ((theForm.frm_func.value == "a") && (theForm.frm_passwd.value == "")) {
-					errmsg += "<?php print get_text('PASSWORD is required.');?><br>";
+					error_message += "<?php print get_text('PASSWORD is required.');?><br>";
 				}
 				if ((theForm.frm_passwd.value.trim().length > 0) && (theForm.frm_passwd.value.trim().length < 6)) {
-					errmsg += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
+					error_message += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
@@ -184,17 +184,17 @@ case "profile":
 		<script>
 
 			function validate_profile(theForm) {
-				var errmsg = "";
+				var error_message = "";
 				if (theForm.frm_passwd.value!=theForm.frm_passwd_confirm.value) {
-					errmsg += "<?php print get_text("Passwd and confirmation must match.");?><br>";
+					error_message += "<?php print get_text("Passwd and confirmation must match.");?><br>";
 				} else {
 					if ((theForm.frm_passwd.value.trim() == "") || (theForm.frm_passwd.value.trim().length < 6)) {
-						errmsg += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
+						error_message += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
 					}
 				}
 
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 //					if(theForm.frm_passwd.value != "") {
@@ -798,7 +798,7 @@ if (is_super()) {
 foreach ($sound_names_array as $value) {
 	print "<tr" . get_help_text_str($value) . ">";
 	print "<th>" . get_text($value) . ":</th>";
-	print "<td>&nbsp;</td><td><a onclick='test_audio(\"" . $value . "\");'>" . get_text("play it") . "</a></td>";//
+	print "<td>&nbsp;</td><td><a onclick='send_test_audio(\"" . $value . "\");'>" . get_text("play it") . "</a></td>";//
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_" . $value . "' value='" . get_variable("_" . $value) . "'></td>";
 	print "<td>&nbsp;</td><td><input class='form-control'" . $disable_str . " cols=40 name='_alter_" . $value . "' value='" . get_variable("_alter_" . $value) . "'></td>";
  	print "\n";;
@@ -983,7 +983,7 @@ case "incident_numbers":
 					return null;
 				}
 
-				var errmsg = "";
+				var error_message = "";
 				switch (get_radio_val(theForm)) {
 				case 0:
 					theForm.frm_do_nature.value = 0;
@@ -993,33 +993,33 @@ case "incident_numbers":
 					break;
 				case 1:
 					if (isNaN(theForm.frm_number.value.trim())) {
-						errmsg += "<?php print get_text("Next number must be numeric");?><br>";
+						error_message += "<?php print get_text("Next number must be numeric");?><br>";
 					} else {
 						if (!(theForm.frm_number.value.trim() > 0)) {
-							errmsg += "<?php print get_text("Next number must be 1 or greater");?><br>";
+							error_message += "<?php print get_text("Next number must be 1 or greater");?><br>";
 						}
 					}
 					theForm.frm_do_nature.value = 0;
 					break;
 				case 2:
 					if ((theForm.frm_label.value.trim()) == "") {
-						errmsg += "<?php print get_text("Label required  with this option");?><br>";
+						error_message += "<?php print get_text("Label required  with this option");?><br>";
 					}
 					if (isNaN(theForm.frm_number.value.trim())) {
-						errmsg += "<?php print get_text("Next number must be numeric");?><br>";
+						error_message += "<?php print get_text("Next number must be numeric");?><br>";
 					} else {
 						if (!(theForm.frm_number.value.trim() > 0)) {
-							errmsg += "<?php print get_text("Next number must be 1 or greater");?><br>";
+							error_message += "<?php print get_text("Next number must be 1 or greater");?><br>";
 						}
 					}	
 					theForm.frm_do_nature.value = 0;
 					break;
 				case 3:
 					if (isNaN(theForm.frm_number.value.trim())) {
-						errmsg += "<?php print get_text("Next number must be numeric");?><br>";
+						error_message += "<?php print get_text("Next number must be numeric");?><br>";
 					} else {
 					if (!(theForm.frm_number.value.trim() > 0)) {
-							errmsg += "<?php print get_text("Next number must be 1 or greater");?><br>";
+							error_message += "<?php print get_text("Next number must be 1 or greater");?><br>";
 						}
 					}
 					theForm.frm_do_nature.value = 0;
@@ -1051,8 +1051,8 @@ case "incident_numbers":
 				default:
 					alert("ERROR @ " + "<?php print __LINE__;?>");
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg)
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message)
 					return false;
 				} else {
 					theForm.submit();
@@ -1232,16 +1232,16 @@ case "api":
 		}
 
 		function submit_api_settings() {
-			var errmsg = "";
+			var error_message = "";
 			if (
 				($("#status_select_0").val() == $("#status_select_1").val()) ||
 				($("#status_select_0").val() == $("#status_select_2").val()) ||
 				($("#status_select_1").val() == $("#status_select_2").val())
 			) {
-				errmsg = "<?php print get_text("Status-Values must be different.");?><br>";
+				error_message = "<?php print get_text("Status-Values must be different.");?><br>";
 			}
-			if (errmsg != "") {
-				show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+			if (error_message != "") {
+				show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 			} else {
 				frm_api_config.submit();
 			}

@@ -238,7 +238,7 @@ default:
 					$("#severity_high").html($("#count_severity_high").html());
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -252,21 +252,21 @@ default:
 			}
 
 			function closed_interval_changed() {
-				var errmsg = "";
+				var error_message = "";
 				if ((moment($("#closed_interval_start").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#closed_interval_start_mysql_timestamp").val(moment($("#closed_interval_start").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 					set_closed_interval("start", $("#closed_interval_start_mysql_timestamp").val());
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
 				if ((moment($("#closed_interval_end").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#closed_interval_end_mysql_timestamp").val(moment($("#closed_interval_end").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 					set_closed_interval("end", $("#closed_interval_end_mysql_timestamp").val());
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
 				get_tickets();
-				return errmsg;
+				return error_message;
 			}
 
 			function set_closed_interval(type, time) {
@@ -283,7 +283,7 @@ default:
 				.done(function () {
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 			}
 
@@ -292,7 +292,7 @@ default:
 				.done(function () {
 				})
 				.fail(function () {
-					alert("error");
+					show_top_notice("danger", "<?php print get_text("Error");?>");
 				});
 				$("#" + tab_id).addClass("active");
 				if (tab_id == "tickets_closed") {

@@ -248,8 +248,8 @@ default:
 				}
 			}
 
-			function post_the_form(form_id) {
-				$.post("units.php", $(form_id).serialize())
+			function send_form_with_post(unit_form) {
+				$.post("units.php", $(unit_form).serialize())
 				.done(function (data) {
 					show_top_notice("success", data);
 					goto_window("units.php");
@@ -260,75 +260,81 @@ default:
 				});
 			}
 
-			function validate(theForm) {
-				theForm.frm_mobile.value = (theForm.frm_mob_disp.checked)? 1 : 0;
-				var errmsg = "";
-				if (theForm.frm_handle.value.trim()=="") {
-					errmsg += "<?php print get_text("Unit HANDLE is required.");?><br>";
+			function validate() {
+				if ($("#frm_mob_disp").prop("checked")) {
+					$("#frm_mobile").val(1);
+				} else {
+					$("#frm_mobile").val(0);
 				}
-				if (theForm.frm_name.value.trim()=="") {
-					errmsg += "<?php print get_text("Unit NAME is required.");?><br>";
+				var error_message = "";
+				if ($("#frm_handle").val() == "") {
+					error_message += "<?php print get_text("Unit HANDLE is required.");?><br>";
 				}
-				if (theForm.frm_type.options[theForm.frm_type.selectedIndex].value==0) {
-					errmsg += "<?php print get_text("Unit type selection is required.");?><br>";
-				}	
-				if (theForm.frm_un_status_id.options[theForm.frm_un_status_id.selectedIndex].value==0) {
-					errmsg += "<?php print get_text("Units STATUS is required.");?><br>";
+				if ($("#frm_name").val() == "") {
+					error_message += "<?php print get_text("Unit NAME is required.");?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if ($("#frm_type").prop('selectedIndex') == 0) {
+					error_message += "<?php print get_text("Unit type selection is required.");?><br>";
+				}
+				if ($("#frm_un_status_id").prop('selectedIndex') == 0) {
+					error_message += "<?php print get_text("Units STATUS is required.");?><br>";
+				}
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					return true;
 				}
 			}
 
-			function submit_form(form_name) {
-				if (validate(form_name)) {
-					post_the_form(form_name);
-				}
-			}
-
 			function copy_unit() {
+				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#function").val("add");
-				show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
-				$("#edit_form").submit();
+				goto_window("units.php?" + $.param($("#units_edit_form").serializeArray()));
 			}
 
 			function save_and_copy_unit(add) {
 				if (add) {
-					if (validate(add_form)) {
-						$.post("units.php", $("#add_form").serialize(), function(data) {
+					if (validate()) {
+						$.post("units.php", $("#units_add_form").serialize(), function(data) {
 						})
 						.done(function() {
-							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#add_form").submit();
+							$("#function").val("add");
+							goto_window("units.php?" + $.param($("#units_add_form").serializeArray()));
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
+							goto_window("units.php");
 						});	
 					}
 				} else {
-					if (validate(edit_form)) {
-						$.post("units.php", $("#edit_form").serialize(), function(data) {
+					if (validate()) {
+						$.post("units.php", $("#units_edit_form").serialize(), function(data) {
 						})
 						.done(function() {
-							$("#function").val("add");
 							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#edit_form").submit();
+							$("#function").val("add");
+							goto_window("units.php?" + $.param($("#units_edit_form").serializeArray()));
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
+							goto_window("units.php");
 						});
 					}
+				}
+			}
+
+			function submit_form(unit_form) {
+				if (validate()) {
+					send_form_with_post(unit_form);
 				}
 			}
 
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					post_the_form("#edit_form")
+					send_form_with_post("#units_edit_form")
 				}
 			}
 
@@ -358,20 +364,20 @@ case "sort":
 	break;
 case "add":
 	$unit_type_id = 0;
-	if (isset ($_POST['frm_type'])) {
-		$unit_type_id = $_POST['frm_type'];
+	if (isset ($_GET['frm_type'])) {
+		$unit_type_id = $_GET['frm_type'];
 	}
 	$unit_status_id = 0;
-	if (isset ($_POST['frm_un_status_id'])) {
-		$unit_status_id = $_POST['frm_un_status_id'];
+	if (isset ($_GET['frm_un_status_id'])) {
+		$unit_status_id = $_GET['frm_un_status_id'];
 	}
 	$multi_dispachable = 1;
-	if (isset ($_POST['frm_multi'])) {
-		$multi_dispachable = $_POST['frm_multi'];
+	if (isset ($_GET['frm_multi'])) {
+		$multi_dispachable = $_GET['frm_multi'];
 	}
 	$guard_house_id = 0;
-	if (isset ($_POST['frm_guard_house'])) {
-		$guard_house_id = $_POST['frm_guard_house'];
+	if (isset ($_GET['frm_guard_house'])) {
+		$guard_house_id = $_GET['frm_guard_house'];
 	}
 	?>
 		<script>
@@ -386,16 +392,16 @@ case "add":
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div class="container-fluid" id="main_container">
-			<form id="add_form" name="add_form" method="post" action="<?php echo basename(__FILE__);?>">
-				<input type="hidden" id="function" name="function" value="insert">
-				<input type="hidden" name="frm_group[]" value="1">
-				<input type="hidden" name="frm_lat" value="">
-				<input type="hidden" name="frm_lng" value="">
-				<input type="hidden" name="frm_icon_url" size=3 maxlength=3 value="">
-				<input type="hidden" name="frm_mobile" value=0>
+		<div id="main_container" class="container-fluid">
+			<form id="units_add_form" name="units_add_form">
+				<input id="function" name="function" type="hidden" value="insert">
+				<input id="frm_group[]" name="frm_group[]" type="hidden" value="1">
+				<input id="frm_lat" name="frm_lat" type="hidden" value="">
+				<input id="frm_lng"name="frm_lng" type="hidden" value="">
+				<input id="frm_icon_url"name="frm_icon_url" type="hidden" size=3 maxlength=3 value="">
+				<input id="frm_mobile"name="frm_mobile" type="hidden" value=0>
 				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Add Unit") . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
@@ -409,13 +415,13 @@ case "add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.add_form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="$('#units_add_form').trigger('reset');"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.add_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form('#units_add_form');"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
@@ -434,13 +440,13 @@ case "add":
 									<tr>
 										<th style="border-top: 0px;"<?php print get_help_text_str("_ResHand");?>><?php print get_text("Unit handle");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
 										<td style="border-top: 0px;" colspan=3>
-											<input type="text" id="frm_handle" name="frm_handle" class="form-control mandatory" tabindex=1 value="<?php if (isset ($_POST['frm_handle'])) {print $_POST['frm_handle'];}?>">
+											<input id="frm_handle" name="frm_handle" type="text" class="form-control mandatory" tabindex=1 value="<?php if (isset ($_GET['frm_handle'])) {print $_GET['frm_handle'];}?>">
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResName");?>><?php print get_text("Unit name");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
 										<td colspan=3>
-											<input type="text" name="frm_name" class="form-control mandatory" tabindex=2 value="<?php if (isset ($_POST['frm_name'])) {print $_POST['frm_name'];}?>">
+											<input id="frm_name" name="frm_name" type="text" class="form-control mandatory" tabindex=2 value="<?php if (isset ($_GET['frm_name'])) {print $_GET['frm_name'];}?>">
 										</td>
 									</tr>
 									<tr>
@@ -450,7 +456,7 @@ case "add":
 										</th>
 										<td colspan=3>
 											<div>
-												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_POST['frm_smsg_id'])) {print $_POST['frm_smsg_id'];}?></textarea>
+												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_GET['frm_smsg_id'])) {print $_GET['frm_smsg_id'];}?></textarea>
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
@@ -461,7 +467,7 @@ case "add":
 										<th<?php print $help_text_phone;?>><?php print get_text("Cellular phone");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="text" id="frm_phone" name="frm_phone" class="form-control" tabindex=6 value="<?php if (isset ($_POST['frm_phone'])) {print $_POST['frm_phone'];}?>">
+												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php if (isset ($_GET['frm_phone'])) {print $_GET['frm_phone'];}?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_phone");?>
@@ -472,7 +478,7 @@ case "add":
 										<th<?php print get_help_text_str("_ResConV");?>><?php print get_text("Email");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="email" id="frm_unit_email" name="frm_unit_email" class="form-control" tabindex=8 value="<?php if (isset ($_POST['frm_unit_email'])) {print $_POST['frm_unit_email'];}?>">
+												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php if (isset ($_GET['frm_unit_email'])) {print $_GET['frm_unit_email'];}?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_email");?>
@@ -499,14 +505,14 @@ case "add":
 											<?php show_unit_types_select($unit_type_id);?>
 											<div style="float: right;">
 												<span style="display: none;"<?php print get_help_text_str("_ResMobi");?>>
-													<strong><?php print get_text("Mobile");?>:</strong> <input type="checkbox" name="frm_mob_disp">
+													<strong><?php print get_text("Mobile");?>:</strong><input type="checkbox" id="frm_mob_disp" name="frm_mob_disp">
 												</span>
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResStat");?>><?php print get_text("Status");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
-										<td colspan=3><?php show_unit_status_select(0, 0, 1);?></td>
+										<td colspan=3><?php show_unit_status_select($unit_status_id, 0, 1);?></td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResMult");?>><?php print get_text("Dispatchable");?>:</th>
@@ -519,19 +525,19 @@ case "add":
 									<tr>
 										<th<?php print get_help_text_str("_ResDesc");?>><?php print get_text("Description");?>:</th>
 										<td colspan=3>
-											<textarea name="frm_descr" class="form-control" tabindex=15 rows=2><?php if (isset ($_POST['frm_descr'])) {print $_POST['frm_descr'];}?></textarea>
+											<textarea id="frm_descr" name="frm_descr" class="form-control" tabindex=15 rows=2><?php if (isset ($_GET['frm_descr'])) {print $_GET['frm_descr'];}?></textarea>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResCapa");?>><?php print get_text("Capability");?>:</th>
 										<td colspan=3>
-											<textarea name="frm_capab" class="form-control"  tabindex=16 rows=2><?php if (isset ($_POST['frm_capab'])) {print $_POST['frm_capab'];}?></textarea>
+											<textarea id="frm_capab" name="frm_capab" class="form-control"  tabindex=16 rows=2><?php if (isset ($_GET['frm_capab'])) {print $_GET['frm_capab'];}?></textarea>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResConN");?>><?php print get_text("Contact name");?>:</th>
 										<td colspan=3>
-											<input type="text" name="frm_contact_name" class="form-control" tabindex=17 value="<?php if (isset ($_POST['frm_contact_name'])) {print $_POST['frm_contact_name'];}?>">
+											<input id="frm_contact_name" name="frm_contact_name" type="text" class="form-control" tabindex=17 value="<?php if (isset ($_GET['frm_contact_name'])) {print $_GET['frm_contact_name'];}?>">
 										</td>
 									</tr>
 									<tr>
@@ -604,21 +610,21 @@ case "edit":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form method="post" id="edit_form" name="edit_form" action="<?php echo basename(__FILE__);?>">
-				<input type="hidden" id="function" name="function" value="update">
-				<input type="hidden" name="frm_un_status_last" value="<?php print $row['unit_status_id'];?>"></input>
-				<input type="hidden" name="frm_group[]" value="1">
-				<input type="hidden" name="frm_id" value="<?php print $_GET['id'];?>">
-				<input type="hidden" name="frm_lat" value="<?php print $row['lat'];?>">
-				<input type="hidden" name="frm_lng" value="<?php print $row['lng'];?>">
-				<input type="hidden" name="frm_icon_url" size=3 maxlength=3 value="<?php print remove_nls($row['icon_url']);?>">
-				<input type="hidden" name="frm_mobile" value=<?php print $row['mobile'];?>>
-				<input type="hidden" name="frm_exist_groups" value="<?php print (isset($alloc_groups))? $alloc_groups : 1;?>">	
-				<input type="hidden" name="frm_status_updated" value="<?php print $row['status_updated'];?>">		
-				<input type="hidden" name="frm_status_update" value=0>	
-				<input type="hidden" id="frm_remove" name="frm_remove" value="false">
+			<form id="units_edit_form" name="units_edit_form">
+				<input id="function" name="function" type="hidden" value="update">
+				<input id="frm_un_status_last" name="frm_un_status_last" type="hidden" value="<?php print $row['unit_status_id'];?>"></input>
+				<input id="frm_group[]" name="frm_group[]" type="hidden" value="1">
+				<input id="frm_id" name="frm_id"  type="hidden"value="<?php print $_GET['id'];?>">
+				<input id="frm_lat" name="frm_lat" type="hidden" value="<?php print $row['lat'];?>">
+				<input id="frm_lng" name="frm_lng" type="hidden" name="frm_lng" value="<?php print $row['lng'];?>">
+				<input id="frm_icon_url" name="frm_icon_url" type="hidden" size=3 maxlength=3 value="<?php print remove_nls($row['icon_url']);?>">
+				<input id="frm_mobile" name="frm_mobile" type="hidden" value=<?php print $row['mobile'];?>>
+				<input id="frm_exist_groups" name="frm_exist_groups" type="hidden" value="<?php print (isset($alloc_groups))? $alloc_groups : 1;?>">
+				<input id="frm_status_updated" name="frm_status_updated" type="hidden" value="<?php print $row['status_updated'];?>">
+				<input id="frm_status_update" name="frm_status_update" type="hidden" value=0>
+				<input id="frm_remove" name="frm_remove" type="hidden" value="false">
 				<div class="row infostring">
-					<div<?php print get_table_id_title_str("unit", $_GET['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle"<?php print get_table_id_title_str("unit", $_GET['id']);?> class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit unit data") . get_table_id($_GET['id']) . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
@@ -632,7 +638,7 @@ case "edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="document.edit_form.reset(); this.form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=20 onclick="$('#units_edit_form').trigger('reset');"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -641,7 +647,7 @@ case "edit":
 									<?php if ($copy_button == true) { ?>
 										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="copy_unit();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form(document.edit_form);"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form('#units_edit_form');"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"<?php print $edit_disabled_str;?>>
 											<span class="caret"></span>
 										</button>
@@ -669,7 +675,7 @@ case "edit":
 											<?php print get_text("Unit handle");?>:
 										</th>
 										<td style="border-top: 0px;" colspan=3>
-											<input type="text" name="frm_handle" class="form-control" value="<?php print remove_nls($row['handle']);?>" readonly>
+											<input id="frm_handle" name="frm_handle" type="text" class="form-control" value="<?php print remove_nls($row['handle']);?>" readonly>
 										</td>
 									</tr>
 									<tr>
@@ -677,7 +683,7 @@ case "edit":
 											<?php print get_text("Unit name");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span>
 										</th>
 										<td colspan=3>
-											<input type="text" name="frm_name" id="frm_name" class="form-control mandatory" tabindex=2 value="<?php print remove_nls($row['unit_name']);?>">
+											<input id="frm_name" name="frm_name" type="text" class="form-control mandatory" tabindex=2 value="<?php print remove_nls($row['unit_name']);?>">
 										</td>
 									</tr>
 									<tr>
@@ -698,7 +704,7 @@ case "edit":
 										<th<?php print $help_text_phone;?>><?php print get_text("Cellular phone");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="text" id="frm_phone" name="frm_phone" class="form-control" tabindex=6 value="<?php print remove_nls($row['unit_phone']);?>">
+												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php print remove_nls($row['unit_phone']);?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_phone");?>
@@ -709,7 +715,7 @@ case "edit":
 										<th<?php print get_help_text_str("_ResConV");?>><?php print get_text("Email");?>:</th>
 										<td colspan=3>
 											<div>
-												<input type="email" id="frm_unit_email" name="frm_unit_email" class="form-control" tabindex=8 value="<?php print remove_nls($row['unit_email']);?>">
+												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php print remove_nls($row['unit_email']);?>">
 											</div>
 											<div>
 												<?php print get_unit_select_str("reporting_channel_email");?>
@@ -736,7 +742,7 @@ case "edit":
 											<?php show_unit_types_select($row['type']);?>
 											<div style="float: right;">
 												<span style="display: none;"<?php print get_help_text_str("_ResMobi");?>>
-													<strong><?php print get_text("Mobile");?>:</strong> <input type="checkbox" name="frm_mob_disp" <?php print $mobile_checked;?>>
+													<strong><?php print get_text("Mobile");?>:</strong><input type="checkbox" id="frm_mob_disp" name="frm_mob_disp" <?php print $mobile_checked;?>>
 												</span>
 											</div>
 										</td>
@@ -755,15 +761,15 @@ case "edit":
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResDesc");?>><?php print get_text("Description");?>:</th>
-										<td colspan=3><textarea name="frm_descr" class="form-control" tabindex=15 rows=2><?php print remove_nls($row['description']);?></textarea></td>
+										<td colspan=3><textarea id="frm_descr" name="frm_descr" class="form-control" tabindex=15 rows=2><?php print remove_nls($row['description']);?></textarea></td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResCapa");?>><?php print get_text("Capability");?>:</th>	
-										<td colspan=3><textarea name="frm_capab" class="form-control" tabindex=16 rows=2><?php print remove_nls($row['capabilities']);?></textarea></td>
+										<td colspan=3><textarea id="frm_capab" name="frm_capab" class="form-control" tabindex=16 rows=2><?php print remove_nls($row['capabilities']);?></textarea></td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResConN");?>><?php print get_text("Contact name");?>:</th>
-										<td colspan=3><input type="text" name="frm_contact_name" class="form-control" tabindex=17 value="<?php print remove_nls($row['contact_name']);?>" /></td>
+										<td colspan=3><input id="frm_contact_name" name="frm_contact_name" type="text" class="form-control" tabindex=17 value="<?php print remove_nls($row['contact_name']);?>"></td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("AdminPerms");?>><?php print get_text("Admin permission");?>:</th>

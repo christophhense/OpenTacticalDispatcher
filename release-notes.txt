@@ -20,6 +20,9 @@
 
 Activities sorted by application function.
 
+* Navigation
+	CHANGE
+		Change popup to top notice Danger No Server Connection
 * Situation
 	NONE
 * Callboard
@@ -58,6 +61,8 @@ Activities sorted by application function.
 	NONE
 * Reports
 	NONE
+* Settings - overview
+	NONE
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account
@@ -67,8 +72,7 @@ Activities sorted by application function.
 * Settings - user accounts - in-/export
 	NONE
 * Settings - general - notification sounds
-	CHANGE
-		postMessage outsourced to functions
+	NONE
 * Settings - general - General Settings
 	NONE
 * Settings - general - ticket name

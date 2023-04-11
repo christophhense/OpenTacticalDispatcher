@@ -355,7 +355,7 @@ case "table":
 				show_top_notice("success", "<?php print get_text("Status update applied");?>");
 			})
 			.fail(function() {
-				alert("error");
+				show_top_notice("danger", "<?php print get_text("Error");?>");
 			});	
 		}
 
@@ -422,7 +422,7 @@ case "table":
 							show_top_notice("success", "<?php print get_text("Assign calls deleted");?>");
 						})
 						.fail(function() {
-							alert("error");
+							show_top_notice("danger", "<?php print get_text("Error");?>");
 						});	
 						break;
 					case "d":
@@ -432,7 +432,7 @@ case "table":
 								show_top_notice("success", "<?php print get_text("Assign deleted");?>");
 							})
 							.fail(function() {
-								alert("error");
+								show_top_notice("danger", "<?php print get_text("Error");?>");
 							});
 						}
 						break;
@@ -504,7 +504,7 @@ case "table":
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<button class="btn btn-xs btn-default" type="button" id="refresh_button" onclick="window.location.reload();" style="display: inline;"><?php print get_text("Refresh");?></button>
+								<button class="btn btn-xs btn-default" type="button" id="refresh_button" onclick="reload_callboard();" style="display: inline;"><?php print get_text("Refresh");?></button>
 	<?php
 		if (is_super() || is_admin() || is_operator()) {
 	?>

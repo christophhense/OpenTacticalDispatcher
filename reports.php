@@ -247,9 +247,10 @@ case "log_report":
 	}
 	?>
 	<?php print show_day_night_style();?>
-	<div style="text-align: center; height: 50px;"><h3><strong><?php print get_text("Log report");?></strong></h3></div>
 	<div class="panel panel-default" style="padding: 0px;">
+		<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;"><tr><th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Log report");?></strong></h3></th></tr></table>
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
+			<tr style="height: 10px;"><th  colspan=6></th></tr>
 			<?php show_log_report("reports", $start_date, $end_date , $where, $_SESSION["reports_filter"]);?>
 		</table>
 	</div>
@@ -282,19 +283,19 @@ default:
 		<script>
 
 			function query_changed() {
-				var errmsg = "";
+				var error_message = "";
 				if ((moment($("#start").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#start_mysql_timestamp").val(moment($("#start").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
 				if ((moment($("#end").val(), "<?php print $moment_date_format;?>").isValid())) {
 					$("#end_mysql_timestamp").val(moment($("#end").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss"));
 				} else {
-					errmsg += "<?php print get_text('date/time error');?><br>";
+					error_message += "<?php print get_text('date/time error');?><br>";
 				}
-				if (errmsg != "") {
-					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", errmsg);
+				if (error_message != "") {
+					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 					if ($("#frm_incident_facility").val() > 0) {
@@ -383,7 +384,7 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form name="reports_form">
+		<form id="reports_form" name="reports_form">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
