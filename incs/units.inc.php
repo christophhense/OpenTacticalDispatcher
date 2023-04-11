@@ -113,7 +113,7 @@ function show_unit_types_select($unit_type = 0) {
 		?>
 <select id="frm_type" name="frm_type" class="form-control mandatory" tabindex=11<?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;">
 	<?php
-		if (!$unit_type) {
+		if ($unit_type == 0) {
 	?>
 	<option value=0 selected><?php print get_text("Select");?></option>
 	<?php

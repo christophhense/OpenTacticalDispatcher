@@ -624,7 +624,7 @@ case "edit":
 				<input id="frm_status_update" name="frm_status_update" type="hidden" value=0>
 				<input id="frm_remove" name="frm_remove" type="hidden" value="false">
 				<div class="row infostring">
-					<div<?php print get_table_id_title_str("unit", $_GET['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle"<?php print get_table_id_title_str("unit", $_GET['id']);?> class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit unit data") . get_table_id($_GET['id']) . " - " . get_variable("page_caption");?>
 					</div>
 				</div>

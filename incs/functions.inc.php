@@ -2719,7 +2719,7 @@ function get_admin_permission_select_str($function, $selected = 0) {
 	$disabled_str ="";
 	}
 	?>
-<select class="form-control"<?php print $tabindex;?> name="frm_adminperms"<?php print $disabled_str;?>>
+<select id="frm_adminperms" name="frm_adminperms" class="form-control"<?php print $tabindex;?> <?php print $disabled_str;?>>
 	<option value=0<?php print $select_str_0;?>><?php print get_text("Admin and superadmin");?></option>
 	<option value=1<?php print $select_str_1;?>><?php print get_text("Superadmin only");?></option>
 </select>
