@@ -111,7 +111,7 @@ function show_unit_types_select($unit_type = 0) {
 			$style_str = " style=' background-color: " . $row_selected_unit_type['bg_color'] . "; color: " . $row_selected_unit_type['text_color'] . ";'";
 		}
 		?>
-<select name="frm_type" class="form-control mandatory" tabindex=11<?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;">
+<select id="frm_type" name="frm_type" class="form-control mandatory" tabindex=11<?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;">
 	<?php
 		if (!$unit_type) {
 	?>
@@ -128,7 +128,7 @@ function show_unit_types_select($unit_type = 0) {
 		unset ($result_selected_unit_type);
 	} else {
 	?>
-<select name="frm_type" class="form-control"  style="background-color: #000000; color: #FFFFFF;">
+<select id="frm_type" name="frm_type" class="form-control" style="background-color: #000000; color: #FFFFFF;">
 	<option value=0><?php print get_text("No data");?></option>
 	<?php
 	}
@@ -164,7 +164,7 @@ function show_unit_status_select($unit_status, $num_of_tickets = 0, $multi = 1) 
 			}
 		}
 	?>
-<select name="frm_un_status_id" class="form-control mandatory" tabindex=12<?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;<?php print $frm_status_updated_str;?>;" <?php print $num_of_tickets;?>>
+<select id="frm_un_status_id" name="frm_un_status_id" class="form-control mandatory" tabindex=12<?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;<?php print $frm_status_updated_str;?>;" <?php print $num_of_tickets;?>>
 	<?php
 		if ($unit_status == 0) {
 	?>
@@ -199,7 +199,7 @@ function show_unit_status_select($unit_status, $num_of_tickets = 0, $multi = 1) 
 		}
 	} else {
 	?>
-<select name="frm_un_status_id" class="form-control" style="background-color: #000000; color: #FFFFFF;">
+<select id="frm_un_status_id" name="frm_un_status_id" class="form-control" style="background-color: #000000; color: #FFFFFF;">
 	<option value=0><?php print get_text("No data");?></option>
 	<?php
 	}
@@ -224,7 +224,7 @@ function show_multiple_select($selected = 1) {
 	default:
 	}
 	?>
-<select class="form-control" tabindex=13 name="frm_multi">
+<select id="frm_multi" name="frm_multi" class="form-control" tabindex=13>
 	<option value=0<?php print $select_str_0;?>><?php print get_text("Not dispatchable");?></option>
 	<option value=1<?php print $select_str_1;?>><?php print get_text("Once dispatchable");?></option>
 	<option value=2<?php print $select_str_2;?>><?php print get_text("Multiple dispatchable");?></option>
