@@ -99,7 +99,7 @@ function show_unit_types_select($unit_type = 0) {
 	$style_str = "";
 	if (db_affected_rows($result_unit_types) > 0) {
 		$style_str = "";
-		if ($unit_type) {
+		if ($unit_type > 0) {
 
 			$query_selected_unit_type = "SELECT `bg_color`, " .
 				"`text_color` " .

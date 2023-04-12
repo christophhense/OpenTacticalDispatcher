@@ -212,10 +212,10 @@ default:
 				if ($("#frm_name").val() == "") {
 					error_message += "<?php print get_text("Facility NAME is required.");?><br>";
 				}
-				if ($("#frm_type").prop('selectedIndex') == 0) {
+				if ($("#frm_type").val() == 0) {
 					error_message += "<?php print get_text("Facility type selection is required.");?><br>";
 				}
-				if ($("#frm_status_id").prop('selectedIndex') == 0) {
+				if ($("#frm_status_id").val() == 0) {
 					error_message += "<?php print get_text("Facility STATUS is required.");?><br>";
 				}
 				if (error_message != "") {
