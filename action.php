@@ -71,7 +71,7 @@ default:
 			var new_infos_array = [];
 			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
-			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
+			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
 			function validate(form_name) {
 				var error_message = "";
@@ -300,9 +300,9 @@ case "insert":
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="action_edit_form" name="action_edit_form">
-			<input type="hidden" name="function" value="update">
-			<input type="hidden" name="action_id" value="<?php print $_GET['action_id'];?>">
-			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input id="function" name="function" type="hidden" value="update">
+			<input id="action_id" name="action_id" type="hidden" value="<?php print $_GET['action_id'];?>">
+			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("action", $_GET['action_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -324,7 +324,7 @@ case "insert":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_edit_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_edit_form');" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -352,9 +352,9 @@ case "insert":
 										<th><?php print get_text("As of") . ":";?></th>
 										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
 										<td>
-											<input type="hidden" class="form-control" id="written" value="<?php print $row_ticket['problemstart'];?>">
-											<input type="text" class="form-control" id="asof" value="<?php print date(get_variable("date_format"));?>" readonly>
-											<input type="hidden" class="form-control" id="asof_mysql_timestamp" name="asof" value="<?php print $datetime_now;?>">
+											<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
+											<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
+											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
 										</td>
 									</tr>
 									<tr style="height: 45px;">
@@ -397,11 +397,11 @@ case "insert":
 		</script>
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="action_add_form" name="action_add_form">
-			<input type="hidden" name="function" value="insert">
-			<input type="hidden" name="ticket_id" value="<?php print $_GET['ticket_id'];?>">
+			<input id="function" name="function" type="hidden" value="insert">
+			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $_GET['ticket_id'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Add Action") . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
@@ -420,7 +420,7 @@ case "insert":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate(action_add_form);" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_add_form');" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -448,9 +448,9 @@ case "insert":
 										<th><?php print get_text("As of") . ":";?></th>
 										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
 										<td>
-											<input type="hidden" class="form-control" id="written" value="<?php print $row_ticket['problemstart'];?>">
-											<input type="text" class="form-control" id="asof" name="asof_textfield" value="<?php print date(get_variable("date_format"));?>" readonly>
-											<input type="hidden" class="form-control" id="asof_mysql_timestamp" name="asof">
+											<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
+											<input id="asof" name="asof_textfield" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
+											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control">
 										</td>
 									</tr>
 								</table>
