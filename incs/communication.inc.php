@@ -13,7 +13,6 @@ function do_email($addresses, $subject = "", $text = "", $attachment = "") {
 	$temp = trim(get_variable("_api_email_smtp_host"));
 	if ($temp != "mail.example.com") {
 		$mail->Timeout = 3;	//seconds
-		$mail->Timelimit = 3;	//seconds
 		if (preg_match("/[a-zA-Z]{3,6}:\/\//", $temp, $match)) {
 			$protocol = substr($match[0], 0, -3);
 			if (($protocol == "tls") && ($protocol == "smtps")) {
