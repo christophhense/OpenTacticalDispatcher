@@ -168,8 +168,8 @@ case "profile":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	if ($_SESSION['user_id'] < 0 OR check_for_rows($query) == 0) {
-		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION[user_id] . "'." . "<br>";
-		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION[user_id] . "'." . "  ";
+		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
+		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "  ";
 	} else {
 
 		$query	= "SELECT * " .
