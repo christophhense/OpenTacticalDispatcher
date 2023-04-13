@@ -944,7 +944,9 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 		$text_postscript_last_part .= "50 " . $i . " moveto\n" . "(" . $key . ") show\n";
 		$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
-			$result = do_print(substr($key["address"], 8), utf8_decode($text_postscript_first_part . "(" . $key["handle"] . ")" . $text_postscript_last_part));
+			$subscriber_url = substr($key["address"], 8);
+			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ")" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
+			$result = do_print($subscriber_url, $subscriber_message);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
 				$sent_ok++;
