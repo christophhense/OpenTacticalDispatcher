@@ -190,7 +190,7 @@ function db_affected_rows($result, $file = "", $line = "") {
 //http://php.net/manual/de/pdostatement.fetchcolumn.php
 	$error_message = $GLOBALS['DATABASE_LINK']->errorInfo();
 	@error_log($error_message[2] . " in " . basename($file) . " line " . $line . "\r\n");
-	return $back;
+//	return $back;
 //	return $result->rowCount();
 }
 
@@ -572,7 +572,7 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 		</tr>
 	</table>
 	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
-		<tr style="heigth: 0px;">
+		<tr style="height: 0px;">
 			<td style="text-align: left; width: 15%;"></td>
 			<td style="text-align: left; width: 15%;"></td>
 			<th style="text-align: right; width: 25%;"></th>
