@@ -6,7 +6,7 @@ require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/assign.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $back = "";
 $url_back = "";
@@ -896,7 +896,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

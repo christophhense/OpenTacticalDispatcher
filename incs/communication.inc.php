@@ -1586,7 +1586,7 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 		</tr>
 	</table>
 	<?php
-	show_infobox();
+	show_infobox("small");
 }
 
 function show_unit($row, $assign, $count_receiver, $destination_regexp) {

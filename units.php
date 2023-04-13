@@ -29,7 +29,7 @@ if (isset($_POST['frm_id'])) {
 }
 switch ($function) {
 case "insert":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	if (!is_super()) {
 		$_POST['frm_adminperms'] = 0;
 	}
@@ -46,7 +46,7 @@ case "insert":
 	print get_text("Saved");
 	exit;
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -146,7 +146,7 @@ case "update":
 	print get_text("Saved");
 	exit;
 case "delete":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -200,7 +200,7 @@ case "printers":
 case "add":
 case "edit":
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -552,7 +552,7 @@ case "add":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -793,7 +793,7 @@ case "edit":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -907,7 +907,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 		<?php show_infobox("large");?>
 	</body>
 </html>

@@ -29,7 +29,7 @@ if (isset($_POST['frm_id'])) {
 }
 switch ($function) {
 case "insert":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$frm_lat = "0.999999";
 	if (!empty ($_POST['frm_lat'])) {
 		$frm_lat = $_POST['frm_lat'];
@@ -55,7 +55,7 @@ case "insert":
 	print get_text("Saved");
 	exit;
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `facilities` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -171,7 +171,7 @@ case "table_right":
 case "add":
 case "edit":
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -504,7 +504,7 @@ case "add":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -720,7 +720,7 @@ case "edit":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

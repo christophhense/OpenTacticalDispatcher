@@ -34,7 +34,7 @@ if (isset ($_POST['function']) && (is_super() || is_admin() || is_operator())) {
 }
 switch ($function) {
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query_old_data = "SELECT * " .
 		"FROM `tickets` " .
@@ -232,7 +232,7 @@ case "actions":
 	<?php
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$moment_date_format = php_to_moment(get_variable("date_format"));
 	$reported_by_select_array = get_reported_by_select_str("ticket_edit_form");
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
@@ -779,7 +779,7 @@ default:
 				<div class="col-md-1"></div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 		<?php show_infobox("large");?>
 	</body>
 </html>	

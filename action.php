@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $datetime_now = mysql_datetime();
 $function = "";
@@ -384,7 +384,7 @@ case "insert":
 				</div>
 			</div>
 		</form>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -470,7 +470,7 @@ case "insert":
 				</div>
 			</div>
 		</form>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

@@ -863,7 +863,7 @@ function show_units_list($function, $page, $pages, $ticket_id) {
 <table class="table table-striped table-condensed" style="table-layout: fixed;">
 	<tr>
 		<th style="width: 6%; border-top: 0px;"></th>
-		<th style="width: 5%; border-top: 0px; text-align: center;"><?php print get_message_click_str($function, 0, $ticket_id, "", "", "", "", true);?></th>
+		<th style="width: 5%; border-top: 0px; text-align: center;"><?php print get_message_click_str($function, 0, $ticket_id, "", "", "", "");?></th>
 		<th style="width: 40%; border-top: 0px;">&nbsp;<?php print get_text("Unit");?> (<?php print $units_count;?>)</th>
 		<th style="width: 35%; border-top: 0px;">&nbsp;<?php print get_text("Status");?></th>
 		<th style="width: 14%; border-top: 0px; text-align: center;"><?php print get_text("As of");?></th>

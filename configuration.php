@@ -139,7 +139,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 	<?php
-	show_infobox();
+	show_infobox("small");
 	show_infobox("large");
 }
 switch ($function) {
@@ -1466,7 +1466,8 @@ case "api":
 		}
 		print "<td>";
 		if (get_variable("_" . substr($value, 0, -5) . "mess") != "") {
-			print get_textblock_select_str("fixtext", "_" . substr($value, 0, -5) . "mess", "_" . substr($value, 0, -5) . "mess", get_variable("_" . substr($value, 0, -5) . "mess"), $show_hide_message);
+			print get_textblock_select_str("fixtext", "_" . substr($value, 0, -5) . "mess", "_" . substr($value, 0, -5) . 
+				"mess", get_variable("_" . substr($value, 0, -5) . "mess"), $show_hide_message);
 		}
 		if (get_variable("_" . substr($value, 0, -5) . "rece") != "") {
 			print "<input class='form-control' id='_" . substr($value, 0, -5) . "rece' name='_" . substr($value,0 , -5) . "rece' " .
@@ -4853,7 +4854,7 @@ case "do_update":
 case "updates":
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$top_notice_head = "";
 	if (!empty ($_GET['top_notice'])) {
 		$top_notice_str .= $_GET['top_notice'] . "<br>";

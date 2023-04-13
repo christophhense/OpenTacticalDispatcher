@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 function get_reserved_row() {
 	$datetime_now = mysql_datetime();
@@ -624,7 +624,7 @@ default:
 										</th>
 										<td>
 										<div style="float:left; width: 55%;">
-											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id");?>
+											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id", 0);?>
 										</div>
 										<div style="float:right; width: 44%;">
 											<?php print get_priority_select_str("ticket_add_form", "frm_severity", 0);?>
@@ -702,7 +702,7 @@ default:
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>	
 	<?php

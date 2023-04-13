@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $ticket_id = 1;
 if (isset ($_GET['ticket_id'])) {

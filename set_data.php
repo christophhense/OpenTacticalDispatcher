@@ -30,29 +30,29 @@ if (is_guest() || is_operator() || is_admin() || is_super()) {
 		$response = "timeout_disabled";
 		break;
 	case "viewed_groups":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$_SESSION['viewed_groups'] = $_GET['value'];
 		break;
 	case "situation_type":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		if (isset ($_GET['screen_id'])) {
 			$_SESSION["screen_id_" . $_GET['screen_id']]['situation_type'] = $_GET['value'];
 		}
 		break;
 	case "closed_interval_start":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		if (isset ($_GET['screen_id'])) {
 			$_SESSION["screen_id_" . $_GET['screen_id']]['closed_interval_start'] = $_GET['value'];
 		}
 		break;
 	case "closed_interval_end":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		if (isset ($_GET['screen_id'])) {
 			$_SESSION["screen_id_" . $_GET['screen_id']]['closed_interval_end'] = $_GET['value'];
 		}
 		break;
 	case "day_night":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$_SESSION['day_night'] = $_GET['value'];
 		$response = $_SESSION['day_night'];
 		break;
@@ -67,7 +67,7 @@ if (is_operator() || is_admin() || is_super()) {
 	$unit_id = 0;
 	switch ($function) {
 	case "unit_status":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$subscribed = false;
 		$unsubscribed = true;
 
@@ -124,7 +124,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$response = remove_nls($row_un_status['description']);
 		break;
 	case "facility_status":
-		set_session_expire_time();
+		set_session_expire_time("on");
 
 		$query = "UPDATE `facilities` SET `facility_status_id` = " .
 			$_GET['frm_status_id'] . ", " .
@@ -147,7 +147,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$response = remove_nls($row_fac_status['description']);
 		break;
 	case "call_progression":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$log_text = "";
 		if (isset($_POST['call_progression_datetime'])) {
 			$datetime_now = $_POST['call_progression_datetime'];
@@ -239,7 +239,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$do_receipt = true;
 		break;
 	case "assign_reset":
-		set_session_expire_time();
+		set_session_expire_time("on");
 
 		$query = "UPDATE `assigns` " .
 			"SET `responding` = NULL, " .
@@ -269,7 +269,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$do_receipt = true;
 		break;
 	case "assign_delete":
-		set_session_expire_time();
+		set_session_expire_time("on");
 
 		$query = "SELECT * " .
 			"FROM `assigns` " .

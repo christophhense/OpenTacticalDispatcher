@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 function get_current_dispatch_str($ticket_id, $unit_id, $dispatch, $multi) {
 	$return_array = array (
@@ -554,7 +554,7 @@ default:
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

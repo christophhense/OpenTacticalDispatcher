@@ -265,7 +265,7 @@ function show_userlist() {
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
 			<tr>
 				<th style="width: <?php print $table_width[1];?>;"></th>
-				<th style="width: <?php print $table_width[2];?>; text-align: center;"><?php print get_message_click_str("user_all", 0, "An alle", 0);?></th>
+				<th style="width: <?php print $table_width[2];?>; text-align: center;"><?php print get_message_click_str("user_all", 0, "An alle", 0, "", "", "");?></th>
 				<th style="width: <?php print $table_width[3];?>;"><?php print get_text("User");?></th>
 				<th style="width: <?php print $table_width[4];?>;"><?php print get_text("Level");?></th>
 				<th style="width: <?php print $table_width[5];?>; text-align: center;"><?php print get_text("Online");?></th>
@@ -298,7 +298,7 @@ function show_userlist() {
 	?>
 			<tr>
 				<td style="text-align: center;"><?php print $edit_str;?></td>
-				<td style="text-align: center;"><?php print get_message_click_str("user", $row['id'], 0, $row['name'], $row['email']);?></td>
+				<td style="text-align: center;"><?php print get_message_click_str("user", $row['id'], 0, $row['name'], $row['email'], "", "", "");?></td>
 				<td<?php print get_help_text_str("level_" . $row['level']);?>><?php print remove_nls($row['name']);?></td>
 				<td<?php print get_help_text_str("level_" . $row['level']);?>><?php print $level;?></td>
 				<td<?php print get_help_text_str("level_" . $row['level']);?> style="text-align: center;"><?php print $online;?></td>

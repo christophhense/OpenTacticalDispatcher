@@ -1702,7 +1702,7 @@ function get_status_display_str($row, $click_str, $disp_inc_stat) {
 	}
 }
 
-function show_infobox($size = "") {
+function show_infobox($size) {
 	$large_id_str = "";
 	$width_str = "";
 	if ($size == "large") {
@@ -1753,7 +1753,7 @@ function show_prevent_browser_back_button() {
 
 //====== selects
 
-function get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id = 0, $no_options, $tabindex) {
+function get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id, $no_options, $tabindex) {
 	$form_id_str = "";
 	if ($form_id != "") {
 		$form_id_str = " id=\"" . $form_id . "\"";
@@ -2067,10 +2067,10 @@ function get_facility_select_str($select_type, $facility_id) {
 		break;
 	default:
 	}
-	return get_select_str($query, $form_id, $form_name ,$class, $title, $style, $onchange, $option_0, $facility_id, $no_elements, $tabindex);
+	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $facility_id, $no_elements, $tabindex);
 }
 
-function get_textblock_select_str($select_type = "synopsis", $form_name, $form_id, $selected = 0, $show_hide_select = "") {
+function get_textblock_select_str($select_type, $form_name, $form_id, $selected, $show_hide_select) {
 	$option_0 = get_text("Textblocks");
 	$class = "sit label";
 	$title = "";
@@ -2134,7 +2134,7 @@ function get_textblock_select_str($select_type = "synopsis", $form_name, $form_i
 		$style = "margin-top: 5px;";
 		$onchange = "set_textblock(this.options[this.selectedIndex].text, " . $form_name . "); this.options[0].selected=true;";
 	}
-	return get_select_str($query, $form_id, $form_name ,$class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
+	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
 }
 
 function get_user_select_str($select_type, $form_name) {
@@ -2164,7 +2164,7 @@ function get_user_select_str($select_type, $form_name) {
 		break;
 	default:
 	}
-	return get_select_str($query, $form_name, $form_name ,$class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
+	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
 }
 
 function get_guard_house_select_str($select_type, $guard_house_id) {
@@ -2212,10 +2212,10 @@ function get_guard_house_select_str($select_type, $guard_house_id) {
 		break;
 	default:
 	}
-	return get_select_str($query, "frm_guard_house", "frm_guard_house" ,$class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
+	return get_select_str($query, "frm_guard_house", "frm_guard_house", $class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
 }
 
-function get_incident_type_select_str($select_type = "ticket_add_form", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
+function get_incident_type_select_str($select_type, $form_name, $selected_inc_type) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2283,7 +2283,7 @@ function get_incident_type_select_str($select_type = "ticket_add_form", $form_na
 		break;
 	default:
 	}
-	return get_select_str($query, $form_name, $form_name ,$class, $title, $style, $onchange, $option_0, $selected_inc_type, $no_elements, $tabindex);
+	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, $selected_inc_type, $no_elements, $tabindex);
 }
 
 function get_severity_protocol_array_str() {
@@ -2299,7 +2299,7 @@ function get_severity_protocol_array_str() {
 	return $severities_str . $protocols_str;
 }
 
-function get_priority_select_str($select_type = "ticket_add_form", $form_name = "frm_severity", $selected_severity = 0) {
+function get_priority_select_str($select_type, $form_name, $selected_severity) {
 	$return_str = "";
 	$where_str = "";
 	$onchange_str = "";
@@ -2464,7 +2464,7 @@ function get_reported_by_select_str($function) {
 	return $return_array;
 }
 
-function get_ticket_status_select_str($select_type = "report", $form_id = "frm_status", $form_name = "", $selected_status = 0) {
+function get_ticket_status_select_str($select_type, $form_id, $form_name, $selected_status) {
 	$return_str = "";
 	$option_0_str = "";
 	$onchange_str = "";
@@ -2474,7 +2474,7 @@ function get_ticket_status_select_str($select_type = "report", $form_id = "frm_s
  	}
 	$form_name_str = "";
 	if ($form_name != "") {
-		$form_name_str = " name=\"" . $$form_name . "\"";
+		$form_name_str = " name=\"" . $form_name . "\"";
  	}
 	$used_status = array ();
 	$disabled_str = "";
@@ -3312,7 +3312,7 @@ function valid_mailserver() {
 	}
 }
 
-function get_message_click_str($function, $targets_ids = 0, $ticket_id = 0, $handle = "", $contact_1 = "", $contact_2 = "", $contact_3 = "") {
+function get_message_click_str($function, $targets_ids, $ticket_id, $handle, $contact_1, $contact_2, $contact_3) {
 	$message_to_all = false;
 	$contact_where_str = "";
 	$title = "";
@@ -3488,7 +3488,7 @@ function is_guest() {
 	}
 }
 
-function set_session_expire_time($timeout = "on") {
+function set_session_expire_time($timeout) {
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];
@@ -3581,7 +3581,7 @@ function get_facility_handle($id) {
 
 //====== gis
 require_once ("phpcoord.inc.php");				// UTM converter
-function toUTM($coordsIn, $from = "") {
+function toUTM($coordsIn) {
 	$temp = explode(",", $coordsIn);
 	$coords = new LatLng(trim($temp[0]), trim($temp[1]));
 	$utm = $coords -> toUTMRef();

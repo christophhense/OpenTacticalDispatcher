@@ -39,7 +39,7 @@ if (is_admin() || is_super()) {
 }
 switch ($function) {
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	if (is_operator() || is_admin() || is_super()) {
 		do_log($GLOBALS['LOG_COMMENT'], 0, $_POST['unit_id'], strip_tags(trim($_POST['frm_comment'])), $_POST['facility_id']);
 	}
@@ -53,7 +53,7 @@ case "table_bottom":
 	<?php
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$unit_id = 0;
 	if (isset ($_GET['unit_id'])) {
 		$unit_id = $_GET['unit_id'];
@@ -290,7 +290,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
