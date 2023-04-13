@@ -4314,6 +4314,7 @@ function highlight($term, $string) {
 
 function get_allocates_where_str($type1, $type2, $statement = "WHERE") {
 	$user_id = 0;
+	$curr_viewed = array ();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -4346,7 +4347,7 @@ function get_allocates_where_str($type1, $type2, $statement = "WHERE") {
 			$where2 .= "AND `allocates`.`type` = " . $type2;
 		}
 	} else {
-		if (count($curr_viewed == 0)) {	//	catch for errors - no entries in allocates for the user.
+		if (count($curr_viewed) == 0) {	//	catch for errors - no entries in allocates for the user.
 			$where2 = $statement . " `allocates`.`type` = " . $type2;
 		} else {
 			$x = 0;
