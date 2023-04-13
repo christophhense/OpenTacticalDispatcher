@@ -502,8 +502,7 @@ function insert_into_unit_types($name, $description, $bg_color, $text_color, $us
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_users($name = "", $password = "", $level = 0, $email = "",
-	$updated = "") {
+function insert_into_users($name, $password, $level, $email, $updated) {
 	if ($updated == "") {
 		$updated = mysql_datetime();
 	}
@@ -530,7 +529,7 @@ function insert_into_users($name = "", $password = "", $level = 0, $email = "",
 
 require_once ("login.inc.php");
 
-function show_dispatch_text($ticket_id, $search = false, $last = false) {
+function show_dispatch_text($ticket_id, $search, $last) {
 	require_once "incs/communication.inc.php";
 	$page_beak_str = " page-break-after: always;";
 	if ($last) {
@@ -560,7 +559,7 @@ function show_dispatch_text($ticket_id, $search = false, $last = false) {
 	<?php
 }
 
-function show_ticket($ticket_id, $search = false, $last = false) {
+function show_ticket($ticket_id, $search, $last) {
 	$page_beak_str = " page-break-after: always;";
 	if ($last) {
 		$page_beak_str = " page-break-after: avoid;";
@@ -588,7 +587,7 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 	<?php
 }
 
-function show_head($ticket_id, $search = false, $ticket_report = false) {
+function show_head($ticket_id, $search, $ticket_report) {
 	if ($ticket_report) {
 		$border_top_str = "";
 	} else {
@@ -987,7 +986,7 @@ function show_assigns($id, $ticket_or_unit) {
 	print $output_str;
 }
 
-function show_actions($ticket_id, $ticket_report = false) {
+function show_actions($ticket_id, $ticket_report) {
 	$click_to_edit_str = "<br><br>" . get_text("Click to edit.");
 	$border_top_str = " border-top: 0px;";
 	$sort_order_str = " DESC";
@@ -1990,7 +1989,7 @@ function get_unit_select_str($select_type, $unit_id, $ticket_id) {
 	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $unit_id, $no_elements, $tabindex);
 }
 
-function get_facility_select_str($select_type = "report_on_scene_location", $facility_id = 0) {
+function get_facility_select_str($select_type, $facility_id) {
 	$option_0 = "";
 	$query = "";
 	$form_id = "";
@@ -2138,7 +2137,7 @@ function get_textblock_select_str($select_type = "synopsis", $form_name, $form_i
 	return get_select_str($query, $form_id, $form_name ,$class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
 }
 
-function get_user_select_str($select_type = "report", $form_name = "frm_user") {
+function get_user_select_str($select_type, $form_name) {
 	$option_0 = "";
 	$query = "";
 	$class = "";

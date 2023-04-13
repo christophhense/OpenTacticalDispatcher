@@ -89,8 +89,8 @@ case "users":
 			} else {
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 				if (db_num_rows($result_test) == 0) {
-					$new_id = insert_into_users(csv2raw($line[USERS_USER]), csv2raw($line[USERS_PASSWORD]), csv2raw($line[USERS_LEVEL]),
-						csv2raw($line[USERS_MAIL]), $datetime_now);
+					$new_id = insert_into_users(csv2raw($line[USERS_USER]), csv2raw($line[USERS_PASSWORD]), 
+						csv2raw($line[USERS_LEVEL]), csv2raw($line[USERS_MAIL]), $datetime_now);
 					if ($new_id > 0) {
 						insert_into_allocates(1, $GLOBALS['TYPE_USER'], $new_id, $user_id, $datetime_now);
 						$users++;
