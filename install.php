@@ -70,7 +70,7 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 				<div class="col-md-4"></div>
 				<div class="col-md-4">
 				<form name="db_error" method="post" action="install.php">
-					<button class="btn btn-default btn-lg btn-block" style="align: center;" type="submit">Back</button>
+					<button class="btn btn-default btn-lg btn-block" style="text-align: center;" type="submit">Back</button>
 				 </form>
 				</div>
 				<div class="col-md-4"></div>
@@ -156,7 +156,7 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 					<div class="col-md-4"></div>
 					<div class="col-md-4">
 						<form name="db_error" method="post" action="install.php">
-							<button class="btn btn-default btn-lg btn-block" style="align: center;" type="submit">Back</button>
+							<button class="btn btn-default btn-lg btn-block" style="text-align: center;" type="submit">Back</button>
 						 </form>
 					</div>
 					<div class="col-md-4"></div>
@@ -235,10 +235,10 @@ if ((isset ($_GET['install_complete'])) && ($_GET['install_complete'] == "yes"))
 						<div class="container-fluid">
 							<div class="row">
 								<div class="col-md-6">
-									<button class="btn btn-default btn-lg btn-block" style="align: center;" type="reset">Reset</button>
+									<button class="btn btn-default btn-lg btn-block" style="text-align: center;" type="reset">Reset</button>
 								</div>
 								<div class="col-md-6">
-									<button class="btn btn-default btn-lg btn-block" style="align: center;" type="submit">Install</button>
+									<button class="btn btn-default btn-lg btn-block" style="text-align: center;" type="submit">Install</button>
 								</div>
 							</div>
 						</div>

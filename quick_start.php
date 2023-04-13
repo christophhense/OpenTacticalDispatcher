@@ -502,7 +502,7 @@ case "first_start":
 								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='index.php';"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
-						<div class="row" style="">
+						<div class="row">
 							<div class="col-md-12">
 								<button id="back_button" type="button" class="btn btn-xs btn-default" onClick="" style="display: none; margin-top: 10px;"><?php print get_text("Back");?></button>
 							</div>

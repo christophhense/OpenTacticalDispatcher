@@ -167,7 +167,7 @@ case "insert":
 				$name_rev = date(get_variable("date_format_year_only")) . $inc_num_array[2] . (string) $inc_num_array[3] . " " ;		// year, separator, number
 				break;
 			default:
-				alert("ERROR @ " + "<?php print __LINE__;?>");
+				@error_log("ERROR @ " . __LINE__);
 			}
 			if ((((int) $inc_num_array[0]) == 3) && (!($inc_num_array[5] == date("y")))) {	// year style and change?
 				$inc_num_array[3] = 1;	// roll over and start at 1
