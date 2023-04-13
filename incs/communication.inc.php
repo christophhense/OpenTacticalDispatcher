@@ -1100,7 +1100,7 @@ function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type
 		$result = db_query($query, __FILE__, __LINE__);
 		$row = stripslashes_deep(db_fetch_array($result));
 		$_problemend = "";
-		if ((isset ($row['problemend'])) && good_date_time($row['problemend'])) {
+		if ((isset ($row['problemend'])) && is_datetime($row['problemend'])) {
 			$_problemend = "  " . get_text("Run End") . ":" . $row['problemend'];
 		}
 		for ($i = 0; $i < count($text_selects); $i++) {
