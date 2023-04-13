@@ -1647,8 +1647,8 @@ case "facilities_status_reset":
 case "facility_types_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
-			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'],
-				$_SESSION['user_id'], $datetime_now);
+			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
@@ -3295,8 +3295,8 @@ case "reset_regions":
 case "incident_types_update":
 	if (is_super()) {
 		if (isset ($_POST['nature_new']) && ($_POST['nature_new'] != "")) {
-			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], $_POST['severity_new'],
-				$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], 
+				$_POST['severity_new'],	$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "  ";

@@ -776,11 +776,10 @@ case "facilities":
 					"WHERE `name` = " . csv2mysql($line[FACILITY_TYPES_TYPE]) . ";";
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
-					if (db_num_rows($result_test) == 0) {
-
-					insert_into_facility_types(csv2raw($line[FACILITY_TYPES_TYPE]), csv2raw($line[FACILITY_TYPES_DESCRIPTION]), $bgcolor, $textcolor,
-						$user_id, $datetime_now);
-
+				if (db_num_rows($result_test) == 0) {
+					insert_into_facility_types(csv2raw($line[FACILITY_TYPES_TYPE]), 
+						csv2raw($line[FACILITY_TYPES_DESCRIPTION]), 
+						$bgcolor, $textcolor, $user_id, $datetime_now);
 					$fac_types++;
 				} else {
 					$row_test = stripslashes_deep(db_fetch_array($result_test));
@@ -1161,8 +1160,9 @@ case "default-incident-types":
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 				if (db_num_rows($result_test) == 0) {
-					$result = insert_into_incident_types(csv2raw($line[INCIDENT_TYPES_TYPE]), csv2raw($line[INCIDENT_TYPES_DESCRIPTION]), csv2raw($line[INCIDENT_TYPES_PROTOCOL]), $severity,
-						csv2raw($line[INCIDENT_TYPES_GROUP]), csv2raw($line[INCIDENT_TYPES_SORT]), $user_id, $datetime_now);
+					$result = insert_into_incident_types(csv2raw($line[INCIDENT_TYPES_TYPE]), csv2raw($line[INCIDENT_TYPES_DESCRIPTION]), 
+						csv2raw($line[INCIDENT_TYPES_PROTOCOL]), $severity,	csv2raw($line[INCIDENT_TYPES_GROUP]), 
+						csv2raw($line[INCIDENT_TYPES_SORT]), $user_id, $datetime_now);
 					$in_types = $in_types + db_affected_rows($result);
 				} else {
 					$row_test = stripslashes_deep(db_fetch_array($result_test));
@@ -1292,8 +1292,9 @@ case "default-textblocks":
 			$affected_rows = 0;
 			for ($j = 1; $j <= $i; $j++) {
 				if (isset ($data_array[$key]["query"]["key"][$j])) {
-					$result = insert_into_textblocks($data_array[$key]["query"]["key"][$j], $data_array[$key]["query"]["code"][$j], $data_array[$key]["query"]["text"][$j], "",
-						0, $data_array[$key]["query"]["sort"][$j], $user_id, $data_array[$key]["query"]["timestamp"][$j]);
+					$result = insert_into_textblocks($data_array[$key]["query"]["key"][$j], 
+						$data_array[$key]["query"]["code"][$j], $data_array[$key]["query"]["text"][$j], "", 0, 
+						$data_array[$key]["query"]["sort"][$j], $user_id, $data_array[$key]["query"]["timestamp"][$j]);
 					$affected_rows += db_affected_rows($result);
 				}
 			}

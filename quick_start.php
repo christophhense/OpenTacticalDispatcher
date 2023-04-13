@@ -401,10 +401,9 @@ case "insert":
 	}
 	if (isset($_POST['frm_facility_handle'])) {
 		$i = 0;
-		
-		insert_into_facility_types(html_entity_decode(get_text("_example_facility_type_name")), html_entity_decode(get_text("_example_facility_type_description")), "#00FF00", "#000000",
-			$user_id, $datetime_now);
-
+		insert_into_facility_types(html_entity_decode(get_text("_example_facility_type_name")), 
+			html_entity_decode(get_text("_example_facility_type_description")), 
+			"#00FF00", "#000000", $user_id, $datetime_now);
 		foreach ($_POST['frm_facility_handle'] as $handle) {
 			if ($handle != "") {
 				$new_id = insert_into_facilities($_POST['frm_facility_name'][$i], $handle, "", "",

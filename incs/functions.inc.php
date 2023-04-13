@@ -353,8 +353,7 @@ function insert_into_facility_status($status_name, $description,
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_facility_types($name = "", $description = "", $bg_color = "", $text_color = "",
-	$user_id = 0, $updated = "") {
+function insert_into_facility_types($name, $description, $bg_color, $text_color, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -370,14 +369,14 @@ function insert_into_facility_types($name = "", $description = "", $bg_color = "
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_incident_types($type = "", $description = "", $protocol = "", $set_severity = 0,
-	$group = "", $sort = 0, $user_id = 0, $updated = "") {
+function insert_into_incident_types($type, $description, $protocol, 
+	$set_severity, $group, $sort, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
 	if ($updated == "") {
-	$updated = mysql_datetime();
-}
+		$updated = mysql_datetime();
+	}
 
 	$query = "INSERT INTO `incident_types` (`type`, `description`, `protocol`, `set_severity`, " .
 		"`group`, `sort`, `user_id`, `client_address`, " .
@@ -389,8 +388,8 @@ function insert_into_incident_types($type = "", $description = "", $protocol = "
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_textblocks($type = "", $group = "", $text = "", $code = "",
-	$report_channels = 0, $sort = 0, $user_id = 0, $updated = "") {
+function insert_into_textblocks($type, $group, $text, $code,
+	$report_channels, $sort, $user_id, $updated) {
 	$report_channels = intval($report_channels);
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
