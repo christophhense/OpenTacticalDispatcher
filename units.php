@@ -459,7 +459,7 @@ case "add":
 												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_GET['frm_smsg_id'])) {print $_GET['frm_smsg_id'];}?></textarea>
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
+												<?php print get_unit_select_str("reporting_channel_smsg_id", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -470,7 +470,7 @@ case "add":
 												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php if (isset ($_GET['frm_phone'])) {print $_GET['frm_phone'];}?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_phone");?>
+												<?php print get_unit_select_str("reporting_channel_phone", 0, 0);?>
 											</div>	
 										</td>
 									</tr>
@@ -481,14 +481,14 @@ case "add":
 												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php if (isset ($_GET['frm_unit_email'])) {print $_GET['frm_unit_email'];}?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_email");?>
+												<?php print get_unit_select_str("reporting_channel_email", 0, 0);?>
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResRepChan");?>><?php print get_text("Get links");?>:</th>
 										<td colspan=3>
-											<?php print get_unit_select_str("reporting_channel");?>
+											<?php print get_unit_select_str("reporting_channel", 0, 0);?>
 										</td>
 									</tr>
 								</table>
@@ -696,7 +696,7 @@ case "edit":
 												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 ><?php print remove_nls($row['remote_data_services']);?></textarea>
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
+												<?php print get_unit_select_str("reporting_channel_smsg_id", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -707,7 +707,7 @@ case "edit":
 												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php print remove_nls($row['unit_phone']);?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_phone");?>
+												<?php print get_unit_select_str("reporting_channel_phone", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -718,14 +718,14 @@ case "edit":
 												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php print remove_nls($row['unit_email']);?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_email");?>
+												<?php print get_unit_select_str("reporting_channel_email", 0, 0);?>
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResRepChan");?>><?php print get_text("Get links");?>:</th>
 										<td colspan=3>
-											<?php print get_unit_select_str("reporting_channel");?>
+											<?php print get_unit_select_str("reporting_channel", 0, 0);?>
 										</td>
 									</tr>
 								</table>

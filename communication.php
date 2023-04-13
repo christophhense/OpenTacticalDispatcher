@@ -54,7 +54,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$current_address_type = "";
 		$receiver_0_addresses = array ();
 		$addresses = array ();
-		$match_array = get_api_configuration();
+		$match_array = get_api_configuration("default");
 		$handles = get_handle_array();
 		$i = array ();
 		foreach ($match_array as $key => $value) {

@@ -244,7 +244,7 @@ default:
 												<textarea class="form-control" id="frm_comment" name="frm_comment" placeholder="<?php print get_text("New entry");?>" tabindex=1></textarea>
 												<?php print get_textblock_select_str("log", "document.log_form.frm_comment", "", 0, "")?>
 												<div<?php print get_help_text_str("log_unit_facility");?>>
-													<?php print get_unit_select_str("log", $unit_id);?>
+													<?php print get_unit_select_str("log", $unit_id, 0);?>
 													<?php print get_facility_select_str("log", $facility_id);?>
 												</div>
 											</form>

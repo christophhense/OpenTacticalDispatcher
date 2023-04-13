@@ -105,7 +105,7 @@ case "infostring_middle":
 		break;
 case "table_top":
 //	show_ticketlist("situation", $tickets_views, $screen_id);
-	show_ticketlist("situation", $screen_id);
+	show_ticketlist("situation", $screen_id, 0);
 	break;
 case "table_left":
 	show_units_list("situation", 1, 2, 0);

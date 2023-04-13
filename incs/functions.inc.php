@@ -1668,7 +1668,7 @@ function get_call_progression_time($elapsed, $data_progression, $additional_assi
 	return $progression;
 }
 
-function get_status_display_str($row, $click_str = "", $disp_inc_stat) {
+function get_status_display_str($row, $click_str, $disp_inc_stat) {
 	$additional_assigns_str = "";
 	$incidents_str = get_text("Incident");
 	if ($disp_inc_stat > 1) {
@@ -1823,7 +1823,7 @@ function get_select_str($query, $form_id, $form_name, $class, $title, $style, $o
 	return $return_str;
 }
 
-function get_unit_select_str($select_type = "report", $unit_id = 0, $ticket_id = 0) {
+function get_unit_select_str($select_type, $unit_id, $ticket_id) {
 	$option_0 = "";
 	$query = "";
 	$form_id = "";
@@ -2170,7 +2170,7 @@ function get_user_select_str($select_type = "report", $form_name = "frm_user") {
 	return get_select_str($query, $form_name, $form_name ,$class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
 }
 
-function get_guard_house_select_str($select_type = "unit", $guard_house_id = 0) {
+function get_guard_house_select_str($select_type, $guard_house_id) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2692,7 +2692,7 @@ function get_incident_location_select_str($function, $facility_id) {
 	return $return_array;
 }
 
-function get_admin_permission_select_str($function, $selected = 0) {
+function get_admin_permission_select_str($function, $selected) {
 	$tabindex = "";
 	switch ($function) {
 	case "unit":
@@ -3014,7 +3014,7 @@ function get_fixtext_report_channels_str() {
 	return $fixtext_report_channels_str;
 }
 
-function get_api_configuration($message_group = "") {
+function get_api_configuration($message_group) {
 	$match_array = array ();
 	switch ($message_group) {
 	case "facility_all":
@@ -3111,7 +3111,7 @@ function get_is_auto_ticket_line($line) {
 	return $return_array;
 }
 
-function get_auto_ticket_configuration($function = "pattern") {
+function get_auto_ticket_configuration($function) {
 /*
 	Provide profiles for different command and control centers
 	Park settings in global variable (only read everything once)

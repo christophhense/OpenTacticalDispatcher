@@ -2,7 +2,7 @@
 @session_start();
 require_once ("./incs/units.inc.php");
 
-function show_ticketlist($function = "", $screen_id = 0, $unit_id = 0) {
+function show_ticketlist($function, $screen_id, $unit_id) {
 	$border_top_str = " border-top: 0px;";
 	$my_offset = 0;
 	$col_width_blank = 1;

@@ -493,11 +493,11 @@ default:
 								</tr>
 								<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
 									<th><?php print get_text("Unit");?>:</th>
-									<td><?php print get_unit_select_str("report");?></td>
+									<td><?php print get_unit_select_str("report", 0, 0);?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_guard_house");?> style="height: 45px;">
 									<th><?php print get_text("Guard house");?>:</th>
-									<td><?php print get_guard_house_select_str("report");?><br>
+									<td><?php print get_guard_house_select_str("report", 0);?><br>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_user");?> style="height: 45px;">
 									<th><?php print get_text("User");?>:</th>
