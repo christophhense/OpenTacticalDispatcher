@@ -43,7 +43,7 @@ function callprogression_is_cleared($row) {
 	return (is_datetime($row))? "<font color='red'><b>" . get_text("Cleared") . "</b></font>" : "";
 }
 
-function get_start_end_facility_select_array($function, $facility_id, $start_end_location, $incident_location = "") {
+function get_start_end_facility_select_array($function, $facility_id, $start_end_location, $incident_location) {
 	$return_array = array ();
 	$return_array["select_str"] = "";
 	$return_array["facility_address"] = "";

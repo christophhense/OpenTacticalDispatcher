@@ -234,3 +234,4 @@ Activities sorted by application function.
 		remove function cancel_button()
 		Change the number of characters in db-table captions and hints to save IPv6.
 		Change popup to top notice danger Error
+		Remove deprecated default values for mandatory php function params

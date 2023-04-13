@@ -1830,8 +1830,9 @@ case "facility_status_update":
 			foreach ($_POST['display_new'] as $VarName=>$VarValue) {
 				$display_new = $display_new | $VarValue;
 			}
-			$result = insert_into_facility_status($_POST['status_val_new'], $_POST['description_new'], intval($_POST['sort_new']), $display_new,
-				"#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_facility_status($_POST['status_val_new'], $_POST['description_new'], 
+				intval($_POST['sort_new']), $display_new, "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";

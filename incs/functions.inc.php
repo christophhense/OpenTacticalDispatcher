@@ -165,6 +165,8 @@ try {
 $GLOBALS['LAST_RESULT'] = null;
 $GLOBALS['LAST_STATEMENT'] = null;
 function db_query($query_str, $file = "", $line = "") {
+	//if ($file == "") {error_log("no file");}
+	//if ($line == "") {error_log("no line");}
 	$result = $GLOBALS['DATABASE_LINK']->query($query_str);
 	if ($result != false) {
 		$GLOBALS['LAST_RESULT'] = $result;
@@ -251,7 +253,7 @@ function trim_quote($string) {
 	return db_real_escape_string(trim($string));
 }
 
-function insert_into_allocates($group = 1, $type = 0, $resource_id = 0, $user_id = 0, $updated = "") {
+function insert_into_allocates($group, $type, $resource_id, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -285,13 +287,13 @@ function get_working_in_development_environement() {
 	}
 }
 
-function insert_into_facilities($name = "", $handle = "", $object_id = "", $direct_dialing_1 = "",
-	$direct_dialing_2 = "", $street = "", $city = "", $security_contact = "",
-	$security_phone = "", $security_email = "", $type = 0, $facility_status_id = 0,
-	$description = "", $capabilities = "", $opening_hours = "", $access_rules = "",
-	$contact_name = "", $contact_phone = "", $contact_email = "", $admin_only = 0,
-	$icon_url = "", $boundary = "", $lat = 0.999999, $lng = 0.999999,
-	$user_id = 0, $updated = "") {
+function insert_into_facilities($name, $handle, $object_id, $direct_dialing_1,
+	$direct_dialing_2, $street, $city, $security_contact,
+	$security_phone, $security_email, $type, $facility_status_id,
+	$description, $capabilities, $opening_hours, $access_rules,
+	$contact_name, $contact_phone, $contact_email, $admin_only,
+	$icon_url, $boundary, $lat, $lng,
+	$user_id, $updated) {
 	if ($type == "") {
 		$type = 0;
 	}
@@ -329,8 +331,8 @@ function insert_into_facilities($name = "", $handle = "", $object_id = "", $dire
 	return $row[0];
 }
 
-function insert_into_facility_status($status_name = "", $description = "", $sort = 0, $display = "",
-	$bg_color = "", $text_color = "", $user_id = 0, $updated = "") {
+function insert_into_facility_status($status_name, $description, 
+	$sort, $display, $bg_color, $text_color, $user_id, $updated) {
 	if (!is_int($sort)) {
 		$sort = 0;
 	}
@@ -4312,7 +4314,7 @@ function highlight($term, $string) {
 
 //====== regions
 
-function get_allocates_where_str($type1, $type2, $statement = "WHERE") {
+function get_allocates_where_str($type1, $type2, $statement) {
 	$user_id = 0;
 	$curr_viewed = array ();
 	if (isset ($_SESSION['user_id'])) {

@@ -1,6 +1,6 @@
 <?php
 
-function do_email($addresses, $subject = "", $text = "", $attachment = "") {
+function do_email($addresses, $subject, $text, $attachment) {
 	require_once ("./lib/phpmailer/class.phpmailer.php");
 	require_once ("./lib/phpmailer/class.smtp.php");
 	require_once ("./lib/phpmailer/language/phpmailer.lang-de.php"); // Optional, wenn du deutsche Fehlermeldungen ausgeben möchtest
@@ -839,7 +839,7 @@ function show_communication_table_right() {
 
 //===================================send message
 
-function send_message($addresses, $text_type, $subject = "", $text = "", $shorttext = "", $ticket_id = 0) {
+function send_message($addresses, $text_type, $subject, $text, $shorttext, $ticket_id) {
 	require_once ("./incs/api.inc.php");
 	$sent_ok = 0;
 	$sent_error = 0;
@@ -1034,7 +1034,7 @@ Scheduled	V
 Maxchar		Z	only for shorttext
 */
 
-function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type = "send") {
+function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 	$match_str = "";
 	$short_message = false;
 	switch ($text_sel) {
@@ -1589,7 +1589,7 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 	show_infobox();
 }
 
-function show_unit($row, $assign, $count_receiver, $destination_regexp = "") {
+function show_unit($row, $assign, $count_receiver, $destination_regexp) {
 	$checked_str = "";
 	if ($row['group'] == 0) {
 		$checked_str = " checked";

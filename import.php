@@ -828,8 +828,9 @@ case "facilities":
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 				if (db_num_rows($result_test) == 0) {
-					insert_into_facility_status(csv2raw($line[FACILITY_STATUS_STATUS]), csv2raw($line[FACILITY_STATUS_DESCRIPTION]), csv2raw($line[FACILITY_STATUS_SORT]), csv2raw($line[FACILITY_STATUS_DISPLAY]),
-						csv2raw($line[FACILITY_STATUS_BGCOLOR]), csv2raw($line[FACILITY_STATUS_TEXTCOLOR]), $user_id, $datetime_now);
+					insert_into_facility_status(csv2raw($line[FACILITY_STATUS_STATUS]), csv2raw($line[FACILITY_STATUS_DESCRIPTION]), 
+						csv2raw($line[FACILITY_STATUS_SORT]), csv2raw($line[FACILITY_STATUS_DISPLAY]), csv2raw($line[FACILITY_STATUS_BGCOLOR]), 
+						csv2raw($line[FACILITY_STATUS_TEXTCOLOR]), $user_id, $datetime_now);
 					$fac_status++;
 				} else {
 					$row_test = stripslashes_deep(db_fetch_array($result_test));
@@ -930,17 +931,14 @@ case "facilities":
 					}
 				}
 				if ($do_import || $do_update) {
-					if (empty ($line[FACILITY_LAT])) {
-						$fac_lat = 0.999999;
-					} else {
+					$fac_lat = "0.999999";
+					if (!empty ($line[FACILITY_LAT])) {
 						$fac_lat = $line[FACILITY_LAT];
 					}
-					if (empty ($line[FACILITY_LNG])) {
-						$fac_lng = 0.999999;
-					} else {
+					$fac_lng = "0.999999";
+					if (!empty ($line[FACILITY_LNG])) {
 						$fac_lng = $line[FACILITY_LNG];
 					}
-
 					$facility_admin_only = 0;
 					if (($line[FACILITY_ADMIN_ONLY] == "yes") || ($line[FACILITY_ADMIN_ONLY] == "Ja")) {
 						$facility_admin_only = 1;

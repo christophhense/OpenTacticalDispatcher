@@ -204,7 +204,7 @@ function get_facility_edit_log_text($function, $id, $values_new, $values_old) {
 	return remove_nls($log_text);
 }
 
-function show_facilities_list($table_side = "left", $split = 0) {
+function show_facilities_list($table_side) {
 	if (empty($_SESSION['facilities_sort_order'])) {
 		$_SESSION['facilities_sort_order'] = get_variable("sort_facilities");
 	}
@@ -435,7 +435,7 @@ function show_facilities_list($table_side = "left", $split = 0) {
 	<?php
 }
 
-function show_facility_types_select($facility_type = 0) {
+function show_facility_types_select($facility_type) {
 
 	$query_facility_types = "SELECT * " .
 		"FROM `facility_types` " .
@@ -481,7 +481,7 @@ function show_facility_types_select($facility_type = 0) {
 	<?php
 }
 
-function show_facility_status_select($facility_status = 0) {
+function show_facility_status_select($facility_status) {
 
 	$query_facility_status = "SELECT * " .
 		"FROM `facility_status` " .
