@@ -1,7 +1,7 @@
 <?php
 $GLOBALS['DATABASE_LINK'] = null;
 
-function update_db_query($query_str, $file = "", $line = "") {
+function update_db_query($query_str, $file, $line) {
 	$result = $GLOBALS['DATABASE_LINK']->query($query_str);
 	if ($result != false) {
 		return $result;

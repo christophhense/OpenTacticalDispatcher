@@ -2307,8 +2307,8 @@ case "unit_status_reset":
 case "unit_types_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
-			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'],
-				$_SESSION['user_id'], $datetime_now);
+			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "  ";
@@ -2485,8 +2485,9 @@ case "unit_types":
 case "unit_status_update":
 	if (is_super()) {
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
-			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], $_POST['dispatch_new'], $_POST['sort_new'],
-				"#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], 
+				$_POST['dispatch_new'], $_POST['sort_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";

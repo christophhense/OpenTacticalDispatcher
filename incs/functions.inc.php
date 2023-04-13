@@ -455,8 +455,8 @@ function insert_into_units($name = "", $handle = "", $remote_data_services = "",
 	return $row[0];
 }
 
-function insert_into_unit_status($status_name = "", $description = "", $dispatch = 0, $sort = 0,
-	$bg_color = "#FFFFFF", $text_color = "#000000", $user_id = 0, $updated = "") {
+function insert_into_unit_status($status_name, $description, $dispatch, 
+	$sort, $bg_color, $text_color, $user_id, $updated) {
 	if (!preg_match("/^#[0-9a-fA-F]{6}/", trim($bg_color))) {
 		$bg_color = "#FFFFFF";
 	}
@@ -480,8 +480,7 @@ function insert_into_unit_status($status_name = "", $description = "", $dispatch
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_unit_types($name = "", $description = "", $bg_color = "#FFFFFF", $text_color = "#000000",
-	$user_id = 0, $updated = "") {
+function insert_into_unit_types($name, $description, $bg_color, $text_color, $user_id, $updated) {
 	if (!preg_match("/^#[0-9a-fA-F]{6}/", trim($bg_color))) {
 		$bg_color = "#FFFFFF";
 	}

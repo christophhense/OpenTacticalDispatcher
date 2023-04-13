@@ -51,7 +51,7 @@ function get_current_dispatch_str($ticket_id, $unit_id, $dispatch, $multi) {
 	return $return_array;
 }
 
-function show_units($ticket_id, $show_all_units = false) {
+function show_units($ticket_id, $show_all_units) {
 	$i = 1;
 	?>
 	<table id="table_left" class="table table-striped table-condensed" style="table-layout: fixed;">

@@ -254,10 +254,9 @@ case "units":
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 				if (db_num_rows($result_test) == 0) {
-
-					insert_into_unit_types(csv2raw($line[UNITS_TYPES_NAME]), csv2raw($line[UNITS_TYPES_DESCRIPTION]), $bgcolor, $textcolor,
-						$user_id, $datetime_now);
-
+					insert_into_unit_types(csv2raw($line[UNITS_TYPES_NAME]), 
+						csv2raw($line[UNITS_TYPES_DESCRIPTION]), 
+						$bgcolor, $textcolor, $user_id, $datetime_now);
 					$resp_types++;
 				} else {
 					$row_test = stripslashes_deep(db_fetch_array($result_test));
@@ -347,10 +346,9 @@ case "units":
 
 					$result_test = db_query($query_test, __FILE__, __LINE__);
 					if (db_num_rows($result_test) == 0) {
-
-						insert_into_unit_status(csv2raw($line[UNITS_STATUS_STATUS]), csv2raw($line[UNITS_STATUS_DESCRIPTION]), $dispatch, csv2raw($line[UNITS_STATUS_SORT]),
-							csv2raw($line[UNITS_STATUS_BGCOLOR]), csv2raw($line[UNITS_STATUS_TEXTCOLOR]), $user_id, $datetime_now);
-
+						insert_into_unit_status(csv2raw($line[UNITS_STATUS_STATUS]), csv2raw($line[UNITS_STATUS_DESCRIPTION]), 
+							$dispatch, csv2raw($line[UNITS_STATUS_SORT]), csv2raw($line[UNITS_STATUS_BGCOLOR]), 
+							csv2raw($line[UNITS_STATUS_TEXTCOLOR]), $user_id, $datetime_now);
 						$resp_status++;
 					} else {
 						$row_test = stripslashes_deep(db_fetch_array($result_test));

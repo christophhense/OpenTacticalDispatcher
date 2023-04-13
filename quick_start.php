@@ -371,8 +371,8 @@ case "insert":
 				if ($_POST['frm_unit_type_text_color'][$i] != 99) {
 					$text_color = "#" . $_POST['frm_unit_type_text_color'][$i];
 				}
-				$result = insert_into_unit_types($unit_type_name, $description, $bg_color, $text_color,
-					$user, $datetime_now);
+				$result = insert_into_unit_types($unit_type_name, $description, 
+					$bg_color, $text_color,	$user, $datetime_now);
 				if ($result) {
 					$output_text .= get_text("Unit type inserted") . ": " . $val . "<br>";
 				}
