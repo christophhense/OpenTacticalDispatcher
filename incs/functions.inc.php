@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
-require_once ("db_credentials.inc.php");
-require_once ("phpcoord.inc.php");				// UTM converter
+require_once ("./incs/db_credentials.inc.php");
 
 //====== misc-codes
 
@@ -527,10 +526,10 @@ function insert_into_users($name, $password, $level, $email, $updated) {
 
 //====== ticket-data
 
-require_once ("login.inc.php");
+require_once ("./incs/login.inc.php");
 
 function show_dispatch_text($ticket_id, $search, $last) {
-	require_once "incs/communication.inc.php";
+	require_once ("./incs/communication.inc.php");
 	$page_beak_str = " page-break-after: always;";
 	if ($last) {
 		$page_beak_str = " page-break-after: avoid;";
@@ -3568,7 +3567,7 @@ function get_facility_handle($id) {
 }
 
 //====== gis
-require_once ("phpcoord.inc.php");				// UTM converter
+require_once ("./incs/phpcoord.inc.php");				// UTM converter
 function toUTM($coordsIn) {
 	$temp = explode(",", $coordsIn);
 	$coords = new LatLng(trim($temp[0]), trim($temp[1]));

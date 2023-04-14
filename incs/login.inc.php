@@ -1,5 +1,5 @@
 <?php
-require_once ("api.inc.php");
+require_once ("./incs/api.inc.php");
 
 function do_logout() {
 	global $hide_dispatched, $hide_status_groups;
