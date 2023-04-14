@@ -41,7 +41,7 @@ switch ($function) {
 case "update":
 	set_session_expire_time("on");
 	if (is_operator() || is_admin() || is_super()) {
-		do_log($GLOBALS['LOG_COMMENT'], 0, $_POST['unit_id'], strip_tags(trim($_POST['frm_comment'])), $_POST['facility_id']);
+		do_log($GLOBALS['LOG_COMMENT'], 0, $_POST['unit_id'], strip_tags(trim($_POST['frm_comment'])), $_POST['facility_id'], "", "", "");
 	}
 	break;
 case "table_bottom":

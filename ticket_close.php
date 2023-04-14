@@ -62,7 +62,7 @@ case "update":
 
 			$cl_res_result = db_query($cl_res_query, __FILE__, __LINE__);
 			$cl_res_row = stripslashes_deep(db_fetch_array($cl_res_result));
-			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $cl_res_row['unit_id']);
+			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $cl_res_row['unit_id'], "", 0, "", "", "");
 			do_receipt_message($cl_res_row['unit_id']);
 		}
 	}
@@ -74,7 +74,7 @@ case "update":
 
 	$result = db_query($query, __FILE__, __LINE__);
 	$row = db_fetch_assoc($result, __FILE__, __LINE__);
-	do_log($GLOBALS['LOG_INCIDENT_CLOSE'], $_POST['frm_ticket_id'], 0, $log_str);
+	do_log($GLOBALS['LOG_INCIDENT_CLOSE'], $_POST['frm_ticket_id'], 0, $log_str, 0, "", "", "");
 	unset ($result_old_data, $result, $cl_res_result);
 	break;
 default:

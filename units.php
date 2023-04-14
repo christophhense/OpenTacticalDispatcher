@@ -42,7 +42,7 @@ case "insert":
 	foreach ($_POST['frm_group'] as $grp_val) {
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_UNIT'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
-	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""));
+	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""), 0, "", "", "");
 	print get_text("Saved");
 	exit;
 case "update":
@@ -130,7 +130,7 @@ case "update":
 			}
 		}
 	}
-	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data));
+	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
 	if (!empty ($_POST['frm_status_update'])) {
 
 		$query_un_status = "SELECT `status_name`, " .
@@ -141,7 +141,7 @@ case "update":
 		$result_un_status = db_query($query_un_status, __FILE__, __LINE__);
 		$row_un_status = stripslashes_deep(db_fetch_assoc($result_un_status));
 		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
-		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val);
+		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val, 0, "", "", "");
 	}
 	print get_text("Saved");
 	exit;
@@ -170,7 +170,7 @@ case "delete":
 
 		$result = db_query($query, __FILE__, __LINE__);
 		$caption = get_text("Deleted");
-		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data));
+		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
 	}
 	print $caption;
 	exit;

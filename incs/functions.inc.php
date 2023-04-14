@@ -1605,19 +1605,7 @@ function set_unit_updated($assign_id) {
 	return true;
 }
 
-function do_log($code = 0, $ticket_id = 0, $unit_id = 0, $text = "", $facility_id = 0, $updated = "", $lat = 0.99999, $lng = 0.99999) {
-	if ($code == "") {
-		$code = 0;
-	}
-	if ($ticket_id == "") {
-		$ticket_id = 0;
-	}
-	if ($unit_id == "") {
-		$unit_id = 0;
-	}
-	if ($facility_id == "") {
-		$facility_id = 0;
-	}
+function do_log($code, $ticket_id, $unit_id, $text, $facility_id, $updated, $lat, $lng) {
 	$text = substr($text, 0, 2047);
 	if ($lat == "") {
 		$lat = 0.999999;

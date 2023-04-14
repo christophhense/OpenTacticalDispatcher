@@ -274,13 +274,13 @@ case "insert":
 		if (!empty ($_POST['frm_comments'])) {
 			$log_str .= get_text("Comments") . ": " . $_POST['frm_comments'] . "  ";
 		}
-		do_log($GLOBALS['LOG_INCIDENT_ADDED'], $ticket_id, 0, get_text("Run Start") . ": " . date(get_variable("date_format"), strtotime(trim($frm_problemstart))));
-		do_log($GLOBALS[$opened_or_scheduled], $ticket_id, 0, html_entity_decode(remove_nls($log_str)), $facility_id);
+		do_log($GLOBALS['LOG_INCIDENT_ADDED'], $ticket_id, 0, get_text("Run Start") . ": " . date(get_variable("date_format"), strtotime(trim($frm_problemstart))), 0, "", "", "");
+		do_log($GLOBALS[$opened_or_scheduled], $ticket_id, 0, html_entity_decode(remove_nls($log_str)), $facility_id, "", "", "");
 		if (intval($facility_id) > 0) {
 			$query_facilities = "SELECT `handle` FROM `facilities` WHERE `id` = " . $facility_id;
 			$result_facilities = db_query($query_facilities, __FILE__, __LINE__);
 			$row_facs = db_fetch_assoc($result_facilities);
-			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id);
+			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id, "", "", "");
 		}
 	}
 	break;

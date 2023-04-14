@@ -4197,7 +4197,7 @@ case "do_update":
 			$simulated_str = get_text("[Simulation]") . " ";
 		}
 	}
-	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $simulated_str . get_text("Update started to version") . ": " . $_GET['version']);
+	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $simulated_str . get_text("Update started to version") . ": " . $_GET['version'], 0, "", "", "");
 
 	$query_set_update_progress_time = "UPDATE `settings` " .
 		"SET `value` = '" . $_GET['update_progress_time'] . "' " .
@@ -4873,7 +4873,7 @@ default:
 		$top_notice_log_str .= $_POST['top_notice_logstr'];
 	}
 	if (!empty ($top_notice_log_str)) {
-		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str);
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str, 0, "", "", "");
 	}
 	?>
 		<script>

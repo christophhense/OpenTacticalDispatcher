@@ -133,12 +133,12 @@ case "update":
 		break;
 	case 1:
 		if ($_POST['frm_exist_fac'] == 0) {
-			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, 0, $row_facilities['handle'], $_POST['frm_facility_id']);
+			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, 0, $row_facilities['handle'], $_POST['frm_facility_id'], "", "", "");
 		} else {
 			if ($_POST['frm_facility_id'] == 0) {
-				do_log($GLOBALS['LOG_FACILITY_INCIDENT_UNSET'], $ticket_id, 0);
+				do_log($GLOBALS['LOG_FACILITY_INCIDENT_UNSET'], $ticket_id, 0, "", 0, "", "", "");
 			} else {
-				do_log($GLOBALS['LOG_FACILITY_INCIDENT_CHANGE'], $ticket_id, 0, $row_facilities['handle'], $_POST['frm_facility_id']);
+				do_log($GLOBALS['LOG_FACILITY_INCIDENT_CHANGE'], $ticket_id, 0, $row_facilities['handle'], $_POST['frm_facility_id'], "", "", "");
 			}
 		}
 		break;
@@ -217,7 +217,7 @@ case "update":
 	if (($row_old_data['problemend'] != $_POST['problemend']) && ($row_old_data['problemend'] != null) && ($_POST['frm_status'] != 1)) {
 		$log_str .= get_text("Run End") . ": " . date(get_variable("date_format"), strtotime($_POST['problemend'])) . "  ";
 	}
-	do_log($GLOBALS[$log_type], $ticket_id, 0, $log_str);
+	do_log($GLOBALS[$log_type], $ticket_id, 0, $log_str, 0, "", "", "");
 	unset ($_SESSION['active_ticket']);
 	break;
 case "assigns":

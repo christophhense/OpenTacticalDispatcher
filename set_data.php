@@ -105,7 +105,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$result_un_status = db_query($query_un_status, __FILE__, __LINE__);
 		$row_un_status = stripslashes_deep(db_fetch_assoc($result_un_status));
 		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
-		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_GET['frm_unit_id'], $un_status_upd_val);
+		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_GET['frm_unit_id'], $un_status_upd_val, 0, "", "", "");
 		$subscribe_value = "";
 		$subscr_unsubscr_settings = explode(",", get_variable("_api_subscr_unsubscr_setng"));
 		if (($row_un_status['dispatch'] < 3) && ($unsubscribed)) {
@@ -143,7 +143,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$result_fac_status = db_query($query_fac_status, __FILE__, __LINE__);
 		$row_fac_status = stripslashes_deep(db_fetch_assoc($result_fac_status));
 		$fac_status_upd_val = $row_fac_status['status_name'] . ", " . $row_fac_status['description'];
-		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_GET['frm_facility_id']);
+		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_GET['frm_facility_id'], "", "", "");
 		$response = remove_nls($row_fac_status['description']);
 		break;
 	case "call_progression":
@@ -166,19 +166,19 @@ if (is_operator() || is_admin() || is_super()) {
 		$date_part="";
 		if ($_POST['frm_callprogression'] == "frm_dispatched") {
 			$date_part .= "`dispatched` = " . quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_DISPATCHED'], $frm_tick, $frm_unit);
+			do_log($GLOBALS['LOG_CALL_DISPATCHED'], $frm_tick, $frm_unit, "", 0, "", "", "");
 		}
 		if ($_POST['frm_callprogression'] == "frm_responding") {
 			$date_part .= "`responding` = " . quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_RESPONDING'], $frm_tick, $frm_unit, $log_text);
+			do_log($GLOBALS['LOG_CALL_RESPONDING'], $frm_tick, $frm_unit, $log_text, 0, "", "", "");
 		}
 		if ($_POST['frm_callprogression'] == "frm_on_scene") {
 			$date_part .= "`on_scene` = ". quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_ON_SCENE'], $frm_tick, $frm_unit, $log_text);
+			do_log($GLOBALS['LOG_CALL_ON_SCENE'], $frm_tick, $frm_unit, $log_text, 0, "", "", "");
 		}
 		if ($_POST['frm_callprogression'] == "frm_clear") {
 			$date_part .= "`clear` = " . quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_CLEAR'], $frm_tick, $frm_unit);
+			do_log($GLOBALS['LOG_CALL_CLEAR'], $frm_tick, $frm_unit, "", 0, "", "", "");
 			$auto_dispatch_settings = explode(",", get_variable("auto_dispatch"));
 			$auto_last_assign = trim($auto_dispatch_settings[1]);
 			if ($auto_last_assign > 0) {
@@ -217,11 +217,11 @@ if (is_operator() || is_admin() || is_super()) {
 		}
 		if ($_POST['frm_callprogression'] == "frm_u2fenr") {
 			$date_part .= "`u2fenr` = " . quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $frm_tick, $frm_unit, $log_text);
+			do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $frm_tick, $frm_unit, $log_text, 0, "", "", "");
 		}
 		if ($_POST['frm_callprogression'] == "frm_u2farr") {
 			$date_part .= "`u2farr` = " . quote_smart($datetime_now) . ", ";
-			do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $frm_tick, $frm_unit, $log_text);
+			do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $frm_tick, $frm_unit, $log_text, 0, "", "", "");
 		}
 		$date_part .= "`user_id` = " . $_SESSION['user_id'] . ", ";
 		$date_part .= substr($date_part, 0, -2);
@@ -262,7 +262,7 @@ if (is_operator() || is_admin() || is_super()) {
 
 		$result = db_query($query, __FILE__, __LINE__);
 		$row = db_fetch_assoc($result);
-		do_log($GLOBALS['LOG_CALL_RESET'], $row['ticket_id'], $row['unit_id']);
+		do_log($GLOBALS['LOG_CALL_RESET'], $row['ticket_id'], $row['unit_id'], "", 0, "", "", "");
 		set_unit_updated($_POST['assign_id']);
 		unset ($result);
 		$unit_id = $row['unit_id'];
@@ -278,7 +278,7 @@ if (is_operator() || is_admin() || is_super()) {
 
 		$result = db_query($query, __FILE__, __LINE__);
 		$row = db_fetch_assoc($result);													// collect for log
-		do_log($GLOBALS['LOG_CALL_DELETED'], $row['ticket_id'], $row['unit_id']);
+		do_log($GLOBALS['LOG_CALL_DELETED'], $row['ticket_id'], $row['unit_id'], "", 0, "", "", "");
 		set_unit_updated($_POST['assign_id']);
 
 		$query = "DELETE FROM `assigns` " .

@@ -233,7 +233,7 @@ case "insert":
 			if ($_POST['asof'] != "") {
 				$log_text .= get_text("As of") . ": " . format_date($_POST['asof']) . "  ";
 			}
-			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text);
+			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text, 0, "", "", "");
 		}
 		break;
 	case "update":
@@ -281,7 +281,7 @@ case "insert":
 		if ($row_old_data['datetime'] != "") {
 			$log_text .= get_text("Written") . ": " . format_date(strtotime($row_old_data['datetime'])) . "  ";
 		}
-		do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text);
+		do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text, 0, "", "", "");
 		break;
 	case "edit":
 
