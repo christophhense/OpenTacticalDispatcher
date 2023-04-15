@@ -6,7 +6,7 @@ require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/communication.inc.php");
 require_once ("./incs/tickets.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 if (is_operator() || is_admin() || is_super()) {
 	$function = "";
@@ -54,7 +54,7 @@ if (is_operator() || is_admin() || is_super()) {
 		$current_address_type = "";
 		$receiver_0_addresses = array ();
 		$addresses = array ();
-		$match_array = get_api_configuration();
+		$match_array = get_api_configuration("default");
 		$handles = get_handle_array();
 		$i = array ();
 		foreach ($match_array as $key => $value) {
@@ -120,7 +120,7 @@ if (is_operator() || is_admin() || is_super()) {
 		show_send_message_table_right($message_group, $target_id, $target_api_log_id, $ticket_id);
 		break;
 	case "update_communication":
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$api_log_action = "";
 		if (isset ($_GET['api_log_action'])) {
 			$api_log_action = $_GET['api_log_action'];
@@ -310,7 +310,7 @@ if (is_operator() || is_admin() || is_super()) {
 	<?php
 		break;
 	default:
-		set_session_expire_time();
+		set_session_expire_time("on");
 		$auto_poll_settings = explode(",", get_variable("auto_poll"));
 		$auto_poll_time = trim($auto_poll_settings[0]);
 	?>

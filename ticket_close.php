@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $datetime_now = mysql_datetime();
 $function = "";
@@ -62,7 +62,7 @@ case "update":
 
 			$cl_res_result = db_query($cl_res_query, __FILE__, __LINE__);
 			$cl_res_row = stripslashes_deep(db_fetch_array($cl_res_result));
-			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $cl_res_row['unit_id']);
+			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $cl_res_row['unit_id'], "", 0, "", "", "");
 			do_receipt_message($cl_res_row['unit_id']);
 		}
 	}
@@ -74,7 +74,7 @@ case "update":
 
 	$result = db_query($query, __FILE__, __LINE__);
 	$row = db_fetch_assoc($result, __FILE__, __LINE__);
-	do_log($GLOBALS['LOG_INCIDENT_CLOSE'], $_POST['frm_ticket_id'], 0, $log_str);
+	do_log($GLOBALS['LOG_INCIDENT_CLOSE'], $_POST['frm_ticket_id'], 0, $log_str, 0, "", "", "");
 	unset ($result_old_data, $result, $cl_res_result);
 	break;
 default:
@@ -368,7 +368,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-	<?php show_infobox();?>
+	<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

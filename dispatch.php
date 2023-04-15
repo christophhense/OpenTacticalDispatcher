@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 function get_current_dispatch_str($ticket_id, $unit_id, $dispatch, $multi) {
 	$return_array = array (
@@ -51,7 +51,7 @@ function get_current_dispatch_str($ticket_id, $unit_id, $dispatch, $multi) {
 	return $return_array;
 }
 
-function show_units($ticket_id, $show_all_units = false) {
+function show_units($ticket_id, $show_all_units) {
 	$i = 1;
 	?>
 	<table id="table_left" class="table table-striped table-condensed" style="table-layout: fixed;">
@@ -277,7 +277,7 @@ case "insert":
 			"WHERE `id` = " . $_POST['frm_ticket_id'] . ";";
 
 		$result_status = db_query($query_status, __FILE__, __LINE__);
-		do_log($GLOBALS['LOG_INCIDENT_OPEN'], $_POST['frm_ticket_id'], 0, get_text("Incident opened"));
+		do_log($GLOBALS['LOG_INCIDENT_OPEN'], $_POST['frm_ticket_id'], 0, get_text("Incident opened"), 0, "", "", "");
 	}
 	if ($row_status['facility_id'] != 0) {
 		$log_dispatch_facility = true;
@@ -345,7 +345,7 @@ case "insert":
 							"WHERE `id` = " .  $new_id . ";";
 
 						db_query($query, __FILE__, __LINE__);
-						do_log($GLOBALS['LOG_CALL_RESPONDING'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime']);
+						do_log($GLOBALS['LOG_CALL_RESPONDING'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime'], "", "");
 						break;
 					case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
 
@@ -354,7 +354,7 @@ case "insert":
 							"WHERE `id` = " .  $new_id . ";";
 
 						db_query($query, __FILE__, __LINE__);
-						do_log($GLOBALS['LOG_CALL_ON_SCENE'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime']);
+						do_log($GLOBALS['LOG_CALL_ON_SCENE'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime'], "", "");
 						break;
 					case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
 
@@ -363,7 +363,7 @@ case "insert":
 							"WHERE `id` = " .  $new_id . ";";
 
 						db_query($query, __FILE__, __LINE__);
-						do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime']);
+						do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime'], "", "");
 						break;
 					case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
 
@@ -372,7 +372,7 @@ case "insert":
 							"WHERE `id` = " .  $new_id . ";";
 
 						db_query($query, __FILE__, __LINE__);
-						do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime']);
+						do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], "", 0, $row['datetime'], "", "");
 						break;
 					default:
 					}
@@ -384,9 +384,9 @@ case "insert":
 					"LIMIT 1;";
 
 				db_query($query, __FILE__, __LINE__);
-				do_log($GLOBALS['LOG_UNIT_STATUS'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], get_text("Resourced"));
+				do_log($GLOBALS['LOG_UNIT_STATUS'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], get_text("Resourced"), 0, "", "", "");
 				if ($log_dispatch_facility) {
-					do_log($GLOBALS['LOG_FACILITY_DISPATCHED'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], remove_nls($row_status['facility_handle']), $row_status['facility_id']);
+					do_log($GLOBALS['LOG_FACILITY_DISPATCHED'], $_POST['frm_ticket_id'], $_POST['unit_id'][$VarName], remove_nls($row_status['facility_handle']), $row_status['facility_id'], "", "", "");
 				}
 				if (($_POST['unit_id'][$VarName] != "") && ($_POST['unit_id'][$VarName] != 0)) {
 					do_receipt_message($_POST['unit_id'][$VarName]);
@@ -554,7 +554,7 @@ default:
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

@@ -154,7 +154,7 @@ function do_unit($unit_id, $status_id, $datetime, $lat, $lon) {
 	}
 }
 
-function do_assigns($assign_id, $call_progression_column, $datetime, $lat, $lon) {
+function do_assigns($unit_id, $assign_id, $call_progression_column, $datetime, $lat, $lon) {
 
 	$query = "UPDATE `assigns` " .
 		"SET `updated` = '" . $datetime . "', " .

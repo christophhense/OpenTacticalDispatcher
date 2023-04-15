@@ -504,11 +504,11 @@ case "table":
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<button class="btn btn-xs btn-default" type="button" id="refresh_button" onclick="reload_callboard();" style="display: inline;"><?php print get_text("Refresh");?></button>
+								<button id="refresh_button" class="btn btn-xs btn-default" type="button" onclick="reload_callboard();" style="display: inline;"><?php print get_text("Refresh");?></button>
 	<?php
 		if (is_super() || is_admin() || is_operator()) {
 	?>
-								<button class="btn btn-xs btn-default" type="button" id="cancel_button" onclick="cancel_clicked();" style="display: none;"><?php print get_text("Cancel");?></button>
+								<button id="cancel_button" class="btn btn-xs btn-default" type="button" onclick="cancel_clicked();" style="display: none;"><?php print get_text("Cancel");?></button>
 	<?php
 		}
 	?>
@@ -516,12 +516,12 @@ case "table":
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button class="btn btn-xs btn-default" type="button" id="active_assigns_button"<?php print $active_assigns_button_display_str;?> onclick="hide_cleared_assigns();"><?php print get_text("Hide closed assigns");?></button>
-								<button class="btn btn-xs btn-default" type="button" id="cleared_assigns_button"<?php print $cleared_assigns_button_display_str;?> onclick="show_cleared_assigns();"><?php print get_text("Show closed assigns");?></button>	
+								<button id="active_assigns_button" class="btn btn-xs btn-default" type="button"<?php print $active_assigns_button_display_str;?> onclick="hide_cleared_assigns();"><?php print get_text("Hide closed assigns");?></button>
+								<button id="cleared_assigns_button" class="btn btn-xs btn-default" type="button"<?php print $cleared_assigns_button_display_str;?> onclick="show_cleared_assigns();"><?php print get_text("Show closed assigns");?></button>	
 	<?php
 		if (is_super() || is_admin() || is_operator()) {
 	?>
-								<button class="btn btn-xs btn-default" type="button" id="save_button" onclick="apply_all_clicked();" style="display: none;"><?php print get_text("Apply all");?></button>
+								<button id="save_button" class="btn btn-xs btn-default" type="button" onclick="apply_all_clicked();" style="display: none;"><?php print get_text("Apply all");?></button>
 	<?php
 		}
 	?>

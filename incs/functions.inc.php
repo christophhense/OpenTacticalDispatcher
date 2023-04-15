@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
-require_once ("db_credentials.inc.php");
-require_once ("phpcoord.inc.php");				// UTM converter
+require_once ("./incs/db_credentials.inc.php");
 
 //====== misc-codes
 
@@ -225,6 +224,8 @@ $GLOBALS['LAST_RESULT'] = null;
 $GLOBALS['LAST_STATEMENT'] = null;
 
 function db_query($query_str, $file = "", $line = "") {
+	//if ($file == "") {error_log("no file");}
+	//if ($line == "") {error_log("no line");}
 	$result = $GLOBALS['DATABASE_LINK']->query($query_str);
 	if ($result != false) {
 		$GLOBALS['LAST_RESULT'] = $result;
@@ -250,7 +251,7 @@ function db_affected_rows($result, $file = "", $line = "") {
 //http://php.net/manual/de/pdostatement.fetchcolumn.php
 	$error_message = $GLOBALS['DATABASE_LINK']->errorInfo();
 	@error_log($error_message[2] . " in " . basename($file) . " line " . $line . "\r\n");
-	return $back;
+//	return $back;
 //	return $result->rowCount();
 }
 
@@ -311,7 +312,7 @@ function trim_quote($string) {
 	return db_real_escape_string(trim($string));
 }
 
-function insert_into_allocates($group = 1, $type = 0, $resource_id = 0, $user_id = 0, $updated = "") {
+function insert_into_allocates($group, $type, $resource_id, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -345,13 +346,13 @@ function get_working_in_development_environement() {
 	}
 }
 
-function insert_into_facilities($name = "", $handle = "", $object_id = "", $direct_dialing_1 = "",
-	$direct_dialing_2 = "", $street = "", $city = "", $security_contact = "",
-	$security_phone = "", $security_email = "", $type = 0, $facility_status_id = 0,
-	$description = "", $capabilities = "", $opening_hours = "", $access_rules = "",
-	$contact_name = "", $contact_phone = "", $contact_email = "", $admin_only = 0,
-	$icon_url = "", $boundary = "", $lat = 0.999999, $lng = 0.999999,
-	$user_id = 0, $updated = "") {
+function insert_into_facilities($name, $handle, $object_id, $direct_dialing_1,
+	$direct_dialing_2, $street, $city, $security_contact,
+	$security_phone, $security_email, $type, $facility_status_id,
+	$description, $capabilities, $opening_hours, $access_rules,
+	$contact_name, $contact_phone, $contact_email, $admin_only,
+	$icon_url, $boundary, $lat, $lng,
+	$user_id, $updated) {
 	if ($type == "") {
 		$type = 0;
 	}
@@ -389,8 +390,8 @@ function insert_into_facilities($name = "", $handle = "", $object_id = "", $dire
 	return $row[0];
 }
 
-function insert_into_facility_status($status_name = "", $description = "", $sort = 0, $display = "",
-	$bg_color = "", $text_color = "", $user_id = 0, $updated = "") {
+function insert_into_facility_status($status_name, $description, 
+	$sort, $display, $bg_color, $text_color, $user_id, $updated) {
 	if (!is_int($sort)) {
 		$sort = 0;
 	}
@@ -411,8 +412,7 @@ function insert_into_facility_status($status_name = "", $description = "", $sort
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_facility_types($name = "", $description = "", $bg_color = "", $text_color = "",
-	$user_id = 0, $updated = "") {
+function insert_into_facility_types($name, $description, $bg_color, $text_color, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -428,14 +428,14 @@ function insert_into_facility_types($name = "", $description = "", $bg_color = "
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_incident_types($type = "", $description = "", $protocol = "", $set_severity = 0,
-	$group = "", $sort = 0, $user_id = 0, $updated = "") {
+function insert_into_incident_types($type, $description, $protocol, 
+	$set_severity, $group, $sort, $user_id, $updated) {
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
 	}
 	if ($updated == "") {
-	$updated = mysql_datetime();
-}
+		$updated = mysql_datetime();
+	}
 
 	$query = "INSERT INTO `incident_types` (`type`, `description`, `protocol`, `set_severity`, " .
 		"`group`, `sort`, `user_id`, `client_address`, " .
@@ -447,8 +447,8 @@ function insert_into_incident_types($type = "", $description = "", $protocol = "
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_textblocks($type = "", $group = "", $text = "", $code = "",
-	$report_channels = 0, $sort = 0, $user_id = 0, $updated = "") {
+function insert_into_textblocks($type, $group, $text, $code,
+	$report_channels, $sort, $user_id, $updated) {
 	$report_channels = intval($report_channels);
 	if ($user_id == 0) {
 		$user_id = $_SESSION['user_id'];
@@ -514,8 +514,8 @@ function insert_into_units($name = "", $handle = "", $remote_data_services = "",
 	return $row[0];
 }
 
-function insert_into_unit_status($status_name = "", $description = "", $dispatch = 0, $sort = 0,
-	$bg_color = "#FFFFFF", $text_color = "#000000", $user_id = 0, $updated = "") {
+function insert_into_unit_status($status_name, $description, $dispatch, 
+	$sort, $bg_color, $text_color, $user_id, $updated) {
 	if (!preg_match("/^#[0-9a-fA-F]{6}/", trim($bg_color))) {
 		$bg_color = "#FFFFFF";
 	}
@@ -539,8 +539,7 @@ function insert_into_unit_status($status_name = "", $description = "", $dispatch
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_unit_types($name = "", $description = "", $bg_color = "#FFFFFF", $text_color = "#000000",
-	$user_id = 0, $updated = "") {
+function insert_into_unit_types($name, $description, $bg_color, $text_color, $user_id, $updated) {
 	if (!preg_match("/^#[0-9a-fA-F]{6}/", trim($bg_color))) {
 		$bg_color = "#FFFFFF";
 	}
@@ -562,8 +561,7 @@ function insert_into_unit_types($name = "", $description = "", $bg_color = "#FFF
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_users($name = "", $password = "", $level = 0, $email = "",
-	$updated = "") {
+function insert_into_users($name, $password, $level, $email, $updated) {
 	if ($updated == "") {
 		$updated = mysql_datetime();
 	}
@@ -588,10 +586,10 @@ function insert_into_users($name = "", $password = "", $level = 0, $email = "",
 
 //====== ticket-data
 
-require_once ("login.inc.php");
+require_once ("./incs/login.inc.php");
 
-function show_dispatch_text($ticket_id, $search = false, $last = false) {
-	require_once "incs/communication.inc.php";
+function show_dispatch_text($ticket_id, $search, $last) {
+	require_once ("./incs/communication.inc.php");
 	$page_beak_str = " page-break-after: always;";
 	if ($last) {
 		$page_beak_str = " page-break-after: avoid;";
@@ -620,7 +618,7 @@ function show_dispatch_text($ticket_id, $search = false, $last = false) {
 	<?php
 }
 
-function show_ticket($ticket_id, $search = false, $last = false) {
+function show_ticket($ticket_id, $search, $last) {
 	$page_beak_str = " page-break-after: always;";
 	if ($last) {
 		$page_beak_str = " page-break-after: avoid;";
@@ -632,7 +630,7 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 		</tr>
 	</table>
 	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
-		<tr style="heigth: 0px;">
+		<tr style="height: 0px;">
 			<td style="text-align: left; width: 15%;"></td>
 			<td style="text-align: left; width: 15%;"></td>
 			<th style="text-align: right; width: 25%;"></th>
@@ -648,7 +646,7 @@ function show_ticket($ticket_id, $search = false, $last = false) {
 	<?php
 }
 
-function show_head($ticket_id, $search = false, $ticket_report = false) {
+function show_head($ticket_id, $search, $ticket_report) {
 	if ($ticket_report) {
 		$border_top_str = "";
 	} else {
@@ -1047,7 +1045,7 @@ function show_assigns($id, $ticket_or_unit) {
 	print $output_str;
 }
 
-function show_actions($ticket_id, $ticket_report = false) {
+function show_actions($ticket_id, $ticket_report) {
 	$click_to_edit_str = "<br><br>" . get_text("Click to edit.");
 	$border_top_str = " border-top: 0px;";
 	$sort_order_str = " DESC";
@@ -1666,19 +1664,7 @@ function set_unit_updated($assign_id) {
 	return true;
 }
 
-function do_log($code = 0, $ticket_id = 0, $unit_id = 0, $text = "", $facility_id = 0, $updated = "", $lat = 0.99999, $lng = 0.99999) {
-	if ($code == "") {
-		$code = 0;
-	}
-	if ($ticket_id == "") {
-		$ticket_id = 0;
-	}
-	if ($unit_id == "") {
-		$unit_id = 0;
-	}
-	if ($facility_id == "") {
-		$facility_id = 0;
-	}
+function do_log($code, $ticket_id, $unit_id, $text, $facility_id, $updated, $lat, $lng) {
 	$text = substr($text, 0, 2047);
 	if ($lat == "") {
 		$lat = 0.999999;
@@ -1726,7 +1712,7 @@ function get_call_progression_time($elapsed, $data_progression, $additional_assi
 	return $progression;
 }
 
-function get_status_display_str($row, $click_str = "", $disp_inc_stat) {
+function get_status_display_str($row, $click_str, $disp_inc_stat) {
 	$additional_assigns_str = "";
 	$incidents_str = get_text("Incident");
 	if ($disp_inc_stat > 1) {
@@ -1763,7 +1749,7 @@ function get_status_display_str($row, $click_str = "", $disp_inc_stat) {
 	}
 }
 
-function show_infobox($size = "") {
+function show_infobox($size) {
 	$large_id_str = "";
 	$width_str = "";
 	if ($size == "large") {
@@ -1814,7 +1800,7 @@ function show_prevent_browser_back_button() {
 
 //====== selects
 
-function get_select_str($input, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id = 0, $no_options, $tabindex) {
+function get_select_str($input, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id, $no_options, $tabindex) {
 	$form_id_str = "";
 	if ($form_id != "") {
 		$form_id_str = " id=\"" . $form_id . "\"";
@@ -1900,7 +1886,7 @@ function get_select_str($input, $form_id, $form_name, $class, $title, $style, $o
 	return $return_str;
 }
 
-function get_unit_select_str($select_type = "report", $unit_id = 0, $ticket_id = 0) {
+function get_unit_select_str($select_type, $unit_id, $ticket_id) {
 	$option_0 = "";
 	$query = "";
 	$form_id = "";
@@ -2069,7 +2055,7 @@ function get_unit_select_str($select_type = "report", $unit_id = 0, $ticket_id =
 	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $unit_id, $no_elements, $tabindex);
 }
 
-function get_facility_select_str($select_type = "report_on_scene_location", $facility_id = 0) {
+function get_facility_select_str($select_type, $facility_id) {
 	$option_0 = "";
 	$query = "";
 	$form_id = "";
@@ -2147,10 +2133,10 @@ function get_facility_select_str($select_type = "report_on_scene_location", $fac
 		break;
 	default:
 	}
-	return get_select_str($query, $form_id, $form_name ,$class, $title, $style, $onchange, $option_0, $facility_id, $no_elements, $tabindex);
+	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $facility_id, $no_elements, $tabindex);
 }
 
-function get_textblock_select_str($select_type = "synopsis", $form_name, $form_id, $selected = 0, $show_hide_select = "") {
+function get_textblock_select_str($select_type, $form_name, $form_id, $selected, $show_hide_select) {
 	$option_0 = get_text("Textblocks");
 	$class = "sit label";
 	$title = "";
@@ -2214,10 +2200,10 @@ function get_textblock_select_str($select_type = "synopsis", $form_name, $form_i
 		$style = "margin-top: 5px;";
 		$onchange = "set_textblock(this.options[this.selectedIndex].text, " . $form_name . "); this.options[0].selected=true;";
 	}
-	return get_select_str($query, $form_id, $form_name ,$class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
+	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
 }
 
-function get_user_select_str($select_type = "report", $form_name = "frm_user") {
+function get_user_select_str($select_type, $form_name) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2244,10 +2230,10 @@ function get_user_select_str($select_type = "report", $form_name = "frm_user") {
 		break;
 	default:
 	}
-	return get_select_str($query, $form_name, $form_name ,$class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
+	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
 }
 
-function get_guard_house_select_str($select_type = "unit", $guard_house_id = 0) {
+function get_guard_house_select_str($select_type, $guard_house_id) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2292,10 +2278,10 @@ function get_guard_house_select_str($select_type = "unit", $guard_house_id = 0) 
 		break;
 	default:
 	}
-	return get_select_str($query, "frm_guard_house", "frm_guard_house" ,$class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
+	return get_select_str($query, "frm_guard_house", "frm_guard_house", $class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
 }
 
-function get_incident_type_select_str($select_type = "ticket_add_form", $form_name = "frm_in_types_id", $selected_inc_type = 0) {
+function get_incident_type_select_str($select_type, $form_name, $selected_inc_type) {
 	$option_0 = "";
 	$query = "";
 	$class = "";
@@ -2363,7 +2349,7 @@ function get_incident_type_select_str($select_type = "ticket_add_form", $form_na
 		break;
 	default:
 	}
-	return get_select_str($query, $form_name, $form_name ,$class, $title, $style, $onchange, $option_0, $selected_inc_type, $no_elements, $tabindex);
+	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, $selected_inc_type, $no_elements, $tabindex);
 }
 
 function get_severity_protocol_array_str() {
@@ -2379,7 +2365,7 @@ function get_severity_protocol_array_str() {
 	return $severities_str . $protocols_str;
 }
 
-function get_priority_select_str($select_type = "ticket_add_form", $form_name = "frm_severity", $selected_severity = 0) {
+function get_priority_select_str($select_type, $form_name, $selected_severity) {
 	$return_str = "";
 	$where_str = "";
 	$onchange_str = "";
@@ -2544,7 +2530,7 @@ function get_reported_by_select_str($function) {
 	return $return_array;
 }
 
-function get_ticket_status_select_str($select_type = "report", $form_id = "frm_status", $form_name = "", $selected_status = 0) {
+function get_ticket_status_select_str($select_type, $form_id, $form_name, $selected_status) {
 	$return_str = "";
 	$option_0_str = "";
 	$onchange_str = "";
@@ -2554,7 +2540,7 @@ function get_ticket_status_select_str($select_type = "report", $form_id = "frm_s
  	}
 	$form_name_str = "";
 	if ($form_name != "") {
-		$form_name_str = " name=\"" . $$form_name . "\"";
+		$form_name_str = " name=\"" . $form_name . "\"";
  	}
 	$used_status = array ();
 	$disabled_str = "";
@@ -2769,7 +2755,7 @@ function get_incident_location_select_str($function, $facility_id) {
 	return $return_array;
 }
 
-function get_admin_permission_select_str($function, $selected = 0) {
+function get_admin_permission_select_str($function, $selected) {
 	$tabindex = "";
 	switch ($function) {
 	case "unit":
@@ -3091,7 +3077,7 @@ function get_fixtext_report_channels_str() {
 	return $fixtext_report_channels_str;
 }
 
-function get_api_configuration($message_group = "") {
+function get_api_configuration($message_group) {
 	$match_array = array ();
 	switch ($message_group) {
 	case "facility_all":
@@ -3188,7 +3174,7 @@ function get_is_auto_ticket_line($line) {
 	return $return_array;
 }
 
-function get_auto_ticket_configuration($function = "pattern") {
+function get_auto_ticket_configuration($function) {
 /*
 	Provide profiles for different command and control centers
 	Park settings in global variable (only read everything once)
@@ -3392,7 +3378,7 @@ function valid_mailserver() {
 	}
 }
 
-function get_message_click_str($function, $targets_ids = 0, $ticket_id = 0, $handle = "", $contact_1 = "", $contact_2 = "", $contact_3 = "") {
+function get_message_click_str($function, $targets_ids, $ticket_id, $handle, $contact_1, $contact_2, $contact_3) {
 	$message_to_all = false;
 	$contact_where_str = "";
 	$title = "";
@@ -3568,7 +3554,7 @@ function is_guest() {
 	}
 }
 
-function set_session_expire_time($timeout = "on") {
+function set_session_expire_time($timeout) {
 	@session_start();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];
@@ -3660,8 +3646,8 @@ function get_facility_handle($id) {
 }
 
 //====== gis
-require_once ("phpcoord.inc.php");				// UTM converter
-function toUTM($coordsIn, $from = "") {
+require_once ("./incs/phpcoord.inc.php");				// UTM converter
+function toUTM($coordsIn) {
 	$temp = explode(",", $coordsIn);
 	$coords = new LatLng(trim($temp[0]), trim($temp[1]));
 	$utm = $coords -> toUTMRef();
@@ -4391,8 +4377,9 @@ function highlight($term, $string) {
 
 //====== regions
 
-function get_allocates_where_str($type1, $type2, $statement = "WHERE") {
+function get_allocates_where_str($type1, $type2, $statement) {
 	$user_id = 0;
+	$curr_viewed = array ();
 	if (isset ($_SESSION['user_id'])) {
 		$user_id = $_SESSION['user_id'];
 	}
@@ -4425,7 +4412,7 @@ function get_allocates_where_str($type1, $type2, $statement = "WHERE") {
 			$where2 .= "AND `allocates`.`type` = " . $type2;
 		}
 	} else {
-		if (count($curr_viewed == 0)) {	//	catch for errors - no entries in allocates for the user.
+		if (count($curr_viewed) == 0) {	//	catch for errors - no entries in allocates for the user.
 			$where2 = $statement . " `allocates`.`type` = " . $type2;
 		} else {
 			$x = 0;

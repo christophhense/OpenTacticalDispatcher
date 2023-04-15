@@ -29,7 +29,7 @@ if (isset($_POST['frm_id'])) {
 }
 switch ($function) {
 case "insert":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$frm_lat = "0.999999";
 	if (!empty ($_POST['frm_lat'])) {
 		$frm_lat = $_POST['frm_lat'];
@@ -51,11 +51,11 @@ case "insert":
 	foreach ($_POST['frm_group'] as $grp_val) {		
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_FACILITY'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
-	do_log($GLOBALS['LOG_FACILITY_ADD'], 0, 0, get_facility_edit_log_text("add", $new_id, $_POST, ""), $new_id);
+	do_log($GLOBALS['LOG_FACILITY_ADD'], 0, 0, get_facility_edit_log_text("add", $new_id, $_POST, ""), $new_id, "", "", "");
 	print get_text("Saved");
 	exit;
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `facilities` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -128,7 +128,7 @@ case "update":
 		}
 	}
 	$log_text = get_text("TBL_ID") . ": #" . $_POST['frm_id'];
-	do_log($GLOBALS['LOG_FACILITY_CHANGE'], 0, 0, get_facility_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id']);
+	do_log($GLOBALS['LOG_FACILITY_CHANGE'], 0, 0, get_facility_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id'], "", "", "");
 	if (!empty ($_POST['frm_status_update'])) {
 
 		$query_fac_status = "SELECT `status_name`, " .
@@ -139,7 +139,7 @@ case "update":
 		$result_fac_status = db_query($query_fac_status, __FILE__, __LINE__);
 		$row_fac_status = stripslashes_deep(db_fetch_assoc($result_fac_status));
 		$fac_status_upd_val = $row_fac_status['status_name'] . ", " . $row_fac_status['description'];
-		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_POST['frm_id']);
+		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_POST['frm_id'], "", "", "");
 	}
 	print get_text("Saved");
 	exit;
@@ -156,7 +156,7 @@ case "delete":
 
 	$result = db_query($query, __FILE__, __LINE__);
 	$log_text = get_text("TBL_ID") . ": #" . $_POST['frm_id'];
-	do_log($GLOBALS['LOG_FACILITY_DELETED'], 0, 0, get_facility_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id']);
+	do_log($GLOBALS['LOG_FACILITY_DELETED'], 0, 0, get_facility_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id'], "", "", "");
 	print get_text("Deleted");
 	exit;
 default:
@@ -171,7 +171,7 @@ case "table_right":
 case "add":
 case "edit":
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -212,10 +212,10 @@ default:
 				if ($("#frm_name").val() == "") {
 					error_message += "<?php print get_text("Facility NAME is required.");?><br>";
 				}
-				if ($("#frm_type").prop('selectedIndex') == 0) {
+				if ($("#frm_type").val() == 0) {
 					error_message += "<?php print get_text("Facility type selection is required.");?><br>";
 				}
-				if ($("#frm_status_id").prop('selectedIndex') == 0) {
+				if ($("#frm_status_id").val() == 0) {
 					error_message += "<?php print get_text("Facility STATUS is required.");?><br>";
 				}
 				if (error_message != "") {
@@ -504,7 +504,7 @@ case "add":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -720,7 +720,7 @@ case "edit":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

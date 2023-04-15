@@ -29,7 +29,7 @@ if (isset($_POST['frm_id'])) {
 }
 switch ($function) {
 case "insert":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	if (!is_super()) {
 		$_POST['frm_adminperms'] = 0;
 	}
@@ -42,11 +42,11 @@ case "insert":
 	foreach ($_POST['frm_group'] as $grp_val) {
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_UNIT'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
-	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""));
+	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""), 0, "", "", "");
 	print get_text("Saved");
 	exit;
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -130,7 +130,7 @@ case "update":
 			}
 		}
 	}
-	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data));
+	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
 	if (!empty ($_POST['frm_status_update'])) {
 
 		$query_un_status = "SELECT `status_name`, " .
@@ -141,12 +141,12 @@ case "update":
 		$result_un_status = db_query($query_un_status, __FILE__, __LINE__);
 		$row_un_status = stripslashes_deep(db_fetch_assoc($result_un_status));
 		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
-		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val);
+		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val, 0, "", "", "");
 	}
 	print get_text("Saved");
 	exit;
 case "delete":
-	set_session_expire_time();
+	set_session_expire_time("on");
 
 	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
 
@@ -170,7 +170,7 @@ case "delete":
 
 		$result = db_query($query, __FILE__, __LINE__);
 		$caption = get_text("Deleted");
-		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data));
+		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
 	}
 	print $caption;
 	exit;
@@ -200,7 +200,7 @@ case "printers":
 case "add":
 case "edit":
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -273,10 +273,10 @@ default:
 				if ($("#frm_name").val() == "") {
 					error_message += "<?php print get_text("Unit NAME is required.");?><br>";
 				}
-				if ($("#frm_type").prop('selectedIndex') == 0) {
+				if ($("#frm_type").val() == 0) {
 					error_message += "<?php print get_text("Unit type selection is required.");?><br>";
 				}
-				if ($("#frm_un_status_id").prop('selectedIndex') == 0) {
+				if ($("#frm_un_status_id").val() == 0) {
 					error_message += "<?php print get_text("Units STATUS is required.");?><br>";
 				}
 				if (error_message != "") {
@@ -459,7 +459,7 @@ case "add":
 												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 value=""><?php if (isset ($_GET['frm_smsg_id'])) {print $_GET['frm_smsg_id'];}?></textarea>
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
+												<?php print get_unit_select_str("reporting_channel_smsg_id", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -470,7 +470,7 @@ case "add":
 												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php if (isset ($_GET['frm_phone'])) {print $_GET['frm_phone'];}?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_phone");?>
+												<?php print get_unit_select_str("reporting_channel_phone", 0, 0);?>
 											</div>	
 										</td>
 									</tr>
@@ -481,14 +481,14 @@ case "add":
 												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php if (isset ($_GET['frm_unit_email'])) {print $_GET['frm_unit_email'];}?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_email");?>
+												<?php print get_unit_select_str("reporting_channel_email", 0, 0);?>
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResRepChan");?>><?php print get_text("Get links");?>:</th>
 										<td colspan=3>
-											<?php print get_unit_select_str("reporting_channel");?>
+											<?php print get_unit_select_str("reporting_channel", 0, 0);?>
 										</td>
 									</tr>
 								</table>
@@ -552,7 +552,7 @@ case "add":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -696,7 +696,7 @@ case "edit":
 												<textarea id="frm_smsg_id" name="frm_smsg_id" rows=7 class="form-control" tabindex=4 ><?php print remove_nls($row['remote_data_services']);?></textarea>
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_smsg_id");?>
+												<?php print get_unit_select_str("reporting_channel_smsg_id", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -707,7 +707,7 @@ case "edit":
 												<input id="frm_phone" name="frm_phone" type="text" class="form-control" tabindex=6 value="<?php print remove_nls($row['unit_phone']);?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_phone");?>
+												<?php print get_unit_select_str("reporting_channel_phone", 0, 0);?>
 											</div>
 										</td>
 									</tr>
@@ -718,14 +718,14 @@ case "edit":
 												<input id="frm_unit_email" name="frm_unit_email" type="email" class="form-control" tabindex=8 value="<?php print remove_nls($row['unit_email']);?>">
 											</div>
 											<div>
-												<?php print get_unit_select_str("reporting_channel_email");?>
+												<?php print get_unit_select_str("reporting_channel_email", 0, 0);?>
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th<?php print get_help_text_str("_ResRepChan");?>><?php print get_text("Get links");?>:</th>
 										<td colspan=3>
-											<?php print get_unit_select_str("reporting_channel");?>
+											<?php print get_unit_select_str("reporting_channel", 0, 0);?>
 										</td>
 									</tr>
 								</table>
@@ -793,7 +793,7 @@ case "edit":
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php
@@ -907,7 +907,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 		<?php show_infobox("large");?>
 	</body>
 </html>

@@ -204,7 +204,7 @@ function get_facility_edit_log_text($function, $id, $values_new, $values_old) {
 	return remove_nls($log_text);
 }
 
-function show_facilities_list($table_side = "left", $split = 0) {
+function show_facilities_list($table_side) {
 	if (empty($_SESSION['facilities_sort_order'])) {
 		$_SESSION['facilities_sort_order'] = get_variable("sort_facilities");
 	}
@@ -435,7 +435,7 @@ function show_facilities_list($table_side = "left", $split = 0) {
 	<?php
 }
 
-function show_facility_types_select($facility_type = 0) {
+function show_facility_types_select($facility_type) {
 
 	$query_facility_types = "SELECT * " .
 		"FROM `facility_types` " .
@@ -445,7 +445,7 @@ function show_facility_types_select($facility_type = 0) {
 	$style_str = "";
 	if (db_affected_rows($result_facility_types) > 0) {
 		$style_str = "";
-		if ($facility_type) {
+		if ($facility_type > 0) {
 
 			$query_selected_facility_type = "SELECT `bg_color`, " .
 				"`text_color` " .
@@ -457,11 +457,11 @@ function show_facility_types_select($facility_type = 0) {
 			$style_str = " style='background-color: " . $row_selected_facility_type['bg_color'] . "; color: " . $row_selected_facility_type['text_color'] . ";'";
 		}
 	?>
-				<select id="frm_type" name="frm_type" class="form-control mandatory" tabindex=13 <?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;">
+<select id="frm_type" name="frm_type" class="form-control mandatory" tabindex=13 <?php print $style_str;?> onchange="this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;">
 	<?php
-		if (!$facility_type) {
+		if ($facility_type == 0) {
 	?>
-					<option value=0><?php print get_text("Select");?></option>
+	<option value=0><?php print get_text("Select");?></option>
 	<?php
 		}
 		while ($row_f_types = stripslashes_deep(db_fetch_assoc($result_facility_types))) {
@@ -471,17 +471,17 @@ function show_facility_types_select($facility_type = 0) {
 		unset ($result_selected_facility_type);
 	} else {
 	?>
-				<select id="frm_type" name="frm_type" class="form-control"  style="background-color: #000000; color: #FFFFFF;">
-					<option value=0><?php print get_text("No data");?></option>
+<select id="frm_type" name="frm_type" class="form-control"  style="background-color: #000000; color: #FFFFFF;">
+	<option value=0><?php print get_text("No data");?></option>
 	<?php
 	}
 	unset ($result_facility_types);
 	?>
-				</select>
+</select>
 	<?php
 }
 
-function show_facility_status_select($facility_status = 0) {
+function show_facility_status_select($facility_status) {
 
 	$query_facility_status = "SELECT * " .
 		"FROM `facility_status` " .

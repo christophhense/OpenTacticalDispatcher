@@ -6,7 +6,7 @@ require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/assign.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $back = "";
 $url_back = "";
@@ -165,7 +165,7 @@ case "reset":
 
 	$result = db_query($query_update, __FILE__, __LINE__);
 
-	do_log($GLOBALS['LOG_CALL_RESET'], $row['ticket_id'], $row['unit_id']);
+	do_log($GLOBALS['LOG_CALL_RESET'], $row['ticket_id'], $row['unit_id'], "", 0, "", "", "");
 	set_unit_updated($_POST['assign_id']);
 	unset ($result);
 	do_receipt_message($row['unit_id']);
@@ -180,7 +180,7 @@ case "delete":
 	$result = db_query($query, __FILE__, __LINE__);
 	$row = db_fetch_assoc($result);
 
-	do_log($GLOBALS['LOG_CALL_DELETED'], $row['ticket_id'], $row['unit_id']);
+	do_log($GLOBALS['LOG_CALL_DELETED'], $row['ticket_id'], $row['unit_id'], "", 0, "", "", "");
 	set_unit_updated($_POST['assign_id']);
 
 	$query = "DELETE FROM `assigns` " .
@@ -301,54 +301,54 @@ case "update":
 	$do_receipt = false;
 	if ((array_key_exists('dispatched_button', $_POST)) && ($as_row_old['dispatched'] != date("Y-m-d H:i:s", strtotime($_POST['dispatched'])))) {
 		if (is_datetime($as_row_old['dispatched'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_DISPATCHED']] . ": " . date(get_variable("date_format"), strtotime($_POST['dispatched'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_DISPATCHED']] . ": " . date(get_variable("date_format"), strtotime($_POST['dispatched'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_DISPATCHED'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['dispatched']);
+			do_log($GLOBALS['LOG_CALL_DISPATCHED'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['dispatched'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('responding_button', $_POST)) && ($as_row_old['responding'] != date("Y-m-d H:i:s", strtotime($_POST['responding'])))) {
 		if (is_datetime($as_row_old['responding'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_RESPONDING']] . ": " . date(get_variable("date_format"), strtotime($_POST['responding'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_RESPONDING']] . ": " . date(get_variable("date_format"), strtotime($_POST['responding'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_RESPONDING'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['responding']);
+			do_log($GLOBALS['LOG_CALL_RESPONDING'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['responding'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('on_scene_button', $_POST)) && ($as_row_old['on_scene'] != date("Y-m-d H:i:s", strtotime($_POST['on_scene'])))) {
 		if (is_datetime($as_row_old['on_scene'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'],$_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_ON_SCENE']] . ": " . date(get_variable("date_format"), strtotime($_POST['on_scene'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'],$_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_ON_SCENE']] . ": " . date(get_variable("date_format"), strtotime($_POST['on_scene'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_ON_SCENE'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['on_scene']);
+			do_log($GLOBALS['LOG_CALL_ON_SCENE'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['on_scene'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('facility_enroute_button', $_POST)) && ($as_row_old['u2fenr'] != date("Y-m-d H:i:s", strtotime($_POST['facility_enroute'])))) {
 		if (is_datetime($as_row_old['u2fenr'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_FACILITY_ENROUTE']] . ": " . date(get_variable("date_format"), strtotime($_POST['facility_enroute'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_FACILITY_ENROUTE']] . ": " . date(get_variable("date_format"), strtotime($_POST['facility_enroute'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['facility_enroute']);
+			do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['facility_enroute'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('facility_arrived_button', $_POST)) && ($as_row_old['u2farr'] != date("Y-m-d H:i:s", strtotime($_POST['facility_arrived'])))) {
 		if (is_datetime($as_row_old['u2farr'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_FACILITY_ARRIVED']] . ": " . date(get_variable("date_format"), strtotime($_POST['facility_arrived'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_FACILITY_ARRIVED']] . ": " . date(get_variable("date_format"), strtotime($_POST['facility_arrived'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['facility_arrived']);
+			do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['facility_arrived'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('clear_button', $_POST)) && ($as_row_old['clear'] != date("Y-m-d H:i:s", strtotime($_POST['clear'])))) {
 		if (is_datetime($as_row_old['clear'])) {
-			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_CLEAR']] . ": " . date(get_variable("date_format"), strtotime($_POST['clear'])));
+			do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], $types[$GLOBALS['LOG_CALL_CLEAR']] . ": " . date(get_variable("date_format"), strtotime($_POST['clear'])), 0, "", "", "");
 		} else {
-			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['clear']);
+			do_log($GLOBALS['LOG_CALL_CLEAR'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], "", "", $_POST['clear'], "", "");
 		}
 		$do_receipt = true;
 	}
 	if ((array_key_exists('frm_comments', $_POST)) && ($as_row_old['comments'] != $_POST['frm_comments'])) {
-		do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], get_text("Comments") . ": " . remove_nls($_POST['frm_comments']));
+		do_log($GLOBALS['LOG_CALL_EDIT'], $_POST['frm_ticket_id'], $as_row_old['unit_id'], get_text("Comments") . ": " . remove_nls($_POST['frm_comments']), 0, "", "", "");
 	}
 	if ((array_key_exists('frm_on_scene_location', $_POST)) && ($as_row_old['on_scene_location'] != $_POST['frm_on_scene_location'])) {
 		$facility_on_scene_str = "";
@@ -362,14 +362,14 @@ case "update":
 		}
 		if (($as_row_old['on_scene_location'] == "") && ((isset ($_POST['frm_on_scene_facility_id'])) && ($_POST['frm_on_scene_facility_id'] != -1))) {
 			do_log($GLOBALS['LOG_CALL_FACILITY_SET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("On-Scene location") .
-				": " . $facility_on_scene_str . $_POST['frm_on_scene_location']);
+				": " . $facility_on_scene_str . $_POST['frm_on_scene_location'], 0, "", "", "");
 		} else {
 			if (($as_row_old['on_scene_facility_id'] >= 0) && ((isset ($_POST['frm_on_scene_facility_id'])) && ($_POST['frm_on_scene_facility_id'] == -1))) {
-				do_log($GLOBALS['LOG_CALL_FACILITY_UNSET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], "");
+				do_log($GLOBALS['LOG_CALL_FACILITY_UNSET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], "", 0, "", "", "");
 			} else {
 				if (($as_row_old['on_scene_location'] != "") && ((isset ($_POST['frm_on_scene_facility_id'])) && ($_POST['frm_on_scene_facility_id'] != -1))) {
 					do_log($GLOBALS['LOG_CALL_FACILITY_CHANGE'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("On-Scene location") .
-						": " . $facility_on_scene_str . $_POST['frm_on_scene_location']);
+						": " . $facility_on_scene_str . $_POST['frm_on_scene_location'], 0, "", "", "");
 				}
 			}
 		}
@@ -385,12 +385,12 @@ case "update":
 			}
 		}
 		if ($as_row_old['receiving_location'] == "") {
-			do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_SET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("Receiving location") . ": " . $facility_receiving_str . $_POST['frm_receiving_location']);
+			do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_SET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("Receiving location") . ": " . $facility_receiving_str . $_POST['frm_receiving_location'], 0, "", "", "");
 		} else {
 			if ($_POST['frm_receiving_location'] == "") {
-				do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_UNSET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], "");
+				do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_UNSET'], $as_row_old['ticket_id'], $as_row_old['unit_id'], "", 0, "", "", "");
 			} else {
-				do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_CHANGE'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("Receiving location") . ": " . $facility_receiving_str . $_POST['frm_receiving_location']);
+				do_log($GLOBALS['LOG_CALL_RECEIVING_FACILITY_CHANGE'], $as_row_old['ticket_id'], $as_row_old['unit_id'], get_text("Receiving location") . ": " . $facility_receiving_str . $_POST['frm_receiving_location'], 0, "", "", "");
 			}
 		}
 	}
@@ -896,7 +896,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

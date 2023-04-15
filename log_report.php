@@ -39,9 +39,9 @@ if (is_admin() || is_super()) {
 }
 switch ($function) {
 case "update":
-	set_session_expire_time();
+	set_session_expire_time("on");
 	if (is_operator() || is_admin() || is_super()) {
-		do_log($GLOBALS['LOG_COMMENT'], 0, $_POST['unit_id'], strip_tags(trim($_POST['frm_comment'])), $_POST['facility_id']);
+		do_log($GLOBALS['LOG_COMMENT'], 0, $_POST['unit_id'], strip_tags(trim($_POST['frm_comment'])), $_POST['facility_id'], "", "", "");
 	}
 	break;
 case "table_bottom":
@@ -53,7 +53,7 @@ case "table_bottom":
 	<?php
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$unit_id = 0;
 	if (isset ($_GET['unit_id'])) {
 		$unit_id = $_GET['unit_id'];
@@ -244,7 +244,7 @@ default:
 												<textarea class="form-control" id="frm_comment" name="frm_comment" placeholder="<?php print get_text("New entry");?>" tabindex=1></textarea>
 												<?php print get_textblock_select_str("log", "document.log_form.frm_comment", "", 0, "")?>
 												<div<?php print get_help_text_str("log_unit_facility");?>>
-													<?php print get_unit_select_str("log", $unit_id);?>
+													<?php print get_unit_select_str("log", $unit_id, 0);?>
 													<?php print get_facility_select_str("log", $facility_id);?>
 												</div>
 											</form>
@@ -290,7 +290,7 @@ default:
 				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

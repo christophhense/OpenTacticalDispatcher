@@ -141,7 +141,7 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 	<?php
-	show_infobox();
+	show_infobox("small");
 	show_infobox("large");
 }
 switch ($function) {
@@ -170,8 +170,8 @@ case "profile":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	if ($_SESSION['user_id'] < 0 OR check_for_rows($query) == 0) {
-		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION[user_id] . "'." . "<br>";
-		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION[user_id] . "'." . "  ";
+		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
+		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "  ";
 	} else {
 
 		$query	= "SELECT * " .
@@ -1468,7 +1468,8 @@ case "api":
 		}
 		print "<td>";
 		if (get_variable("_" . substr($value, 0, -5) . "mess") != "") {
-			print get_textblock_select_str("fixtext", "_" . substr($value, 0, -5) . "mess", "_" . substr($value, 0, -5) . "mess", get_variable("_" . substr($value, 0, -5) . "mess"), $show_hide_message);
+			print get_textblock_select_str("fixtext", "_" . substr($value, 0, -5) . "mess", "_" . substr($value, 0, -5) . 
+				"mess", get_variable("_" . substr($value, 0, -5) . "mess"), $show_hide_message);
 		}
 		if (get_variable("_" . substr($value, 0, -5) . "rece") != "") {
 			print "<input class='form-control' id='_" . substr($value, 0, -5) . "rece' name='_" . substr($value,0 , -5) . "rece' " .
@@ -1649,8 +1650,8 @@ case "facilities_status_reset":
 case "facility_types_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
-			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'],
-				$_SESSION['user_id'], $datetime_now);
+			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
@@ -1832,8 +1833,9 @@ case "facility_status_update":
 			foreach ($_POST['display_new'] as $VarName=>$VarValue) {
 				$display_new = $display_new | $VarValue;
 			}
-			$result = insert_into_facility_status($_POST['status_val_new'], $_POST['description_new'], intval($_POST['sort_new']), $display_new,
-				"#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_facility_status($_POST['status_val_new'], $_POST['description_new'], 
+				intval($_POST['sort_new']), $display_new, "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";
@@ -2308,8 +2310,8 @@ case "unit_status_reset":
 case "unit_types_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
-			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'],
-				$_SESSION['user_id'], $datetime_now);
+			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "  ";
@@ -2486,8 +2488,9 @@ case "unit_types":
 case "unit_status_update":
 	if (is_super()) {
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
-			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], $_POST['dispatch_new'], $_POST['sort_new'],
-				"#" . $_POST['bg_color_new'], "#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], 
+				$_POST['dispatch_new'], $_POST['sort_new'], "#" . $_POST['bg_color_new'], 
+				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";
@@ -4055,8 +4058,8 @@ case "reset_regions":
 case "incident_types_update":
 	if (is_super()) {
 		if (isset ($_POST['nature_new']) && ($_POST['nature_new'] != "")) {
-			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], $_POST['severity_new'],
-				$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
+			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], 
+				$_POST['severity_new'],	$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
 				$top_notice_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "<br>";
 				$top_notice_log_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "  ";
@@ -4955,7 +4958,7 @@ case "do_update":
 			$simulated_str = get_text("[Simulation]") . " ";
 		}
 	}
-	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $simulated_str . get_text("Update started to version") . ": " . $_GET['version']);
+	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $simulated_str . get_text("Update started to version") . ": " . $_GET['version'], 0, "", "", "");
 
 	$query_set_update_progress_time = "UPDATE `settings` " .
 		"SET `value` = '" . $_GET['update_progress_time'] . "' " .
@@ -5614,7 +5617,7 @@ case "do_update":
 case "updates":
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$top_notice_head = "";
 	if (!empty ($_GET['top_notice'])) {
 		$top_notice_str .= $_GET['top_notice'] . "<br>";
@@ -5633,7 +5636,7 @@ default:
 		$top_notice_log_str .= $_POST['top_notice_logstr'];
 	}
 	if (!empty ($top_notice_log_str)) {
-		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str);
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str, 0, "", "", "");
 	}
 	?>
 		<script>

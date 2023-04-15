@@ -1016,7 +1016,7 @@ foreach ($sound_names_array as $value) {
 					<div style="float: right;">
 						<button<?php print get_help_text_str("toggle_day_night");?> class="btn btn-xs btn-default" value=""
 							onclick="send_request('./set_data.php?function=day_night&value=' + day_night_toggle, do_day_night);"><?php print get_text("Day / Night");?></button>
-						<button<?php print get_help_text_str("deactivate_timeout");?> id="timeout_button" class="btn btn-xs btn-default"
+						<button id="timeout_button"<?php print get_help_text_str("deactivate_timeout");?> class="btn btn-xs btn-default"
 							onclick="send_request('./set_data.php?function=timeout&value=off', callback_no_timeout);"><?php print get_text("Auto-logout off");?></button>
 						<button id="logout" class="btn btn-xs btn-default"
 							onclick="do_logout();"><?php print get_text("Logout");?></button>

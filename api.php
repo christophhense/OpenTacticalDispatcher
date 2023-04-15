@@ -148,9 +148,9 @@ default:
 				$result_str .= "Notruf" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_log($GLOBALS['LOG_EMGCY_HI'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_EMGCY_HI'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					} else {
-						do_log($GLOBALS['LOG_EMGCY_HI'], 0, $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_EMGCY_HI'], 0, $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					}
 					do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_EMGCY_HI'], $types[$GLOBALS['LOG_EMGCY_HI']], $lat, $lon);
 					$result_str .= "TRUE";
@@ -161,9 +161,9 @@ default:
 				$result_str .= "Hilferuf(0)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_log($GLOBALS['LOG_EMGCY_LO'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_EMGCY_LO'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					} else {
-						do_log($GLOBALS['LOG_EMGCY_LO'], 0, $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_EMGCY_LO'], 0, $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					}
 					do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_EMGCY_LO'], $types[$GLOBALS['LOG_EMGCY_LO']], $lat, $lon);
 					$result_str .= "TRUE";
@@ -174,9 +174,9 @@ default:
 				$result_str .= "Sprechwunsch(5)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_log($GLOBALS['LOG_CALL_REQ'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_CALL_REQ'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					} else {
-						do_log($GLOBALS['LOG_CALL_REQ'], 0, $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_CALL_REQ'], 0, $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					}
 					do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_REQ'], $types[$GLOBALS['LOG_CALL_REQ']], $lat, $lon);
 					$result_str .= "TRUE";
@@ -187,9 +187,9 @@ default:
 				$result_str .= "Handquittung(9)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_log($GLOBALS['LOG_CALL_MANACKN'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_CALL_MANACKN'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					} else {
-						do_log($GLOBALS['LOG_CALL_MANACKN'], 0, $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_CALL_MANACKN'], 0, $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 					}
 					do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_MANACKN'], $types[$GLOBALS['LOG_CALL_MANACKN']], $lat, $lon);
 					$result_str .= "TRUE";
@@ -200,8 +200,8 @@ default:
 				$result_str .= "Aus(3)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "responding", $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_CALL_RESPONDING'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "responding", $datetime_now, $lat, $lon);
+						do_log($GLOBALS['LOG_CALL_RESPONDING'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_RESPONDING'], $types[$GLOBALS['LOG_CALL_RESPONDING']], $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
@@ -215,8 +215,8 @@ default:
 				$result_str .= "Ein(4)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "on_scene", $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_CALL_ON_SCENE'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "on_scene", $datetime_now, $lat, $lon);
+						do_log($GLOBALS['LOG_CALL_ON_SCENE'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_ON_SCENE'], $types[$GLOBALS['LOG_CALL_ON_SCENE']], $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
@@ -230,8 +230,8 @@ default:
 				$result_str .= "Ab(7)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "u2fenr", $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "u2fenr", $datetime_now, $lat, $lon);
+						do_log($GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_FACILITY_ENROUTE'], $types[$GLOBALS['LOG_CALL_FACILITY_ENROUTE']], $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
@@ -245,8 +245,8 @@ default:
 				$result_str .= "An(8)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "u2farr", $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "u2farr", $datetime_now, $lat, $lon);
+						do_log($GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_CALL_FACILITY_ARRIVED'], $types[$GLOBALS['LOG_CALL_FACILITY_ARRIVED']], $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
@@ -260,13 +260,13 @@ default:
 				$result_str .= "Frei(1)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "clear", $datetime_now, $lat, $lon);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "clear", $datetime_now, $lat, $lon);
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_CALL_CLEAR'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now);
+						do_log($GLOBALS['LOG_CALL_CLEAR'], $assign_data[1], $unit_data["unit_id"], "", 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_clr_stat")), $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_clr_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_clr_stat")), 0, $datetime_now);
+						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_clr_stat")), 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_clr_stat")), $lat, $lon);
 					}
 					$result_str .= "TRUE";
@@ -277,13 +277,13 @@ default:
 				$result_str .= "Wache(2)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "clear", $datetime_now, $lat, $lon);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "clear", $datetime_now, $lat, $lon);
 						do_unit($unit_data["unit_id"], get_variable("_api_quat_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_UNIT_STATUS'], $assign_data[1], $unit_data["unit_id"], get_status_description(get_variable("_api_quat_stat")), 0, $datetime_now);
+						do_log($GLOBALS['LOG_UNIT_STATUS'], $assign_data[1], $unit_data["unit_id"], get_status_description(get_variable("_api_quat_stat")), 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_quat_stat")), $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_quat_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_quat_stat")), 0, $datetime_now);
+						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_quat_stat")), 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_quat_stat")), $lat, $lon);
 					}
 					$result_str .= "TRUE";
@@ -294,13 +294,13 @@ default:
 				$result_str .= "Ausser Dienst(6)" . "<br>";
 				if (($unit_data["unit_id"] != 0) || $unit_data["store_unknown_unit_data"]) {
 					if ($assign_data[0]) {
-						do_assigns($assign_data[0], "clear", $datetime_now, $lat, $lon);
+						do_assigns($unit_data["unit_id"], $assign_data[0], "clear", $datetime_now, $lat, $lon);
 						do_unit($unit_data["unit_id"], get_variable("_api_off_duty_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_UNIT_STATUS'], $assign_data[1], $unit_data["unit_id"], get_status_description(get_variable("_api_off_duty_stat")), 0, $datetime_now);
+						do_log($GLOBALS['LOG_UNIT_STATUS'], $assign_data[1], $unit_data["unit_id"], get_status_description(get_variable("_api_off_duty_stat")), 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_off_duty_stat")), $lat, $lon);
 					} else {
 						do_unit($unit_data["unit_id"], get_variable("_api_off_duty_stat"), $datetime_now, $lat, $lon);
-						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_off_duty_stat")), 0, $datetime_now);
+						do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $unit_data["unit_id"], get_status_description(get_variable("_api_off_duty_stat")), 0, $datetime_now, $lat, $lon);
 						do_api_log($datetime_now, $source, $source_regexp, $unit_data["unit_id"], $destination, $destination_alias, $audio_link, $GLOBALS['LOG_UNIT_STATUS'], get_status_description(get_variable("_api_off_duty_stat")), $lat, $lon);
 					}
 					$result_str .= "TRUE";

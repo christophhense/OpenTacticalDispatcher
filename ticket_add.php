@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 @session_start();
 require_once ("./incs/functions.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 function get_reserved_row() {
 	$datetime_now = mysql_datetime();
@@ -167,7 +167,7 @@ case "insert":
 				$name_rev = date(get_variable("date_format_year_only")) . $inc_num_array[2] . (string) $inc_num_array[3] . " " ;		// year, separator, number
 				break;
 			default:
-				alert("ERROR @ " + "<?php print __LINE__;?>");
+				@error_log("ERROR @ " . __LINE__);
 			}
 			if ((((int) $inc_num_array[0]) == 3) && (!($inc_num_array[5] == date("y")))) {	// year style and change?
 				$inc_num_array[3] = 1;	// roll over and start at 1
@@ -274,13 +274,13 @@ case "insert":
 		if (!empty ($_POST['frm_comments'])) {
 			$log_str .= get_text("Comments") . ": " . $_POST['frm_comments'] . "  ";
 		}
-		do_log($GLOBALS['LOG_INCIDENT_ADDED'], $ticket_id, 0, get_text("Run Start") . ": " . date(get_variable("date_format"), strtotime(trim($frm_problemstart))));
-		do_log($GLOBALS[$opened_or_scheduled], $ticket_id, 0, html_entity_decode(remove_nls($log_str)), $facility_id);
+		do_log($GLOBALS['LOG_INCIDENT_ADDED'], $ticket_id, 0, get_text("Run Start") . ": " . date(get_variable("date_format"), strtotime(trim($frm_problemstart))), 0, "", "", "");
+		do_log($GLOBALS[$opened_or_scheduled], $ticket_id, 0, html_entity_decode(remove_nls($log_str)), $facility_id, "", "", "");
 		if (intval($facility_id) > 0) {
 			$query_facilities = "SELECT `handle` FROM `facilities` WHERE `id` = " . $facility_id;
 			$result_facilities = db_query($query_facilities, __FILE__, __LINE__);
 			$row_facs = db_fetch_assoc($result_facilities);
-			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id);
+			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id, "", "", "");
 		}
 	}
 	break;
@@ -624,7 +624,7 @@ default:
 										</th>
 										<td>
 										<div style="float:left; width: 55%;">
-											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id");?>
+											<?php print get_incident_type_select_str("ticket_add_form", "frm_in_types_id", 0);?>
 										</div>
 										<div style="float:right; width: 44%;">
 											<?php print get_priority_select_str("ticket_add_form", "frm_severity", 0);?>
@@ -702,7 +702,7 @@ default:
 				</div>
 			</form>
 		</div>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>	
 	<?php

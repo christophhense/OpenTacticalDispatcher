@@ -1,6 +1,6 @@
 <?php
 
-function do_email($addresses, $subject = "", $text = "", $attachment = "") {
+function do_email($addresses, $subject, $text, $attachment) {
 	require_once ("./lib/phpmailer/class.phpmailer.php");
 	require_once ("./lib/phpmailer/class.smtp.php");
 	require_once ("./lib/phpmailer/language/phpmailer.lang-de.php"); // Optional, wenn du deutsche Fehlermeldungen ausgeben möchtest
@@ -13,7 +13,6 @@ function do_email($addresses, $subject = "", $text = "", $attachment = "") {
 	$temp = trim(get_variable("_api_email_smtp_host"));
 	if ($temp != "mail.example.com") {
 		$mail->Timeout = 3;	//seconds
-		$mail->Timelimit = 3;	//seconds
 		if (preg_match("/[a-zA-Z]{3,6}:\/\//", $temp, $match)) {
 			$protocol = substr($match[0], 0, -3);
 			if (($protocol == "tls") && ($protocol == "smtps")) {
@@ -275,7 +274,7 @@ function update_communication($api_log_id, $api_log_action) {
 								$result_array[1] = "success";
 								$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
 							}
-							do_log($message_type, $ticket_id, $unit_id, get_text("Receiver") . ": " . $source . " " . $message_array["text"]);
+							do_log($message_type, $ticket_id, $unit_id, get_text("Receiver") . ": " . $source . " " . $message_array["text"], 0, "", "", "");
 						}
 						break;
 					case "api_log_private_call":
@@ -288,7 +287,7 @@ function update_communication($api_log_id, $api_log_action) {
 							$result_array[1] = "success";
 							$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
 						}
-						do_log($message_type, $ticket_id, $unit_id, get_text("Private Call") . " " . get_text("Receiver") . ": " . $source);
+						do_log($message_type, $ticket_id, $unit_id, get_text("Private Call") . " " . get_text("Receiver") . ": " . $source, 0, "", "", "");
 						break;
 					default:
 					}
@@ -301,7 +300,7 @@ function update_communication($api_log_id, $api_log_action) {
 					if (($row['unit_id'] == 0) || ($row['unit_id'] == "")) {
 						$text = "  " . $row['source'] . $text;
 					}
-					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text);
+					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
 					$result_array[0] = "";
 					$result_array[1] = "";
 					$result_array[2] = "communication.php?function=send_message&message_group=unit&target_api_log_id=" . urlencode($api_log_id) . "&ticket_id=" . $ticket_id;
@@ -343,12 +342,12 @@ function update_communication($api_log_id, $api_log_action) {
 							$text = "  " . $row['source'] . $text;
 						}
 					}
-					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text);
+					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
 					$result_array[0] = get_text("Saved");
 					$result_array[1] = "success";
 					break;
 				case "api_log_no_action":
-					do_log($GLOBALS['LOG_NO_ACTION'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text);
+					do_log($GLOBALS['LOG_NO_ACTION'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
 					$result_array[0] = get_text("Saved");
 					$result_array[1] = "success";
 					break;
@@ -840,7 +839,7 @@ function show_communication_table_right() {
 
 //===================================send message
 
-function send_message($addresses, $text_type, $subject = "", $text = "", $shorttext = "", $ticket_id = 0) {
+function send_message($addresses, $text_type, $subject, $text, $shorttext, $ticket_id) {
 	require_once ("./incs/api.inc.php");
 	$sent_ok = 0;
 	$sent_error = 0;
@@ -887,7 +886,7 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 					$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
 					$sent_error++;
 				}
-				do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . $key["address"] . " " . $shorttext);
+				do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . $key["address"] . " " . $shorttext, 0, "", "", "");
 			}
 			if ((count($addresses[$destination_prefix]) > 1) && ($batch_start_setting != "") && ($batch_stop_setting != "")) {
 				do_api_message("", $destination_prefix, $batch_stop_setting, "", "", "");
@@ -944,7 +943,9 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 		$text_postscript_last_part .= "50 " . $i . " moveto\n" . "(" . $key . ") show\n";
 		$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
-			$result = do_print(substr($key["address"], 8), utf8_decode($text_postscript_first_part . "(" . $key["handle"] . ")" . $text_postscript_last_part));
+			$subscriber_url = substr($key["address"], 8);
+			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ")" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
+			$result = do_print($subscriber_url, $subscriber_message);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
 				$sent_ok++;
@@ -952,7 +953,7 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 				$message_type = $GLOBALS['LOG_PRINT_JOB_ERROR'];
 				$sent_error++;
 			}
-			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text);
+			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text, 0, "", "", "");
 		}
 	}
 	//========================= E-Mail
@@ -985,7 +986,7 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 				//Specify recipient in the log text
 				$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $message_text;
 			}
-			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id);
+			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id, "", "", "");
 		}
 	}
 	//========================= Return info
@@ -1003,7 +1004,7 @@ function send_message($addresses, $text_type, $subject = "", $text = "", $shortt
 		$return_array[1] = "danger";
 	}
 	if (($sent_ok == 0) && ($sent_error == 0)) {
-		do_log($GLOBALS['LOG_SMS_MESSAGE_ERROR'], $ticket_id, 0, get_text("No receiver available") . ":  " . $shorttext);
+		do_log($GLOBALS['LOG_SMS_MESSAGE_ERROR'], $ticket_id, 0, get_text("No receiver available") . ":  " . $shorttext, 0, "", "", "");
 	}
 	$return_array[2] = $sent_ok;
 	$return_array[3] = $sent_error;
@@ -1033,7 +1034,7 @@ Scheduled	V
 Maxchar		Z	only for shorttext
 */
 
-function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type = "send") {
+function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 	$match_str = "";
 	$short_message = false;
 	switch ($text_sel) {
@@ -1098,7 +1099,7 @@ function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type
 		$result = db_query($query, __FILE__, __LINE__);
 		$row = stripslashes_deep(db_fetch_array($result));
 		$_problemend = "";
-		if ((isset ($row['problemend'])) && good_date_time($row['problemend'])) {
+		if ((isset ($row['problemend'])) && is_datetime($row['problemend'])) {
 			$_problemend = "  " . get_text("Run End") . ":" . $row['problemend'];
 		}
 		for ($i = 0; $i < count($text_selects); $i++) {
@@ -1230,7 +1231,7 @@ function get_dispatch_message($ticket_id, $text_sel = "message_text", $text_type
 			default:
 				$err_str = "mail error: '" . $match_str[$i] . "' @ " .  __LINE__;
 				if (!(array_key_exists($err_str, $_SESSION))) {
-					do_log($GLOBALS['LOG_ERROR'], 0, 0, $err_str);
+					do_log($GLOBALS['LOG_ERROR'], 0, 0, $err_str, 0, "", "", "");
 					$_SESSION[$err_str] = true;
 				}
 			}
@@ -1585,10 +1586,10 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 		</tr>
 	</table>
 	<?php
-	show_infobox();
+	show_infobox("small");
 }
 
-function show_unit($row, $assign, $count_receiver, $destination_regexp = "") {
+function show_unit($row, $assign, $count_receiver, $destination_regexp) {
 	$checked_str = "";
 	if ($row['group'] == 0) {
 		$checked_str = " checked";

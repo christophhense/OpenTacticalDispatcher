@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 require_once ("./incs/functions.inc.php");
 require_once ("./incs/log_codes.inc.php");
 do_login(basename(__FILE__));
-set_session_expire_time();
+set_session_expire_time("on");
 
 $moment_date_format = php_to_moment(get_variable("date_format"));
 
@@ -444,14 +444,14 @@ default:
 									<th<?php print get_help_text_str("_reports_location");?>><?php print get_text("Incident location");?> / <?php print get_text("On-Scene location");?>:</th>
 									<td colspan=3>
 										<input type="text" id="frm_incident_location" name="frm_incident_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=2>
-										<?php print get_facility_select_str("report_on_scene_location");?>
+										<?php print get_facility_select_str("report_on_scene_location", 0);?>
 									</td>
 								</tr>
 								<tr style="height: 45px;">
 									<th<?php print get_help_text_str("_reports_receiving");?>><?php print get_text("Receiving location");?>:</th>
 									<td colspan=3>
 										<input type="text" id="frm_receiving_location" name="frm_receiving_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=3>
-										<?php print get_facility_select_str("report_receiving_location");?>
+										<?php print get_facility_select_str("report_receiving_location", 0);?>
 									</td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_filter");?> style="height: 45px;">
@@ -489,23 +489,23 @@ default:
 								</tr>
 								<tr<?php print get_help_text_str("_reports_incident_type");?> style="height: 45px;">
 									<th><?php print get_text("Incident type");?>:</th>
-									<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id");?></td>
+									<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id", 0);?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
 									<th><?php print get_text("Unit");?>:</th>
-									<td><?php print get_unit_select_str("report");?></td>
+									<td><?php print get_unit_select_str("report", 0, 0);?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_guard_house");?> style="height: 45px;">
 									<th><?php print get_text("Guard house");?>:</th>
-									<td><?php print get_guard_house_select_str("report");?><br>
+									<td><?php print get_guard_house_select_str("report", 0);?><br>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_user");?> style="height: 45px;">
 									<th><?php print get_text("User");?>:</th>
-									<td><?php print get_user_select_str("report");?></td>
+									<td><?php print get_user_select_str("report", "frm_user");?></td>
 								</tr>
 								<tr<?php print get_help_text_str("_reports_status");?> style="height: 45px;">
 									<th><?php print get_text("Status");?>:</th>
-									<td><?php print get_ticket_status_select_str("report");?></td>
+									<td><?php print get_ticket_status_select_str("report", "frm_status", "frm_status", 0);?></td>
 								</tr>
 							</table>
 						</div>
@@ -516,7 +516,7 @@ default:
 				<div class="col-md-1 hidden-print"></div>
 			</div>
 		</form>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 	</body>
 </html>
 	<?php

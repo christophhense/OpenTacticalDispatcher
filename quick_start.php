@@ -371,8 +371,8 @@ case "insert":
 				if ($_POST['frm_unit_type_text_color'][$i] != 99) {
 					$text_color = "#" . $_POST['frm_unit_type_text_color'][$i];
 				}
-				$result = insert_into_unit_types($unit_type_name, $description, $bg_color, $text_color,
-					$user, $datetime_now);
+				$result = insert_into_unit_types($unit_type_name, $description, 
+					$bg_color, $text_color,	$user, $datetime_now);
 				if ($result) {
 					$output_text .= get_text("Unit type inserted") . ": " . $val . "<br>";
 				}
@@ -401,10 +401,9 @@ case "insert":
 	}
 	if (isset($_POST['frm_facility_handle'])) {
 		$i = 0;
-		
-		insert_into_facility_types(html_entity_decode(get_text("_example_facility_type_name")), html_entity_decode(get_text("_example_facility_type_description")), "#00FF00", "#000000",
-			$user_id, $datetime_now);
-
+		insert_into_facility_types(html_entity_decode(get_text("_example_facility_type_name")), 
+			html_entity_decode(get_text("_example_facility_type_description")), 
+			"#00FF00", "#000000", $user_id, $datetime_now);
 		foreach ($_POST['frm_facility_handle'] as $handle) {
 			if ($handle != "") {
 				$new_id = insert_into_facilities($_POST['frm_facility_name'][$i], $handle, "", "",
@@ -502,7 +501,7 @@ case "first_start":
 								<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='index.php';"><?php print get_text("Cancel");?></button>
 							</div>
 						</div>
-						<div class="row" style="">
+						<div class="row">
 							<div class="col-md-12">
 								<button id="back_button" type="button" class="btn btn-xs btn-default" onClick="" style="display: none; margin-top: 10px;"><?php print get_text("Back");?></button>
 							</div>

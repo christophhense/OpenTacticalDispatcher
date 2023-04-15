@@ -1,6 +1,6 @@
 <?php
 
-function get_units_data($where_str, $order_str = "", $limit_str = "", $offset_str = "") {
+function get_units_data($where_str, $order_str, $limit_str, $offset_str) {
 
 	$query = "SELECT " .
 		"UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
@@ -89,7 +89,7 @@ function show_units_sortbar() {
 	<?php
 }
 
-function show_unit_types_select($unit_type = 0) {
+function show_unit_types_select($unit_type) {
 
 	$query_unit_types = "SELECT * " .
 		"FROM `unit_types` " .
@@ -99,7 +99,7 @@ function show_unit_types_select($unit_type = 0) {
 	$style_str = "";
 	if (db_affected_rows($result_unit_types) > 0) {
 		$style_str = "";
-		if ($unit_type) {
+		if ($unit_type > 0) {
 
 			$query_selected_unit_type = "SELECT `bg_color`, " .
 				"`text_color` " .
@@ -138,7 +138,7 @@ function show_unit_types_select($unit_type = 0) {
 	<?php
 }
 
-function show_unit_status_select($unit_status, $num_of_tickets = 0, $multi = 1) {
+function show_unit_status_select($unit_status, $num_of_tickets, $multi) {
 
 	$query_unit_status = "SELECT * " .
 		"FROM `unit_status` " .
@@ -209,7 +209,7 @@ function show_unit_status_select($unit_status, $num_of_tickets = 0, $multi = 1) 
 	<?php
 }
 
-function show_multiple_select($selected = 1) {
+function show_multiple_select($selected) {
 	$select_str_0 = $select_str_1 = $select_str_2 = "";
 	switch ($selected) {
 	case 0:
@@ -375,7 +375,7 @@ function get_unit_edit_log_text($function, $id, $values_new, $values_old) {
 	return remove_nls($log_text);
 }
 
-function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket_id = 0) {
+function show_units_list($function, $page, $pages, $ticket_id) {
 	$table_side = ($page == 1)? "left" : "right";
 //==================================== Regions
 
@@ -495,12 +495,11 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		$result = db_query($query, __FILE__, __LINE__);
 		$units_count = db_affected_rows($result, __FILE__, __LINE__);
 		unset ($result);
+		$limit_str = " LIMIT " . $units_count;
+		$offset_str = " OFFSET " . round($units_count/2);
 		if ($table_side == "left") {
 			$limit_str = " LIMIT " . round($units_count/2);
 			$offset_str = "";
-		} else {
-			$limit_str = " LIMIT " . $units_count;
-			$offset_str = " OFFSET " . round($units_count/2);
 		}
 		$result = get_units_data($where2, $order_str, $limit_str, $offset_str);
 		$assigns_ary_where_str = "WHERE ((`clear` IS  NULL) OR (DATE_FORMAT(`clear`,'%y') = '00'))";
@@ -864,7 +863,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 <table class="table table-striped table-condensed" style="table-layout: fixed;">
 	<tr>
 		<th style="width: 6%; border-top: 0px;"></th>
-		<th style="width: 5%; border-top: 0px; text-align: center;"><?php print get_message_click_str($function, 0, $ticket_id, "", "", "", "", true);?></th>
+		<th style="width: 5%; border-top: 0px; text-align: center;"><?php print get_message_click_str($function, 0, $ticket_id, "", "", "", "");?></th>
 		<th style="width: 40%; border-top: 0px;">&nbsp;<?php print get_text("Unit");?> (<?php print $units_count;?>)</th>
 		<th style="width: 35%; border-top: 0px;">&nbsp;<?php print get_text("Status");?></th>
 		<th style="width: 14%; border-top: 0px; text-align: center;"><?php print get_text("As of");?></th>
@@ -922,6 +921,7 @@ function show_units_list($function = "situation", $page = 1, $pages = 1, $ticket
 		}
 //================== Assigns
 		$assign_old = "false";
+		$disp_inc_stat = 0;
 		if (!(array_key_exists($row['unit_id'], $assigns_ary))) {
 			$row_assign = false;
 			$disp_inc_stat = 0;

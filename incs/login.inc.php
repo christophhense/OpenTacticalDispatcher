@@ -1,5 +1,5 @@
 <?php
-require_once ("api.inc.php");
+require_once ("./incs/api.inc.php");
 
 function do_logout() {
 	global $hide_dispatched, $hide_status_groups;
@@ -19,7 +19,7 @@ function do_logout() {
 		$logout_setting = trim($login_logout_settings[1]);
 		do_api_message($_SESSION['user_id'], $_SERVER['REMOTE_ADDR'], $logout_setting, $_SESSION['user_name'], "", "");
 	}
-	do_log($GLOBALS['LOG_SIGN_OUT'], 0, 0, "");
+	do_log($GLOBALS['LOG_SIGN_OUT'], 0, 0, "", 0, "", "", "");
 	if (isset ($_COOKIE[session_name()])) {
 		setcookie(session_name(), "", time() - 42000, "/");
 	}
@@ -183,7 +183,7 @@ function do_login($requested_page, $logout = false) {
 				if (trim($report_last_settings[3]) == 1) {
 					$_SESSION["reports_filter"]["settings"] = "true";
 				}
-				do_log($GLOBALS['LOG_SIGN_IN'], 0, 0, $browser);
+				do_log($GLOBALS['LOG_SIGN_IN'], 0, 0, $browser, 0, "", "", "");
 				if (is_super() || is_admin() || is_operator()) {
 					$login_logout_settings = explode(",", get_variable("_api_login_logout_setng"));
 					$login_setting = trim($login_logout_settings[0]);
@@ -193,7 +193,7 @@ function do_login($requested_page, $logout = false) {
 			} else {
 				$log_message =  $_POST['frm_user'] . "  " . $_SERVER['REMOTE_ADDR'] . "  " . check_browser();
 				@error_log("Login failed. Username: " . $log_message);
-				do_log($GLOBALS['LOG_INFO'], 0, 0, get_text("Login failed. Username") . ": " . $log_message);
+				do_log($GLOBALS['LOG_INFO'], 0, 0, get_text("Login failed. Username") . ": " . $log_message, 0, "", "", "");
 			}
 		}
 		@session_destroy();

@@ -105,7 +105,7 @@ case "infostring_middle":
 		break;
 case "table_top":
 //	show_ticketlist("situation", $tickets_views, $screen_id);
-	show_ticketlist("situation", $screen_id);
+	show_ticketlist("situation", $screen_id, 0);
 	break;
 case "table_left":
 	show_units_list("situation", 1, 2, 0);
@@ -114,7 +114,7 @@ case "table_right":
 	show_units_list("situation", 2, 2, 0);
 	break;
 default:
-	set_session_expire_time();
+	set_session_expire_time("on");
 	$auto_poll_settings = explode(",", get_variable("auto_poll"));
 	$auto_poll_time = trim($auto_poll_settings[0]);
 	$current_situation_type = "tickets_units";
@@ -494,7 +494,7 @@ default:
 		<script>
 			$(".nav-pills, .nav-tabs").tabdrop();
 		</script>
-		<?php show_infobox();?>
+		<?php show_infobox("small");?>
 		<?php show_infobox("large");?>
 	</body>
 </html>
