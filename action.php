@@ -106,12 +106,6 @@ case "update":
 	do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text, 0, "", "", "");
 	break;
 default:
-}
-switch ($function) {
-case "insert":
-case "update":
-	break;
-default:
 	$ticket_id = 0;
 	if (isset ($_GET['ticket_id'])) {
 		$ticket_id = $_GET['ticket_id'];
@@ -131,11 +125,7 @@ default:
 		$url_back = "ticket_edit.php";
 	}
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
-	$additional_helptext_form_data_parking_str = "";
-	if (trim($parking_form_data_settings[2]) != 0) {
-		$additional_helptext_form_data_parking_str = get_title_str(get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[2]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[3]));
-	}
+
 	$query_ticket = "SELECT `problemstart` " .
 		"FROM `tickets` " .
 		"WHERE `id` = " . $ticket_id . " " .
@@ -144,6 +134,30 @@ default:
 	$result_ticket = db_query($query_ticket, __FILE__, __LINE__);
 	$row_ticket = stripslashes_deep(db_fetch_array($result_ticket));
 
+	$description = "";
+	$written_title_str = "";
+	$written_str = "";
+	$edited_title_str = "";
+	$edited_str = "";
+	if ($function == "edit") {
+
+		$query = "SELECT * " .
+			"FROM `actions` " .
+			"WHERE `id` = " . $action_id . " " .
+			"LIMIT 1;";
+
+		$result = db_query($query, __FILE__, __LINE__);
+
+		$row = stripslashes_deep(db_fetch_array($result));
+
+		$unit_id = $row['unit_id'];
+		$description = remove_nls($row['description']);
+		$written_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));
+		$written_str = date(get_variable("date_format_time_only"), strtotime($row['datetime'])) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);
+		$edited_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['updated'])));
+		$edited_str = date(get_variable("date_format_time_only"), strtotime($row['updated'])) . " " . get_text("by") . " " . get_user_name($row['user_id']);
+	}
+	$action_select_str = get_unit_select_str("action", $unit_id, $ticket_id);
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -169,7 +183,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("action");?> + 0;
 			var ticket_id = <?php print $ticket_id;?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
 			function validate(form_name) {
@@ -291,16 +305,7 @@ default:
 	<?php
 	switch ($function) {
 	case "edit":
-	
-		$query = "SELECT * " .
-			"FROM `actions` " .
-			"WHERE `id` = " . $action_id . " " .
-			"LIMIT 1;";
-	
-		$result = db_query($query, __FILE__, __LINE__);
-	
-		$row = stripslashes_deep(db_fetch_array($result));
-		?>
+	?>
 		<body onload="check_frames();">
 			<script>
 				set_window_present("action_edit");
@@ -345,13 +350,13 @@ default:
 											<td style="width: 5%; border-top: 0px;"></td>
 											<td style="width: 75%; border-top: 0px;">
 												<div>
-													<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print remove_nls($row['description']);?></textarea>
+													<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print $description;?></textarea>
 												</div>
 												<div>
 													<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
 												</div>
 												<div>
-													<?php print get_unit_select_str("action", $row['unit_id'], $ticket_id);?>
+													<?php print $action_select_str;?>
 												</div>
 											</td>
 										</tr>
@@ -370,8 +375,8 @@ default:
 												<div><?php print get_text("Edited");?>:</div>
 											</th>
 											<td>
-												<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['datetime'])) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);?></div>
-												<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['updated'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['updated'])) . " " . get_text("by") . " " . get_user_name($row['user_id']);?></div>
+												<div <?php print $written_title_str;?>><?php print $written_str;?></div>
+												<div <?php print $edited_title_str;?>><?php print $edited_str;?></div>
 											</td>
 										</tr>
 									</table>
@@ -437,7 +442,7 @@ default:
 								<div id="table_left">
 									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 										<tr>
-											<th style="width: 20%; border-top: 0px;"<?php print $additional_helptext_form_data_parking_str;?>><?php print get_text("Action description");?>:</th>
+											<th style="width: 20%; border-top: 0px;"<?php print get_parking_form_data_helptext("action");?>><?php print get_text("Action description");?>:</th>
 											<td style="width: 5%; border-top: 0px;"></td>
 											<td style="width: 75%; border-top: 0px;">
 												<div>
@@ -447,7 +452,7 @@ default:
 													<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
 												</div>
 												<div>
-													<?php print get_unit_select_str("action", $unit_id, $ticket_id);?>
+													<?php print $action_select_str;?>
 												</div>
 											</td>
 										</tr>
