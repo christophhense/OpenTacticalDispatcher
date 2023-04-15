@@ -7,13 +7,13 @@ function do_email($addresses, $subject, $text, $attachment) {
 	require "./lib/PHPMailer-6.8.0/src/PHPMailer.php";
     require "./lib/PHPMailer-6.8.0/src/SMTP.php";
     require "./lib/PHPMailer-6.8.0/src/Exception.php";
-	//$mail->setLanguage('de', './lib/PHPMailer-6.8.0/language/');
 	$result_data = array ();
 	$configuration_complete = true;
 	$valid_smtp_host = true;
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 	$mail->CharSet = "utf-8";
+	$mail->setLanguage(substr(get_variable("_locale") , 0, 2), './lib/PHPMailer-6.8.0/language/');
 	$temp = trim(get_variable("_api_email_smtp_host"));
 	if ($temp != "mail.example.com") {
 		$mail->Timeout = 3;	//seconds
