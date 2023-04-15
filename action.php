@@ -10,34 +10,8 @@ $function = "";
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
 }
-$ticket_id = 0;
-if (isset ($_GET['ticket_id'])) {
-	$ticket_id = $_GET['ticket_id'];
-}
-$action_id = 0;
-if (isset ($_GET['action_id'])) {
-	$action_id = $_GET['action_id'];
-}
-$unit_id = 0;
-$unit_id_str = "";
-if (isset ($_GET['unit_id'])) {
-	$unit_id = $_GET['unit_id'];
-	$unit_id_str = "&unit_id=" . $_GET['unit_id'];
-}
-$url_back = "situation.php";
-if (isset ($_GET['back']) && $_GET['back'] == "ticket") {
-	$url_back = "ticket_edit.php";
-}
 if (isset ($_POST['function'])) {
 	$function = $_POST['function'];
-}
-$moment_date_format = php_to_moment(get_variable("date_format"));
-$auto_poll_settings = explode(",", get_variable("auto_poll"));
-$auto_poll_time = trim($auto_poll_settings[0]);
-$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
-$additional_helptext_form_data_parking_str = "";
-if (trim($parking_form_data_settings[2]) != 0) {
-	$additional_helptext_form_data_parking_str = get_title_str(get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[2]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[3]));
 }
 switch ($function) {
 case "insert":
@@ -138,7 +112,30 @@ case "insert":
 case "update":
 	break;
 default:
-	
+	$ticket_id = 0;
+	if (isset ($_GET['ticket_id'])) {
+		$ticket_id = $_GET['ticket_id'];
+	}
+	$action_id = 0;
+	if (isset ($_GET['action_id'])) {
+		$action_id = $_GET['action_id'];
+	}
+	$unit_id = 0;
+	$unit_id_str = "";
+	if (isset ($_GET['unit_id'])) {
+		$unit_id = $_GET['unit_id'];
+		$unit_id_str = "&unit_id=" . $_GET['unit_id'];
+	}
+	$url_back = "situation.php";
+	if (isset ($_GET['back']) && $_GET['back'] == "ticket") {
+		$url_back = "ticket_edit.php";
+	}
+	$moment_date_format = php_to_moment(get_variable("date_format"));
+	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
+	$additional_helptext_form_data_parking_str = "";
+	if (trim($parking_form_data_settings[2]) != 0) {
+		$additional_helptext_form_data_parking_str = get_title_str(get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[2]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[3]));
+	}
 	$query_ticket = "SELECT `problemstart` " .
 		"FROM `tickets` " .
 		"WHERE `id` = " . $ticket_id . " " .
@@ -292,198 +289,198 @@ default:
 		</script>
 	</head>
 	<?php
-}
-switch ($function) {
-case "edit":
-
-	$query = "SELECT * " .
-		"FROM `actions` " .
-		"WHERE `id` = " . $action_id . " " .
-		"LIMIT 1;";
-
-	$result = db_query($query, __FILE__, __LINE__);
-
-	$row = stripslashes_deep(db_fetch_array($result));
-	?>
-	<body onload="check_frames();">
-		<script>
-			set_window_present("action_edit");
-		</script>
-		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="action_edit_form" name="action_edit_form">
-			<input id="function" name="function" type="hidden" value="update">
-			<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
-			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
-			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Edit Action") . get_table_id($action_id) . " - " . get_variable("page_caption");?>
+	switch ($function) {
+	case "edit":
+	
+		$query = "SELECT * " .
+			"FROM `actions` " .
+			"WHERE `id` = " . $action_id . " " .
+			"LIMIT 1;";
+	
+		$result = db_query($query, __FILE__, __LINE__);
+	
+		$row = stripslashes_deep(db_fetch_array($result));
+		?>
+		<body onload="check_frames();">
+			<script>
+				set_window_present("action_edit");
+			</script>
+			<script type="text/javascript" src="./js/wz_tooltip.js"></script>
+			<form id="action_edit_form" name="action_edit_form">
+				<input id="function" name="function" type="hidden" value="update">
+				<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
+				<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
+				<div class="container-fluid" id="main_container">
+					<div class="row infostring">
+						<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Edit Action") . get_table_id($action_id) . " - " . get_variable("page_caption");?>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1">
+							<div class="container-fluid" style="position: fixed;">
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="action_edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_edit_form');" tabindex=4><?php print get_text("Save");?></button>
+									</div>
+								</div>
+							</div>
+						</div>	
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_left">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<tr>
+											<th style="width: 20%; border-top: 0px;"><?php print get_text("Action description");?>:</th>
+											<td style="width: 5%; border-top: 0px;"></td>
+											<td style="width: 75%; border-top: 0px;">
+												<div>
+													<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print remove_nls($row['description']);?></textarea>
+												</div>
+												<div>
+													<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
+												</div>
+												<div>
+													<?php print get_unit_select_str("action", $row['unit_id'], $ticket_id);?>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th><?php print get_text("As of") . ":";?></th>
+											<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
+											<td>
+												<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
+												<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
+												<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
+											</td>
+										</tr>
+										<tr style="height: 45px;">
+											<th colspan=2>
+												<div><?php print get_text("Written");?>:</div>
+												<div><?php print get_text("Edited");?>:</div>
+											</th>
+											<td>
+												<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['datetime'])) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);?></div>
+												<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['updated'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['updated'])) . " " . get_text("by") . " " . get_user_name($row['user_id']);?></div>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_right">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<?php show_head($ticket_id, false, false);?>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-md-1">
-						<div class="container-fluid" style="position: fixed;">
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
-								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="action_edit_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
-								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_edit_form');" tabindex=4><?php print get_text("Save");?></button>
-								</div>
-							</div>
-						</div>
-					</div>	
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_left">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<tr>
-										<th style="width: 20%; border-top: 0px;"><?php print get_text("Action description");?>:</th>
-										<td style="width: 5%; border-top: 0px;"></td>
-										<td style="width: 75%; border-top: 0px;">
-											<div>
-												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print remove_nls($row['description']);?></textarea>
-											</div>
-											<div>
-												<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
-											</div>
-											<div>
-												<?php print get_unit_select_str("action", $row['unit_id'], $ticket_id);?>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th><?php print get_text("As of") . ":";?></th>
-										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
-										<td>
-											<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
-											<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
-											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
-										</td>
-									</tr>
-									<tr style="height: 45px;">
-										<th colspan=2>
-											<div><?php print get_text("Written");?>:</div>
-											<div><?php print get_text("Edited");?>:</div>
-										</th>
-										<td>
-											<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['datetime'])) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);?></div>
-											<div <?php print get_title_str(date(get_variable("date_format"), strtotime($row['updated'])));?>><?php print date(get_variable("date_format_time_only"), strtotime($row['updated'])) . " " . get_text("by") . " " . get_user_name($row['user_id']);?></div>
-										</td>
-									</tr>
-								</table>
-							</div>
+			</form>
+			<?php show_infobox("small");?>
+		</body>
+	</html>
+		<?php
+		break;
+	default:
+		?>
+		<body onload="check_frames();">
+			<script>
+				set_window_present("action_add");
+			</script>
+			<script type="text/javascript" src="./js/wz_tooltip.js"></script>
+			<form id="action_add_form" name="action_add_form">
+				<input id="function" name="function" type="hidden" value="insert">
+				<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
+				<div class="container-fluid" id="main_container">
+					<div class="row infostring">
+						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Add Action") . " - " . get_variable("page_caption");?>
 						</div>
 					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_right">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<?php show_head($ticket_id, false, false);?>
-								</table>
+					<div class="row">
+						<div class="col-md-1">
+							<div class="container-fluid" style="position: fixed;">
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); action_add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_add_form');" tabindex=4><?php print get_text("Save");?></button>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-md-1"></div>
-				</div>
-			</div>
-		</form>
-		<?php show_infobox("small");?>
-	</body>
-</html>
-	<?php
-	break;
-default:
-	?>
-	<body onload="check_frames();">
-		<script>
-			set_window_present("action_add");
-		</script>
-		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="action_add_form" name="action_add_form">
-			<input id="function" name="function" type="hidden" value="insert">
-			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
-			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Add Action") . " - " . get_variable("page_caption");?>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_left">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<tr>
+											<th style="width: 20%; border-top: 0px;"<?php print $additional_helptext_form_data_parking_str;?>><?php print get_text("Action description");?>:</th>
+											<td style="width: 5%; border-top: 0px;"></td>
+											<td style="width: 75%; border-top: 0px;">
+												<div>
+													<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1></textarea>
+												</div>
+												<div>
+													<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
+												</div>
+												<div>
+													<?php print get_unit_select_str("action", $unit_id, $ticket_id);?>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th><?php print get_text("As of") . ":";?></th>
+											<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
+											<td>
+												<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
+												<input id="asof" name="asof_textfield" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
+												<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control">
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_right">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<?php show_head($ticket_id, false, false);?>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-md-1">
-						<div class="container-fluid" style="position: fixed;">
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
-								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); action_add_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
-								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_add_form');" tabindex=4><?php print get_text("Save");?></button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_left">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<tr>
-										<th style="width: 20%; border-top: 0px;"<?php print $additional_helptext_form_data_parking_str;?>><?php print get_text("Action description");?>:</th>
-										<td style="width: 5%; border-top: 0px;"></td>
-										<td style="width: 75%; border-top: 0px;">
-											<div>
-												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1></textarea>
-											</div>
-											<div>
-												<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
-											</div>
-											<div>
-												<?php print get_unit_select_str("action", $unit_id, $ticket_id);?>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th><?php print get_text("As of") . ":";?></th>
-										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
-										<td>
-											<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
-											<input id="asof" name="asof_textfield" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
-											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control">
-										</td>
-									</tr>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_right">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<?php show_head($ticket_id, false, false);?>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-1"></div>
-				</div>
-			</div>
-		</form>
-		<?php show_infobox("small");?>
-	</body>
-</html>
-	<?php
+			</form>
+			<?php show_infobox("small");?>
+		</body>
+	</html>
+		<?php
+	}
 }
 ?>
