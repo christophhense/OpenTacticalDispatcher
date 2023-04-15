@@ -786,8 +786,7 @@ foreach ($sound_names_array as $value) {
 					case "dispatch_text":
 					case "ticket_edit":
 					case "ticket_close":
-					case "action_add":
-					case "action_edit":
+					case "action":
 						highlight_button("situation")
 						break;
 					case "communication_send":
