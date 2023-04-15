@@ -194,9 +194,8 @@ default:
 			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("action");?> + 0;
 			var ticket_id = <?php print $ticket_id;?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
-			function validate(form_name) {
+			function validate() {
 				var error_message = "";
-				var written = $("#written").val();
 				var asof = moment($("#asof").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
 				if ($("#frm_description").val() == "") {
@@ -205,7 +204,7 @@ default:
 				if (
 					!moment(asof, "YYYY-MM-DD HH:mm:ss").isValid() ||
 					moment(asof, "YYYY-MM-DD HH:mm:ss").isAfter(moment(datetime_now, "YYYY-MM-DD HH:mm:ss").add(1, 'm')) ||
-					moment(asof, "YYYY-MM-DD HH:mm:ss").isBefore(moment(written, "YYYY-MM-DD HH:mm:ss"))
+					moment(asof, "YYYY-MM-DD HH:mm:ss").isBefore(moment($("#written").val(), "YYYY-MM-DD HH:mm:ss"))
 				) {
 					error_message += "<?php print get_text('date/time error');?><br>";
 				}
@@ -215,7 +214,7 @@ default:
 				} else {
 					$("#asof_mysql_timestamp").val(asof);
 					set_parked_form_data();
-					$.post("action.php", $(form_name).serialize())
+					$.post("action.php", $('#action_form').serialize())
 					.done(function (data) {
 						show_top_notice("success", "<?php print get_text("Saved");?>");
 						goto_window("<?php print $url_back;?>?ticket_id=" + ticket_id + "&screen_id=" + screen_id_main);
@@ -317,6 +316,7 @@ default:
 			<input id="function" name="function" type="hidden" value="<?php print $function_str;?>">
 			<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
 			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
+			<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -338,7 +338,7 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate('#action_form');" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -366,7 +366,6 @@ default:
 										<th><?php print get_text("As of") . ":";?></th>
 										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
 										<td>
-											<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
 											<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
 											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
 										</td>
