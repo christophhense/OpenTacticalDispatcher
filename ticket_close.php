@@ -79,8 +79,6 @@ case "update":
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
 	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 	$additional_helptext_form_data_parking = "";
 	if (trim($parking_form_data_settings[4]) != 0) {
@@ -150,7 +148,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[4]);?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_close");?> + 0;
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate() {
@@ -300,7 +298,7 @@ default:
 								<input type="hidden" name="function" value="update">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 									<tr>
-										<th style="width: 20%; border-top: 0px;"<?php print get_title_str(get_help_text("_synop", true) . $additional_helptext_form_data_parking);?>>
+										<th style="width: 20%; border-top: 0px;"<?php print get_title_str(get_help_text("_synop", true) . get_parking_form_data_helptext("ticket_close"));?>>
 											<?php print get_text("Synopsis");?>:
 										</th>
 										<td style="width: 5%; border-top: 0px;"></td>
@@ -310,7 +308,7 @@ default:
 										</td>
 									</tr>
 									<tr>
-										<th<?php print get_title_str(get_help_text("_cmnts", true) . $additional_helptext_form_data_parking);?>>
+										<th<?php print get_title_str(get_help_text("_cmnts", true) . get_parking_form_data_helptext("ticket_close"));?>>
 											<?php print get_text("Comments");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span>
 										</th>
 										<td></td>

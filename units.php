@@ -807,8 +807,6 @@ case "table_right":
 case "printers":
 	break;
 default:
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
 	?>
 		<script>
 

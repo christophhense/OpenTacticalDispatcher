@@ -115,8 +115,6 @@ case "table_right":
 	break;
 default:
 	set_session_expire_time("on");
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
 	$current_situation_type = "tickets_units";
 	$report_last_settings = explode(",", get_variable("report_last"));
 	$start_date = mysql_datetime(time() - trim($report_last_settings[0]) * 60);
