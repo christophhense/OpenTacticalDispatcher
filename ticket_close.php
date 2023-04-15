@@ -79,8 +79,6 @@ case "update":
 	break;
 default:
 	$moment_date_format = php_to_moment(get_variable("date_format"));
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
 	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 	$additional_helptext_form_data_parking = "";
 	if (trim($parking_form_data_settings[4]) != 0) {
