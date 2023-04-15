@@ -61,16 +61,13 @@ Activities sorted by application function.
 		Remove href
 		postMessage outsourced to functions
 		Rename form to ticket_close_form
-* Ticket - new action
+* Ticket - action
 	CHANGE
 		Form submit with ajax
+		Remove duplicate forms for add and edit
 	BUGFIX
-		Go back to the right situation-screen
-* Ticket - update action
-	CHANGE
-		Form submit with ajax
-	BUGFIX
-		Go back to ticket instead to situation
+		Add: Go back to the right situation-screen if comming from
+		Edit: Go back to ticket instead to situation
 * Ticket - dispatch
 	CHANGE
 		Form submit with ajax
