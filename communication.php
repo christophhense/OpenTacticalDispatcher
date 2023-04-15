@@ -311,8 +311,6 @@ if (is_operator() || is_admin() || is_super()) {
 		break;
 	default:
 		set_session_expire_time("on");
-		$auto_poll_settings = explode(",", get_variable("auto_poll"));
-		$auto_poll_time = trim($auto_poll_settings[0]);
 	?>
 		<script>
 			var new_infos_array = [];

@@ -235,8 +235,6 @@ default:
 	set_session_expire_time("on");
 	$moment_date_format = php_to_moment(get_variable("date_format"));
 	$reported_by_select_array = get_reported_by_select_str("ticket_edit_form");
-	$auto_poll_settings = explode(",", get_variable("auto_poll"));
-	$auto_poll_time = trim($auto_poll_settings[0]);
 
 	$query = "SELECT *, " .
 		"UNIX_TIMESTAMP(`problemstart`) AS `problemstart2`, " .
