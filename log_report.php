@@ -76,13 +76,6 @@ default:
 		break;
 	default:
 	}
-	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
-	$additional_helptext_form_data_parking_str = "";
-	if (trim($parking_form_data_settings[6]) != 0) {
-		$additional_helptext_form_data_parking_str =  get_title_str(get_help_text("parked_trigger_chars", true) . ": " . 
-			trim($parking_form_data_settings[6]) . " " . get_help_text("parked_seconds", true) . ": " . 
-			trim($parking_form_data_settings[7]));
-	}
 	?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -105,7 +98,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[6]);?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("log_report");?> + 0;
 
 			function send_data() {
 				if (log_form.frm_comment.value) {
@@ -236,7 +229,7 @@ default:
 	if (is_operator() || is_admin() || is_super()) {
 	?>
 									<tr class="form-group">
-										<th style="width: 10%;"<?php print $additional_helptext_form_data_parking_str;?>><?php print get_text("Text");?>:</th>
+										<th style="width: 10%;"<?php print get_parking_form_data_helptext("log_report");?>><?php print get_text("Text");?>:</th>
 										<td colspan=6 style="width: 85%;">
 											<form id="log_form" name="log_form">
 												<textarea class="form-control" id="frm_comment" name="frm_comment" placeholder="<?php print get_text("New entry");?>" tabindex=1></textarea>

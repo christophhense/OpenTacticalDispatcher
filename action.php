@@ -136,6 +136,7 @@ default:
 
 	$function_str = "insert";
 	$caption_str = get_text("Add Action") . " - " . get_variable("page_caption");
+	$parking_title_str = get_parking_form_data_helptext("action");
 	$description = "";
 	$display_datetime_row = " display: none;";
 	$written_title_str = "";
@@ -156,6 +157,7 @@ default:
 		$unit_id = $row['unit_id'];
 		$function_str = "update";
 		$caption_str = get_text("Edit Action") . get_table_id($action_id) . " - " . get_variable("page_caption");
+		$parking_title_str = "";
 		$description = remove_nls($row['description']);
 		$display_datetime_row = "";
 		$written_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));
@@ -345,7 +347,7 @@ default:
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<tr>
+									<tr <?php print $parking_title_str;?>>
 										<th style="width: 20%; border-top: 0px;"><?php print get_text("Action description");?>:</th>
 										<td style="width: 5%; border-top: 0px;"></td>
 										<td style="width: 75%; border-top: 0px;">

@@ -290,10 +290,6 @@ default:
 	$auto_dispatch_settings = explode(",", get_variable("auto_dispatch"));
 	$auto_dispatch = trim($auto_dispatch_settings[0]);
 	$parking_form_data_settings = explode(",", get_variable("parking_form_data"));
-	$additional_helptext_form_data_parking = "";
-	if (trim($parking_form_data_settings[0]) != 0) {
-		$additional_helptext_form_data_parking = " " . get_help_text("parked_trigger_chars", true) . ": " . trim($parking_form_data_settings[0]) . " " . get_help_text("parked_seconds", true) . ": " . trim($parking_form_data_settings[1]);
-	}
 	$moment_date_format = php_to_moment(get_variable("date_format"));
 	$incident_location_select_array = get_incident_location_select_str("ticket_add_form", 0);
 	$reported_by_select_array = get_reported_by_select_str("ticket_add_form");
@@ -353,7 +349,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[0]);?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_add");?> + 0;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 			var severities = [];
 			var protocols = [];
@@ -588,7 +584,7 @@ default:
 							<div id="table_left">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 									<tr>
-										<th style="width: 25%; border-top: 0px;"<?php print get_title_str(get_help_text("_loca", true) . $additional_helptext_form_data_parking);?>>
+										<th style="width: 25%; border-top: 0px;"<?php print get_title_str(get_help_text("_loca", true) . get_parking_form_data_helptext("ticket_add"));?>>
 											<?php print get_text("Incident location"); ?>:
 										</th>
 										<td style="width: 75%; border-top: 0px;">
@@ -597,13 +593,13 @@ default:
 										</td>
 									</tr>
 									<tr>
-										<th<?php print get_title_str(get_help_text("_callback", true) . $additional_helptext_form_data_parking);?>><?php print get_text("Callback phone");?>:</th>
+										<th<?php print get_title_str(get_help_text("_callback", true) . get_parking_form_data_helptext("ticket_add"));?>><?php print get_text("Callback phone");?>:</th>
 										<td>
 											<input type="text" id="frm_phone" name="frm_phone" class="form-control" tabindex=3 value="">
 										</td>
 									</tr>
 									<tr>
-										<th<?php print get_title_str(get_help_text("_synop", true) . $additional_helptext_form_data_parking);?>><?php print get_text("Synopsis");?>:</th>
+										<th<?php print get_title_str(get_help_text("_synop", true) . get_parking_form_data_helptext("ticket_add"));?>><?php print get_text("Synopsis");?>:</th>
 										<td>
 											<textarea  id="frm_description" name="frm_description" class="form-control" tabindex=4 cols="48" rows="3" wrap="virtual"></textarea>
 											<?php print get_textblock_select_str("synopsis", "document.ticket_add_form.frm_description", "", 0, "");?>	
