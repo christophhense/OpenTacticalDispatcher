@@ -10,6 +10,14 @@ $function = "";
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
 }
+$ticket_id = 0;
+if (isset ($_GET['ticket_id'])) {
+	$ticket_id = $_GET['ticket_id'];
+}
+$action_id = 0;
+if (isset ($_GET['action_id'])) {
+	$action_id = $_GET['action_id'];
+}
 $unit_id = 0;
 $unit_id_str = "";
 if (isset ($_GET['unit_id'])) {
@@ -23,6 +31,7 @@ if (isset ($_GET['back']) && $_GET['back'] == "ticket") {
 if (isset ($_POST['function'])) {
 	$function = $_POST['function'];
 }
+$moment_date_format = php_to_moment(get_variable("date_format"));
 $auto_poll_settings = explode(",", get_variable("auto_poll"));
 $auto_poll_time = trim($auto_poll_settings[0]);
 $parking_form_data_settings = explode(",", get_variable("parking_form_data"));
@@ -32,14 +41,107 @@ if (trim($parking_form_data_settings[2]) != 0) {
 }
 switch ($function) {
 case "insert":
+	if ($_POST['frm_unit'] != "") {
+		$unit_id = $_POST['frm_unit'];
+	}
+
+	$query 	= "SELECT * " .
+		"FROM `actions` " .
+		"WHERE `description` = '" . $_POST['frm_description'] . "' " .
+		"AND `ticket_id` = '" . $_POST['ticket_id'] . "' " .
+		"AND `user_id` = '" . $_SESSION['user_id'] . "' " .
+		"AND `action_type` = '" . $GLOBALS['ACTION_COMMENT'] . "' " .
+		"AND `updated` = '" . $_POST['asof'] . "' " .
+		"AND `unit_id` = " . $unit_id . ";";
+
+		$result	= db_query($query, __FILE__, __LINE__);
+
+		if (db_num_rows($result) == 0) {
+
+			$query 	= "INSERT INTO `actions` (`ticket_id`, `description`, `action_type`, " .
+				"`unit_id`, `call_taker_id`, `user_id`, `client_address`, `updated`, `datetime`) " .
+				"VALUES ('" . $_POST['ticket_id'] . "', '" . addslashes($_POST['frm_description']) . "', " . $GLOBALS['ACTION_COMMENT'] . ", " .
+				$unit_id . ", " . $_SESSION['user_id'] . ", " . $_SESSION['user_id'] . ", '" . $_SERVER['REMOTE_ADDR'] . "', '" . 
+				$_POST['asof'] . "', '" . $datetime_now . "');";
+
+			$result	= db_query($query, __FILE__, __LINE__);
+
+			$query = "UPDATE `tickets` " .
+					"SET `updated` = '" . $datetime_now . "', " .
+				"`user_id` = " . $_SESSION['user_id'] .
+				" WHERE `id`='" . $_POST['ticket_id'] . "' " .
+				"LIMIT 1;";
+
+			$result = db_query($query, __FILE__, __LINE__);
+
+			$log_text = "";
+			if ($_POST['frm_description'] != "") {
+				$log_text .= get_text("Action") . ": " . $_POST['frm_description'] . "  ";
+			}
+			if ($_POST['asof'] != "") {
+				$log_text .= get_text("As of") . ": " . format_date($_POST['asof']) . "  ";
+			}
+			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text, 0, "", "", "");
+		}
+	break;
+case "update":
+
+	$query_old_data = "SELECT * " .
+		"FROM `actions` " .
+		"WHERE `id` = " . $_POST['action_id'] . " " .
+		"LIMIT 1;";
+
+	$result_old_data = db_query($query_old_data, __FILE__, __LINE__);
+
+	$row_old_data = stripslashes_deep(db_fetch_array($result_old_data));
+
+	$result = db_query("UPDATE `actions` " .
+		"SET `description` = '" . $_POST['frm_description'] . "', " .
+		"`unit_id` = " . $_POST['frm_unit'] . ", " .
+		"`updated` = '" . $_POST['asof'] . "', " .
+		"`user_id` = " . $_SESSION['user_id'] . " " .
+		"WHERE `id` = " . $_POST['action_id'] . " " .
+		"LIMIT 1;", __FILE__, __LINE__);
+
+	$result = db_query("UPDATE `tickets` " .
+		"SET `updated` = '" . $datetime_now . "', " .
+		"`user_id` = " . $_SESSION['user_id'] . " " .
+		"WHERE id = " . $_POST['ticket_id'] . " " .
+		"LIMIT 1;", __FILE__, __LINE__);
+	unset ($result);
+
+	$query_unit_handle = "SELECT `handle` " .
+		"FROM `units` " .
+		"WHERE `id` = " . $_POST['frm_unit'] . ";";
+
+	$result_unit_handle = db_query($query_unit_handle, __FILE__, __LINE__);
+	$row_unit_handle = stripslashes_deep(db_fetch_array($result_unit_handle));
+	$log_text = "";
+	if ($_POST['frm_description'] != $row_old_data['description']) {
+		$log_text .= get_text("Action") . ": " . $_POST['frm_description'] . "  ";
+	}
+	if ($_POST['frm_unit'] != $row_old_data['unit_id']) {
+		$log_text .= get_text("Unit") . ": " . remove_nls($row_unit_handle['handle']) . "  ";
+	}
+	if ($_POST['asof'] != "") {
+		$log_text .= get_text("As of") . ": " . format_date($_POST['asof']) . "  ";
+	}
+	if ($row_old_data['datetime'] != "") {
+		$log_text .= get_text("Written") . ": " . format_date(strtotime($row_old_data['datetime'])) . "  ";
+	}
+	do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text, 0, "", "", "");
+	break;
+default:
+}
+switch ($function) {
+case "insert":
 case "update":
 	break;
 default:
-	$moment_date_format = php_to_moment(get_variable("date_format"));
-
+	
 	$query_ticket = "SELECT `problemstart` " .
 		"FROM `tickets` " .
-		"WHERE `id` = " . $_GET['ticket_id'] . " " .
+		"WHERE `id` = " . $ticket_id . " " .
 		"LIMIT 1;";
 
 	$result_ticket = db_query($query_ticket, __FILE__, __LINE__);
@@ -71,7 +173,7 @@ default:
 			var new_infos_array = [];
 			var screen_id_main = 0;
 			var parking_form_data_min_trigger_chars = <?php print trim($parking_form_data_settings[2]);?> + 0;
-			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
+			var ticket_id = <?php print $ticket_id;?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
 			function validate(form_name) {
 				var error_message = "";
@@ -192,107 +294,16 @@ default:
 	<?php
 }
 switch ($function) {
-case "insert":
-	if ($_POST['frm_unit'] != "") {
-		$unit_id = $_POST['frm_unit'];
-	}
+case "edit":
 
-	$query 	= "SELECT * " .
+	$query = "SELECT * " .
 		"FROM `actions` " .
-		"WHERE `description` = '" . $_POST['frm_description'] . "' " .
-		"AND `ticket_id` = '" . $_POST['ticket_id'] . "' " .
-		"AND `user_id` = '" . $_SESSION['user_id'] . "' " .
-		"AND `action_type` = '" . $GLOBALS['ACTION_COMMENT'] . "' " .
-		"AND `updated` = '" . $_POST['asof'] . "' " .
-		"AND `unit_id` = " . $unit_id . ";";
+		"WHERE `id` = " . $action_id . " " .
+		"LIMIT 1;";
 
-		$result	= db_query($query, __FILE__, __LINE__);
+	$result = db_query($query, __FILE__, __LINE__);
 
-		if (db_num_rows($result) == 0) {
-
-			$query 	= "INSERT INTO `actions` (`ticket_id`, `description`, `action_type`, " .
-				"`unit_id`, `call_taker_id`, `user_id`, `client_address`, `updated`, `datetime`) " .
-				"VALUES ('" . $_POST['ticket_id'] . "', '" . addslashes($_POST['frm_description']) . "', " . $GLOBALS['ACTION_COMMENT'] . ", " .
-				$unit_id . ", " . $_SESSION['user_id'] . ", " . $_SESSION['user_id'] . ", '" . $_SERVER['REMOTE_ADDR'] . "', '" . 
-				$_POST['asof'] . "', '" . $datetime_now . "');";
-
-			$result	= db_query($query, __FILE__, __LINE__);
-
-			$query = "UPDATE `tickets` " .
-			 	"SET `updated` = '" . $datetime_now . "', " .
-				"`user_id` = " . $_SESSION['user_id'] .
-				" WHERE `id`='" . $_POST['ticket_id'] . "' " .
-				"LIMIT 1;";
-
-			$result = db_query($query, __FILE__, __LINE__);
-
-			$log_text = "";
-			if ($_POST['frm_description'] != "") {
-				$log_text .= get_text("Action") . ": " . $_POST['frm_description'] . "  ";
-			}
-			if ($_POST['asof'] != "") {
-				$log_text .= get_text("As of") . ": " . format_date($_POST['asof']) . "  ";
-			}
-			do_log($GLOBALS['LOG_ACTION_ADD'], $_POST['ticket_id'], $unit_id, $log_text, 0, "", "", "");
-		}
-		break;
-	case "update":
-
-		$query_old_data = "SELECT * " .
-			"FROM `actions` " .
-			"WHERE `id` = " . $_POST['action_id'] . " " .
-			"LIMIT 1;";
-
-		$result_old_data = db_query($query_old_data, __FILE__, __LINE__);
-
-		$row_old_data = stripslashes_deep(db_fetch_array($result_old_data));
-
-		$result = db_query("UPDATE `actions` " .
-			"SET `description` = '" . $_POST['frm_description'] . "', " .
-			"`unit_id` = " . $_POST['frm_unit'] . ", " .
-			"`updated` = '" . $_POST['asof'] . "', " .
-			"`user_id` = " . $_SESSION['user_id'] . " " .
-			"WHERE `id` = " . $_POST['action_id'] . " " .
-			"LIMIT 1;", __FILE__, __LINE__);
-
-		$result = db_query("UPDATE `tickets` " .
-			"SET `updated` = '" . $datetime_now . "', " .
-			"`user_id` = " . $_SESSION['user_id'] . " " .
-			"WHERE id = " . $_POST['ticket_id'] . " " .
-			"LIMIT 1;", __FILE__, __LINE__);
-		unset ($result);
-
-		$query_unit_handle = "SELECT `handle` " .
-			"FROM `units` " .
-			"WHERE `id` = " . $_POST['frm_unit'] . ";";
-
-		$result_unit_handle = db_query($query_unit_handle, __FILE__, __LINE__);
-		$row_unit_handle = stripslashes_deep(db_fetch_array($result_unit_handle));
-		$log_text = "";
-		if ($_POST['frm_description'] != $row_old_data['description']) {
-			$log_text .= get_text("Action") . ": " . $_POST['frm_description'] . "  ";
-		}
-		if ($_POST['frm_unit'] != $row_old_data['unit_id']) {
-			$log_text .= get_text("Unit") . ": " . remove_nls($row_unit_handle['handle']) . "  ";
-		}
-		if ($_POST['asof'] != "") {
-			$log_text .= get_text("As of") . ": " . format_date($_POST['asof']) . "  ";
-		}
-		if ($row_old_data['datetime'] != "") {
-			$log_text .= get_text("Written") . ": " . format_date(strtotime($row_old_data['datetime'])) . "  ";
-		}
-		do_log($GLOBALS['LOG_ACTION_EDIT'], $_POST['ticket_id'], $_POST['frm_unit'], $log_text, 0, "", "", "");
-		break;
-	case "edit":
-
-		$query = "SELECT * " .
-			"FROM `actions` " .
-			"WHERE `id` = " . $_GET['action_id'] . " " .
-			"LIMIT 1;";
-
-		$result = db_query($query, __FILE__, __LINE__);
-
-		$row = stripslashes_deep(db_fetch_array($result));
+	$row = stripslashes_deep(db_fetch_array($result));
 	?>
 	<body onload="check_frames();">
 		<script>
@@ -301,12 +312,12 @@ case "insert":
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="action_edit_form" name="action_edit_form">
 			<input id="function" name="function" type="hidden" value="update">
-			<input id="action_id" name="action_id" type="hidden" value="<?php print $_GET['action_id'];?>">
-			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $_GET['ticket_id'];?>">
+			<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
+			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
-					<div<?php print get_table_id_title_str("action", $_GET['action_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Edit Action") . get_table_id($_GET['action_id']) . " - " . get_variable("page_caption");?>
+					<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Edit Action") . get_table_id($action_id) . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
 				<div class="row">
@@ -314,7 +325,7 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -344,7 +355,7 @@ case "insert":
 												<?php print get_textblock_select_str("action", "document.action_edit_form.frm_description", "", 0, "");?>
 											</div>
 											<div>
-												<?php print get_unit_select_str("action", $row['unit_id'], $_GET['ticket_id']);?>
+												<?php print get_unit_select_str("action", $row['unit_id'], $ticket_id);?>
 											</div>
 										</td>
 									</tr>
@@ -375,7 +386,7 @@ case "insert":
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_right">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<?php show_head($_GET['ticket_id'], false, false);?>
+									<?php show_head($ticket_id, false, false);?>
 								</table>
 							</div>
 						</div>
@@ -388,8 +399,8 @@ case "insert":
 	</body>
 </html>
 	<?php
-		break;
-	default:
+	break;
+default:
 	?>
 	<body onload="check_frames();">
 		<script>
@@ -398,7 +409,7 @@ case "insert":
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<form id="action_add_form" name="action_add_form">
 			<input id="function" name="function" type="hidden" value="insert">
-			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $_GET['ticket_id'];?>">
+			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -410,7 +421,7 @@ case "insert":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $_GET['ticket_id'] . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -440,7 +451,7 @@ case "insert":
 												<?php print get_textblock_select_str("action", "document.action_add_form.frm_description", "", 0 ,"");?>
 											</div>
 											<div>
-												<?php print get_unit_select_str("action", $unit_id, $_GET['ticket_id']);?>
+												<?php print get_unit_select_str("action", $unit_id, $ticket_id);?>
 											</div>
 										</td>
 									</tr>
@@ -461,7 +472,7 @@ case "insert":
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_right">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<?php show_head($_GET['ticket_id'], false, false);?>
+									<?php show_head($ticket_id, false, false);?>
 								</table>
 							</div>
 						</div>
