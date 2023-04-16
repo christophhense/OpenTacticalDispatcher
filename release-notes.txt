@@ -53,6 +53,9 @@ Activities sorted by application function.
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
 		Rename form to ticket_edit_form
+* Ticket - disposition print
+	CHANGE
+		Smaller line spacing
 * Ticket - report
 	CHANGE
 		Remove href
