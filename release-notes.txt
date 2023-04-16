@@ -11,12 +11,12 @@
 						 Google Chrome 102.0.5005.63, Zoom: 125%
 
 	- Ubuntu 20.04 LTS
-		- Database:      10.3.34-MariaDB
-		- Webserver:     Apache/2.4.41
-		- PHP:           8.0.19
+		- Database:      10.6.12-MariaDB
+		- Webserver:     Apache/2.4.52
+		- PHP:           8.2.4
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 100.0.2, Zoom: 120%
-						 Chromium 102.0.5005.115, Zoom 125%
+		- Browser:       Firefox 112.0, Zoom: 120%
+						 Chromium 112.0.5615.49, Zoom 125%
 
 Activities sorted by application function.
 
@@ -38,6 +38,8 @@ Activities sorted by application function.
 		Remove href
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
+		Change PHPMailer version to 6.8.0
+		Change network-printer font from Courier to Helvetica
 * Ticket - new
 	CHANGE
 		Form submit with ajax

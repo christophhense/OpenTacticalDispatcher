@@ -2932,39 +2932,6 @@ function get_variable($which) {
 	return $value;
 }
 
-function get_parking_form_data_helptext($function) {
-	$chars = 0;
-	$time = 0;
-	$raw = false;
-	switch($function) {
-	case "ticket_add":
-		$chars = 0;
-		$time = 1;
-		$raw = true;
-	case "ticket_close":
-		$chars = 4;
-		$time = 5;
-		$raw = true;
-	case "log_report":
-		$chars = 6;
-		$time = 7;
-	case "action":
-		$chars = 2;
-		$time = 3;
-	default:
-	}
-	$settings = explode(",", get_variable("parking_form_data"));
-	$text_str = "";
-	if (trim($settings[$chars]) != 0) {
-		$text_str = get_help_text("parked_trigger_chars", true) . ": " . trim($settings[$chars]) . 
-		 	" " . get_help_text("parked_seconds", true) . ": " . trim($settings[$time]);
-		if (!$raw) {
-			$text_str = get_title_str($text_str);
-		}
-	}
-	return $text_str;
-}
-
 function get_parking_form_data_time($function) {
 	$time = 0;
 	switch($function) {
@@ -3213,6 +3180,12 @@ function get_units_addresses($smsg, $phone, $email) {
 		}
 	}
 	return $addresses;
+}
+
+function get_language() {
+	$locale = array();
+	$locale = explode("-", get_variable("_locale"));
+	return $locale[0];
 }
 
 //====== communication
@@ -4279,6 +4252,39 @@ function get_nowrap_title_str($text) {
 	if ($text) {
 		return " onmouseover=\"Tip('" . $text . "');\" onmouseout=\"UnTip();\"";
 	}
+}
+
+function get_parking_form_data_helptext($function) {
+	$chars = 0;
+	$time = 0;
+	$raw = false;
+	switch($function) {
+	case "ticket_add":
+		$chars = 0;
+		$time = 1;
+		$raw = true;
+	case "ticket_close":
+		$chars = 4;
+		$time = 5;
+		$raw = true;
+	case "log_report":
+		$chars = 6;
+		$time = 7;
+	case "action":
+		$chars = 2;
+		$time = 3;
+	default:
+	}
+	$settings = explode(",", get_variable("parking_form_data"));
+	$text_str = "";
+	if (trim($settings[$chars]) != 0) {
+		$text_str = get_help_text("parked_trigger_chars", true) . ": " . trim($settings[$chars]) . 
+		 	" " . get_help_text("parked_seconds", true) . ": " . trim($settings[$time]);
+		if (!$raw) {
+			$text_str = get_title_str($text_str);
+		}
+	}
+	return $text_str;
 }
 
 //====== text format

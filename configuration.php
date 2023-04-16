@@ -31,8 +31,7 @@ default:
 	while ($row = stripslashes_deep(db_fetch_assoc($result))) {
 		$users .= trim($row['user_name']) . "\t";
 	}
-	$locale = array();
-	$locale = explode("-", get_variable("_locale"));
+	$language = get_language();
 ?>
 <!doctype html>
 <html lang="<?php print get_variable("_locale");?>">
@@ -57,7 +56,7 @@ default:
 		<script src="./js/jscolor/jscolor.js"></script>
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<script src="./js/fileinput.min.js" type="text/javascript"></script>
-		<script src="./js/fileinput_locales/<?php print $locale[0];?>.js" type="text/javascript"></script>
+		<script src="./js/fileinput_locales/<?php print $language;?>.js" type="text/javascript"></script>
 		<?php print show_day_night_style();?>
 		<script>
 
@@ -4951,7 +4950,7 @@ default:
 									<input type="hidden" name="function" value="users">
 									<script>
 										$("#users_upload").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5037,7 +5036,7 @@ default:
 									<input type="hidden" name="function" value="settings">
 									<script>
 										$("#settings_upload").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5106,7 +5105,7 @@ default:
 									<input type="hidden" name="function" value="facilities">
 									<script>
 										$("#facilties_upload").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5178,7 +5177,7 @@ default:
 									<input type="hidden" name="function" value="units">
 									<script>
 										$("#units_upload").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5293,7 +5292,7 @@ default:
 									<input type="hidden" name="function" value="incident-types">
 									<script>
 										$("#incident-types_upload_file").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5418,7 +5417,7 @@ default:
 									<input type="hidden" name="function" value="textblocks">
 									<script>
 										$("#textblocks_upload_file").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>
@@ -5475,7 +5474,7 @@ default:
 								<input type="hidden" name="function" value="captions">
 									<script>
 										$("#captions_hints_upload").fileinput({
-											language: "<?php print $locale[0];?>",
+											language: "<?php print $language;?>",
 											allowedFileExtensions: ["csv"]
 										});
 									</script>

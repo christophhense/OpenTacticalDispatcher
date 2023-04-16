@@ -13,21 +13,26 @@ function do_email($addresses, $subject, $text, $attachment) {
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 	$mail->CharSet = "utf-8";
-	$mail->setLanguage(substr(get_variable("_locale") , 0, 2), './lib/PHPMailer-6.8.0/language/');
+	$mail->setLanguage(get_language(), './lib/PHPMailer-6.8.0/language/');
 	$temp = trim(get_variable("_api_email_smtp_host"));
 	if ($temp != "mail.example.com") {
 		$mail->Timeout = 3;	//seconds
 		if (preg_match("/[a-zA-Z]{3,6}:\/\//", $temp, $match)) {
 			$protocol = substr($match[0], 0, -3);
-			if (($protocol == "tls") && ($protocol == "smtps")) {
-				$mail->SMTPSecure = "tls";
+			if (strcasecmp($protocol, "starttls") == 0) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+				$mail->Port = 587;
 			}
-		}
-		if (preg_match("/" . get_regexp_plain_url() . "/", $temp, $match)) {
-			$mail->Host = $match[0];
+			if ((strcasecmp($protocol, "tls") == 0) || (strcasecmp($protocol, "smtps") == 0)) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+				$mail->Port = 465;
+			}
 		}
 		if (preg_match("/:[0-9]{1,5}/", $temp, $match)) {
 			$mail->Port = substr($match[0], 1);
+		}
+		if (preg_match("/" . get_regexp_plain_url() . "/", $temp, $match)) {
+			$mail->Host = $match[0];
 		}
 		$temp_variable = remove_nls(get_variable("_api_email_smtp_authentication"));
 		$temp = explode(",", $temp_variable);
@@ -901,13 +906,13 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
 		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
 		$text_postscript_first_part = "%!\n" .
-			"/Courier findfont\n" .
+			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"10 scalefont\n" .
 			"setfont\n" .
 			"50 800 moveto \n" .
@@ -916,24 +921,24 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"(" . get_text("Incident dispatch system") . ") show\n" .
 			"480 800 moveto \n";
 		$text_postscript_last_part = " show\n" .
-			"/Courier-Bold findfont\n" .
+			"/Helvetica-Bold findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"15 scalefont\n" .
 			"setfont\n" .
 			"50 760 moveto \n" .
 			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
-			"/Courier findfont\n" .
+			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"10 scalefont\n" .
 			"setfont\n";
 		$i = 740;
