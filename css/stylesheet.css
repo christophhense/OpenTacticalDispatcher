@@ -45,6 +45,7 @@ body {
 		text-overflow: inherit !important;
 		white-space: pre-wrap !important;
 		font-size: 11px !important;
+		padding: 0px !important;
 	}
 
 	.big {
