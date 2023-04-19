@@ -86,22 +86,27 @@ function do_email($addresses, $subject, $text, $attachment) {
 		$mail->Body = $text;
 		if ($attachment != "") {
 			$mail->addAttachment($attachment);	// Ex.: 'images/phpmailer_mini.png'
+			//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 		}
 		/*	$mail->isHTML(true);// Send mail as HTML replace line breaks with <br> in html-email
-			$mail->Body = 'This is the message as <code>HTML version</code>';
-			$mail->AltBody = 'It's without HTML, there are supposed to be people out there who need it';*/
+			$mail->isHTML(true);                                  //Set email format to HTML
+			$mail->Subject = 'Here is the subject';
+			$mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+			$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+		*/
 		//	print_r(get_object_vars($mail)); exit ();
 	} else {
 		$configuration_complete = false;
 		$valid_smtp_host = false;
 	}
 	if ($configuration_complete) {
-		if (!$mail->send()) {
-			$result_data[0] = "MAIL_SENT_ERROR";
-			$result_data[1] = $mail->ErrorInfo;
-		} else {
+		try {
+			$mail->send();
 			$result_data[0] = "OK";
 			$result_data[1] = "";
+		} catch (Exception $e) {
+			$result_data[0] = "MAIL_SENT_ERROR";
+			$result_data[1] = $mail->ErrorInfo;
 		}
 	} else {
 		$result_data[0] = "INVALID_CONFIG_ERROR";
