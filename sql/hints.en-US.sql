@@ -67,7 +67,7 @@ INSERT INTO `hints` (`tag`, `hint`) VALUES
 ('_api_errlog_encdg', 'API-Code parameter for incoming errorlog-message from aplication interface. Example: &code=ERROR'),
 ('_api_message_encdg', 'API-Code parameter for incoming text-message. Example: &code=MESSAGE'),
 ('_api_position_encdg', 'API-Code parameter for incoming position-report and outgoing for position-report request. Example: &code=POSITION'),
-('_api_email_smtp_host', 'SMTP-Server for Email. Information on protocol, encryption and port are optional. In \"smtps://\" or \"tls://\", the connection only scrambled up, "smtp://\" in or without will only set up a secure connection when the server offers this. Ex.: smtps://mail.example.com:25. In the case of potentially unstable Internet connection, it is advisable to leave the infeed to a local smpt server, e.g. postfix (Unix / Linux) or h-Mailserver (Windows).'),
+('_api_email_smtp_host', 'SMTP server for sending emails. Protocol, encryption and port information are optional. With \"smtps://\" or \"tls://\" the connection is only established encrypted, with \"smtp://\" or without specification an encrypted connection is only established if the server offers it. Example: smtps://mail.example.com:25. If no port is specified, the following are used: smtp 25, starttls 587, smtps/tls 465. If the Internet connection is potentially unstable, it is advisable to leave the delivery to a local smpt server, e.g. Postfix (Unix / Linux) or h-mail server (Windows).'),
 ('_api_email_smtp_authentication', 'Authentification for SMTP-server - [Username],[Password]'),
 ('_api_email_from', 'Email FROM - [fromaddress],[fromname (optional)]'),
 ('_api_email_cc', 'Email CC - [ccaddress (optional)], [ccname (optional)]'),

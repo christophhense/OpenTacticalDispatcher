@@ -69,7 +69,7 @@ OpenTacticalDispatcher
 		http://www.walterzorn.de
 
 /lib
-	phpMailer
+	PHPMailer
 		LGPLv2.1
 		https://github.com/PHPMailer/PHPMailer
 

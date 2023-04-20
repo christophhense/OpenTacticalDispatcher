@@ -1,29 +1,38 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 function do_email($addresses, $subject, $text, $attachment) {
-	require_once ("./lib/phpmailer/class.phpmailer.php");
-	require_once ("./lib/phpmailer/class.smtp.php");
-	require_once ("./lib/phpmailer/language/phpmailer.lang-de.php"); // Optional, wenn du deutsche Fehlermeldungen ausgeben möchtest
+	require "./lib/PHPMailer-6.8.0/src/PHPMailer.php";
+    require "./lib/PHPMailer-6.8.0/src/SMTP.php";
+    require "./lib/PHPMailer-6.8.0/src/Exception.php";
 	$result_data = array ();
 	$configuration_complete = true;
 	$valid_smtp_host = true;
-	$mail = new PHPMailer;
+	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 	$mail->CharSet = "utf-8";
+	$mail->setLanguage(get_language(), './lib/PHPMailer-6.8.0/language/');
 	$temp = trim(get_variable("_api_email_smtp_host"));
 	if ($temp != "mail.example.com") {
 		$mail->Timeout = 3;	//seconds
 		if (preg_match("/[a-zA-Z]{3,6}:\/\//", $temp, $match)) {
 			$protocol = substr($match[0], 0, -3);
-			if (($protocol == "tls") && ($protocol == "smtps")) {
-				$mail->SMTPSecure = "tls";
+			if (strcasecmp($protocol, "starttls") == 0) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+				$mail->Port = 587;
 			}
-		}
-		if (preg_match("/" . get_regexp_plain_url() . "/", $temp, $match)) {
-			$mail->Host = $match[0];
+			if ((strcasecmp($protocol, "tls") == 0) || (strcasecmp($protocol, "smtps") == 0)) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+				$mail->Port = 465;
+			}
 		}
 		if (preg_match("/:[0-9]{1,5}/", $temp, $match)) {
 			$mail->Port = substr($match[0], 1);
+		}
+		if (preg_match("/" . get_regexp_plain_url() . "/", $temp, $match)) {
+			$mail->Host = $match[0];
 		}
 		$temp_variable = remove_nls(get_variable("_api_email_smtp_authentication"));
 		$temp = explode(",", $temp_variable);
@@ -77,22 +86,27 @@ function do_email($addresses, $subject, $text, $attachment) {
 		$mail->Body = $text;
 		if ($attachment != "") {
 			$mail->addAttachment($attachment);	// Ex.: 'images/phpmailer_mini.png'
+			//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 		}
 		/*	$mail->isHTML(true);// Send mail as HTML replace line breaks with <br> in html-email
-			$mail->Body = 'This is the message as <code>HTML version</code>';
-			$mail->AltBody = 'It's without HTML, there are supposed to be people out there who need it';*/
+			$mail->isHTML(true);                                  //Set email format to HTML
+			$mail->Subject = 'Here is the subject';
+			$mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+			$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+		*/
 		//	print_r(get_object_vars($mail)); exit ();
 	} else {
 		$configuration_complete = false;
 		$valid_smtp_host = false;
 	}
 	if ($configuration_complete) {
-		if (!$mail->send()) {
-			$result_data[0] = "MAIL_SENT_ERROR";
-			$result_data[1] = $mail->ErrorInfo;
-		} else {
+		try {
+			$mail->send();
 			$result_data[0] = "OK";
 			$result_data[1] = "";
+		} catch (Exception $e) {
+			$result_data[0] = "MAIL_SENT_ERROR";
+			$result_data[1] = $mail->ErrorInfo;
 		}
 	} else {
 		$result_data[0] = "INVALID_CONFIG_ERROR";
@@ -897,13 +911,13 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
 		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
 		$text_postscript_first_part = "%!\n" .
-			"/Courier findfont\n" .
+			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"10 scalefont\n" .
 			"setfont\n" .
 			"50 800 moveto \n" .
@@ -912,24 +926,24 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"(" . get_text("Incident dispatch system") . ") show\n" .
 			"480 800 moveto \n";
 		$text_postscript_last_part = " show\n" .
-			"/Courier-Bold findfont\n" .
+			"/Helvetica-Bold findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"15 scalefont\n" .
 			"setfont\n" .
 			"50 760 moveto \n" .
 			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
-			"/Courier findfont\n" .
+			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
 			"currentdict\n" .
 			"end\n" .
-			"/Courier-ISOLatin1 exch definefont\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
 			"10 scalefont\n" .
 			"setfont\n";
 		$i = 740;
