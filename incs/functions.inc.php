@@ -236,7 +236,9 @@ function stripslashes_deep($value) {
 	if (is_array($value)) {
 		$value = array_map("stripslashes_deep", $value);
 	} else {
-		$value = stripslashes($value);
+		if (($value != "") || ($value != null)) {
+			$value = stripslashes($value);
+		}
 	}
 	return $value;
 }
@@ -1185,7 +1187,7 @@ function generate_log_where_str($function, $start_date, $end_date, $custom_where
 	return $where_str;
 }
 
-function show_log_report($function, $start_date = 0, $end_date = 0, $custom_where = "", $filter) {
+function show_log_report($function, $filter, $start_date = 0, $end_date = 0, $custom_where = "") {
 	global $types;
 	$caption_no_data = get_text("No data for this period!");
 	if ($function == "reports") {

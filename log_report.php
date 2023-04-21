@@ -48,7 +48,7 @@ case "table_bottom":
 	?>
 	<?php print show_day_night_style();?>
 	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
-		<?php show_log_report("log_report", 0, 0, "", $_SESSION["log_report_filter"]);?>
+		<?php show_log_report("log_report", $_SESSION["log_report_filter"], 0, 0, "");?>
 	</table>
 	<?php
 	break;
