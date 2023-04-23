@@ -251,6 +251,9 @@ function quote_smart($value) {
 }
 
 function trim_quote($string) {
+	if ($string == null) {
+		$string = "";
+	}
 	return db_real_escape_string(trim($string));
 }
 
@@ -409,12 +412,12 @@ function insert_into_textblocks($type, $group, $text, $code,
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_units($name = "", $handle = "", $remote_data_services = "", $unit_phone = "",
-	$unit_email = "", $type = 0, $unit_status_id = 0, $multi = 0,
-	$mobile = "", $parent_unit_id = "", $guard_house_id = "", $description = "",
-	$capabilities = "", $contact_name = "", $admin_only = 0, $icon_url = "",
-	$lat = "", $lng = "", $lat_lng_updated = "", $status_updated = "",
-	$user_id = 0, $updated = "") {
+function insert_into_units($name, $handle, $remote_data_services, $unit_phone,
+	$unit_email, $type, $unit_status_id, $multi,
+	$mobile, $parent_unit_id, $guard_house_id, $description,
+	$capabilities, $contact_name, $admin_only, $icon_url,
+	$lat, $lng, $lat_lng_updated, $status_updated,
+	$user_id, $updated) {
 	if ($lat == "") {
 		$lat = "0.999999";
 	}
