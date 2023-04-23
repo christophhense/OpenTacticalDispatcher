@@ -1115,7 +1115,7 @@ function show_ticket_log($ticket_id) {
 	}
 }
 
-function generate_log_where_str($function, $start_date, $end_date, $custom_where = "", $filter = "") {
+function generate_log_where_str($function, $filter, $start_date, $end_date, $custom_where) {
 	if (empty ($filter) || $filter == "") {
 		$filter = array ("communication" => "false", "status" => "false", "settings" => "false");
 	}
@@ -1187,13 +1187,13 @@ function generate_log_where_str($function, $start_date, $end_date, $custom_where
 	return $where_str;
 }
 
-function show_log_report($function, $filter, $start_date = 0, $end_date = 0, $custom_where = "") {
+function show_log_report($function, $filter, $start_date, $end_date, $custom_where) {
 	global $types;
 	$caption_no_data = get_text("No data for this period!");
 	if ($function == "reports") {
 		$caption_no_data = get_text("No data for this filter!");
 	}
-	$where_str = generate_log_where_str($function, $start_date, $end_date, $custom_where, $filter);
+	$where_str = generate_log_where_str($function, $filter, $start_date, $end_date, $custom_where);
 
 	$query = " SELECT DISTINCT `l`.`client_address`, " .
 		"`l`.`code`, " .
@@ -4292,6 +4292,9 @@ function get_parking_form_data_helptext($function) {
 //====== text format
 
 function remove_nls($instr) {
+	if ($instr == null) {
+		$instr = "";
+	}
 	$nls = array ("\r\n", "\n", "\r", "'", "\"");
 	$nonls = str_replace($nls, " ", $instr);
 	$return_str = htmlspecialchars($nonls, ENT_COMPAT, "UTF-8");	//ENT_QUOTES	ENT_COMPAT

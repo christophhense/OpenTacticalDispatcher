@@ -604,7 +604,7 @@ default:
 
 		$query = "SELECT `id` " .
 			"FROM `log` `l`" .
-			generate_log_where_str("get_infos", 0, 0, "", "") . ";";
+			generate_log_where_str("get_infos", "", 0, 0, "") . ";";
 
 		$result = db_query($query, __FILE__, __LINE__);
 		if (db_num_rows($result)) {
