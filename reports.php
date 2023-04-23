@@ -251,7 +251,7 @@ case "log_report":
 		<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;"><tr><th style="text-align: center;"><h3><strong style="white-space: nowrap;"><?php print get_text("Log report");?></strong></h3></th></tr></table>
 		<table class="table table-striped table-condensed" style="table-layout: fixed;">
 			<tr style="height: 10px;"><th  colspan=6></th></tr>
-			<?php show_log_report("reports", $start_date, $end_date , $where, $_SESSION["reports_filter"]);?>
+			<?php show_log_report("reports", $_SESSION["reports_filter"], $start_date, $end_date , $where);?>
 		</table>
 	</div>
 	<?php

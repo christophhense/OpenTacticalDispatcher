@@ -296,7 +296,9 @@ function stripslashes_deep($value) {
 	if (is_array($value)) {
 		$value = array_map("stripslashes_deep", $value);
 	} else {
-		$value = stripslashes($value);
+		if (($value != "") || ($value != null)) {
+			$value = stripslashes($value);
+		}
 	}
 	return $value;
 }
@@ -309,6 +311,9 @@ function quote_smart($value) {
 }
 
 function trim_quote($string) {
+	if ($string == null) {
+		$string = "";
+	}
 	return db_real_escape_string(trim($string));
 }
 
@@ -467,12 +472,12 @@ function insert_into_textblocks($type, $group, $text, $code,
 	return db_query($query, __FILE__, __LINE__);
 }
 
-function insert_into_units($name = "", $handle = "", $remote_data_services = "", $unit_phone = "",
-	$unit_email = "", $type = 0, $unit_status_id = 0, $multi = 0,
-	$mobile = "", $parent_unit_id = "", $guard_house_id = "", $description = "",
-	$capabilities = "", $contact_name = "", $admin_only = 0, $icon_url = "",
-	$lat = "", $lng = "", $lat_lng_updated = "", $status_updated = "",
-	$user_id = 0, $updated = "") {
+function insert_into_units($name, $handle, $remote_data_services, $unit_phone,
+	$unit_email, $type, $unit_status_id, $multi,
+	$mobile, $parent_unit_id, $guard_house_id, $description,
+	$capabilities, $contact_name, $admin_only, $icon_url,
+	$lat, $lng, $lat_lng_updated, $status_updated,
+	$user_id, $updated) {
 	if ($lat == "") {
 		$lat = "0.999999";
 	}
@@ -1173,7 +1178,7 @@ function show_ticket_log($ticket_id) {
 	}
 }
 
-function generate_log_where_str($function, $start_date, $end_date, $custom_where = "", $filter = "") {
+function generate_log_where_str($function, $filter, $start_date, $end_date, $custom_where) {
 	if (empty ($filter) || $filter == "") {
 		$filter = array ("communication" => "false", "status" => "false", "settings" => "false");
 	}
@@ -1245,13 +1250,13 @@ function generate_log_where_str($function, $start_date, $end_date, $custom_where
 	return $where_str;
 }
 
-function show_log_report($function, $start_date = 0, $end_date = 0, $custom_where = "", $filter) {
+function show_log_report($function, $filter, $start_date, $end_date, $custom_where) {
 	global $types;
 	$caption_no_data = get_text("No data for this period!");
 	if ($function == "reports") {
 		$caption_no_data = get_text("No data for this filter!");
 	}
-	$where_str = generate_log_where_str($function, $start_date, $end_date, $custom_where, $filter);
+	$where_str = generate_log_where_str($function, $filter, $start_date, $end_date, $custom_where);
 
 	$query = " SELECT DISTINCT `l`.`client_address`, " .
 		"`l`.`code`, " .
@@ -4369,6 +4374,9 @@ function get_parking_form_data_helptext($function) {
 //====== text format
 
 function remove_nls($instr) {
+	if ($instr == null) {
+		$instr = "";
+	}
 	$nls = array ("\r\n", "\n", "\r", "'", "\"");
 	$nonls = str_replace($nls, " ", $instr);
 	$return_str = htmlspecialchars($nonls, ENT_COMPAT, "UTF-8");	//ENT_QUOTES	ENT_COMPAT

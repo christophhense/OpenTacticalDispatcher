@@ -345,7 +345,7 @@ default:
 			"update" => $unit_updated,
 			"user" => $unit_user
 		);
-		//=========== Call progression
+		//========== Call progression
 
 		$query = "SELECT `as`.`updated` AS `updated`, " .
 			"`as`.`id` AS `assign_id`, " .
@@ -381,7 +381,7 @@ default:
 			$call_progression_user = $assign_row["user_id"];
 		}
 		$progession_changed = "true";
-		if ($assign_row && (trim($assign_row["progession_changed"])) == "false") {
+		if ($assign_row && ($assign_row['progession_changed'] != null) && (trim($assign_row['progession_changed'])) == "false") {
 			$progession_changed = "false";
 		}
 		$json_call_progression = array (
@@ -394,7 +394,7 @@ default:
 			$unit_update_unit_id = $assign_row["unit_id"];
 			$unit_update_time = $assign_row["updated"];
 		}
-		//=========== Dispatch
+		//========== Dispatch
 
 		$query = "SELECT `as`.`updated` AS `updated`, " .
 			"`as`.`id` AS `assign_id`, " .
@@ -439,7 +439,7 @@ default:
 			$unit_update_unit_id = $assign_row["unit_id"];
 			$unit_update_time = $assign_row["updated"];
 		}
-		$_SESSION["unit_flag_1"] = $unit_update_unit_id;
+		$_SESSION['unit_flag_1'] = $unit_update_unit_id;
 		//=========== Actions
 
 		$query = "SELECT `id`, " .
@@ -607,7 +607,7 @@ default:
 
 		$query = "SELECT `id` " .
 			"FROM `log` `l`" .
-			generate_log_where_str("get_infos", 0, 0, "", "") . ";";
+			generate_log_where_str("get_infos", "", 0, 0, "") . ";";
 
 		$result = db_query($query, __FILE__, __LINE__);
 		if (db_num_rows($result)) {

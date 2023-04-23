@@ -50,6 +50,7 @@ if (isset ($_GET['first_start'])) {
 	$first_start = $_GET['first_start'];
 }
 if (((count_units_and_facilities_and_users() == 0) && (($first_start == "yes") || (empty ($_SESSION['wizard']))))) {
+	require_once ("./incs/install.inc.php");
 	$_SESSION['wizard'] = "do_not_show_wizard_select_page";
 	?>
 	<body onLoad="setIframeHeight();">

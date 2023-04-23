@@ -4829,7 +4829,7 @@ case "reset":
 		$microtime = explode(" ", microtime());
 		$pseudo_randomtime = $microtime[1];
 		while ($pseudo_randomtime >= $base){
-			$i = $pseudo_randomtime % $base;
+			$i = (int) $pseudo_randomtime % $base;
 			$result = $charset[$i] . $result;
 			$pseudo_randomtime /= $base;
 		}
@@ -5409,7 +5409,7 @@ case "updates":
 										<th style="width: 30%;"></th>
 									</tr>
 	<?php
-		if ($release_list_array[0][VERSION] != "false") {
+		if (($release_list_array[0][VERSION] != null) && ($release_list_array[0][VERSION] != "false")) {
 			if ($new_updates) {
 				$class_str = " class=\"text_green_bold\"";
 				foreach ($release_list_array as $key => $value) {
