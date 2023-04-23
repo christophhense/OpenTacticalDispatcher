@@ -378,7 +378,7 @@ default:
 			$call_progression_user = $assign_row['user_id'];
 		}
 		$progession_changed = "true";
-		if ($assign_row && (trim($assign_row['progession_changed'])) == "false") {
+		if ($assign_row && ($assign_row['progession_changed'] != null) && (trim($assign_row['progession_changed'])) == "false") {
 			$progession_changed = "false";
 		}
 		$json_call_progression = array (
