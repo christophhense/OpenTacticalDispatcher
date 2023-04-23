@@ -342,7 +342,7 @@ default:
 			"update" => $unit_updated,
 			"user" => $unit_user
 		);
-		//=========== Call progression
+		//========== Call progression
 
 		$query = "SELECT `as`.`updated` AS `updated`, " .
 			"`as`.`id` AS `assign_id`, " .
@@ -391,7 +391,7 @@ default:
 			$unit_update_unit_id = $assign_row['unit_id'];
 			$unit_update_time = $assign_row['updated'];
 		}
-		//=========== Dispatch
+		//========== Dispatch
 
 		$query = "SELECT `as`.`updated` AS `updated`, " .
 			"`as`.`id` AS `assign_id`, " .
@@ -437,7 +437,7 @@ default:
 			$unit_update_time = $assign_row['updated'];
 		}
 		$_SESSION['unit_flag_1'] = $unit_update_unit_id;
-		//=========== Actions
+		//========== Actions
 
 		$query = "SELECT `id`, " .
 			"`updated`, " .

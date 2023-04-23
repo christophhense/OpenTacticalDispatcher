@@ -236,7 +236,7 @@ function install_default_csv_file(result) {
 		$.post("import.php", "function=" + import_type + "&filename=" + import_file)
 		.done(function(data) {
 			var get_infos_array = JSON.parse(data);
-			window.location.href = window.location.href.replace( /[\?#].*|$/, "/configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
+			goto_window("configuration.php?top_notice=" + get_infos_array['top_notice_str'] + "&top_notice_logstr=" + get_infos_array['top_notice_log_str']);
 		})
 		.fail(function() {
 			show_top_notice("danger", "Error");

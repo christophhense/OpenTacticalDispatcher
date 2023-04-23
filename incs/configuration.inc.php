@@ -637,7 +637,6 @@ function get_default_incident_types($file) {
 			"</td><td style='padding: 2px; vertical-align: top;width: 25%;'>" . get_text("Protocol") .
 			"</td><td style='padding: 2px; vertical-align: top;width: 10%;'>" . get_text("Sort group") .
 			"</td><td style='padding: 2px; vertical-align: top;width: 10%;'>" . get_text("Sort") . "</td></tr>";
-		ini_set("auto_detect_line_endings", true);
 		$uploadfile = fopen($file, "rb");
 		while (!feof($uploadfile)) {
 			$line = fgetcsv($uploadfile, 4096, ";");
@@ -686,7 +685,6 @@ function get_default_textblocks($file) {
 			"</td><td style='padding: 2px; vertical-align: top;width: 65%;'>" . get_text("Textblocks") .
 			"</td><td style='padding: 2px; vertical-align: top;width: 10%;'>" . get_text("Sort group") .
 			"</td><td style='padding: 2px; vertical-align: top;width: 10%;'>" . get_text("Sort") . "</td></tr>";
-		ini_set("auto_detect_line_endings", true);
 		$uploadfile = fopen($file, "rb");
 		while (!feof($uploadfile)) {
 			$line = fgetcsv($uploadfile, 4096, ";");

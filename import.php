@@ -54,7 +54,6 @@ case "users":
 	$line = "";
 	$users = $users_updated = $users_del = 0;
 	$severity = 0;
-	ini_set("auto_detect_line_endings", true);
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 	while (!feof($uploadfile)) {
 		$line = fgetcsv($uploadfile, 4096, ";");
@@ -174,7 +173,6 @@ case "units":
 	$resp_status = $resp_status_updated = $resp_status_del = 0;
 	$unit = $unit_updated = $unit_del = 0;
 	$unit_mobile = $unit_multi = $unit_admin_only = 0;
-	ini_set("auto_detect_line_endings", true);
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 	while (!feof($uploadfile)) {
 		$line = fgetcsv($uploadfile, 4096, ";");
@@ -680,7 +678,6 @@ case "facilities":
 	$fac_types = $fac_types_updated = $fac_types_del = 0;
 	$fac_status = $fac_status_updated = $fac_status_del = 0;
 	$facilitiy = $facilitiy_updated = $facilitiy_del = 0;
-	ini_set("auto_detect_line_endings", true);
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 
 	$query_facilitiy_type = "SELECT `id`, " .
@@ -1124,7 +1121,6 @@ case "default-incident-types":
 	define("INCIDENT_TYPES_DELETE", 7);
 	$line = "";
 	$in_types = $in_types_updated = $in_types_del = 0;
-	ini_set("auto_detect_line_endings", true);
 	if ($function == "default-incident-types") {
 		$uploadfile = fopen(get_current_path("sql/" . $filename), "rb");
 	} else {
@@ -1220,7 +1216,6 @@ case "default-textblocks":
 	$data_array["close"]["insert"] = $data_array["close"]["update"] = $data_array["close"]["delete"] = 0;
 	$data_array["log"]["insert"] = $data_array["log"]["update"] = $data_array["log"]["delete"] = 0;
 	$data_array["message"]["insert"] = $data_array["message"]["update"] = $data_array["message"]["delete"] = 0;
-	ini_set("auto_detect_line_endings", true);
 	if ($function == "default-textblocks") {
 		$uploadfile = fopen(get_current_path("sql/" . $filename), "rb");
 	} else {
@@ -1315,7 +1310,6 @@ case "captions":
 	define("CAPTIONSHINTS_REPLACE", 2);
 	$line = "";
 	$captions = $hints = 0;
-	ini_set("auto_detect_line_endings", true);
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 	while (!feof($uploadfile)) {
 		$line = fgetcsv($uploadfile, 4096, ";");
@@ -1378,7 +1372,6 @@ case "settings":
 	define("SETTINGS_VALUE", 2);
 	$line = "";
 	$settings = 0;
-	ini_set("auto_detect_line_endings", true);
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 	while (!feof($uploadfile)) {
 		$line = fgetcsv($uploadfile, 4096, ";");
