@@ -19,6 +19,7 @@ if (($function == "") && isset ($_POST['function'])) {
 }
 switch ($function) {
 case "do_update":
+case "user_insert":
 	break;
 default:
 
@@ -280,7 +281,7 @@ case "user_insert":
 			}
 		}
 	}
-	break;
+	exit;
 case "user_add":
 	if (is_super() || is_admin()) {
 		$super_disabled = "";
@@ -293,11 +294,28 @@ case "user_add":
 		<script>
 
 			$(function () {
-				document.user_add_Form.frm_user.focus();
+				$("#frm_user").focus();
 			})
 
+			function send_user_add() {
+				if (validate_user(document.user_add_Form)) {
+					$.post("configuration.php", $('#user_add_form').serialize())
+					.done(function (data) {
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("configuration.php");
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("configuration.php");
+					});
+				} else {	
+					return false;
+				}
+			}
+
 		</script>
-		<form method="post" name="user_add_Form" onSubmit="return validate_user(document.user_add_Form);" action="configuration.php?function=user_insert">
+		<form id="user_add_form" name="user_add_Form">
+			<input type="hidden" name="function" value="user_insert">
 			<input type="hidden" name="frm_func" value="a">
 			<input type="hidden" name="frm_hash" value="">
 			<input type="hidden" name="frm_group[]" value="1">
@@ -312,7 +330,7 @@ case "user_add":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<?php if (is_admin() || is_super()) { ?>
@@ -323,7 +341,7 @@ case "user_add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_user_add();"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<?php } ?>
