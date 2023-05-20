@@ -80,12 +80,16 @@ default:
 			}
 
 			function validate_user(theForm) {
+				add_or_edit = "add";
+				if (theForm.frm_func.value == "e") {
+					add_or_edit = "edit";
+				}
 				if ($("#frm_remove").val() == "true") {	
 					show_infobox("<?php print get_text("Please confirm removing");?>", $("#frm_user").val(), false, do_delete_user);
 					return false;
 				}
 				var error_message = "";
-				if ($("#frm_user").val() == "")	{
+				if ((add_or_edit == "add") && ($("#frm_user").val() == ""))	{
 					error_message += "<?php print html_entity_decode(get_text('UserID is required.'));?><br>";
 				}
 				if ((theForm.frm_func.value=="a") && (theForm.frm_user.value.length > 0) && (in_array(ary_users, theForm.frm_user.value.trim())) && (theForm.frm_user.value != "")) {
@@ -117,6 +121,22 @@ default:
 					theForm.frm_passwd.value = "";
 					theForm.frm_passwd_confirm.value = "";
 					return true;
+				}
+			}
+
+			function send_user_infos(user_form) {
+				if (validate_user(user_form)) {
+					$.post("configuration.php", $(user_form).serialize())
+					.done(function () {
+						show_top_notice("success", "<?php print get_text("Saved");?>");
+						goto_window("configuration.php");
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("configuration.php");
+					});
+				} else {	
+					return false;
 				}
 			}
 
@@ -297,22 +317,6 @@ case "user_add":
 				$("#frm_user").focus();
 			})
 
-			function send_user_add() {
-				if (validate_user(document.user_add_Form)) {
-					$.post("configuration.php", $('#user_add_form').serialize())
-					.done(function (data) {
-						show_top_notice("success", "<?php print get_text("Saved");?>");
-						goto_window("configuration.php");
-					})
-					.fail(function () {
-						show_top_notice("danger", "<?php print get_text("Error");?>");
-						goto_window("configuration.php");
-					});
-				} else {	
-					return false;
-				}
-			}
-
 		</script>
 		<form id="user_add_form" name="user_add_Form">
 			<input type="hidden" name="function" value="user_insert">
@@ -341,7 +345,7 @@ case "user_add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_user_add();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_user_infos(document.user_add_Form);"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<?php } ?>
@@ -501,7 +505,7 @@ case "user_update":
 			$top_notice_log_str .= get_text("User data has been updated") . ": " . remove_nls($old_value['name'] . "  " . get_text("Edited") . "  " . $log_text_password . $log_text_level . $log_text_email . "  ");
 		}
 	}
-	break;
+	exit;
 case "user_edit":
 	if ((isset ($_GET['id'])) && ($_GET['id'] != "")) {
 		if (is_super() || is_admin()) {
@@ -612,7 +616,7 @@ case "user_edit":
 					$email_disabled = " disabled";
 				}
 	?>
-		<form name="frm_user" method="post" onSubmit="return validate_user(document.frm_user);" action="configuration.php">
+		<form id="frm_user" name="frm_user">
 			<input type="hidden" name="frm_id" value="<?php print $_GET['id'];?>">
 			<input type="hidden" id="frm_remove" name="frm_remove" value="">
 			<input type="hidden" name="function" value="user_update">
@@ -630,7 +634,7 @@ case "user_edit":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>	
 							<div class="row" style="margin-top: 10px;">
@@ -640,7 +644,7 @@ case "user_edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_user_infos(document.frm_user);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 20px;">
