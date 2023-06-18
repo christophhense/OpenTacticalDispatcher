@@ -23,6 +23,8 @@ case "user_insert":
 case "user_update":
 case "audio_update":
 case "settings_update":
+case "incident_numbers_update":
+
 case "do_update":	
 	break;
 default:
@@ -927,11 +929,14 @@ case "incident_numbers_update":
 		$result = db_query($query, __FILE__, __LINE__);
 		$updated_rows = $updated_rows + db_affected_rows($result);
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ";
+			//$top_notice_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
+			//$top_notice_log_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	break;
+	//break;
+	exit;
 case "incident_numbers":
 	if (is_super()) {
 			$inc_num_array = unserialize(base64_decode(get_variable('_inc_num')));
@@ -1064,12 +1069,13 @@ case "incident_numbers":
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message)
 					return false;
 				} else {
-					theForm.submit();
+					//theForm.submit();
+					send_configuration_name_form(theForm);
 				}
 			}
 
 		</script>
-		<form id="inc_num_Form" name="inc_num_Form" method="post" action="<?php print basename(__FILE__);?>">
+		<form id="inc_num_Form" name="inc_num_Form">
 			<input type="hidden" id="function" name="function" value="incident_numbers_update">
 			<input type="hidden" id="do_db" name="do_db" value="true">
 			<input type="hidden" id="frm_do_nature" name="frm_do_nature" value=<?php print $do_nature;?>>
