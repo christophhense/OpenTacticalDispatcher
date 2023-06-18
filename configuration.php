@@ -26,6 +26,7 @@ case "settings_update":
 case "incident_numbers_update":
 case "api_update":
 case "facilities_status_reset_update":
+case "facility_types_update":
 
 case "do_update":	
 	break;
@@ -1527,9 +1528,11 @@ case "facilities_status_reset_update":
 			}
 		} else {
 			$message_str .= get_text("Nothing to do!") . "<br>";
-			$log_str .= get_text("Nothing to do!") . "  ";
+			$log_str = NULL;
 		}
-		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		}
 		print get_text($message_str) . "<br>";
 	}
 	exit;
@@ -1589,27 +1592,27 @@ case "facilities_status_reset":
 		}
 		$the_status_sel .= "</select>";
 	?>
-			<style>
-				.table, td {
-					overflow: visible !important;
-				}
-			</style>
-			<script>
+		<style>
+			.table, td {
+				overflow: visible !important;
+			}
+		</style>
+		<script>
 
-			$(document).ready(function() {
-				$("#facility_type").multiselect ({
-					buttonWidth: "100%",
-					nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
-					nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
-					allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
-					numberDisplayed: 0,
-					includeSelectAllOption: true,
-					selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
-				});
+		$(document).ready(function() {
+			$("#facility_type").multiselect ({
+				buttonWidth: "100%",
+				nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
+				nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
+				allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
+				numberDisplayed: 0,
+				includeSelectAllOption: true,
+				selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
 			});
+		});
 
-			</script>
-			<div id="main_container" class="container-fluid">
+		</script>
+		<div id="main_container" class="container-fluid">
 			<form id="frm_def_status" name="frm_def_status">
 				<input type="hidden" id="function" name="function" value="facilities_status_reset_update">
 				<div class="row infostring">
@@ -1666,12 +1669,14 @@ case "facilities_status_reset":
 	break;
 case "facility_types_update":
 	if (is_super()) {
+		$log_str = NULL;
+		$message_str = get_text("Nothing to do!") . "<br>";
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
 			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		if (isset ($_POST['facility_types_id'][0])) {
@@ -1710,26 +1715,31 @@ case "facility_types_update":
 				}
 			}
 			if ($updated_rows != 0) {
-				$top_notice_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "  ";
+				$message_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "<br>";
+				$log_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "  ";
 			}
 			if ($deleted_rows != 0) {
-				$top_notice_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "  ";
+				$message_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "<br>";
+				$log_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "  ";
 			}
 		}
-		break;
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		}
+		print get_text($message_str) . "<br>";
 	}
+	exit;
 case "facility_types":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<div class="row infostring">
-				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Facility types configuration") . " - "  . get_variable("page_caption");?>
+			<form id="facility_types" name="facility_types">
+			<input type="hidden" id="function" name="function" value="facility_types_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Facility types configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form id="facility_types" name="facility_types" method="post" action="configuration.php?function=facility_types_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -1745,7 +1755,7 @@ case "facility_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_types.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_types');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1835,9 +1845,9 @@ case "facility_types":
 							</div>
 						</div>
 						<div class="col-md-1"></div>
-					</div>
-				</form>
-			</div>
+					</div>	
+				</div>
+			</form>
 		</body>
 	</html>
 	<?php
