@@ -25,6 +25,7 @@ case "audio_update":
 case "settings_update":
 case "incident_numbers_update":
 case "api_update":
+case "facilities_status_reset_update":
 
 case "do_update":	
 	break;
@@ -1503,6 +1504,8 @@ case "api":
 	break;
 case "facilities_status_reset_update":
 	if (is_super() || is_admin()) {	
+		$message_str = "";
+		$log_str = "";
 		if (isset ($_POST['facility_type'])) {
 			$facility_types_where_str = "";
 			foreach ($_POST['facility_type'] as $VarName => $VarValue) {
@@ -1516,18 +1519,20 @@ case "facilities_status_reset_update":
 
 			$result = db_query($query, __FILE__, __LINE__);
 			if ($result) {
-				$top_notice_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
 			} else {
-				$top_notice_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
 			}
 		} else {
-			$top_notice_str .= get_text("Nothing to do!") . "<br>";
-			$top_notice_log_str .= get_text("Nothing to do!") . "  ";
+			$message_str .= get_text("Nothing to do!") . "<br>";
+			$log_str .= get_text("Nothing to do!") . "  ";
 		}
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		print get_text($message_str) . "<br>";
 	}
-	break;
+	exit;
 case "facilities_status_reset":
 	if (is_super() || is_admin()) {
 		$unit_type_selectr_str = "";
@@ -1605,7 +1610,7 @@ case "facilities_status_reset":
 
 			</script>
 			<div id="main_container" class="container-fluid">
-			<form id="frm_def_status" name="frm_def_status" method="post" action="<?php print basename(__FILE__);?>">
+			<form id="frm_def_status" name="frm_def_status">
 				<input type="hidden" id="function" name="function" value="facilities_status_reset_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -1622,7 +1627,7 @@ case "facilities_status_reset":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_def_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
