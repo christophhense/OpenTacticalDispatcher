@@ -207,12 +207,13 @@ case "profile":
 						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());		
 						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
 //				}
-					theForm.submit();
+					send_configuration_name_form(theForm);
 				}
 			}
 
 		</script>
-		<form name="frm_profile" method="post" action="configuration.php?function=profile_update">
+		<form id="frm_profile" name="frm_profile">
+			<input type="hidden" id="function" name="function" value="profile_update">
 			<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
 			<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
 			<div class="container-fluid" id="main_container">
