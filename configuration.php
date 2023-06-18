@@ -18,8 +18,11 @@ if (($function == "") && isset ($_POST['function'])) {
 	$function = $_POST['function'];
 }
 switch ($function) {
-case "do_update":
+case "profile_update":
 case "user_insert":
+case "user_update":
+case "audio_update":
+case "do_update":	
 	break;
 default:
 
@@ -120,23 +123,7 @@ default:
 					theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
 					theForm.frm_passwd.value = "";
 					theForm.frm_passwd_confirm.value = "";
-					return true;
-				}
-			}
-
-			function send_user_infos(user_form) {
-				if (validate_user(user_form)) {
-					$.post("configuration.php", $(user_form).serialize())
-					.done(function () {
-						show_top_notice("success", "<?php print get_text("Saved");?>");
-						goto_window("configuration.php");
-					})
-					.fail(function () {
-						show_top_notice("danger", "<?php print get_text("Error");?>");
-						goto_window("configuration.php");
-					});
-				} else {	
-					return false;
+					send_configuration_name_form(theForm);
 				}
 			}
 
@@ -178,9 +165,9 @@ case "profile_update":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	db_query($query, __FILE__, __LINE__);
-	$top_notice_str .= get_text("Your profile has been updated.") . "<br>";
-	$top_notice_log_str .= get_text("Your profile has been updated.") . "  ";
-	break;
+	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Your profile has been updated.") . "  ", 0, "", "", "");
+	print get_text("Your profile has been updated.") . "<br>";
+	exit;
 case "profile":
 
 	$query = "SELECT `id` " .
@@ -296,8 +283,8 @@ case "user_insert":
 				foreach ($_POST['frm_group'] as $grp_val) {
 					insert_into_allocates($grp_val, $GLOBALS['TYPE_USER'], $new_id, $_SESSION['user_id'], $datetime_now);
 				}
-				$top_notice_str .= get_text("User has been added") . ": <i>" . $_POST['frm_user'] . "</i><br>";
-				$top_notice_log_str .= get_text("User has been added") . remove_nls(": " . $_POST['frm_user'] . "  " . get_text("Level") . ": " . get_level_text(trim($_POST['frm_level'])) . "  " . get_text("Email") . ": " . trim($_POST['frm_email']) . "  ");
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User has been added") . remove_nls(": " . $_POST['frm_user'] . "  " . get_text("Level") . ": " . get_level_text(trim($_POST['frm_level'])) . "  " . get_text("Email") . ": " . trim($_POST['frm_email']) . "  "), 0, "", "", "");
+				print get_text("User has been added") . ": <i>" . $_POST['frm_user'] . "</i><br>";
 			}
 		}
 	}
@@ -345,7 +332,7 @@ case "user_add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_user_infos(document.user_add_Form);"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_add_Form);"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<?php } ?>
@@ -498,11 +485,11 @@ case "user_update":
 			}
 		}
 		if ($user_deletet) {
-			$top_notice_str .= get_text("User has been deleted") . ": <i>" . $old_value['name'] . "</i><br>";
-			$top_notice_log_str .= get_text("User has been deleted") . ": " . $old_value['name'] . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User has been deleted") . ": " . $old_value['name'] . "  ", 0, "", "", "");
+			print get_text("User has been deleted") . ": <i>" . $old_value['name'] . "</i><br>";
 		} else {
-			$top_notice_str .= get_text("User data has been updated") . ": <i>" . $old_value['name'] . "</i><br>";
-			$top_notice_log_str .= get_text("User data has been updated") . ": " . remove_nls($old_value['name'] . "  " . get_text("Edited") . "  " . $log_text_password . $log_text_level . $log_text_email . "  ");
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User data has been updated") . ": " . remove_nls($old_value['name'] . "  " . get_text("Edited") . "  " . $log_text_password . $log_text_level . $log_text_email . "  "), 0, "", "", "");
+			print get_text("User data has been updated") . ": <i>" . $old_value['name'] . "</i><br>";
 		}
 	}
 	exit;
@@ -644,7 +631,7 @@ case "user_edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_user_infos(document.frm_user);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.frm_user);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 20px;">
@@ -754,12 +741,15 @@ case "audio_update":
 		if ($updated_rows != 0) {
 			$top_notice_str .= get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
 			$top_notice_log_str .= get_text("Audio files updated") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Audio files updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	break;
+	exit;
 case "audio":
 	?>
-			<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+		<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+			<input type="hidden" id="function" name="function" value="audio_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -771,7 +761,7 @@ case "audio":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 	<?php
@@ -784,7 +774,7 @@ case "audio":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_audio_files');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -799,7 +789,6 @@ case "audio":
 					</div>
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<input type="hidden" id="function" name="function" value="audio_update">
 							<table class='table table-striped table-condensed' style="text-align: left;">
 								<tr class="form-group" style="height: 44px;">
 									<th<?php print get_help_text_str("sound_code");?> colspan=4><?php print get_text("Code");?></th>
@@ -824,7 +813,7 @@ foreach ($sound_names_array as $value) {
 }
 	?>
 								</tr>
-							</table>
+							</table>	
 						</div>
 					</div>
 				</div>
@@ -867,7 +856,7 @@ case "settings":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1094,7 +1083,7 @@ case "incident_numbers":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1280,7 +1269,7 @@ case "api":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1624,7 +1613,7 @@ case "facilities_status_reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1737,7 +1726,7 @@ case "facility_types":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1945,7 +1934,7 @@ case "facility_status":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2284,7 +2273,7 @@ case "unit_status_reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2397,7 +2386,7 @@ case "unit_types":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2578,7 +2567,7 @@ case "unit_status":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2777,7 +2766,7 @@ case "regions":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3396,7 +3385,7 @@ case "incident_types":
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -3695,7 +3684,7 @@ case "textblocks":
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -3915,7 +3904,7 @@ case "captions":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4007,7 +3996,7 @@ case "hints":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 						<div class="row" style="margin-top: 10px;">
@@ -4118,7 +4107,7 @@ case "reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4569,7 +4558,7 @@ case "updates":
 						}
 						do_update_progression_info_box("show", "", 0);
 						do_update_progression_info_box("download", "start", update_download_time);
-						$.get("./configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
+						$.get("configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
 							"&update_progress_time=" + update_progress_time + simulate_query_part_download, function(data) {
 						})
 						.done(function(data) {
@@ -4582,7 +4571,7 @@ case "updates":
 								return;
 							}
 							do_update_progression_info_box("unzip", "start", unzip_time);
-							$.get("./update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
+							$.get("update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
 							})
 							.done(function(data) {
 								var return_array = JSON.parse(data);
@@ -4594,7 +4583,7 @@ case "updates":
 									return;
 								}
 								do_update_progression_info_box("changes", "start", changes_time);
-								$.get("./update.php?function=do_changes" + simulate_query_part_changes, function(data) {
+								$.get("update.php?function=do_changes" + simulate_query_part_changes, function(data) {
 								})
 								.done(function(data) {
 									var return_array = JSON.parse(data);
@@ -4652,7 +4641,7 @@ case "updates":
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -4821,17 +4810,17 @@ case "updates":
 						</div>
 						<div id="update_infobox_body" class="modal-body text_black">
 							<div class="progress">
-								<div id="download_progressbar" class="progress-bar progress-bar-warning" style="width:70%" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+								<div id="download_progressbar" class="progress-bar progress-bar-warning" style="width: 70%;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Downloading update");?>
 								</div>
 							</div>
 							<div class="progress">
-								<div id="unzip_progressbar" class="progress-bar progress-bar-warning" style="width:70%" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+								<div id="unzip_progressbar" class="progress-bar progress-bar-warning" style="width: 70%;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Unpacking files");?>
 								</div>
 							</div>
 							<div class="progress">
-								<div id="changes_progressbar" class="progress-bar progress-bar-warning" style="width:10%;" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+								<div id="changes_progressbar" class="progress-bar progress-bar-warning" style="width: 10%;" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Change database");?>
 								</div>
 							</div>

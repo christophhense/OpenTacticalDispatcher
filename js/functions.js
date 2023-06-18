@@ -637,3 +637,22 @@ function activate_show_hide_password() {
 		}
 	});
 }
+
+function send_configuration_name_form(form) {
+	$.post("configuration.php", $(form).serialize())
+	.done(function (data) {
+		var change_notice = "";
+		if (data != "") {
+			change_notice = "?top_notice=" + data;
+		}
+		goto_window("configuration.php" + change_notice);
+	})
+	.fail(function () {
+		goto_window("configuration.php");
+	});
+}
+
+function send_configuration_form(form_id) {
+	form_id = "#" + form_id;
+	send_configuration_name_form(form_id);
+}
