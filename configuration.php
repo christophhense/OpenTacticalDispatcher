@@ -22,6 +22,7 @@ case "profile_update":
 case "user_insert":
 case "user_update":
 case "audio_update":
+case "settings_update":
 case "do_update":	
 	break;
 default:
@@ -740,8 +741,6 @@ case "audio_update":
 			$updated_rows = $updated_rows + db_affected_rows($result);
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Audio files updated") . ": " .  $updated_rows . "  ";
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Audio files updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
 			print get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
 		}
@@ -837,15 +836,16 @@ case "settings_update":
 			$updated_rows = $updated_rows + db_affected_rows($result);
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Settings saved (will take effect at next re-start)") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Settings saved (will take effect at next re-start)") . ": " . $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	break;
+	exit;
 case "settings":
 	if (is_super()) {
 	?>
-		<form id="set_Form" name="set_Form" method="post" action="configuration.php?function=settings_update">
+		<form id="settings_form" name="settings_form">
+			<input type="hidden" id="function" name="function" value="settings_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -862,12 +862,12 @@ case "settings":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.set_Form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.settings_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('settings_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
