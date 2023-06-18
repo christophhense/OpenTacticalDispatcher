@@ -604,6 +604,7 @@ function prevent_browser_back_button() {
 	*/
 }
 
+//====================configuration includes
 function activate_show_hide_password() {
 	$("#frm_passwd").on("focus", function() {
 		if ($("#frm_passwd").val() == "!!!!!!!!") {

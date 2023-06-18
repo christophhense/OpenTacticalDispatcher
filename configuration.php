@@ -78,7 +78,7 @@ default:
 
 			function do_delete_user(result) {
 				if (result == true) {
-					document.frm_user.submit();
+					send_configuration_form("frm_user");
 				}
 			}
 
@@ -636,7 +636,7 @@ case "user_edit":
 							</div>
 							<div class="row" style="margin-top: 20px;">
 								<div<?php print get_help_text_str("_user_remove");?> class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); submit"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); validate_user(document.frm_user);"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
 								</div>
 							</div>
 						</div>
