@@ -24,6 +24,7 @@ case "user_update":
 case "audio_update":
 case "settings_update":
 case "incident_numbers_update":
+case "api_update":
 
 case "do_update":	
 	break;
@@ -210,7 +211,7 @@ case "profile":
 						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());		
 						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
 //				}
-					send_configuration_name_form(theForm);
+					send_configuration_form("frm_profile");
 				}
 			}
 
@@ -929,13 +930,10 @@ case "incident_numbers_update":
 		$result = db_query($query, __FILE__, __LINE__);
 		$updated_rows = $updated_rows + db_affected_rows($result);
 		if ($updated_rows != 0) {
-			//$top_notice_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
-			//$top_notice_log_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ";
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ", 0, "", "", "");
 			print get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	//break;
 	exit;
 case "incident_numbers":
 	if (is_super()) {
@@ -1069,8 +1067,7 @@ case "incident_numbers":
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message)
 					return false;
 				} else {
-					//theForm.submit();
-					send_configuration_name_form(theForm);
+					send_configuration_form("inc_num_Form");
 				}
 			}
 
@@ -1204,11 +1201,11 @@ case "api_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("API settings updated") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("API settings updated") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("API settings updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("API settings updated") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	break;
+	exit;
 case "api":
 	if (is_super()) {
 	?>
@@ -1258,12 +1255,12 @@ case "api":
 			if (error_message != "") {
 				show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 			} else {
-				frm_api_config.submit();
+				send_configuration_form("frm_api_config");
 			}
 		}
 
 		</script>
-		<form id="frm_api_config" name="frm_api_config" method="post" action="<?php print basename(__FILE__);?>">
+		<form id="frm_api_config" name="frm_api_config">
 			<input type="hidden" id="function" name="function" value="api_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
