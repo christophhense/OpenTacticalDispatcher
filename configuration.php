@@ -7,9 +7,7 @@ require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
 
-$datetime_now = mysql_datetime();
-$top_notice_str = "";	
-$top_notice_log_str = "";
+$datetime_now = mysql_datetime();	
 $function = "";
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
@@ -193,8 +191,8 @@ case "profile":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	if ($_SESSION['user_id'] < 0 OR check_for_rows($query) == 0) {
-		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
-		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "  ";
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'.", 0, "", "", "");
+		print __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
 	} else {
 
 		$query	= "SELECT * " .
@@ -521,8 +519,8 @@ case "user_edit":
 				"WHERE `id` = " . $_GET['id'] . ";";
 
 			if ($_GET['id'] < 0 OR check_for_rows($query) == 0) {
-				$top_notice_str .= __LINE__ . " Invalid user id '" . $_GET['id'] . "'." . "<br>";
-				$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_GET['id'] . "'." . "  ";
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'.", 0, "", "", "");
+				print __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
 			} else {
 
 				$query = "SELECT `u`.`id` AS `id`, " .
@@ -760,6 +758,8 @@ case "audio_update":
 		if ($updated_rows != 0) {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Audio files updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
 			print get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
 	exit;
@@ -855,6 +855,8 @@ case "settings_update":
 		if ($updated_rows != 0) {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "  ", 0, "", "", "");
 			print get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
 	exit;
@@ -946,6 +948,8 @@ case "incident_numbers_update":
 		if ($updated_rows != 0) {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ", 0, "", "", "");
 			print get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
 	exit;
@@ -4978,6 +4982,7 @@ case "updates":
 	break;
 default:
 	set_session_expire_time("on");
+	$top_notice_str = "";
 	$top_notice_head = "";
 	if (!empty ($_GET['top_notice'])) {
 		$top_notice_str .= $_GET['top_notice'] . "<br>";
@@ -4987,16 +4992,6 @@ default:
 	}
 	if ($top_notice_str != "") {
 		$top_notice_head = get_text("Configuration");
-	}
-	$top_notice_log_str = substr($top_notice_log_str, 0, -2);
-	if (!empty ($_GET['top_notice_logstr'])) {
-		$top_notice_log_str .= $_GET['top_notice_logstr'];
-	}
-	if (!empty ($_POST['top_notice_logstr'])) {
-		$top_notice_log_str .= $_POST['top_notice_logstr'];
-	}
-	if (!empty ($top_notice_log_str)) {
-		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str, 0, "", "", "");
 	}
 	?>
 		<script>
