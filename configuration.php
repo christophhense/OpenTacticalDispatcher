@@ -1681,7 +1681,7 @@ case "facilities_status_reset":
 case "facility_types_update":
 	if (is_super()) {
 		$log_str = NULL;
-		$message_str = get_text("Nothing to do!") . "<br>";
+		$message_str = "";
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
 			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
@@ -1736,8 +1736,10 @@ case "facility_types_update":
 		}
 		if ($log_str != NULL) {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
-		print get_text($message_str) . "<br>";
 	}
 	exit;
 case "facility_types":
@@ -1866,6 +1868,8 @@ case "facility_types":
 	break;
 case "facility_status_update":
 	if (is_super()) {
+		$log_str = NULL;
+		$message_str = get_text("Nothing to do!") . "<br>";
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$display_new = 0;
 			foreach ($_POST['display_new'] as $VarName=>$VarValue) {
@@ -1929,8 +1933,13 @@ case "facility_status_update":
 			$top_notice_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "<br>";
 			$top_notice_log_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "  ";
 		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		}
+		print get_text($message_str) . "<br>";
 	}
-	break;
+	//break;
+	exit;
 case "facility_status":
 	if (is_super()) {
 	?>
