@@ -37,7 +37,7 @@ case "unit_status_update":
 case "incident_types_update":
 case "textblocks_update":
 case "captions_update":
-//case "hints_update":
+case "hints_update":
 //case "do_reset":
 case "do_update":	
 	break;
@@ -1517,7 +1517,7 @@ case "api":
 case "facilities_status_reset_update":
 	if (is_super() || is_admin()) {	
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['facility_type'])) {
 			$facility_types_where_str = "";
 			foreach ($_POST['facility_type'] as $VarName => $VarValue) {
@@ -2145,7 +2145,7 @@ case "facility_status":
 case "unit_status_reset_update":
 	if (is_super() || is_admin()) {
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['unit_type'])) {
 			$unit_types_where_str = "";
 			foreach ($_POST['unit_type'] as $VarName => $VarValue) {
@@ -2368,7 +2368,7 @@ case "unit_status_reset":
 case "unit_types_update":
 	if (is_super()) {
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
 			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
@@ -2555,7 +2555,7 @@ case "unit_types":
 case "unit_status_update":
 	if (is_super()) {
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], 
 				$_POST['dispatch_new'], $_POST['sort_new'], "#" . $_POST['bg_color_new'], 
@@ -3375,7 +3375,7 @@ case "reset_regions":
 case "incident_types_update":
 	if (is_super()) {
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['nature_new']) && ($_POST['nature_new'] != "")) {
 			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], 
 				$_POST['severity_new'],	$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
@@ -3587,7 +3587,7 @@ case "incident_types":
 case "textblocks_update":
 	if (is_super()) {
 		$message_str = "";
-		$log_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['frm_textblock_new']) && ($_POST['frm_textblock_new'] != "")) {
 			$group = "";
 			if (isset ($_POST['group_new']) && ($_POST['group_new'] != "")) {
@@ -4055,6 +4055,8 @@ case "captions":
 	break;
 case "hints_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		$updated_rows = 0;
 		foreach ($_POST as $VarName => $VarValue) {
 			if ($VarName != "function") {
@@ -4070,21 +4072,28 @@ case "hints_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset hints updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset hints updated") . ": " . $updated_rows . ", ";
+			$message_str .= get_text("Dataset hints updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset hints updated") . ": " . $updated_rows . ", ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "hints":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<div class="row infostring">
-				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Incident Add/Edit hints - enter revisions") . " - "  . get_variable("page_caption");?>
-				</div>
-			</div>
-			<form id="hints" name="hints" method="post" action="<?php print basename(__FILE__);?>">
+			<form id="hints" name="hints">
+				<input type="hidden" id="function" name="function" value="hints_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Incident Add/Edit hints - enter revisions") . " - "  . get_variable("page_caption");?>
+					</div>
+				</div>		
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -4100,7 +4109,7 @@ case "hints":
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onClick="document.hints.submit();"><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('hints');"><?php print get_text("Save");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
@@ -4112,7 +4121,6 @@ case "hints":
 				</div>
 				<div class="col-md-10">
 					<div id="table_top" class="panel panel-default" style="padding: 0px;">
-						<input type="hidden" id="function" name="function" value="hints_update">
 						<table class="table table-striped table-condensed" style="text-align: left;">	
 							<tr style="height: 44px;">
 								<th><?php print get_text("Text");?></th>
@@ -4126,7 +4134,7 @@ case "hints":
 
 		$result = db_query($query, __FILE__, __LINE__);
 		while ($row = stripslashes_deep(db_fetch_array($result))) {
-			print "<tr name='" . $row['id'] . "' class='form-group'><td><textarea class='form-control' cols=100 rows=2>" . trim($row['hint']) . "</textarea></td><th>" . $row['tag'] . "</th></tr>\n";
+			print "<tr name='" . $row['id'] . "' class='form-group'><td><textarea class='form-control' name='" . $row['id'] . "' cols=100 rows=2>" . trim($row['hint']) . "</textarea></td><th>" . $row['tag'] . "</th></tr>\n";
 		}
 	?>
 							</table>
