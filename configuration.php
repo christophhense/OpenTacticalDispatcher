@@ -27,7 +27,18 @@ case "incident_numbers_update":
 case "api_update":
 case "facilities_status_reset_update":
 case "facility_types_update":
-
+//case "facility_status_update":
+//case "unit_status_reset_update":
+//case "unit_types_update":
+//case "unit_status_update":
+////case "regions_update":
+////case "cleanse_regions_update":
+////case "reset_regions_update":
+//case "incident_types_update":
+//case "textblocks_update":
+//case "captions_update":
+//case "hints_update":
+//case "do_reset":
 case "do_update":	
 	break;
 default:
@@ -2718,7 +2729,7 @@ case "unit_status":
 	<?php
 	}
 	break;
-case "regions_update":
+/*case "regions_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
 
@@ -3322,7 +3333,7 @@ case "reset_regions":
 	</html>	
 	<?php
 	}
-	break;
+	break;*/
 case "incident_types_update":
 	if (is_super()) {
 		if (isset ($_POST['nature_new']) && ($_POST['nature_new'] != "")) {
