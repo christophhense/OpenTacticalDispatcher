@@ -35,7 +35,7 @@ case "unit_status_update":
 ////case "cleanse_regions_update":
 ////case "reset_regions_update":
 case "incident_types_update":
-//case "textblocks_update":
+case "textblocks_update":
 //case "captions_update":
 //case "hints_update":
 //case "do_reset":
@@ -3586,6 +3586,8 @@ case "incident_types":
 	break;
 case "textblocks_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = "";
 		if (isset ($_POST['frm_textblock_new']) && ($_POST['frm_textblock_new'] != "")) {
 			$group = "";
 			if (isset ($_POST['group_new']) && ($_POST['group_new'] != "")) {
@@ -3601,11 +3603,11 @@ case "textblocks_update":
 					$report_channels = $report_channels | $VarValue;
 				}
 			}
-			$result = insert_into_textblocks($_GET['type'], $group, $_POST['frm_textblock_new'], $code,
+			$result = insert_into_textblocks($_POST['type'], $group, $_POST['frm_textblock_new'], $code,
 				$report_channels, $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -3643,7 +3645,7 @@ case "textblocks_update":
 				}
 
 				$query = "UPDATE `textblocks` SET " .
-								"`type` = '" . $_GET['type'] . "', " .
+					"`type` = '" . $_POST['type'] . "', " .
 					$group_str .
 					$code_str .
 					$report_channels_str .
@@ -3666,15 +3668,21 @@ case "textblocks_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " deleted") . ": " . $deleted_rows . "  ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "textblocks":
 	$header_text = "";
 	$textinput_caption = get_text("Textblock");
@@ -3749,12 +3757,14 @@ case "textblocks":
 		}
 	?>
 			<div id="main_container" class="container-fluid">
-				<div class="row infostring">
-					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
+				<form id="textblocks" name="textblocks">
+					<input type="hidden" id="function" name="function" value="textblocks_update">
+					<input type="hidden" id="type" name="type" value="<?php print $_GET['textblocks'];?>">
+					<div class="row infostring">
+						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<form id="textblocks" name="textblocks" method="post" action="configuration.php?function=textblocks_update&type=<?php print $_GET['textblocks'];?>">
 					<div class="row">
 						<div class="col-md-1">
 							<div class="container-fluid" style="position: fixed;">
@@ -3770,7 +3780,7 @@ case "textblocks":
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks.submit();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
