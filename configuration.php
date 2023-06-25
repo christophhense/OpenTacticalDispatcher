@@ -30,7 +30,7 @@ case "facility_types_update":
 case "facility_status_update":
 case "unit_status_reset_update":
 case "unit_types_update":
-//case "unit_status_update":
+case "unit_status_update":
 ////case "regions_update":
 ////case "cleanse_regions_update":
 ////case "reset_regions_update":
@@ -2554,13 +2554,15 @@ case "unit_types":
 	break;
 case "unit_status_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = "";
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], 
 				$_POST['dispatch_new'], $_POST['sort_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -2602,25 +2604,32 @@ case "unit_status_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "  ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "unit_status":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<div class="row infostring">
-				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Unit status configuration") . " - "  . get_variable("page_caption");?>
+			<form id="unit_status" name="unit_status">
+				<input type="hidden" id="function" name="function" value="unit_status_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Unit status configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form id="unit_status" name="unit_status" method="post" action="configuration.php?function=unit_status_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -2636,7 +2645,7 @@ case "unit_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_status.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
