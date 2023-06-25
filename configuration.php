@@ -27,7 +27,7 @@ case "incident_numbers_update":
 case "api_update":
 case "facilities_status_reset_update":
 case "facility_types_update":
-//case "facility_status_update":
+case "facility_status_update":
 //case "unit_status_reset_update":
 //case "unit_types_update":
 //case "unit_status_update":
@@ -1680,8 +1680,8 @@ case "facilities_status_reset":
 	break;
 case "facility_types_update":
 	if (is_super()) {
-		$log_str = NULL;
 		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
 			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
@@ -1868,8 +1868,8 @@ case "facility_types":
 	break;
 case "facility_status_update":
 	if (is_super()) {
+		$message_str = "";
 		$log_str = NULL;
-		$message_str = get_text("Nothing to do!") . "<br>";
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$display_new = 0;
 			foreach ($_POST['display_new'] as $VarName=>$VarValue) {
@@ -1879,8 +1879,8 @@ case "facility_status_update":
 				intval($_POST['sort_new']), $display_new, "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -1926,19 +1926,20 @@ case "facility_status_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "  ";
 		}
 		if ($log_str != NULL) {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
-		print get_text($message_str) . "<br>";
 	}
-	//break;
 	exit;
 case "facility_status":
 	if (is_super()) {
@@ -1962,12 +1963,13 @@ case "facility_status":
 
 		</script>
 		<div id="main_container" class="container-fluid">
-			<div class="row infostring">
-				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Facility status configuration") . " - "  . get_variable("page_caption");?>
+			<form id="facility_status" name="facility_status">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Facility status configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form id="facility_status" name="facility_status" method="post" action="configuration.php?function=facility_status_update">
+				<input type="hidden" id="function" name="function" value="facility_status_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -1983,7 +1985,7 @@ case "facility_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_status.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
