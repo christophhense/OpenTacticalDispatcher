@@ -642,6 +642,9 @@ function activate_show_hide_password() {
 function send_configuration_name_form(form) {
 	$.post("configuration.php", $(form).serialize())
 	.done(function (data) {
+		if (data == "FIRST_START") {
+			goto_window("index.php?first_start=yes");
+		}
 		var change_notice = "";
 		if (data != "") {
 			change_notice = "?top_notice=" + data;

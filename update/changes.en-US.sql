@@ -7,3 +7,5 @@ UPDATE `hints` SET `hint` = 'SMTP server for sending emails. Protocol, encryptio
 UPDATE `settings` SET `value` = '10' WHERE `name` = 'auto_poll';
 ALTER TABLE `captions` CHANGE `client_address` `client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address';
 ALTER TABLE `hints` CHANGE `client_address` `client_address` varchar(50) NOT NULL DEFAULT '0.0.0.0' COMMENT 'ip-address';
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Settings reseted.', 'Settings reseted.');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Reseted database-credentials only.', 'Reseted database-credentials only.');

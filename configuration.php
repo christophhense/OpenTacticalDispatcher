@@ -39,7 +39,7 @@ case "textblocks_update":
 case "captions_update":
 case "hints_update":
 case "optimize":
-//case "do_reset":
+case "do_reset":
 case "do_update":	
 	break;
 default:
@@ -4162,18 +4162,24 @@ case "do_reset":
 		if ((isset ($_POST['frm_random_captcha'])) && ($_POST['frm_input_captcha'] == $_POST['frm_random_captcha'])) {
 			install(get_version(), $_POST['frm_locale'], $_POST['frm_option'], $_POST['frm_db_host'], $_POST['frm_db_dbname'], $_POST['frm_db_user'], $_POST['frm_db_password']);
 			$first_start_str = "";
-			if ($_POST['frm_option'] == "install") {
-				$first_start_str = "?first_start=yes";
+			switch ($_POST['frm_option']) {
+			case "install":
+				print "FIRST_START";
+				break;
+			case "reset_settings":
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Reseted settings."), 0, "", "", "");
+				print get_text("Settings reseted.") . "<br>";	
+				break;
+			case "write_credentials":
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Reseted database-credentials only."), 0, "", "", "");
+				print get_text("Reseted database-credentials only.") . "<br>";
+				break;
+			default:
 			}
-	?>
-		<script>
-			//parent.location.href="index.php<?php print $first_start_str;?>";
-			//was ist mit first_start???
-		</script>
-	<?php
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	//break;
 	exit;
 case "reset":
 	if (is_super()) {
@@ -4199,12 +4205,14 @@ case "reset":
 		$image = ob_get_contents();
 		ob_end_clean();
 	?>
-		<form id="frm_reset_db" name="frm_reset_db" method="post" action="configuration.php?function=do_reset">
-			<input type="hidden" id="frm_random_captcha" name="frm_random_captcha" value="<?php print $captcha;?>">
-			<div id="main_container" class="container-fluid">
+		
+		<div id="main_container" class="container-fluid">
+			<form id="frm_reset_db" name="frm_reset_db">
+				<input type="hidden" id="function" name="function" value="do_reset">
+				<input type="hidden" id="frm_random_captcha" name="frm_random_captcha" value="<?php print $captcha;?>">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Reset Database functions") . " - " . get_variable("page_caption");?>
+						<?php print get_text("Reset Database functions") . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
 				<div class="row">
@@ -4222,7 +4230,7 @@ case "reset":
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('frm_reset_db'); goto_window('index.php<?php print $first_start_str;?>');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('frm_reset_db');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4296,8 +4304,8 @@ case "reset":
 					</div>
 					<div class="col-md-2"></div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</body>
 </html>
 	<?php
