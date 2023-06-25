@@ -541,16 +541,16 @@ function do_api_connection_test(periodic, done_message) {
 	if (periodic) {
 		periodic_parameter = "&periodic=true";
 	}
-		$.get("set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
-		}) 
-		.done(function() {
-			if (!periodic) {
-				var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
-				send_post_message(changes_data);
-			}
-		})
-		.fail(function() {
-			show_top_notice("danger", "Error");
+	$.get("set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
+	})
+	.done(function() {
+		if (!periodic) {
+			var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
+			send_post_message(changes_data);
+		}
+	})
+	.fail(function() {
+		show_top_notice("danger", "Error");
 	});
 }
 

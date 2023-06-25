@@ -38,6 +38,7 @@ case "incident_types_update":
 case "textblocks_update":
 case "captions_update":
 case "hints_update":
+case "optimize":
 //case "do_reset":
 case "do_update":	
 	break;
@@ -4151,11 +4152,11 @@ case "hints":
 	break;
 case "optimize":
 	if (is_super()) {
-		$result = db_query("OPTIMIZE TABLE ticket, action, user, settings", __FILE__, __LINE__);
-		$top_notice_str .= get_text("Database optimization complete.") . "<br>";
-		$top_notice_log_str .= get_text("Database optimization complete.") . "  ";
+		db_query("OPTIMIZE TABLE ticket, action, user, settings", __FILE__, __LINE__);
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Database optimization complete."), 0, "", "", "");
+		print get_text("Database optimization complete.") . "<br>";
 	}
-	break;
+	exit;
 case "do_reset":
 	if (is_super()) {
 		if ((isset ($_POST['frm_random_captcha'])) && ($_POST['frm_input_captcha'] == $_POST['frm_random_captcha'])) {
@@ -4166,12 +4167,14 @@ case "do_reset":
 			}
 	?>
 		<script>
-			parent.location.href="index.php<?php print $first_start_str;?>";
+			//parent.location.href="index.php<?php print $first_start_str;?>";
+			//was ist mit first_start???
 		</script>
 	<?php
 		}
 	}
-	break;
+	//break;
+	exit;
 case "reset":
 	if (is_super()) {
 		$charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -4219,7 +4222,7 @@ case "reset":
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="window.location.href='configuration.php';"><?php print get_text("Save");?></button>
+									<button type="submit" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('frm_reset_db'); goto_window('index.php<?php print $first_start_str;?>');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -5611,10 +5614,13 @@ default:
 						<div class="row">
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("db_optimize");?> class="nav nav-pills">
-									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=optimize" style="white-space: nowrap;">
-											<?php print get_text("Optimize Database");?>
-										</a>
+									<li role="presentation">	
+										<form id="do_optimize" name="do_optimize">
+											<input type="hidden" id="function" name="function" value="optimize">
+											<a onclick="send_configuration_form('do_optimize');" style="white-space: nowrap;">
+												<?php print get_text("Optimize Database");?>
+											</a>
+										</form>
 									</li>
 								</ul>
 							</div>
