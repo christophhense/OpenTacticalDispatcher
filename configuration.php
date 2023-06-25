@@ -36,7 +36,7 @@ case "unit_status_update":
 ////case "reset_regions_update":
 case "incident_types_update":
 case "textblocks_update":
-//case "captions_update":
+case "captions_update":
 //case "hints_update":
 //case "do_reset":
 case "do_update":	
@@ -3955,6 +3955,8 @@ case "textblocks":
 	break;
 case "captions_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		$updated_rows = 0;
 		foreach ($_POST as $VarName => $VarValue) {
 			if ($VarName != "function") {
@@ -3970,21 +3972,28 @@ case "captions_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset captions updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset captions updated") . ": " . $updated_rows . ", ";
+			$message_str .= get_text("Dataset captions updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset captions updated") . ": " . $updated_rows . ", ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "captions":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<div class="row infostring">
-				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Incident Add/Edit captions - enter revisions") . " - "  . get_variable("page_caption");?>
+			<form id="captions" name="captions">
+				<input type="hidden" id="function" name="function" value="captions_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Incident Add/Edit captions - enter revisions") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form id="captions" name="captions" method="post" action="<?php print basename(__FILE__);?>">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
@@ -4000,7 +4009,7 @@ case "captions":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.captions.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('captions');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4012,7 +4021,6 @@ case "captions":
 					</div>
 					<div class="col-md-10">
 						<div id="table_top" class="panel panel-default" style="padding: 0px;">
-							<input type="hidden" id="function" name="function" value="captions_update">
 							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th><?php print get_text("Text");?></th>
