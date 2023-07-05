@@ -41,6 +41,8 @@ Activities sorted by application function.
 		Change PHPMailer version to 6.8.0
 		Change network-printer font from Courier to Helvetica
 * Ticket - new
+	BUGFIX
+		Fix SQL-Error in logging facility assignment
 	CHANGE
 		Form submit with ajax
 		postMessage outsourced to functions

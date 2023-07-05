@@ -280,7 +280,7 @@ case "insert":
 			$query_facilities = "SELECT `handle` FROM `facilities` WHERE `id` = " . $facility_id;
 			$result_facilities = db_query($query_facilities, __FILE__, __LINE__);
 			$row_facs = db_fetch_assoc($result_facilities);
-			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id, "", "", "");
+			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, 0, remove_nls($row_facs['handle']), $facility_id, "", "", "");
 		}
 	}
 	break;
