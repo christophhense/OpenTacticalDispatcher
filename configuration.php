@@ -243,7 +243,7 @@ case "profile":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -5030,7 +5030,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=profile" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=profile');">
 											<?php print get_text("Edit My Profile");?>
 										</a>
 									</li>
@@ -5042,7 +5042,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=user_add" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=user_add');">
 											<?php print get_text("Add user");?>
 										</a>
 									</li>
@@ -5057,7 +5057,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a onclick="location.href='export.php?do_export=user';">
+										<a onclick="location.href='export.php?do_export=user';" style="white-space: nowrap;">
 											<?php print get_text("Export");?>
 										</a>
 									</li>
@@ -5091,7 +5091,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_audio");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=audio" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=audio');">
 											<?php print get_text("Alarm audio files");?>
 										</a>
 									</li>
@@ -5103,7 +5103,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_settings");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=settings" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=settings');">
 											<?php print get_text("Edit Settings");?>
 										</a>
 									</li>
@@ -5112,7 +5112,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_incident_names");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=incident_numbers" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=incident_numbers');">
 											<?php print get_text("Incident Numbers");?>
 										</a>
 									</li>
@@ -5121,7 +5121,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_api_settings");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=api" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=api');">
 											<?php print get_text("Application Interface");?>
 										</a>
 									</li>
@@ -5130,7 +5130,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_fixtexts");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=fixtext" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=fixtext');">
 											<?php print get_text("Message fixtexts");?>
 										</a>
 									</li>
@@ -5180,7 +5180,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_common_status");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facilities_status_reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facilities_status_reset');">
 											<?php print get_text("Set facilities status to a common setting");?>
 										</a>
 									</li>
@@ -5192,7 +5192,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_category");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facility_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facility_types');">
 											<?php print get_text("Facility type");?>
 										</a>
 									</li>
@@ -5201,7 +5201,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_status_value");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facility_status" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facility_status');">
 											<?php print get_text("Facility Status");?>
 										</a>
 									</li>
@@ -5252,7 +5252,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_common_status");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_status_reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_status_reset');">
 											<?php print get_text("Set units status to a common setting");?>
 										</a>
 									</li>
@@ -5264,7 +5264,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_category");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_types');">
 											<?php print get_text("Unit type");?>
 										</a>
 									</li>
@@ -5273,7 +5273,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_status_value");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_status" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_status');">
 											<?php print get_text("Unit status");?>
 										</a>
 									</li>
@@ -5310,7 +5310,7 @@ default:
 	<?php
 	}
 	?>
-<!--=========================================================================================================================================-->
+<!--=========================================================================================================================================
 	<?php
 	if (is_super() && false) {
 	?>
@@ -5353,7 +5353,7 @@ default:
 	<?php
 	}
 	?>
-<!--=========================================================================================================================================-->
+    =========================================================================================================================================-->
 	<?php
 	if (is_super()) {
 		$default_incident_types_file = "default_incident_types." . get_variable("_locale") . ".csv";
@@ -5373,7 +5373,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_incident_types");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=incident_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=incident_types');">
 											<?php print get_text("Incident types");?>
 										</a>
 									</li>
@@ -5442,7 +5442,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=synopsis" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=synopsis');">
 											<?php print get_text("Textblocks synopsis");?>
 										</a>
 									</li>
@@ -5451,7 +5451,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=description" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=description');">
 											<?php print get_text("Textblocks description");?>
 										</a>
 									</li>
@@ -5460,7 +5460,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=action" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=action');">
 											<?php print get_text("Textblocks action");?>
 										</a>
 									</li>
@@ -5469,7 +5469,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=assign" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=assign');">
 											<?php print get_text("Textblocks assign");?>
 										</a>
 									</li>
@@ -5480,7 +5480,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=close" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=close');">
 											<?php print get_text("Textblocks incident close");?>
 										</a>
 									</li>
@@ -5489,7 +5489,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=log" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=log');">
 											<?php print get_text("Textblocks log");?>
 										</a>
 									</li>
@@ -5498,7 +5498,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=message" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=message');">
 											<?php print get_text("Textblocks message");?>
 										</a>
 									</li>
@@ -5561,7 +5561,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_captions");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=captions" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=captions');">
 											<?php print get_text("Captions");?>
 										</a>
 									</li>
@@ -5570,7 +5570,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_hints");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=hints" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=hints');">
 											<?php print get_text("Hints");?>
 										</a>
 									</li>
@@ -5620,7 +5620,7 @@ default:
 									<li role="presentation">	
 										<form id="do_optimize" name="do_optimize">
 											<input type="hidden" id="function" name="function" value="optimize">
-											<a onclick="send_configuration_form('do_optimize');" style="white-space: nowrap;">
+											<a style="white-space: nowrap;" onclick="send_configuration_form('do_optimize');">
 												<?php print get_text("Optimize Database");?>
 											</a>
 										</form>
@@ -5630,7 +5630,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("db_reset");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=reset');">
 											<?php print get_text("Reset Database");?>
 										</a>
 									</li>
@@ -5639,7 +5639,7 @@ default:
 							<div class="col-xs-2">
 								<ul <?php print get_help_text_str("Updates");?> class="nav nav-pills">
 									<li role="presentation" onclick="$('#update_button').prop('disabled', true); $('#update_button').html('<?php print get_text("Wait");?>');">
-										<a id="update_button" href="<?php print basename(__FILE__);?>?function=updates" style="white-space: nowrap;">
+										<a id="update_button" style="white-space: nowrap;" onclick="goto_window('configuration.php?function=updates');">
 											<?php print get_text("Updates");?>
 										</a>
 									</li>

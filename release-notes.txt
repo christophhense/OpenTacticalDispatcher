@@ -134,86 +134,115 @@ Activities sorted by application function.
 * Settings - overview
 	CHANGE
 		cancel-button switched to function goto_window
+		Remove href
 * Settings - user accounts - User accounts
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - user accounts - own account
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - user accounts - new
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - user accounts - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - general - notification sounds
 	CHANGE
 		postMessage outsourced to functions
+		Form submit with ajax
 * Settings - general - General Settings
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - general - ticket name
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - general - API
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - general - fixmessage
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - general - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - facilities - put on the same status
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - facilities - categorie
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - facilities - status
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - facilities - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - units - put on the same status
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - units - categorie
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - units - status
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - incident types - incident types
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - incident types - default incident types
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - incident types - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - textblocks - synopsis
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - comments
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - actions
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - disposition
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - close comments
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - log report
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - messages
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - default-textblocks
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - textblocks - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - captions and hints - captions
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - captions and hints - hints
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - captions and hints - in-/export
 	CHANGE
 		Get current version from programmcode
 * Settings - database and updates - optimize
-	NONE
+	CHANGE
+		Button submit with ajax
 * Settings - database and updates - reset
-	NONE
+	CHANGE
+		Form submit with ajax
 * Settings - database and updates - updates
 	CHANGE
 		Get current version from programmcode
