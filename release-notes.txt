@@ -87,6 +87,8 @@ Activities sorted by application function.
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
 * Units - overview
+	BUGFIX
+		Allowing overflow at too much types
 	CHANGE
 		Remove href
 		cancel-button switched to function goto_window
@@ -106,6 +108,8 @@ Activities sorted by application function.
 		Change formname to units_edit_form
 		Copy und save with ajax
 * Facilities - overview
+	BUGFIX
+		Allowing overflow at too much types
 	CHANGE
 		Form submit with ajax
 		Remove href

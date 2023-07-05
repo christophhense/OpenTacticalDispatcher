@@ -54,10 +54,11 @@ function show_units_legend() {
 
 	$result = db_query($query, __FILE__, __LINE__);
 
+	//$count_unit_types = db_num_rows($result);
 	$output_str = "<span align='center'><span align='center'> " . get_text("Units legend") . ": </span>&nbsp;";
 	while ($row = stripslashes_deep(db_fetch_assoc($result))) {
 		$output_str .= "<span class='label' style='background-color: " . $row['bg_color'] . "; color: " . $row['text_color'] . ";'" .
-			get_title_str($row['unit_types_description']) . "> " . remove_nls($row['unit_types_name']) . " </span>&nbsp;";
+			get_title_str($row['unit_types_description']) . "> " . remove_nls($row['unit_types_name']) . " </span>&nbsp; ";
 	}
 	print $output_str . "</span>";
 }

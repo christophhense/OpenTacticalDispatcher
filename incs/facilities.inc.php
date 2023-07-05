@@ -12,10 +12,11 @@ function show_facilities_legend() {
 
 	$result = db_query($query, __FILE__, __LINE__);
 
+	//$count_facility_types = db_num_rows($result);
 	$output_str = "<span align='center'><span align='center'> " . get_text("Facilities legend") . ": </span>&nbsp;";
 	while ($row = stripslashes_deep(db_fetch_array($result))) {
-		$title_type_str = get_title_str($row['mydescription']);
-		$output_str .= "<span class='label' style='background-color: " . $row['bg_color'] . "; color: " . $row['text_color'] . ";'" . $title_type_str . "> " . remove_nls($row['mytype']) . " </span>&nbsp;";
+		$output_str .= "<span class='label' style='background-color: " . $row['bg_color'] . "; color: " . $row['text_color'] . ";'" . 
+			get_title_str($row['mydescription']) . "> " . remove_nls($row['mytype']) . " </span>&nbsp; ";
 	}
 	print $output_str .= "</span>";
 }

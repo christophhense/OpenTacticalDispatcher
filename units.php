@@ -831,10 +831,11 @@ default:
 						get_units();
 				});
 			}
-			set_window_present("units");
+			
 			$(document).ready(function() {
 				get_units();
 				show_to_top_button("<?php print get_text("To top");?>");
+				set_window_present("units");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
