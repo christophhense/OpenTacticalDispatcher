@@ -4832,7 +4832,7 @@ case "updates":
 		if (get_working_in_development_environement() && $new_updates) {
 	?>
 									<tr>
-										<td class="text_red_bold" colspan=2><?php print get_text("SVN project files still exist. Update is only simulated.");?></td>
+										<td class="text_red_bold" colspan=2><?php print get_text("Version control files still exist. Update is only simulated.");?></td>
 									</tr>
 	<?php
 		}

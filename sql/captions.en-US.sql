@@ -797,7 +797,7 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('Update started to version', 'Update started to version'),
 ('Update-Server', 'Update-Server'),
 ('Update progress', 'Update progress'),
-('SVN project files still exist. Update is only simulated.', 'SVN project files still exist. Update is only simulated.'),
+('Version control files still exist. Update is only simulated.', 'Version control files still exist. Update is only simulated.'),
 ('Updates', 'Updates'),
 ('Unpacking files', 'Unpacking files'),
 ('Unpacking files finished', 'Unpacking files finished'),
