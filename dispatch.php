@@ -462,7 +462,7 @@ default:
 				}
 			}
 
-			function validate() {
+			function validate_dispatch() {
 				if (count_units_checked == 0) {
 					show_infobox("<?php print get_text("Please select units, or cancel");?>");
 				} else {
@@ -529,7 +529,7 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=10000><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_dispatch();" tabindex=10000><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>

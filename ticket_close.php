@@ -151,7 +151,7 @@ default:
 			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_close");?> + 0;
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
-			function validate() {
+			function validate_ticket_close_form() {
 				var error_message = "";
 				var problemstart = "<?php print $problemstart;?>";
 				var problemend = moment($("#problemend").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -286,7 +286,7 @@ default:
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=3><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_close_form();" tabindex=3><?php print get_text("Save");?></button>
 							</div>
 						</div>
 					</div>

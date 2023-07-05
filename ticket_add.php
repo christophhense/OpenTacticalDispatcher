@@ -360,7 +360,7 @@ default:
 		<?php print $incident_location_select_array["facility_address"];?>
 		<?php print $incident_location_select_array["facility_coordinates"];?>
 
-			function validate() {
+			function validate_ticket_add_form() {
 				var error_message = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemstart = moment($("#problemstart").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -472,7 +472,7 @@ default:
 				}
 			}
 
-			function do_reset_form() {
+			function do_reset_add_form() {
 				$("#ticket_add_form").trigger("reset");
 				$("#frm_severity").css({"background-color": "#0000FF"});	//Blue
 				do_lock_readonly("problemstart");
@@ -567,12 +567,12 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_form();" tabindex=13><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_add_form();" tabindex=13><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=12><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_add_form();" tabindex=12><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>

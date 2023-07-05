@@ -204,7 +204,7 @@ default:
 				});
 			}
 
-			function validate() {
+			function validate_facility_form() {
 				var error_message = "";
 				if ($("#frm_handle").val() == "") {
 					error_message += "<?php print get_text("Facility HANDLE is required.");?><br>";
@@ -234,7 +234,7 @@ default:
 
 			function save_and_copy_facility(add) {
 				if (add) {
-					if (validate()) {
+					if (validate_facility_form()) {
 						$.post("facilities.php", $("#facilities_add_form").serialize(), function() {
 						})
 						.done(function() {
@@ -248,7 +248,7 @@ default:
 						});
 					}
 				} else {
-					if (validate()) {
+					if (validate_facility_form()) {
 						$.post("facilities.php", $("#facilities_edit_form").serialize(), function(data) {
 						})
 						.done(function() {
@@ -265,7 +265,7 @@ default:
 			}
 
 			function submit_form(facility_form) {
-				if (validate()) {
+				if (validate_facility_form()) {
 					send_form_with_post(facility_form);
 				}
 			}

@@ -46,6 +46,7 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		cancel-button switched to function goto_window
 		Rename form to ticket_add_form
+		Renamed function validate() to form specific
 * Ticket - update
 	CHANGE
 		Form submit with ajax
@@ -53,6 +54,7 @@ Activities sorted by application function.
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
 		Rename form to ticket_edit_form
+		Renamed function validate() to form specific
 * Ticket - disposition print
 	CHANGE
 		Smaller line spacing
@@ -66,10 +68,12 @@ Activities sorted by application function.
 		Remove href
 		postMessage outsourced to functions
 		Rename form to ticket_close_form
+		Renamed function validate() to form specific
 * Ticket - action
 	CHANGE
 		Form submit with ajax
 		Remove duplicate forms for add and edit
+		Renamed function validate() to form specific
 	BUGFIX
 		Add: Go back to the right situation-screen if comming from
 		Edit: Go back to ticket instead to situation
@@ -77,11 +81,13 @@ Activities sorted by application function.
 	CHANGE
 		Form submit with ajax
 		postMessage outsourced to functions
+		Renamed function validate() to form specific
 * Ticket - disposition
 	CHANGE
 		Form submit with ajax
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
+		Renamed function validate() to form specific
 * Log report
 	CHANGE
 		cancel-button switched to function goto_window
@@ -100,6 +106,7 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		Change formname to units_add_form
 		Copy und save with ajax
+		Renamed function validate() to form specific
 * Units - update
 	CHANGE
 		Form submit with ajax
@@ -107,6 +114,7 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		Change formname to units_edit_form
 		Copy und save with ajax
+		Renamed function validate() to form specific
 * Facilities - overview
 	BUGFIX
 		Allowing overflow at too much types
@@ -123,12 +131,14 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		Change formname to facilities_add_form
 		Copy und save with ajax
+		Renamed function validate() to form specific
 * Facilities - update
 	CHANGE
 		Form submit with ajax
 		Remove href
 		postMessage outsourced to functions
 		Change formname to facilities_edit_form
+		Renamed function validate() to form specific
 * Reports
 	CHANGE
 		cancel-button switched to function goto_window

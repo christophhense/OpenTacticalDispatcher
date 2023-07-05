@@ -194,7 +194,7 @@ default:
 			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("action");?> + 0;
 			var ticket_id = <?php print $ticket_id;?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
-			function validate() {
+			function validate_action_form() {
 				var error_message = "";
 				var asof = moment($("#asof").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
@@ -338,7 +338,7 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_action_form();" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
