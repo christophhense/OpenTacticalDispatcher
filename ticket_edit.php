@@ -533,9 +533,9 @@ default:
 					sideBySide: true
 				});
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				set_window_present("ticket_edit");
 				get_units();
 				get_actions();
+				set_window_present("ticket_edit");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

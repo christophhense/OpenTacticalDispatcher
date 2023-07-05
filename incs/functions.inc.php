@@ -2937,21 +2937,25 @@ function get_variable($which) {
 	return $value;
 }
 
-function get_parking_form_data_time($function) {
-	$time = 0;
+function get_parking_form_data_trigger_chars($function) {
+	$trigger_chars_position = 0;
 	switch($function) {
 	case "ticket_add":
-		$time = 1;
-	case "ticket_close":
-		$time = 5;
-	case "log_report":
-		$time = 7;
+		$trigger_chars_position = 0;
+		break;
 	case "action":
-		$time = 3;
+		$trigger_chars_position = 2;
+		break;
+	case "ticket_close":
+		$trigger_chars_position = 4;
+		break;
+	case "log_report":
+		$trigger_chars_position = 6;
+		break;
 	default:
 	}
 	$settings = explode(",", get_variable("parking_form_data"));
-	return trim($settings[$time]);
+	return trim($settings[$trigger_chars_position]);
 }
 
 function get_sound_array() {

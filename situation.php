@@ -394,6 +394,7 @@ default:
 				change_situation("<?php print $current_situation_type;?>");
 				get_infostring();
 				set_window_present("situation");
+				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);

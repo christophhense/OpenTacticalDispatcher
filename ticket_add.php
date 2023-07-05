@@ -347,7 +347,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_add");?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_trigger_chars("ticket_add");?> + 0;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 			var severities = [];
 			var protocols = [];

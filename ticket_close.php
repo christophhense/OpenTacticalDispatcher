@@ -148,7 +148,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_close");?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_trigger_chars("ticket_close");?> + 0;
 			var ticket_id = <?php print $_GET['ticket_id'];?> + 0;
 
 			function validate_ticket_close_form() {
