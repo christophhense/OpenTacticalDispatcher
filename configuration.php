@@ -326,7 +326,7 @@ case "user_add":
 			<form id="user_add_form" name="user_add_Form">
 				<input type="hidden" id="function" name="function" value="user_insert">
 				<input type="hidden" id="frm_func" name="frm_func" value="a">
-				<input type="hidden" id="frm_hash" value="">
+				<input type="hidden" id="frm_hash" name="frm_hash" value="">
 				<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
