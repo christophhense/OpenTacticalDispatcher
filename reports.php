@@ -384,138 +384,138 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="reports_form" name="reports_form">
 			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Reports") . " - " . get_variable("page_caption");?>
+				<form id="reports_form" name="reports_form">
+					<div class="row infostring">
+						<div class="col-md-12 hidden-print" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Reports") . " - " . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<div class="row hidden-print">
-					<div class="col-md-1">
-						<div id="button_container" class="container-fluid" style="position: fixed;">
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+					<div class="row hidden-print">
+						<div class="col-md-1">
+							<div id="button_container" class="container-fluid" style="position: fixed;">
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+									</div>
 								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
+									</div>
 								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.focus(); window.print();"><?php print get_text("Print");?></button>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="window.focus(); window.print();"><?php print get_text("Print");?></button>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
-								<tr<?php print get_help_text_str("_reports_period");?> style="height: 45px;">
-									<th style="width: 30%;"><?php print get_text("Select the period") . ":";?></th>
-									<td colspan=3 style="width: 70%;">
-										<div style="float: left; width: 48%;">
-											<input type="text" class="form-control" id="start" value="<?php print date(trim(get_variable("date_format")), $start_date);?>">
-											<input type="hidden" class="form-control" id="start_mysql_timestamp" name="start">
-										</div>
-										<div style="float: right; width: 48%;">
-											<input type="text" class="form-control" id="end" value="<?php print date(trim(get_variable("date_format")), $end_date);?>">
-											<input type="hidden" class="form-control" id="end_mysql_timestamp" name="end">
-										</div>
-									</td>
-								</tr>
-								<tr style="height: 45px;">
-									<th<?php print get_help_text_str("_reports_function");?>><?php print get_text("Report type");?>:</th>
-									<td colspan=3>
-										<select id="frm_function" name="frm_function" style="margin-top: 5px;" class="form-control" onchange="query_changed();">
-											<option value="ticket_report"><?php print get_text("Incident Reports");?></option>
-											<option value="log_report"><?php print get_text("Log report");?></option>
-										</select>
-									</td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_text_query");?> style="height: 45px;">
-									<th><?php print get_text("Query text");?>:</th>
-									<td colspan=3><input id="frm_query_text" name="frm_query_text" type="text" class="form-control" onchange="query_changed();" tabindex=1></td>
-								</tr>
-								<tr style="height: 45px;">
-									<th<?php print get_help_text_str("_reports_location");?>><?php print get_text("Incident location");?> / <?php print get_text("On-Scene location");?>:</th>
-									<td colspan=3>
-										<input type="text" id="frm_incident_location" name="frm_incident_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=2>
-										<?php print get_facility_select_str("report_on_scene_location", 0);?>
-									</td>
-								</tr>
-								<tr style="height: 45px;">
-									<th<?php print get_help_text_str("_reports_receiving");?>><?php print get_text("Receiving location");?>:</th>
-									<td colspan=3>
-										<input type="text" id="frm_receiving_location" name="frm_receiving_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=3>
-										<?php print get_facility_select_str("report_receiving_location", 0);?>
-									</td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_filter");?> style="height: 45px;">
-									<th style="width: 10%;"><?php print get_text("Hide");?>:</th>
-									<th>
-										<input type="checkbox" id="filter_communication" onchange="query_changed();"<?php print $filter_communication_checked_str;?>>
-										<div style="display: inline; vertical-align: 22%; padding: 5px;">
-											<?php print get_text("Communication");?>
-										</div>
-									</th>
-									<th>
-										<input type="checkbox" id="filter_status" onchange="query_changed();"<?php print $filter_status_checked_str;?>>
-										<div style="display: inline; vertical-align: 22%; padding: 5px;">
-											<?php print get_text("Status");?>
-										</div>
-									</th>
-									<th>
-										<input type="checkbox" id="filter_settings" style="<?php print $filter_settings_display_str;?>" onchange="query_changed();"<?php print $filter_settings_checked_str;?>>
-										<div style="vertical-align: 22%; padding: 5px;<?php print $filter_settings_display_str;?>">
-											<?php print get_text("Configuration");?>
-										</div>
-									</th>
-									<td colspan=3></td>
-									<td style="width: 5%;"></td>
-								</tr>
-							</table>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
+									<tr<?php print get_help_text_str("_reports_period");?> style="height: 45px;">
+										<th style="width: 30%;"><?php print get_text("Select the period") . ":";?></th>
+										<td colspan=3 style="width: 70%;">
+											<div style="float: left; width: 48%;">
+												<input type="text" class="form-control" id="start" value="<?php print date(trim(get_variable("date_format")), $start_date);?>">
+												<input type="hidden" class="form-control" id="start_mysql_timestamp" name="start">
+											</div>
+											<div style="float: right; width: 48%;">
+												<input type="text" class="form-control" id="end" value="<?php print date(trim(get_variable("date_format")), $end_date);?>">
+												<input type="hidden" class="form-control" id="end_mysql_timestamp" name="end">
+											</div>
+										</td>
+									</tr>
+									<tr style="height: 45px;">
+										<th<?php print get_help_text_str("_reports_function");?>><?php print get_text("Report type");?>:</th>
+										<td colspan=3>
+											<select id="frm_function" name="frm_function" style="margin-top: 5px;" class="form-control" onchange="query_changed();">
+												<option value="ticket_report"><?php print get_text("Incident Reports");?></option>
+												<option value="log_report"><?php print get_text("Log report");?></option>
+											</select>
+										</td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_text_query");?> style="height: 45px;">
+										<th><?php print get_text("Query text");?>:</th>
+										<td colspan=3><input id="frm_query_text" name="frm_query_text" type="text" class="form-control" onchange="query_changed();" tabindex=1></td>
+									</tr>
+									<tr style="height: 45px;">
+										<th<?php print get_help_text_str("_reports_location");?>><?php print get_text("Incident location");?> / <?php print get_text("On-Scene location");?>:</th>
+										<td colspan=3>
+											<input type="text" id="frm_incident_location" name="frm_incident_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=2>
+											<?php print get_facility_select_str("report_on_scene_location", 0);?>
+										</td>
+									</tr>
+									<tr style="height: 45px;">
+										<th<?php print get_help_text_str("_reports_receiving");?>><?php print get_text("Receiving location");?>:</th>
+										<td colspan=3>
+											<input type="text" id="frm_receiving_location" name="frm_receiving_location" class="form-control" onchange="query_changed();" cols=48 rows=3 tabindex=3>
+											<?php print get_facility_select_str("report_receiving_location", 0);?>
+										</td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_filter");?> style="height: 45px;">
+										<th style="width: 10%;"><?php print get_text("Hide");?>:</th>
+										<th>
+											<input type="checkbox" id="filter_communication" onchange="query_changed();"<?php print $filter_communication_checked_str;?>>
+											<div style="display: inline; vertical-align: 22%; padding: 5px;">
+												<?php print get_text("Communication");?>
+											</div>
+										</th>
+										<th>
+											<input type="checkbox" id="filter_status" onchange="query_changed();"<?php print $filter_status_checked_str;?>>
+											<div style="display: inline; vertical-align: 22%; padding: 5px;">
+												<?php print get_text("Status");?>
+											</div>
+										</th>
+										<th>
+											<input type="checkbox" id="filter_settings" style="<?php print $filter_settings_display_str;?>" onchange="query_changed();"<?php print $filter_settings_checked_str;?>>
+											<div style="vertical-align: 22%; padding: 5px;<?php print $filter_settings_display_str;?>">
+												<?php print get_text("Configuration");?>
+											</div>
+										</th>
+										<td colspan=3></td>
+										<td style="width: 5%;"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
+									<tr<?php print get_help_text_str("_reports_incident_name");?> style="height: 45px;">
+										<th style="width: 30%;"><?php print get_text("Incident name");?>:</th>
+										<td style="width: 70%;"><input id="frm_incident_name" name="frm_incident_name" type="text" class="form-control" onchange="query_changed();" tabindex=4></td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_incident_type");?> style="height: 45px;">
+										<th><?php print get_text("Incident type");?>:</th>
+										<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id", 0);?></td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
+										<th><?php print get_text("Unit");?>:</th>
+										<td><?php print get_unit_select_str("report", 0, 0);?></td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_guard_house");?> style="height: 45px;">
+										<th><?php print get_text("Guard house");?>:</th>
+										<td><?php print get_guard_house_select_str("report", 0);?><br>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_user");?> style="height: 45px;">
+										<th><?php print get_text("User");?>:</th>
+										<td><?php print get_user_select_str("report", "frm_user");?></td>
+									</tr>
+									<tr<?php print get_help_text_str("_reports_status");?> style="height: 45px;">
+										<th><?php print get_text("Status");?>:</th>
+										<td><?php print get_ticket_status_select_str("report", "frm_status", "frm_status", 0);?></td>
+									</tr>
+								</table>
+							</div>
 						</div>
 					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
-								<tr<?php print get_help_text_str("_reports_incident_name");?> style="height: 45px;">
-									<th style="width: 30%;"><?php print get_text("Incident name");?>:</th>
-									<td style="width: 70%;"><input id="frm_incident_name" name="frm_incident_name" type="text" class="form-control" onchange="query_changed();" tabindex=4></td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_incident_type");?> style="height: 45px;">
-									<th><?php print get_text("Incident type");?>:</th>
-									<td><?php print get_incident_type_select_str("reports_form", "frm_in_types_id", 0);?></td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_unit");?> style="height: 45px;">
-									<th><?php print get_text("Unit");?>:</th>
-									<td><?php print get_unit_select_str("report", 0, 0);?></td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_guard_house");?> style="height: 45px;">
-									<th><?php print get_text("Guard house");?>:</th>
-									<td><?php print get_guard_house_select_str("report", 0);?><br>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_user");?> style="height: 45px;">
-									<th><?php print get_text("User");?>:</th>
-									<td><?php print get_user_select_str("report", "frm_user");?></td>
-								</tr>
-								<tr<?php print get_help_text_str("_reports_status");?> style="height: 45px;">
-									<th><?php print get_text("Status");?>:</th>
-									<td><?php print get_ticket_status_select_str("report", "frm_status", "frm_status", 0);?></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-1 hidden-print"></div>
-				<div id="content" class="col-md-10" style="padding: 0px;"></div>
-				<div class="col-md-1 hidden-print"></div>
+					<div class="col-md-1 hidden-print"></div>
+					<div id="content" class="col-md-10" style="padding: 0px;"></div>
+					<div class="col-md-1 hidden-print"></div>
+				</form>	
 			</div>
-		</form>
 		<?php show_infobox("small");?>
 	</body>
 </html>

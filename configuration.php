@@ -232,11 +232,11 @@ case "profile":
 			}
 
 		</script>
-		<form id="frm_profile" name="frm_profile">
-			<input type="hidden" id="function" name="function" value="profile_update">
-			<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
-			<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="frm_profile" name="frm_profile">
+				<input type="hidden" id="function" name="function" value="profile_update">
+				<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
+				<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit My Profile") . " - "  . get_variable("page_caption");?>
@@ -284,8 +284,8 @@ case "profile":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>		
+		</div>
 	</body>
 </html>
 	<?php
@@ -326,12 +326,12 @@ case "user_add":
 			})
 
 		</script>
-		<form id="user_add_form" name="user_add_Form">
-			<input type="hidden" id="function" name="function" value="user_insert">
-			<input type="hidden" id="frm_func" name="frm_func" value="a">
-			<input type="hidden" id="frm_hash" value="">
-			<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="user_add_form" name="user_add_Form">
+				<input type="hidden" id="function" name="function" value="user_insert">
+				<input type="hidden" id="frm_func" name="frm_func" value="a">
+				<input type="hidden" id="frm_hash" name="frm_hash" value="">
+				<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Add user") . " - " . get_variable("page_caption");?>
@@ -407,8 +407,8 @@ case "user_add":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</body>
 </html>
 	<?php
@@ -624,14 +624,14 @@ case "user_edit":
 					$email_disabled = " disabled";
 				}
 	?>
-		<form id="frm_user" name="frm_user">
-			<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_GET['id'];?>">
-			<input type="hidden" id="frm_remove" name="frm_remove" value="">
-			<input type="hidden" id="function" name="function" value="user_update">
-			<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
-			<input type="hidden" id="frm_func" name="frm_func" value="e">
-			<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="frm_user" name="frm_user">
+				<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_GET['id'];?>">
+				<input type="hidden" id="frm_remove" name="frm_remove" value="">
+				<input type="hidden" id="function" name="function" value="user_update">
+				<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
+				<input type="hidden" id="frm_func" name="frm_func" value="e">
+				<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("user", $_GET['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit User Data") . ": " . $row['user_name'] . get_table_id($_GET['id']) . " - " . get_variable("page_caption");?>
@@ -730,8 +730,8 @@ case "user_edit":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>	
+		</div>
 	</body>
 </html>
 	<?php
@@ -769,9 +769,9 @@ case "audio_update":
 	exit;
 case "audio":
 	?>
-		<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
-			<input type="hidden" id="function" name="function" value="audio_update">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+				<input type="hidden" id="function" name="function" value="audio_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Alarm audio files") . " - "  . get_variable("page_caption");?>
@@ -838,8 +838,8 @@ foreach ($sound_names_array as $value) {
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</body>
 </html>
 	<?php
@@ -867,9 +867,9 @@ case "settings_update":
 case "settings":
 	if (is_super()) {
 	?>
-		<form id="settings_form" name="settings_form">
-			<input type="hidden" id="function" name="function" value="settings_update">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="settings_form" name="settings_form">
+				<input type="hidden" id="function" name="function" value="settings_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Edit Settings") . " - "  . get_variable("page_caption");?>
@@ -920,8 +920,8 @@ case "settings":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>		
+		</div>
 	</body>
 </html>
 	<?php
@@ -1094,11 +1094,11 @@ case "incident_numbers":
 			}
 
 		</script>
-		<form id="inc_num_Form" name="inc_num_Form">
-			<input type="hidden" id="function" name="function" value="incident_numbers_update">
-			<input type="hidden" id="do_db" name="do_db" value="true">
-			<input type="hidden" id="frm_do_nature" name="frm_do_nature" value=<?php print $do_nature;?>>
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="inc_num_Form" name="inc_num_Form">
+				<input type="hidden" id="function" name="function" value="incident_numbers_update">
+				<input type="hidden" id="do_db" name="do_db" value="true">
+				<input type="hidden" id="frm_do_nature" name="frm_do_nature" value=<?php print $do_nature;?>>
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Incident Numbers") . " - "  . get_variable("page_caption");?>
@@ -1196,8 +1196,8 @@ case "incident_numbers":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>				
+		</div>
 	</body>
 	<script>
 
@@ -1282,9 +1282,9 @@ case "api":
 		}
 
 		</script>
-		<form id="frm_api_config" name="frm_api_config">
-			<input type="hidden" id="function" name="function" value="api_update">
-			<div class="container-fluid" id="main_container">
+		<div class="container-fluid" id="main_container">
+			<form id="frm_api_config" name="frm_api_config">
+				<input type="hidden" id="function" name="function" value="api_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Application Interface") . " - "  . get_variable("page_caption");?>
@@ -1516,8 +1516,8 @@ case "api":
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</body>
 </html>
 	<?php
@@ -2299,27 +2299,27 @@ case "unit_status_reset":
 		}
 		$the_status_sel .= "</select>";
 	?>
-			<style>
-				.table, td {
-					overflow: visible !important;
-				}
-			</style>
-			<script>
+		<style>
+			.table, td {
+				overflow: visible !important;
+			}
+		</style>
+		<script>
 
-			$(document).ready(function() {
-				$("#unit_type").multiselect ({
-					buttonWidth: "100%",
-					nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
-					nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
-					allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
-					numberDisplayed: 0,
-					includeSelectAllOption: true,
-					selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
-				});
+		$(document).ready(function() {
+			$("#unit_type").multiselect ({
+				buttonWidth: "100%",
+				nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
+				nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
+				allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
+				numberDisplayed: 0,
+				includeSelectAllOption: true,
+				selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
 			});
+		});
 
-			</script>
-			<div id="main_container" class="container-fluid">
+		</script>
+		<div id="main_container" class="container-fluid">
 			<form id="frm_def_status" name="frm_def_status">
 				<input type="hidden" id="function" name="function" value="unit_status_reset_update">
 				<div class="row infostring">
@@ -4232,87 +4232,87 @@ case "incident_types_update":
 case "incident_types":
 	if (is_super()) {
 	?>
-			<div id="main_container" class="container-fluid">
-				<form id="incident_types" name="incident_types">
-					<input type="hidden" id="function" name="function" value="incident_types_update">
-					<div class="row infostring">
-						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-							<?php print get_text("Incident Types Configuration") . " - "  . get_variable("page_caption");?>
-						</div>
+		<div id="main_container" class="container-fluid">
+			<form id="incident_types" name="incident_types">
+				<input type="hidden" id="function" name="function" value="incident_types_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Incident Types Configuration") . " - "  . get_variable("page_caption");?>
 					</div>
-					<div class="row">
-						<div class="col-md-1">
-							<div class="container-fluid" style="position: fixed;">
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
-									</div>
-								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types.reset();"><?php print get_text("Reset");?></button>
-									</div>
-								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types');"><?php print get_text("Save");?></button>
-									</div>
-								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_types");?>');"><?php print get_text("Helptext");?></button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-10">
-							<div id="table_top" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
-									<tr style="height: 44px;">
-										<th style="width: 15%;"><?php print get_text("Incident type");?></th>
-										<th style="width: 10%;"><?php print get_text("Severity");?></th>
-										<th style="width: 25%;"><?php print get_text("Description");?></th>
-										<th style="width: 25%;"><?php print get_text("Protocol");?></th>
-										<th style="width: 10%;"><?php print get_text("Sort group");?></th>
-										<th style="width: 10%;"><?php print get_text("Sort");?></th>
-										<th style="width: 5%;"></th>
-									</tr>
-									<tr class="form-group">
-										<td><input type="text" id="nature_new" name="nature_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
-										<td>
-											<select id="severity_new" name="severity_new" class="form-control">
-												<option value=0 selected><?php print get_text("Normal");?></option>
-												<option value=1><?php print get_text("Medium");?></option>
-												<option value=2><?php print get_text("High");?></option>
-											</select>
-										</td>
-										<td><textarea type="text" id="description_new" name="description_new" class="form-control"></textarea></td>
-										<td><textarea type="text" id="back" name="protocol_new" class="form-control" value=""></textarea></td>
-										<td><input type="text" id="group_new" name="group_new" class="form-control"></input></td>
-										<td><input type="text" id="text" name="sort_new" class="form-control" value=""></input></td>
-										<td></td>
-									</tr>
-								</table>
-						</div>
-					</div>
-					<div class="col-md-1"></div>
 				</div>
 				<div class="row">
 					<div class="col-md-1">
-						<div class="container-fluid" style="position: fixed;"></div>
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types.reset();"><?php print get_text("Reset");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types');"><?php print get_text("Save");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_types");?>');"><?php print get_text("Helptext");?></button>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="col-md-10">
 						<div id="table_top" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
-									<tr style="height: 44px;">
-										<th style="width: 15%;"><?php print get_text("Incident type");?></th>
-										<th style="width: 10%;"><?php print get_text("Severity");?></th>
-										<th style="width: 25%;"><?php print get_text("Description");?></th>
-										<th style="width: 25%;"><?php print get_text("Protocol");?></th>
-										<th style="width: 10%;"><?php print get_text("Sort group");?></th>
-										<th style="width: 10%;"><?php print get_text("Sort");?></th>
-										<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
-									</tr>
+							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
+								<tr style="height: 44px;">
+									<th style="width: 15%;"><?php print get_text("Incident type");?></th>
+									<th style="width: 10%;"><?php print get_text("Severity");?></th>
+									<th style="width: 25%;"><?php print get_text("Description");?></th>
+									<th style="width: 25%;"><?php print get_text("Protocol");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort group");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%;"></th>
+								</tr>
+								<tr class="form-group">
+									<td><input type="text" id="nature_new" name="nature_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td>
+										<select id="severity_new" name="severity_new" class="form-control">
+											<option value=0 selected><?php print get_text("Normal");?></option>
+											<option value=1><?php print get_text("Medium");?></option>
+											<option value=2><?php print get_text("High");?></option>
+										</select>
+									</td>
+									<td><textarea type="text" id="description_new" name="description_new" class="form-control"></textarea></td>
+									<td><textarea type="text" id="back" name="protocol_new" class="form-control" value=""></textarea></td>
+									<td><input type="text" id="group_new" name="group_new" class="form-control"></input></td>
+									<td><input type="text" id="text" name="sort_new" class="form-control" value=""></input></td>
+									<td></td>
+								</tr>
+							</table>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1">
+					<div class="container-fluid" style="position: fixed;"></div>
+				</div>
+				<div class="col-md-10">
+					<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
+								<tr style="height: 44px;">
+									<th style="width: 15%;"><?php print get_text("Incident type");?></th>
+									<th style="width: 10%;"><?php print get_text("Severity");?></th>
+									<th style="width: 25%;"><?php print get_text("Description");?></th>
+									<th style="width: 25%;"><?php print get_text("Protocol");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort group");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
+								</tr>
 	<?php
 		$severity_select_str = array ("", "", "", "", "");
 		$delete_disabled_str = "";
@@ -4328,43 +4328,43 @@ case "incident_types":
 				$severity_select_str[0] = $severity_select_str[1] = $severity_select_str[2] = "";
 				$severity_select_str[$row['set_severity']] = " selected";
 	?>
-									<tr class="form-group">
-										<td><input type="text" id="nature[]" name="nature[]" class="form-control" value="<?php print $row['type'];?>" disabled></input></td>
-										<td>
-											<select id="severity[]" name="severity[]" class="form-control">
-												<option value=0<?php print $severity_select_str[0];?>><?php print get_text("Normal");?></option>
-												<option value=1<?php print $severity_select_str[1];?>><?php print get_text("Medium");?></option>
-												<option value=2<?php print $severity_select_str[2];?>><?php print get_text("High");?></option>
-											</select>
-										</td>
-										<td><textarea type="text" id="description[]" name="description[]" class="form-control"><?php print $row['description'];?></textarea></td>
-										<td><textarea type="text" id="protocol[]" name="protocol[]" class="form-control"><?php print $row['protocol'];?></textarea></td>
-										<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"></input></td>
-										<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"></input></td>
-										<td style="text-align: center;">
-											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" id="incident_types_id[]" name="incident_types_id[]" value="<?php print $row['id'];?>">
-										</td>
-									</tr>
+								<tr class="form-group">
+									<td><input type="text" id="nature[]" name="nature[]" class="form-control" value="<?php print $row['type'];?>" disabled></input></td>
+									<td>
+										<select id="severity[]" name="severity[]" class="form-control">
+											<option value=0<?php print $severity_select_str[0];?>><?php print get_text("Normal");?></option>
+											<option value=1<?php print $severity_select_str[1];?>><?php print get_text("Medium");?></option>
+											<option value=2<?php print $severity_select_str[2];?>><?php print get_text("High");?></option>
+										</select>
+									</td>
+									<td><textarea type="text" id="description[]" name="description[]" class="form-control"><?php print $row['description'];?></textarea></td>
+									<td><textarea type="text" id="protocol[]" name="protocol[]" class="form-control"><?php print $row['protocol'];?></textarea></td>
+									<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"></input></td>
+									<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"></input></td>
+									<td style="text-align: center;">
+										<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+										<input type="hidden" id="incident_types_id[]" name="incident_types_id[]" value="<?php print $row['id'];?>">
+									</td>
+								</tr>
 	<?php
 			}
 		} else {
 	?>
-										<tr class="form-group" style="height: 44px;">
-											<th style="text-align: center;" colspan=7><?php print get_text("No data");?></th>
-										</tr>
+									<tr class="form-group" style="height: 44px;">
+										<th style="text-align: center;" colspan=7><?php print get_text("No data");?></th>
+									</tr>
 	<?php
 		}
 	?>
-								</table>
-							</div>
+							</table>
 						</div>
-						<div class="col-md-1"></div>
 					</div>
-				</form>
-			</div>
-		</body>
-	</html>
+					<div class="col-md-1"></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
 	<?php
 	}
 	break;
@@ -4540,99 +4540,99 @@ case "textblocks":
 	<?php
 		}
 	?>
-			<div id="main_container" class="container-fluid">
-				<form id="textblocks" name="textblocks">
-					<input type="hidden" id="function" name="function" value="textblocks_update">
-					<input type="hidden" id="type" name="type" value="<?php print $_GET['textblocks'];?>">
-					<div class="row infostring">
-						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-							<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
-						</div>
+		<div id="main_container" class="container-fluid">
+			<form id="textblocks" name="textblocks">
+				<input type="hidden" id="function" name="function" value="textblocks_update">
+				<input type="hidden" id="type" name="type" value="<?php print $_GET['textblocks'];?>">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
 					</div>
-					<div class="row">
-						<div class="col-md-1">
-							<div class="container-fluid" style="position: fixed;">
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
-									</div>
+				</div>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks.reset();"><?php print get_text("Reset");?></button>
-									</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks.reset();"><?php print get_text("Reset");?></button>
 								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks');"><?php print get_text("Save");?></button>
-									</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks');"><?php print get_text("Save");?></button>
 								</div>
-								<div class="row" style="margin-top: 10px;">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_fixtexts");?>');"><?php print get_text("Helptext");?></button>
-									</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_fixtexts");?>');"><?php print get_text("Helptext");?></button>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-10">
-							<div id="table_top" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="text-align: left;">
-									<tr style="height: 44px;">
-										<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
-	<?php if ($show_additional_options) { ?>
-										<th style="width: 10%;"><?php print get_text("API-Code");?></th>
-										<th style="width: 12%;"><?php print get_text("Reporting channel");?></th>
-	<?php } else { ?>
-										<th style="width: 10%;"><?php print get_text("Sort group");?></th>
-	<?php } ?>
-										<th style="width: 10%;"><?php print get_text("Sort");?></th>
-										<th style="width: 5%;"></th>
-									</tr>
-									<tr class="form-group">
-										<td><input type="text" id="frm_textblock_new" name="frm_textblock_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
-	<?php if ($show_additional_options) { ?>
-										<td><input type="text" id="frm_apicode_new" name="frm_apicode_new" class="form-control"></input></td>
-										<td>
-											<select id="reporting_channel_new" name="reporting_channel_new[]" multiple="multiple">
-												<option value=1><?php print get_text("Cellular phone");?></option>
-												<option value=2><?php print get_text("Email");?></option>
-												<option value=4><?php print get_text("Printer");?></option>
-												<option value=8><?php print get_text("Reporting channel 1");?></option>
-												<option value=16><?php print get_text("Reporting channel 2");?></option>
-												<option value=32><?php print get_text("Reporting channel 3");?></option>
-												<option value=64><?php print get_text("Reporting channel 4");?></option>
-												<option value=128><?php print get_text("Reporting channel 5");?></option>
-											</select>
-										</td>
-	<?php } else { ?>
-										<td><input type="text" id="group_new" name="group_new" class="form-control" value=""></input></td>
-	<?php } ?>
-										<td><input type="text" id="sort_new" name="sort_new" class="form-control" value=""></input></td>
-										<td></td>
-									</tr>
-								</table>
-							</div>
-						</div>
-						<div class="col-md-1"></div>
 					</div>
-					<div class="row">
-						<div class="col-md-1">
-							<div class="container-fluid" style="position: fixed;"></div>
-						</div>
-						<div class="col-md-10">
-							<div id="table_top" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="text-align: left;">
-									<tr style="height: 44px;">
-										<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
+					<div class="col-md-10">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
+								<tr style="height: 44px;">
+									<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
 	<?php if ($show_additional_options) { ?>
-										<th style="width: 10%;"><?php print get_text("API-Code");?></th>
-										<th style="width: 12%;"><?php print get_text("Reporting channel");?></th>
+									<th style="width: 10%;"><?php print get_text("API-Code");?></th>
+									<th style="width: 12%;"><?php print get_text("Reporting channel");?></th>
 	<?php } else { ?>
-										<th style="width: 10%;"><?php print get_text("Sort group");?></th>
+									<th style="width: 10%;"><?php print get_text("Sort group");?></th>
 	<?php } ?>
-										<th style="width: 10%;"><?php print get_text("Sort");?></th>
-										<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
-									</tr>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%;"></th>
+								</tr>
+								<tr class="form-group">
+									<td><input type="text" id="frm_textblock_new" name="frm_textblock_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+	<?php if ($show_additional_options) { ?>
+									<td><input type="text" id="frm_apicode_new" name="frm_apicode_new" class="form-control"></input></td>
+									<td>
+										<select id="reporting_channel_new" name="reporting_channel_new[]" multiple="multiple">
+											<option value=1><?php print get_text("Cellular phone");?></option>
+											<option value=2><?php print get_text("Email");?></option>
+											<option value=4><?php print get_text("Printer");?></option>
+											<option value=8><?php print get_text("Reporting channel 1");?></option>
+											<option value=16><?php print get_text("Reporting channel 2");?></option>
+											<option value=32><?php print get_text("Reporting channel 3");?></option>
+											<option value=64><?php print get_text("Reporting channel 4");?></option>
+											<option value=128><?php print get_text("Reporting channel 5");?></option>
+										</select>
+									</td>
+	<?php } else { ?>
+									<td><input type="text" id="group_new" name="group_new" class="form-control" value=""></input></td>
+	<?php } ?>
+									<td><input type="text" id="sort_new" name="sort_new" class="form-control" value=""></input></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;"></div>
+					</div>
+					<div class="col-md-10">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
+								<tr style="height: 44px;">
+									<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
+	<?php if ($show_additional_options) { ?>
+									<th style="width: 10%;"><?php print get_text("API-Code");?></th>
+									<th style="width: 12%;"><?php print get_text("Reporting channel");?></th>
+	<?php } else { ?>
+									<th style="width: 10%;"><?php print get_text("Sort group");?></th>
+	<?php } ?>
+									<th style="width: 10%;"><?php print get_text("Sort");?></th>
+									<th style="width: 5%; text-align: center;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></th>
+								</tr>
 	<?php
 
 		$query = "SELECT * " .
@@ -4675,65 +4675,65 @@ case "textblocks":
 					$selected128 = " selected";
 				}
 	?>
-									<tr class="form-group">
-										<td><input type="text" id="textblock[]" name="textblock[]" class="form-control" value="<?php print $row['text'];?>"<?php print $readonly;?>></input></td>
+								<tr class="form-group">
+									<td><input type="text" id="textblock[]" name="textblock[]" class="form-control" value="<?php print $row['text'];?>"<?php print $readonly;?>></input></td>
 	<?php
 					if ($show_additional_options) {
 	?>
-										<td><input type="text" id="apicode[]" name="apicode[]" class="form-control" value="<?php print $row['code'];?>"<?php print $readonly;?>></input></td>
-										<td>
-											<select id="reporting_channel_<?php print $row['id'];?>" name="reporting_channel_<?php print $row['id'];?>[]" multiple="multiple"<?php print $readonly;?>>
-												<option value=1<?php print $selected1;?>><?php print get_text("Cellular phone");?></option>
-												<option value=2<?php print $selected2;?>><?php print get_text("Email");?></option>
-												<option value=4<?php print $selected4;?>><?php print get_text("Printer");?></option>
-												<option value=8<?php print $selected8;?>><?php print get_text("Reporting channel 1");?></option>
-												<option value=16<?php print $selected16;?>><?php print get_text("Reporting channel 2");?></option>
-												<option value=32<?php print $selected32;?>><?php print get_text("Reporting channel 3");?></option>
-												<option value=64<?php print $selected32;?>><?php print get_text("Reporting channel 4");?></option>
-												<option value=128<?php print $selected32;?>><?php print get_text("Reporting channel 5");?></option>
-											</select>
-										</td>
-										<script>
+									<td><input type="text" id="apicode[]" name="apicode[]" class="form-control" value="<?php print $row['code'];?>"<?php print $readonly;?>></input></td>
+									<td>
+										<select id="reporting_channel_<?php print $row['id'];?>" name="reporting_channel_<?php print $row['id'];?>[]" multiple="multiple"<?php print $readonly;?>>
+											<option value=1<?php print $selected1;?>><?php print get_text("Cellular phone");?></option>
+											<option value=2<?php print $selected2;?>><?php print get_text("Email");?></option>
+											<option value=4<?php print $selected4;?>><?php print get_text("Printer");?></option>
+											<option value=8<?php print $selected8;?>><?php print get_text("Reporting channel 1");?></option>
+											<option value=16<?php print $selected16;?>><?php print get_text("Reporting channel 2");?></option>
+											<option value=32<?php print $selected32;?>><?php print get_text("Reporting channel 3");?></option>
+											<option value=64<?php print $selected32;?>><?php print get_text("Reporting channel 4");?></option>
+											<option value=128<?php print $selected32;?>><?php print get_text("Reporting channel 5");?></option>
+										</select>
+									</td>
+									<script>
 
-											$(document).ready(function() {
-												$("#reporting_channel_<?php print $row['id'];?>").multiselect ({
-													buttonWidth: "100%",
-													nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
-													nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
-													allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
-													numberDisplayed: 0
-												});
+										$(document).ready(function() {
+											$("#reporting_channel_<?php print $row['id'];?>").multiselect ({
+												buttonWidth: "100%",
+												nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
+												nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
+												allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
+												numberDisplayed: 0
 											});
+										});
 
-										</script>
+									</script>
 	<?php 		} else { ?>
-										<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"<?php print $readonly;?>></input></td>
+									<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"<?php print $readonly;?>></input></td>
 	<?php 		} ?>
-										<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"<?php print $readonly;?>></input></td>
-										<td style="text-align: center;" <?php if ($disabled != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $disabled;?>>
-											<input type="hidden" id="textblocks_id[]" name="textblocks_id[]" value="<?php print $row['id'];?>">
-										</td>
-									</tr>
+									<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"<?php print $readonly;?>></input></td>
+									<td style="text-align: center;" <?php if ($disabled != "") print get_help_text_str("not_deletable");?>>
+										<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $disabled;?>>
+										<input type="hidden" id="textblocks_id[]" name="textblocks_id[]" value="<?php print $row['id'];?>">
+									</td>
+								</tr>
 	<?php
 			}
 		} else {
 	?>
-										<tr class="form-group" style="height: 44px;">
-											<th style="text-align: center;" colspan=4><?php print get_text("No data");?></th>
-										</tr>
+									<tr class="form-group" style="height: 44px;">
+										<th style="text-align: center;" colspan=4><?php print get_text("No data");?></th>
+									</tr>
 	<?php
 		}
 	?>
-								</table>
-							</div>
+							</table>
 						</div>
-						<div class="col-md-1"></div>
 					</div>
-				</form>
-			</div>
-		</body>
-	</html>
+					<div class="col-md-1"></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
 	<?php
 	}
 	break;
@@ -4987,8 +4987,7 @@ case "reset":
 		imagepng($im);
 		$image = ob_get_contents();
 		ob_end_clean();
-	?>
-		
+	?>	
 		<div id="main_container" class="container-fluid">
 			<form id="frm_reset_db" name="frm_reset_db">
 				<input type="hidden" id="function" name="function" value="do_reset">
@@ -5526,12 +5525,12 @@ case "updates":
 
 			</script>
 			<div id="main_container" class="container-fluid">
-				<div class="row infostring">
-					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Updates") . " - "  . get_variable("page_caption");?>
+				<form id="update" name="update">
+					<div class="row infostring">
+						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Updates") . " - "  . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<form id="captions" name="captions" method="post" action="<?php print basename(__FILE__);?>">
 					<div class="row">
 						<div class="col-md-1">
 							<div class="container-fluid" style="position: fixed;">
@@ -5579,40 +5578,40 @@ case "updates":
 			$click_to_show_current_release_notes_str = "&nbsp;&nbsp;&nbsp;<span style=\"color: #337ab7\">" . get_text("Show release notes") . "</span>";
 		}
 	?>
-								</table>
-							</div>
-							<div id="table_left_bottom" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed text_black" style="text-align: left; table-layout: fixed;">
-								
-									<tr>
-										<th style="width: 25%;"><?php print get_text("Current version") . ": ";?></th>
-										<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_version() . $click_to_show_current_release_notes_str;?></td>
-									</tr>
+							</table>
+						</div>
+						<div id="table_left_bottom" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed text_black" style="text-align: left; table-layout: fixed;">
+							
+								<tr>
+									<th style="width: 25%;"><?php print get_text("Current version") . ": ";?></th>
+									<td onclick="show_release_note('<?php print $current_version;?>');" style="width: 75%;"><?php print get_version() . $click_to_show_current_release_notes_str;?></td>
+								</tr>
 	<?php
 		if ($new_updates) {
 	?>
-									<tr>
-										<th><?php print get_text("Next version") . ": ";?></th>
-										<td><?php print $release_list_array[$next_update][VERSION] . "&nbsp;&nbsp;&nbsp;" . get_text("An update is only possible to the next version.");?></td>
-									</tr>
+								<tr>
+									<th><?php print get_text("Next version") . ": ";?></th>
+									<td><?php print $release_list_array[$next_update][VERSION] . "&nbsp;&nbsp;&nbsp;" . get_text("An update is only possible to the next version.");?></td>
+								</tr>
 	<?php
 		}
 	?>
-									<tr>
-										<th><?php print get_text("Update-Server") . ": ";?></th>
-										<td<?php print get_title_str(get_variable("release_file"));?>><?php print get_variable("release_file");?></td>
-									</tr>
-									<tr>
-										<td style="white-space: normal !important;" colspan=2>
-											<?php print get_help_text("Update-hint", true);?>
-										</td>
-									</tr>
+								<tr>
+									<th><?php print get_text("Update-Server") . ": ";?></th>
+									<td<?php print get_title_str(get_variable("release_file"));?>><?php print get_variable("release_file");?></td>
+								</tr>
+								<tr>
+									<td style="white-space: normal !important;" colspan=2>
+										<?php print get_help_text("Update-hint", true);?>
+									</td>
+								</tr>
 	<?php
 		if (get_working_in_development_environement() && $new_updates) {
 	?>
-									<tr>
-										<td class="text_red_bold" colspan=2><?php print get_text("Version control files still exist. Update is only simulated.");?></td>
-									</tr>
+								<tr>
+									<td class="text_red_bold" colspan=2><?php print get_text("Version control files still exist. Update is only simulated.");?></td>
+								</tr>
 	<?php
 		}
 		if (isset ($not_writable_array[0])) {
@@ -5622,11 +5621,11 @@ case "updates":
 			}
 			$title_text = substr($title_text, 0, -2);
 	?>
-									<tr>
-										<td class="text_red_bold" colspan=2><?php print get_text("For an update, write permission is missing for") . ":";?></td>
-									</tr>
-									<tr>
-										<td<?php print get_title_str($title_text);?> colspan=2>
+								<tr>
+									<td class="text_red_bold" colspan=2><?php print get_text("For an update, write permission is missing for") . ":";?></td>
+								</tr>
+								<tr>
+									<td<?php print get_title_str($title_text);?> colspan=2>
 	<?php
 			$text = "";
 			$info_text = "";
@@ -5642,8 +5641,8 @@ case "updates":
 			$text = substr($text, 0, -2) . $info_text;
 			print wordwrap($text, 100, "<br>", true);
 	?>
-										</td>
-									</tr>
+									</td>
+								</tr>
 	<?php
 		}
 		$disabled_str = " disabled";
@@ -5651,21 +5650,21 @@ case "updates":
 			$disabled_str = "";
 		}
 	?>
-									<tr>
-										<td style="text-align: center;" colspan=2>
-											<button type="button" class="btn btn-xs btn-default" onClick="do_update('<?php print $release_list_array[$next_update][VERSION];?>', '<?php print $release_list_array[$next_update][ZIP_LINK];?>', '<?php print $release_list_array[$next_update][MD5SUM];?>');"<?php print $disabled_str;?>><?php print get_text("Start update");?></button>
-										</td>
-									</tr>
-								</table>
-							</div>
+								<tr>
+									<td style="text-align: center;" colspan=2>
+										<button type="button" class="btn btn-xs btn-default" onClick="do_update('<?php print $release_list_array[$next_update][VERSION];?>', '<?php print $release_list_array[$next_update][ZIP_LINK];?>', '<?php print $release_list_array[$next_update][MD5SUM];?>');"<?php print $disabled_str;?>><?php print get_text("Start update");?></button>
+									</td>
+								</tr>
+							</table>
 						</div>
-						<div class="col-md-5">
-							<div id="table_right" class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="text-align: left;">
-									<tr style="height: 44px;">
-										<th><?php print get_text("Release notes");?></th>
-									</tr>
-								</table>
+					</div>
+					<div class="col-md-5">
+						<div id="table_right" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
+								<tr style="height: 44px;">
+									<th><?php print get_text("Release notes");?></th>
+								</tr>
+							</table>
 	<?php
 		$display_str = "display: none; ";
 		foreach ($release_list_array as $key => $value) {
@@ -5688,12 +5687,11 @@ case "updates":
 			}
 		}
 	?>
-								</div>
 							</div>
 						</div>
-						<div class="col-md-1"></div>
 					</div>
-				</form>
+					<div class="col-md-1"></div>
+				</div>
 			</div>
 			<div id="update_infobox" class="modal fade" role="dialog" aria-labelledby="myModalLabel" tabindex="-1">
 				<div class="modal-dialog" style="width: 1000px;" role="document">
@@ -5726,9 +5724,10 @@ case "updates":
 						</div>
 					</div>
 				</div>
-			</div>
-		</body>
-	</html>
+			</form>
+		</div>
+	</body>
+</html>
 	<?php
 	}
 	break;
@@ -6011,7 +6010,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=facilities';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -6102,7 +6101,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=units';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -6219,7 +6218,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=nature';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -6344,7 +6343,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=textblocks';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -6401,7 +6400,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=captions';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
