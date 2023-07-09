@@ -191,95 +191,95 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Log report") . " - " . get_variable("page_caption");?>
+				<form id="log_form" name="log_form">
+					<div class="row infostring">
+						<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Log report") . " - " . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">
-						<div id="button_container" class="container-fluid" style="position: fixed;">
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?screen_id=' + screen_id_main);" tabindex=7><?php print get_text("Cancel");?></button>
+					<div class="row">
+						<div class="col-md-1">
+							<div id="button_container" class="container-fluid" style="position: fixed;">
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?screen_id=' + screen_id_main);" tabindex=7><?php print get_text("Cancel");?></button>
+									</div>
 								</div>
-							</div>
 	<?php
 	if ((is_super() || is_admin() || is_operator())) {
 	?>	
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.log_form.reset();" tabindex=6><?php print get_text("Reset");?></button>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.log_form.reset();" tabindex=6><?php print get_text("Reset");?></button>
+									</div>
 								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_data();" tabindex=5><?php print get_text("Save");?></button>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="send_data();" tabindex=5><?php print get_text("Save");?></button>
+									</div>
 								</div>
-							</div>
 	<?php
 	}
 	?>
+							</div>
 						</div>
-					</div>
-					<div class="col-md-10">
-							<div class="panel panel-default" style="padding: 0px;">
-								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
+						<div class="col-md-10">
+								<div class="panel panel-default" style="padding: 0px;">
+									<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 	<?php
 	if (is_operator() || is_admin() || is_super()) {
 	?>
-									<tr class="form-group">
-										<th style="width: 10%;"<?php print get_parking_form_data_helptext("log_report");?>><?php print get_text("Text");?>:</th>
-										<td colspan=6 style="width: 85%;">
-											<form id="log_form" name="log_form">
+										<tr class="form-group">
+											<th style="width: 10%;"<?php print get_parking_form_data_helptext("log_report");?>><?php print get_text("Text");?>:</th>
+											<td colspan=6 style="width: 85%;">
 												<textarea class="form-control" id="frm_comment" name="frm_comment" placeholder="<?php print get_text("New entry");?>" tabindex=1></textarea>
 												<?php print get_textblock_select_str("log", "document.log_form.frm_comment", "", 0, "")?>
 												<div<?php print get_help_text_str("log_unit_facility");?>>
 													<?php print get_unit_select_str("log", $unit_id, 0);?>
 													<?php print get_facility_select_str("log", $facility_id);?>
-												</div>
-											</form>
-										</td>
-										<td style="width: 5%;"></td>
-									</tr>
+												</div>								
+											</td>
+											<td style="width: 5%;"></td>
+										</tr>
 	<?php
 	}
 	?>
-									<tr<?php print get_help_text_str("_reports_filter");?>>
-										<th style="width: 10%;"><?php print get_text("Hide");?>:</th>
-										<th>
-											<input type="checkbox" id="filter_communication" onchange="load_content();"<?php print $filter_communication_checked_str;?>>
-											<div style="display: inline; vertical-align: 22%; padding: 5px;">
-												<?php print get_text("Communication");?>
-											</div>
-										</th>
-										<th>
-											<input type="checkbox" id="filter_status" onchange="load_content();"<?php print $filter_status_checked_str;?>>
-											<div style="display: inline; vertical-align: 22%; padding: 5px;">
-												<?php print get_text("Status");?>
-											</div>
-										</th>
-										<th>
-											<input type="checkbox" id="filter_settings" style="<?php print $filter_settings_display_str;?>" onchange="load_content();"<?php print $filter_settings_checked_str;?>>
-											<div style="vertical-align: 22%; padding: 5px;<?php print $filter_settings_display_str;?>">
-												<?php print get_text("Configuration");?>
-											</div>
-										</th>
-										<td colspan=3></td>
-										<td style="width: 5%;"></td>
-									</tr>
-								</table>
+										<tr<?php print get_help_text_str("_reports_filter");?>>
+											<th style="width: 10%;"><?php print get_text("Hide");?>:</th>
+											<th>
+												<input type="checkbox" id="filter_communication" onchange="load_content();"<?php print $filter_communication_checked_str;?>>
+												<div style="display: inline; vertical-align: 22%; padding: 5px;">
+													<?php print get_text("Communication");?>
+												</div>
+											</th>
+											<th>
+												<input type="checkbox" id="filter_status" onchange="load_content();"<?php print $filter_status_checked_str;?>>
+												<div style="display: inline; vertical-align: 22%; padding: 5px;">
+													<?php print get_text("Status");?>
+												</div>
+											</th>
+											<th>
+												<input type="checkbox" id="filter_settings" style="<?php print $filter_settings_display_str;?>" onchange="load_content();"<?php print $filter_settings_checked_str;?>>
+												<div style="vertical-align: 22%; padding: 5px;<?php print $filter_settings_display_str;?>">
+													<?php print get_text("Configuration");?>
+												</div>
+											</th>
+											<td colspan=3></td>
+											<td style="width: 5%;"></td>
+										</tr>
+									</table>
+								</div>
 							</div>
+						<div class="col-md-1"></div>
+					</div>
+					<div class="row">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="panel panel-default" id="table_bottom" style="padding: 0px;"></div>
 						</div>
 					<div class="col-md-1"></div>
 				</div>
-				<div class="row">
-					<div class="col-md-1"></div>
-					<div class="col-md-10">
-						<div class="panel panel-default" id="table_bottom" style="padding: 0px;"></div>
-					</div>
-				<div class="col-md-1"></div>
-			</div>
+			</form>
 		</div>
 		<?php show_infobox("small");?>
 	</body>

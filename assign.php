@@ -694,47 +694,47 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div<?php print get_table_id_title_str("assign", $asgn_row['assign_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Edit this Call Assignment") . get_table_id($asgn_row['assign_id']) . " - "  . get_variable("page_caption");?>
+			<form id="assign_form" name="assign_form">
+				<input type="hidden" name="function" value="update">
+				<input type="hidden" name="assign_id" value="<?php print $_GET['assign_id'];?>">
+				<input type="hidden" name="frm_ticket_id" value="<?php print $asgn_row['ticket_id'];?>">
+				<div class="row infostring">
+					<div<?php print get_table_id_title_str("assign", $asgn_row['assign_id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Edit this Call Assignment") . get_table_id($asgn_row['assign_id']) . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-1">
-					<div class="container-fluid" style="position: fixed;">
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id;?>&screen_id=' + screen_id_main);" tabindex=9><?php print get_text("Cancel");?></button>
-							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="do_reset();" tabindex=8><?php print get_text("Reset");?></button>
-							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="validate_assign_form();" tabindex=7><?php print get_text("Save");?></button>
-							</div>
-						</div>
-						<div style="margin-top: 20px;">
-							<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=<?php print $back;?>&ticket_id=<?php print $asgn_row['ticket_id'] . "&unit_id=" . $asgn_row['unit_id'];?>');" tabindex=6><?php print get_text("Add Action");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id;?>&screen_id=' + screen_id_main);" tabindex=9><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
-							<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
+							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $asgn_row['ticket_id'];?>');" tabindex=5><?php print get_text("Incident");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="do_reset();" tabindex=8><?php print get_text("Reset");?></button>
+								</div>
+							</div>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_assign_form();" tabindex=7><?php print get_text("Save");?></button>
+								</div>
+							</div>
+							<div style="margin-top: 20px;">
+								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=<?php print $back;?>&ticket_id=<?php print $asgn_row['ticket_id'] . "&unit_id=" . $asgn_row['unit_id'];?>');" tabindex=6><?php print get_text("Add Action");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $asgn_row['ticket_id'];?>');" tabindex=5><?php print get_text("Incident");?></button>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<form id="assign_form" name="assign_form">
-					<input type="hidden" name="function" value="update">
-					<input type="hidden" name="assign_id" value="<?php print $_GET['assign_id'];?>">
-					<input type="hidden" name="frm_ticket_id" value="<?php print $asgn_row['ticket_id'];?>">
 					<div class="col-md-5">
 						<div class="panel panel-default" style="padding: 0px;">
 							<div id="table_left">
@@ -892,9 +892,9 @@ default:
 							</div>
 						</div>
 					</div>
-				</form>
-				<div class="col-md-1"></div>
-			</div>
+					<div class="col-md-1"></div>
+				</div>
+			</form>	
 		</div>
 		<?php show_infobox("small");?>
 	</body>

@@ -311,91 +311,91 @@ default:
 	</head>
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<form id="action_form" name="action_form">
-			<input id="function" name="function" type="hidden" value="<?php print $function_str;?>">
-			<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
-			<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
-			<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
 			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print $caption_str;?>
+				<form id="action_form" name="action_form">
+					<input id="function" name="function" type="hidden" value="<?php print $function_str;?>">
+					<input id="action_id" name="action_id" type="hidden" value="<?php print $action_id;?>">
+					<input id="ticket_id" name="ticket_id" type="hidden" value="<?php print $ticket_id;?>">
+					<input id="written" type="hidden" class="form-control" value="<?php print $row_ticket['problemstart'];?>">
+					<div class="row infostring">
+						<div<?php print get_table_id_title_str("action", $action_id);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+							<?php print $caption_str;?>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">
-						<div class="container-fluid" style="position: fixed;">
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+					<div class="row">
+						<div class="col-md-1">
+							<div class="container-fluid" style="position: fixed;">
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=6><?php print get_text("Cancel");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(data); action_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 10px;">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-xs btn-default" onclick="validate_action_form();" tabindex=4><?php print get_text("Save");?></button>
+									</div>
 								</div>
 							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(data); action_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
-								</div>
-							</div>
-							<div class="row" style="margin-top: 10px;">
-								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate_action_form();" tabindex=4><?php print get_text("Save");?></button>
+						</div>	
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_left">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<tr <?php print $parking_title_str;?>>
+											<th style="width: 20%; border-top: 0px;"><?php print get_text("Action description");?>:</th>
+											<td style="width: 5%; border-top: 0px;"></td>
+											<td style="width: 75%; border-top: 0px;">
+												<div>
+													<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print $description;?></textarea>
+												</div>
+												<div>
+													<?php print get_textblock_select_str("action", "document.action_form.frm_description", "", 0, "");?>
+												</div>
+												<div>
+													<?php print $action_select_str;?>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th><?php print get_text("As of") . ":";?></th>
+											<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
+											<td>
+												<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
+												<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
+											</td>
+										</tr>
+										<tr style="height: 45px;<?php print $display_datetime_row;?>">
+											<th colspan=2>
+												<div><?php print get_text("Written");?>:</div>
+												<div><?php print get_text("Edited");?>:</div>
+											</th>
+											<td>
+												<div <?php print $written_title_str;?>><?php print $written_str;?></div>
+												<div <?php print $edited_title_str;?>><?php print $edited_str;?></div>
+											</td>
+										</tr>
+									</table>
 								</div>
 							</div>
 						</div>
-					</div>	
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_left">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<tr <?php print $parking_title_str;?>>
-										<th style="width: 20%; border-top: 0px;"><?php print get_text("Action description");?>:</th>
-										<td style="width: 5%; border-top: 0px;"></td>
-										<td style="width: 75%; border-top: 0px;">
-											<div>
-												<textarea id="frm_description" name="frm_description" class="form-control" cols="80" rows="10" wrap="soft" tabindex=1><?php print $description;?></textarea>
-											</div>
-											<div>
-												<?php print get_textblock_select_str("action", "document.action_form.frm_description", "", 0, "");?>
-											</div>
-											<div>
-												<?php print $action_select_str;?>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th><?php print get_text("As of") . ":";?></th>
-										<td><span id="asof_lock" class="glyphicon glyphicon-lock" aria-hidden="true" onclick="do_unlock_readonly('asof');"></span></td>
-										<td>
-											<input id="asof" type="text" class="form-control" value="<?php print date(get_variable("date_format"));?>" readonly>
-											<input id="asof_mysql_timestamp" name="asof" type="hidden" class="form-control" value="<?php print $datetime_now;?>">
-										</td>
-									</tr>
-									<tr style="height: 45px;<?php print $display_datetime_row;?>">
-										<th colspan=2>
-											<div><?php print get_text("Written");?>:</div>
-											<div><?php print get_text("Edited");?>:</div>
-										</th>
-										<td>
-											<div <?php print $written_title_str;?>><?php print $written_str;?></div>
-											<div <?php print $edited_title_str;?>><?php print $edited_str;?></div>
-										</td>
-									</tr>
-								</table>
+						<div class="col-md-5">
+							<div class="panel panel-default" style="padding: 0px;">
+								<div id="table_right">
+									<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+										<?php show_head($ticket_id, false, false);?>
+									</table>
+								</div>
 							</div>
 						</div>
+						<div class="col-md-1"></div>
 					</div>
-					<div class="col-md-5">
-						<div class="panel panel-default" style="padding: 0px;">
-							<div id="table_right">
-								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-									<?php show_head($ticket_id, false, false);?>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-1"></div>
-				</div>
+				</form>	
 			</div>
-		</form>
 		<?php show_infobox("small");?>
 	</body>
 </html>

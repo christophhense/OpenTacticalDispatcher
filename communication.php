@@ -265,45 +265,45 @@ if (is_operator() || is_admin() || is_super()) {
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Send message") . " - "  . get_variable("page_caption");?>
+			<form id="message_form" name="message_form">
+				<input type="hidden" name="function" value="update_send_message">
+				<input type="hidden" name="display_dispatch-message" value="<?php print $display_dispatch_message;?>">
+				<div class="row infostring">
+					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Send message") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-1">
-					<div class="container-fluid" style="position: fixed;">
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_cancel();" tabindex=10><?php print get_text("Cancel");?></button>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_cancel();" tabindex=10><?php print get_text("Cancel");?></button>
+								</div>
 							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="load_content();" tabindex=9><?php print get_text("Reset");?></button>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="load_content();" tabindex=9><?php print get_text("Reset");?></button>
+								</div>
 							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_send_api_message();" tabindex=8>
-									<?php print get_text("Send");?>
-								</button>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_send_api_message();" tabindex=8>
+										<?php print get_text("Send");?>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<form id="message_form" name="message_form">
-					<input type="hidden" name="function" value="update_send_message">
-					<input type="hidden" name="display_dispatch-message" value="<?php print $display_dispatch_message;?>">
 					<div class="col-md-5">
 						<div class="panel panel-default" id="table_left" style="padding: 0px;"></div>
 					</div>
 					<div class="col-md-5">
 						<div id="table_right" style="padding: 0px;"></div>
 					</div>
-				</form>
-				<div class="col-md-1"></div>
-			</div>
+					<div class="col-md-1"></div>
+				</div>
+			</form>
 		</div>
 	</body>
 </html>

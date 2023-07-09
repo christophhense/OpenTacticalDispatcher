@@ -266,36 +266,37 @@ default:
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div<?php print get_table_id_title_str("ticket", $row['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Close incident") . get_table_id($row['id']) . " - " . get_variable("page_caption");?>
+			<form id="ticket_close_form" name="ticket_close_form">
+				<input type="hidden" name="function" value="update">
+				<input type="hidden" name="frm_ticket_id" value="<?php print $_GET['ticket_id'];?>">
+				<div class="row infostring">
+					<div<?php print get_table_id_title_str("ticket", $row['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Close incident") . get_table_id($row['id']) . " - " . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-1">
-					<div class="container-fluid" style="position: fixed;">
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'];?>');" tabindex=5><?php print get_text("Cancel");?></button>
+				<div class="row">
+					<div class="col-md-1">
+						<div class="container-fluid" style="position: fixed;">
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'];?>');" tabindex=5><?php print get_text("Cancel");?></button>
+								</div>
 							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.ticket_close_form.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.ticket_close_form.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
+								</div>
 							</div>
-						</div>
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_close_form();" tabindex=3><?php print get_text("Save");?></button>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-md-12">
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_close_form();" tabindex=3><?php print get_text("Save");?></button>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-md-5">
-					<div class="panel panel-default" style="padding: 0px;">
-						<div id="table_left">
-							<form id="ticket_close_form" name="ticket_close_form">
-								<input type="hidden" name="function" value="update">
+					<div class="col-md-5">
+						<div class="panel panel-default" style="padding: 0px;">
+							<div id="table_left">
 								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
 									<tr>
 										<th style="width: 20%; border-top: 0px;"<?php print get_title_str(get_help_text("_synop", true) . get_parking_form_data_helptext("ticket_close"));?>>
@@ -349,22 +350,21 @@ default:
 		}
 	?>
 								</table>
-								<input type="hidden" name="frm_ticket_id" value="<?php print $_GET['ticket_id'];?>">
-							</form>
+							</div>
 						</div>
 					</div>
+					<div class="col-md-5">
+						<div class="panel panel-default" style="padding: 0px;">
+							<div id="table_right">
+								<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
+									<?php show_head($_GET['ticket_id'], false, false);?>
+								</table>
+							</div>
+					</div>
+					</div>
+					<div class="col-md-1"></div>
 				</div>
-				<div class="col-md-5">
-					<div class="panel panel-default" style="padding: 0px;">
-						<div id="table_right">
-							<table id="data" class="table table-striped table-condensed" style="table-layout: fixed;">
-								<?php show_head($_GET['ticket_id'], false, false);?>
-							</table>
-						</div>
-				</div>
-				</div>
-				<div class="col-md-1"></div>
-			</div>
+			</form>
 		</div>
 	<?php show_infobox("small");?>
 	</body>
