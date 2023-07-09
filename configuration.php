@@ -94,7 +94,7 @@ default:
 
 			function do_delete_user(result) {
 				if (result == true) {
-					send_configuration_form("frm_user");
+					send_configuration_form("user_edit_form");
 				}
 			}
 
@@ -205,25 +205,31 @@ case "profile":
 		<script>
 
 			function validate_profile(theForm) {
+			//function validate_profile() {
 				var error_message = "";
 				if (theForm.frm_passwd.value!=theForm.frm_passwd_confirm.value) {
+				//if ($("#frm_passwd").val() != $("#frm_passwd_confirm").val())) {
 					error_message += "<?php print get_text("Passwd and confirmation must match.");?><br>";
 				} else {
 					if ((theForm.frm_passwd.value.trim() == "") || (theForm.frm_passwd.value.trim().length < 6)) {
+					//if (($("#frm_passwd").val().trim() == "") || ($("#frm_passwd").val().trim().length < 6)) {
 						error_message += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
 					}
 				}
-
 				if (error_message != "") {
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
 //					if(theForm.frm_passwd.value != "") {
 //						theForm.frm_hash.value = hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
-						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());		
+						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
+						//$("#frm_hash").val() = (($("#frm_passwd").val().trim() == "!!!!!!!!") || ($("#frm_passwd").val().trim() == ""))? "" : hex_md5($("#frm_passwd").val().trim().toLowerCase());
 						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
+						//$("#frm_passwd").val() = $("#frm_passwd_confirm").val() = "";
 //				}
 					send_configuration_name_form(theForm);
+					//send_configuration_name_form("own_profile_form");
+					//else "Nothing to do!"
 				}
 			}
 
@@ -621,7 +627,7 @@ case "user_edit":
 				}
 	?>
 		<div class="container-fluid" id="main_container">
-			<form id="frm_user" name="frm_user">
+			<form id="user_edit_form" name="user_edit_form">
 				<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_GET['id'];?>">
 				<input type="hidden" id="frm_remove" name="frm_remove" value="">
 				<input type="hidden" id="function" name="function" value="user_update">
@@ -643,17 +649,17 @@ case "user_edit":
 							</div>	
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.frm_user.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.user_edit_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.frm_user);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_edit_form);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 20px;">
 								<div<?php print get_help_text_str("_user_remove");?> class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); validate_user(document.frm_user);"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); validate_user(document.user_edit_form);"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
 								</div>
 							</div>
 						</div>
