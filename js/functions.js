@@ -541,16 +541,16 @@ function do_api_connection_test(periodic, done_message) {
 	if (periodic) {
 		periodic_parameter = "&periodic=true";
 	}
-		$.get("set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
-		}) 
-		.done(function() {
-			if (!periodic) {
-				var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
-				send_post_message(changes_data);
-			}
-		})
-		.fail(function() {
-			show_top_notice("danger", "Error");
+	$.get("set_data.php?function=api_connection_test" + periodic_parameter, function(data) {
+	})
+	.done(function() {
+		if (!periodic) {
+			var changes_data = '{"type":"message","item":"info","action":"' + done_message + '"}';
+			send_post_message(changes_data);
+		}
+	})
+	.fail(function() {
+		show_top_notice("danger", "Error");
 	});
 }
 
@@ -604,6 +604,7 @@ function prevent_browser_back_button() {
 	*/
 }
 
+//====================configuration includes
 function activate_show_hide_password() {
 	$("#frm_passwd").on("focus", function() {
 		if ($("#frm_passwd").val() == "!!!!!!!!") {
@@ -636,4 +637,26 @@ function activate_show_hide_password() {
 			$(".pw_show").addClass("glyphicon-eye-open");
 		}
 	});
+}
+
+function send_configuration_name_form(form) {
+	$.post("configuration.php", $(form).serialize())
+	.done(function (data) {
+		if (data == "FIRST_START") {
+			goto_window("index.php?first_start=yes");
+		}
+		var change_notice = "";
+		if (data != "") {
+			change_notice = "?top_notice=" + data;
+		}
+		goto_window("configuration.php" + change_notice);
+	})
+	.fail(function () {
+		goto_window("configuration.php");
+	});
+}
+
+function send_configuration_form(form_id) {
+	form_id = "#" + form_id;
+	send_configuration_name_form(form_id);
 }

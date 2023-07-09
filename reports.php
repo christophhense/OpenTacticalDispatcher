@@ -371,8 +371,8 @@ default:
 
 				show_to_top_button("<?php print get_text("To top");?>");
 				$("#frm_query_text").focus();
-				set_window_present("reports");
 				query_changed();
+				set_window_present("reports");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

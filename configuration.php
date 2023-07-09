@@ -7,9 +7,7 @@ require_once ("./incs/log_codes.inc.php");
 require_once ("./incs/api.inc.php");
 do_login(basename(__FILE__));
 
-$datetime_now = mysql_datetime();
-$top_notice_str = "";	
-$top_notice_log_str = "";
+$datetime_now = mysql_datetime();	
 $function = "";
 if (isset ($_GET['function'])) {
 	$function = $_GET['function'];
@@ -18,7 +16,31 @@ if (($function == "") && isset ($_POST['function'])) {
 	$function = $_POST['function'];
 }
 switch ($function) {
-case "do_update":
+case "profile_update":
+case "user_insert":
+case "user_update":
+case "audio_update":
+case "settings_update":
+case "incident_numbers_update":
+case "api_update":
+case "facilities_status_reset_update":
+case "facility_types_update":
+case "facility_status_update":
+case "unit_status_reset_update":
+case "unit_types_update":
+case "unit_status_update":
+case "presentation_tab_update":
+case "presentation_list_update":
+////case "regions_update":
+////case "cleanse_regions_update":
+////case "reset_regions_update":
+case "incident_types_update":
+case "textblocks_update":
+case "captions_update":
+case "hints_update":
+case "optimize":
+case "do_reset":
+case "do_update":	
 	break;
 default:
 
@@ -76,17 +98,21 @@ default:
 
 			function do_delete_user(result) {
 				if (result == true) {
-					document.frm_user.submit();
+					send_configuration_form("frm_user");
 				}
 			}
 
 			function validate_user(theForm) {
+				add_or_edit = "add";
+				if (theForm.frm_func.value == "e") {
+					add_or_edit = "edit";
+				}
 				if ($("#frm_remove").val() == "true") {	
 					show_infobox("<?php print get_text("Please confirm removing");?>", $("#frm_user").val(), false, do_delete_user);
 					return false;
 				}
 				var error_message = "";
-				if ($("#frm_user").val() == "")	{
+				if ((add_or_edit == "add") && ($("#frm_user").val() == ""))	{
 					error_message += "<?php print html_entity_decode(get_text('UserID is required.'));?><br>";
 				}
 				if ((theForm.frm_func.value=="a") && (theForm.frm_user.value.length > 0) && (in_array(ary_users, theForm.frm_user.value.trim())) && (theForm.frm_user.value != "")) {
@@ -117,7 +143,7 @@ default:
 					theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
 					theForm.frm_passwd.value = "";
 					theForm.frm_passwd_confirm.value = "";
-					return true;
+					send_configuration_name_form(theForm);
 				}
 			}
 
@@ -159,9 +185,9 @@ case "profile_update":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	db_query($query, __FILE__, __LINE__);
-	$top_notice_str .= get_text("Your profile has been updated.") . "<br>";
-	$top_notice_log_str .= get_text("Your profile has been updated.") . "  ";
-	break;
+	do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Your profile has been updated.") . "  ", 0, "", "", "");
+	print get_text("Your profile has been updated.") . "<br>";
+	exit;
 case "profile":
 
 	$query = "SELECT `id` " .
@@ -169,8 +195,8 @@ case "profile":
 		"WHERE `id` = " . $_SESSION['user_id'] . ";";
 
 	if ($_SESSION['user_id'] < 0 OR check_for_rows($query) == 0) {
-		$top_notice_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
-		$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "  ";
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'.", 0, "", "", "");
+		print __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
 	} else {
 
 		$query	= "SELECT * " .
@@ -201,14 +227,15 @@ case "profile":
 						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());		
 						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
 //				}
-					theForm.submit();
+					send_configuration_form("frm_profile");
 				}
 			}
 
 		</script>
-		<form name="frm_profile" method="post" action="configuration.php?function=profile_update">
-			<input type="hidden" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
-			<input type="hidden" name="frm_hash" value="<?php print $row['password'];?>">
+		<form id="frm_profile" name="frm_profile">
+			<input type="hidden" id="function" name="function" value="profile_update">
+			<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
+			<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -220,7 +247,7 @@ case "profile":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -277,12 +304,12 @@ case "user_insert":
 				foreach ($_POST['frm_group'] as $grp_val) {
 					insert_into_allocates($grp_val, $GLOBALS['TYPE_USER'], $new_id, $_SESSION['user_id'], $datetime_now);
 				}
-				$top_notice_str .= get_text("User has been added") . ": <i>" . $_POST['frm_user'] . "</i><br>";
-				$top_notice_log_str .= get_text("User has been added") . remove_nls(": " . $_POST['frm_user'] . "  " . get_text("Level") . ": " . get_level_text(trim($_POST['frm_level'])) . "  " . get_text("Email") . ": " . trim($_POST['frm_email']) . "  ");
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User has been added") . remove_nls(": " . $_POST['frm_user'] . "  " . get_text("Level") . ": " . get_level_text(trim($_POST['frm_level'])) . "  " . get_text("Email") . ": " . trim($_POST['frm_email']) . "  "), 0, "", "", "");
+				print get_text("User has been added") . ": <i>" . $_POST['frm_user'] . "</i><br>";
 			}
 		}
 	}
-	break;
+	exit;
 case "user_add":
 	if (is_super() || is_admin()) {
 		$super_disabled = "";
@@ -295,14 +322,15 @@ case "user_add":
 		<script>
 
 			$(function () {
-				document.user_add_Form.frm_user.focus();
+				$("#frm_user").focus();
 			})
 
 		</script>
-		<form method="post" name="user_add_Form" onSubmit="return validate_user(document.user_add_Form);" action="configuration.php?function=user_insert">
-			<input type="hidden" name="frm_func" value="a">
-			<input type="hidden" name="frm_hash" value="">
-			<input type="hidden" name="frm_group[]" value="1">
+		<form id="user_add_form" name="user_add_Form">
+			<input type="hidden" id="function" name="function" value="user_insert">
+			<input type="hidden" id="frm_func" name="frm_func" value="a">
+			<input type="hidden" id="frm_hash" value="">
+			<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -314,7 +342,7 @@ case "user_add":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<?php if (is_admin() || is_super()) { ?>
@@ -325,7 +353,7 @@ case "user_add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_add_Form);"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<?php } ?>
@@ -353,18 +381,18 @@ case "user_add":
 									<th<?php print get_help_text_str("_user_level");?>><?php print get_text("Level");?>: <span style="font-size: small; vertical-align: top; color: red;">*</span></th>
 									<td>
 										<label class="radio-inline"<?php print get_help_text_str("level_0");?>>
-											<input type="radio" name="frm_level"<?php print $super_disabled;?> value="<?php print $GLOBALS['LEVEL_SUPER'];?>">
+											<input type="radio" id="frm_level_super" name="frm_level"<?php print $super_disabled;?> value="<?php print $GLOBALS['LEVEL_SUPER'];?>">
 											<?php print get_text("permission_super");?>
 											</label>
 										<label class="radio-inline"<?php print get_help_text_str("level_1");?>>
-											<input type="radio" name="frm_level"<?php print $admin_disabled;?> value="<?php print $GLOBALS['LEVEL_ADMINISTRATOR'];?>">
+											<input type="radio" id="frm_level_admin" name="frm_level" name="frm_level"<?php print $admin_disabled;?> value="<?php print $GLOBALS['LEVEL_ADMINISTRATOR'];?>">
 											<?php print get_text("permission_admin");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("level_2");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_OPERATOR'];?>">
+											<input type="radio" id="frm_level_operator" name="frm_level" value="<?php print $GLOBALS['LEVEL_OPERATOR'];?>">
 											<?php print get_text("permission_operator");?></label>
 										<label class="radio-inline"<?php print get_help_text_str("level_3");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_GUEST'];?>">
+											<input type="radio" id="frm_level_guest" name="frm_level" value="<?php print $GLOBALS['LEVEL_GUEST'];?>">
 											<?php print get_text("permission_guest");?>
 										</label>
 									</td>
@@ -372,7 +400,7 @@ case "user_add":
 								</tr>
 								<tr<?php print get_help_text_str("_user_email");?>>
 									<th><?php print get_text("Email");?>: </th>
-									<td><input name="frm_email" class="form-control" value=""></td>
+									<td><input id="frm_email" name="frm_email" class="form-control" value=""></td>
 									<td style="width: 40%;"></td>
 								</tr>
 							</table>
@@ -478,14 +506,14 @@ case "user_update":
 			}
 		}
 		if ($user_deletet) {
-			$top_notice_str .= get_text("User has been deleted") . ": <i>" . $old_value['name'] . "</i><br>";
-			$top_notice_log_str .= get_text("User has been deleted") . ": " . $old_value['name'] . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User has been deleted") . ": " . $old_value['name'] . "  ", 0, "", "", "");
+			print get_text("User has been deleted") . ": <i>" . $old_value['name'] . "</i><br>";
 		} else {
-			$top_notice_str .= get_text("User data has been updated") . ": <i>" . $old_value['name'] . "</i><br>";
-			$top_notice_log_str .= get_text("User data has been updated") . ": " . remove_nls($old_value['name'] . "  " . get_text("Edited") . "  " . $log_text_password . $log_text_level . $log_text_email . "  ");
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("User data has been updated") . ": " . remove_nls($old_value['name'] . "  " . get_text("Edited") . "  " . $log_text_password . $log_text_level . $log_text_email . "  "), 0, "", "", "");
+			print get_text("User data has been updated") . ": <i>" . $old_value['name'] . "</i><br>";
 		}
 	}
-	break;
+	exit;
 case "user_edit":
 	if ((isset ($_GET['id'])) && ($_GET['id'] != "")) {
 		if (is_super() || is_admin()) {
@@ -495,8 +523,8 @@ case "user_edit":
 				"WHERE `id` = " . $_GET['id'] . ";";
 
 			if ($_GET['id'] < 0 OR check_for_rows($query) == 0) {
-				$top_notice_str .= __LINE__ . " Invalid user id '" . $_GET['id'] . "'." . "<br>";
-				$top_notice_log_str .= __LINE__ . " Invalid user id '" . $_GET['id'] . "'." . "  ";
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'.", 0, "", "", "");
+				print __LINE__ . " Invalid user id '" . $_SESSION['user_id'] . "'." . "<br>";
 			} else {
 
 				$query = "SELECT `u`.`id` AS `id`, " .
@@ -596,13 +624,13 @@ case "user_edit":
 					$email_disabled = " disabled";
 				}
 	?>
-		<form name="frm_user" method="post" onSubmit="return validate_user(document.frm_user);" action="configuration.php">
-			<input type="hidden" name="frm_id" value="<?php print $_GET['id'];?>">
+		<form id="frm_user" name="frm_user">
+			<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_GET['id'];?>">
 			<input type="hidden" id="frm_remove" name="frm_remove" value="">
-			<input type="hidden" name="function" value="user_update">
-			<input type="hidden" name="frm_hash" value="<?php print $row['password'];?>">
-			<input type="hidden" name="frm_func" value="e">
-			<input type="hidden" name="frm_group[]" value="1">
+			<input type="hidden" id="function" name="function" value="user_update">
+			<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
+			<input type="hidden" id="frm_func" name="frm_func" value="e">
+			<input type="hidden" id="frm_group[]" name="frm_group[]" value="1">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div<?php print get_table_id_title_str("user", $_GET['id']);?> class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -614,7 +642,7 @@ case "user_edit":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>	
 							<div class="row" style="margin-top: 10px;">
@@ -624,12 +652,12 @@ case "user_edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.frm_user);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 20px;">
 								<div<?php print get_help_text_str("_user_remove");?> class="col-md-12">
-									<button type="" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); submit"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="$('#frm_remove').val('true'); validate_user(document.frm_user);"<?php print $delete_disabled;?>><?php print get_text("Delete");?></button>
 								</div>
 							</div>
 						</div>
@@ -657,19 +685,19 @@ case "user_edit":
 									<th<?php print get_help_text_str("_user_level");?>><?php print get_text("Level");?>:</th>
 									<td>
 										<label class="radio-inline"<?php print get_help_text_str("level_0");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_SUPER'];?>"<?php print $super_checked . $super_disabled;?>>
+											<input type="radio" id="frm_level_super" name="frm_level" value="<?php print $GLOBALS['LEVEL_SUPER'];?>"<?php print $super_checked . $super_disabled;?>>
 											<?php print get_text("permission_super");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("level_1");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_ADMINISTRATOR'];?>"<?php print $admin_checked . $admin_disabled;?>>
+											<input type="radio" id="frm_level_admin" name="frm_level" value="<?php print $GLOBALS['LEVEL_ADMINISTRATOR'];?>"<?php print $admin_checked . $admin_disabled;?>>
 											<?php print get_text("permission_admin");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("level_2");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_OPERATOR'];?>"<?php print $operator_checked . $operator_disabled;?>>
+											<input type="radio" id="frm_level_operator" name="frm_level" value="<?php print $GLOBALS['LEVEL_OPERATOR'];?>"<?php print $operator_checked . $operator_disabled;?>>
 											<?php print get_text("permission_operator");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("level_3");?>>
-											<input type="radio" name="frm_level" value="<?php print $GLOBALS['LEVEL_GUEST'];?>"<?php print $info_checked . $info_disabled;?>>
+											<input type="radio" id="frm_level_guest" name="frm_level" value="<?php print $GLOBALS['LEVEL_GUEST'];?>"<?php print $info_checked . $info_disabled;?>>
 											<?php print get_text("permission_guest");?>
 										</label>
 										<label class="radio-inline">
@@ -684,7 +712,7 @@ case "user_edit":
 								</tr>
 								<tr<?php print get_help_text_str("_user_email");?>>
 									<th><?php print get_text("Email");?>: </th>
-									<td><input name="frm_email" class="form-control" value="<?php print remove_nls($row['email']);?>"<?php print $email_disabled;?>></td>
+									<td><input id="frm_email" name="frm_email" class="form-control" value="<?php print remove_nls($row['email']);?>"<?php print $email_disabled;?>></td>
 									<td></td>
 								</tr>
 								<tr style="height: 44px;">
@@ -732,14 +760,17 @@ case "audio_update":
 			$updated_rows = $updated_rows + db_affected_rows($result);
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Audio files updated") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Audio files updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Audio files updated") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "audio":
 	?>
-			<form name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+		<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+			<input type="hidden" id="function" name="function" value="audio_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -751,7 +782,7 @@ case "audio":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 	<?php
@@ -764,7 +795,7 @@ case "audio":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_audio_files');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -779,7 +810,6 @@ case "audio":
 					</div>
 					<div class="col-md-10">
 						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<input type="hidden" name="function" value="audio_update">
 							<table class='table table-striped table-condensed' style="text-align: left;">
 								<tr class="form-group" style="height: 44px;">
 									<th<?php print get_help_text_str("sound_code");?> colspan=4><?php print get_text("Code");?></th>
@@ -804,7 +834,7 @@ foreach ($sound_names_array as $value) {
 }
 	?>
 								</tr>
-							</table>
+							</table>	
 						</div>
 					</div>
 				</div>
@@ -827,15 +857,18 @@ case "settings_update":
 			$updated_rows = $updated_rows + db_affected_rows($result);
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Settings saved (will take effect at next re-start)") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Settings saved (will take effect at next re-start)") . ": " . $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Settings saved (will take effect at next re-start)") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "settings":
 	if (is_super()) {
 	?>
-		<form method="post" name="set_Form" action="configuration.php?function=settings_update">
+		<form id="settings_form" name="settings_form">
+			<input type="hidden" id="function" name="function" value="settings_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -847,17 +880,17 @@ case "settings":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.set_Form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.settings_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('settings_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -868,8 +901,8 @@ case "settings":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th><?php print get_text("Key");?></th>
 									<th><?php print get_text("Value");?></th>
@@ -917,11 +950,13 @@ case "incident_numbers_update":
 		$result = db_query($query, __FILE__, __LINE__);
 		$updated_rows = $updated_rows + db_affected_rows($result);
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Incident number settings updateted") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("Incident number settings updateted") . ": " .  $updated_rows . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "incident_numbers":
 	if (is_super()) {
 			$inc_num_array = unserialize(base64_decode(get_variable('_inc_num')));
@@ -1054,15 +1089,15 @@ case "incident_numbers":
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message)
 					return false;
 				} else {
-					theForm.submit();
+					send_configuration_form("inc_num_Form");
 				}
 			}
 
 		</script>
-		<form name="inc_num_Form" method="post" action="<?php print basename(__FILE__);?>">
-			<input type="hidden" name="function" value="incident_numbers_update">
-			<input type="hidden" name="do_db" value="true">
-			<input type="hidden" name="frm_do_nature" value=<?php print $do_nature;?>>
+		<form id="inc_num_Form" name="inc_num_Form">
+			<input type="hidden" id="function" name="function" value="incident_numbers_update">
+			<input type="hidden" id="do_db" name="do_db" value="true">
+			<input type="hidden" id="frm_do_nature" name="frm_do_nature" value=<?php print $do_nature;?>>
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -1074,7 +1109,7 @@ case "incident_numbers":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1101,30 +1136,30 @@ case "incident_numbers":
 									<th colspan=2 style="height: 44px;"><?php print get_text("Incident name with counter");?>: </th>
 									<td>
 										<label class="radio-inline"<?php print get_help_text_str("_NO12345");?>>
-											 <input type="radio" name="frm_style" value=1 <?php print $style_checked[1];?> onclick="inc_num_by_counter_attributes_disable(1);"><?php print get_text("NO12345");?>
+											 <input type="radio" id="frm_style1" name="frm_style" value=1 <?php print $style_checked[1];?> onclick="inc_num_by_counter_attributes_disable(1);"><?php print get_text("NO12345");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("_Label12345");?>>
-											 <input type="radio" name="frm_style" value=2 <?php print $style_checked[2];?> onclick="inc_num_by_counter_attributes_disable(2);"><?php print get_text("Label12345");?>
+											 <input type="radio" id="frm_style2" name="frm_style" value=2 <?php print $style_checked[2];?> onclick="inc_num_by_counter_attributes_disable(2);"><?php print get_text("Label12345");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("_YR12345");?>>
-											<input type="radio" name="frm_style" value=3 <?php print $style_checked[3];?> onclick="inc_num_by_counter_attributes_disable(3);"><?php print get_text("YR12345");?>
+											<input type="radio" id="frm_style3" name="frm_style" value=3 <?php print $style_checked[3];?> onclick="inc_num_by_counter_attributes_disable(3);"><?php print get_text("YR12345");?>
 										</label>
 									</td>
 								</tr>
 								<tr<?php print get_help_text_str("_Label12345");?>>
 									<th></th>
 									<th><?php print get_text("Incident name Label");?>: <span id="frm_label_mandatory" style="font-size: small; vertical-align: top; color: red; display: none;">*</span></th>
-									<td><input class="form-control mandatory" type="text" name="frm_label" size=16 maxlength=16 value="<?php print $inc_num_array[1];?>"></td>
+									<td><input type="text" id="frm_label" name="frm_label" class="form-control mandatory" size=16 maxlength=16 value="<?php print $inc_num_array[1];?>"></td>
 								</tr>
 								<tr<?php print get_help_text_str("_inc_name_sep");?>>
 									<th></th>
 									<th><?php print get_text("Incident name Separator");?>: <span id="frm_sep_mandatory" style="font-size: small; vertical-align: top; color: red; display: none;">*</span></th>
-									<td><input class="form-control mandatory" type="text" name="frm_sep" size=4 maxlength=4 value="<?php print $inc_num_array[2];?>"></td>
+									<td><input type="text" id="frm_sep" name="frm_sep" class="form-control mandatory" size=4 maxlength=4 value="<?php print $inc_num_array[2];?>"></td>
 								</tr>
 								<tr<?php print get_help_text_str("_inc_next_num");?>>
 									<th></th>
 									<th><?php print get_text("Next number");?>: <span id="frm_number_mandatory" style="font-size: small; vertical-align: top; color: red; display: none;">*</span></th>
-									<td><input class="form-control mandatory" type="text" name="frm_number" size=8 maxlength=8 value="<?php print $inc_num_array[3];?>"></td>
+									<td><input type="text" id="frm_number" name="frm_number" class="form-control mandatory" size=8 maxlength=8 value="<?php print $inc_num_array[3];?>"></td>
 								</tr>
 								<tr>
 									<td colspan=3 style="height: 44px;"></td>
@@ -1133,13 +1168,13 @@ case "incident_numbers":
 									<th colspan=2 style="height: 44px;"><?php print get_text("Incident name with Database-ID");?>: </th>
 									<td>
 										<label class="radio-inline"<?php print get_help_text_str("_NO#12345");?>>
-											<input type="radio" name="frm_style" value=0 <?php print $style_checked[0];?> onclick="inc_num_by_counter_attributes_disable(0);"><?php print get_text("NO#12345");?>
+											<input type="radio" id="frm_style0" name="frm_style" value=0 <?php print $style_checked[0];?> onclick="inc_num_by_counter_attributes_disable(0);"><?php print get_text("NO#12345");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("_Free_text/NO#12345");?>>
-											 <input type="radio" name="frm_style" value=4 <?php print $style_checked[4];?> onclick="inc_num_by_counter_attributes_disable(4);"><?php print get_text("Free_text/NO#12345");?>
+											 <input type="radio" id="frm_style4" name="frm_style" value=4 <?php print $style_checked[4];?> onclick="inc_num_by_counter_attributes_disable(4);"><?php print get_text("Free_text/NO#12345");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("_NO#12345/Free_text");?>>
-											 <input type="radio" name="frm_style" value=5 <?php print $style_checked[5];?> onclick="inc_num_by_counter_attributes_disable(5);"><?php print get_text("NO#12345/Free_text");?>
+											 <input type="radio" id="frm_style5" name="frm_style" value=5 <?php print $style_checked[5];?> onclick="inc_num_by_counter_attributes_disable(5);"><?php print get_text("NO#12345/Free_text");?>
 										</label>
 									</td>
 								</tr>
@@ -1150,10 +1185,10 @@ case "incident_numbers":
 									<th style="height: 44px;" colspan=2><?php print get_text("Incident name manual edit");?>: </th>
 									<td>
 										<label class="radio-inline"<?php print get_help_text_str("_Free_text(add)");?>>
-											 <input type="radio" name="frm_style" value=6 <?php print $style_checked[6];?> onclick="inc_num_by_counter_attributes_disable(6);"><?php print get_text("Free_text(add)");?>
+											 <input type="radio" id="frm_style6" name="frm_style" value=6 <?php print $style_checked[6];?> onclick="inc_num_by_counter_attributes_disable(6);"><?php print get_text("Free_text(add)");?>
 										</label>
 										<label class="radio-inline"<?php print get_help_text_str("_Free_text(edit)");?>>
-											 <input type="radio" name="frm_style" value=7 <?php print $style_checked[7];?> onclick="inc_num_by_counter_attributes_disable(7);"><?php print get_text("Free_text(edit)");?>
+											 <input type="radio" id="frm_style7" name="frm_style" value=7 <?php print $style_checked[7];?> onclick="inc_num_by_counter_attributes_disable(7);"><?php print get_text("Free_text(edit)");?>
 										</label>
 									</td>
 								</tr>
@@ -1188,11 +1223,11 @@ case "api_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("API settings updated") . ": " .  $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("API settings updated") . ": " .  $updated_rows . "  ";
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("API settings updated") . ": " .  $updated_rows . "  ", 0, "", "", "");
+			print get_text("API settings updated") . ": " .  $updated_rows . "<br>";
 		}
 	}
-	break;
+	exit;
 case "api":
 	if (is_super()) {
 	?>
@@ -1242,13 +1277,13 @@ case "api":
 			if (error_message != "") {
 				show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 			} else {
-				frm_api_config.submit();
+				send_configuration_form("frm_api_config");
 			}
 		}
 
 		</script>
-		<form name="frm_api_config" method="post" action="<?php print basename(__FILE__);?>">
-			<input type="hidden" name="function" value="api_update">
+		<form id="frm_api_config" name="frm_api_config">
+			<input type="hidden" id="function" name="function" value="api_update">
 			<div class="container-fluid" id="main_container">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -1260,7 +1295,7 @@ case "api":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1293,7 +1328,7 @@ case "api":
 								<tr class="form-group"<?php print get_help_text_str("_api_hosts");?>>
 									<th><?php print get_text("_api_hosts");?>:</th>
 									<td>
-										<input class="form-control" name="_api_hosts" type="text" size=70 maxlength=70 value="<?php print get_variable("_api_hosts");?>">
+										<input" type="text" id="_api_hosts" name="_api_hosts" class="form-control" size=70 maxlength=70 value="<?php print get_variable("_api_hosts");?>">
 									</td>
 									<td colspan=3></td>
 								</tr>
@@ -1327,28 +1362,28 @@ case "api":
 								<tr class="form-group"<?php print get_help_text_str("_api_destination_host");?>>
 									<th><?php print get_text("_api_destination_host");?>:</th>
 									<td>
-										<input class="form-control" name="_api_destination_host" type="text" size=70 maxlength=70 value="<?php print get_variable("_api_destination_host");?>">
+										<input type="text" id="_api_destination_host" name="_api_destination_host" class="form-control" size=70 maxlength=70 value="<?php print get_variable("_api_destination_host");?>">
 									</td>
 									<td colspan=3></td>
 								</tr>
 								<tr class="form-group"<?php print get_help_text_str("_api_phone_host");?>>
 									<th><?php print get_text("_api_phone_host");?>:</th>
 									<td>
-										<input class="form-control" name="_api_phone_host" type="text" size=70 maxlength=70 value="<?php print get_variable("_api_phone_host");?>">
+										<input type="text" id="_api_phone_host" name="_api_phone_host" class="form-control" size=70 maxlength=70 value="<?php print get_variable("_api_phone_host");?>">
 									</td>
 									<td colspan=3></td>
 								</tr>
 								<tr class="form-group"<?php print get_help_text_str("_api_destination_password");?>>
 									<th><?php print get_text("_api_destination_password");?>:</th>
 									<td>
-										<input class="form-control" name="_api_destination_password" type="text" size=70 maxlength=70 value="<?php print get_variable("_api_destination_password");?>">
+										<input type="text" id="_api_destination_password" name="_api_destination_password" class="form-control" size=70 maxlength=70 value="<?php print get_variable("_api_destination_password");?>">
 									</td>
 									<td colspan=3></td>
 								</tr>
 								<tr class="form-group"<?php print get_help_text_str("_api_connection_test_configuration");?>>
 									<th><?php print get_text("_api_connection_test_configuration");?>:</th>
 									<td>
-										<input class="form-control" name="_api_connection_test_configuration" type="text" size=70 maxlength=140 value="<?php print get_variable("_api_connection_test_configuration");?>">
+										<input type="text" id="_api_connection_test_configuration" name="_api_connection_test_configuration" class="form-control" size=70 maxlength=140 value="<?php print get_variable("_api_connection_test_configuration");?>">
 									</td>
 									<td colspan=3></td>
 								</tr>
@@ -1374,7 +1409,7 @@ case "api":
 	foreach ($api_array as $value) {
 		print "<tr class='form-group'" . get_help_text_str("_" . $value) . ">";
 		print "<th>" . call_progression_captions("_" . $value) . ":</th>";
-		print "<td><input class='form-control' name='_" . $value . "' type='text' size=70 maxlength=512 value='" . get_variable("_" . $value) . "'></td>";
+		print "<td><input type='text' id='_" . $value . "' name='_" . $value . "' class='form-control' size=70 maxlength=512 value='" . get_variable("_" . $value) . "'></td>";
 		if (get_variable("_" . substr($value, 0 , -5) . "stat") != "") {
 
 			$query_status = "SELECT `status_name`, " .
@@ -1395,7 +1430,7 @@ case "api":
 
 				$result = db_query($query, __FILE__, __LINE__);
 				$row = stripslashes_deep(db_fetch_assoc($result));
-				print "<td><select class='form-control' id='status_select_" . $i . "' name='_" . substr($value, 0 , -5) . "stat' style=' background-color: " . $row['bg_color'] .
+				print "<td><select id='status_select_" . $i . "' name='_" . substr($value, 0 , -5) . "stat' class='form-control' style=' background-color: " . $row['bg_color'] .
 					"; color: " . $row['text_color'] . ";' onchange='this.style.backgroundColor=" .
 					"this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;'>";
 				while ($row_status = stripslashes_deep(db_fetch_array($result_status))) {
@@ -1452,7 +1487,7 @@ case "api":
 				break;
 			default;
 			}
-			print "<td><select class='form-control' id='_" . substr($value, 0, -5) . "repl' name='_" . substr($value, 0, -5) . "repl' " .
+			print "<td><select id='_" . substr($value, 0, -5) . "repl' name='_" . substr($value, 0, -5) . "repl'  class='form-control'" .
 				"onchange='change_textfields(\"_" . substr($value, 0, -5) . "\", this.options[this.selectedIndex].value);'>";
 			print "<option value=0" . $selected_0 . ">" . get_text("Off") . "</option>";
 			print "<option value=1" . $selected_1 . ">" . get_text("Status") . "</option>";
@@ -1490,6 +1525,8 @@ case "api":
 	break;
 case "facilities_status_reset_update":
 	if (is_super() || is_admin()) {	
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['facility_type'])) {
 			$facility_types_where_str = "";
 			foreach ($_POST['facility_type'] as $VarName => $VarValue) {
@@ -1503,18 +1540,22 @@ case "facilities_status_reset_update":
 
 			$result = db_query($query, __FILE__, __LINE__);
 			if ($result) {
-				$top_notice_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Facility status values set to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
 			} else {
-				$top_notice_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Could not set facility status values to") . ": " . get_facilities_status_name($_POST['frm_status']) . "  ";
 			}
 		} else {
-			$top_notice_str .= get_text("Nothing to do!") . "<br>";
-			$top_notice_log_str .= get_text("Nothing to do!") . "  ";
+			$message_str .= get_text("Nothing to do!") . "<br>";
+			$log_str = NULL;
 		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		}
+		print get_text($message_str) . "<br>";
 	}
-	break;
+	exit;
 case "facilities_status_reset":
 	if (is_super() || is_admin()) {
 		$unit_type_selectr_str = "";
@@ -1551,7 +1592,7 @@ case "facilities_status_reset":
 			$bg_color = "#000000";
 			$text_color = "#FFFFFF";
 		}
-		$the_status_sel .= "<select name='frm_status' class='form-control' style='max-width: 200px; background-color: " .
+		$the_status_sel .= "<select id='frm_status' name='frm_status' class='form-control' style='max-width: 200px; background-color: " .
 			$bg_color .  "; color: " . $text_color . ";' onchange='this.style.backgroundColor=" .
 			"this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;'>";
 
@@ -1571,29 +1612,29 @@ case "facilities_status_reset":
 		}
 		$the_status_sel .= "</select>";
 	?>
-			<style>
-				.table, td {
-					overflow: visible !important;
-				}
-			</style>
-			<script>
+		<style>
+			.table, td {
+				overflow: visible !important;
+			}
+		</style>
+		<script>
 
-			$(document).ready(function() {
-				$("#facility_type").multiselect ({
-					buttonWidth: "100%",
-					nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
-					nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
-					allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
-					numberDisplayed: 0,
-					includeSelectAllOption: true,
-					selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
-				});
+		$(document).ready(function() {
+			$("#facility_type").multiselect ({
+				buttonWidth: "100%",
+				nonSelectedText: "<?php print html_entity_decode(get_text("None selected"));?>",
+				nSelectedText: "<?php print html_entity_decode(get_text("selected"));?>",
+				allSelectedText: "<?php print html_entity_decode(get_text("All selected"));?>",
+				numberDisplayed: 0,
+				includeSelectAllOption: true,
+				selectAllText: "<?php print html_entity_decode(get_text("Select all"));?>"
 			});
+		});
 
-			</script>
-			<div class="container-fluid" id="main_container">
-			<form name="frm_def_status" method="post" action="<?php print basename(__FILE__);?>">
-				<input type="hidden" name="function" value="facilities_status_reset_update">
+		</script>
+		<div id="main_container" class="container-fluid">
+			<form id="frm_def_status" name="frm_def_status">
+				<input type="hidden" id="function" name="function" value="facilities_status_reset_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Set facilities to a common status") . " - "  . get_variable("page_caption");?>
@@ -1604,12 +1645,12 @@ case "facilities_status_reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_def_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1620,7 +1661,7 @@ case "facilities_status_reset":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 20%;"><?php print get_text("Facility type");?></th>
@@ -1648,12 +1689,14 @@ case "facilities_status_reset":
 	break;
 case "facility_types_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {	
 			$result = insert_into_facility_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset fac_types added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		if (isset ($_POST['facility_types_id'][0])) {
@@ -1692,32 +1735,39 @@ case "facility_types_update":
 				}
 			}
 			if ($updated_rows != 0) {
-				$top_notice_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "  ";
+				$message_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "<br>";
+				$log_str .= get_text("Dataset fac_types updated") . ": " . $updated_rows . "  ";
 			}
 			if ($deleted_rows != 0) {
-				$top_notice_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "  ";
+				$message_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "<br>";
+				$log_str .= get_text("Dataset fac_types deleted") . ": " . $deleted_rows . "  ";
 			}
 		}
-		break;
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
+		}
 	}
+	exit;
 case "facility_types":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Facility types configuration") . " - "  . get_variable("page_caption");?>
+		<div id="main_container" class="container-fluid">
+			<form id="facility_types" name="facility_types">
+			<input type="hidden" id="function" name="function" value="facility_types_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Facility types configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form name="facility_types" method="post" action="configuration.php?function=facility_types_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1727,7 +1777,7 @@ case "facility_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_types.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_types');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1748,10 +1798,10 @@ case "facility_types":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
-									<td><input type="text" class="form-control" name="description_new"></input></td>
-									<td><input type="text" class="form-control color" name="bg_color_new" id="back" value="FFFFFF"></input></td>
-									<td><input type="text" class="form-control color" name="text_color_new" id="text" value="000000"></input></td>
+									<td><input type="text" id="name_new" name="name_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" id="description_new" name="description_new" class="form-control"></input></td>
+									<td><input type="text" id="back" name="bg_color_new" class="form-control color" value="FFFFFF"></input></td>
+									<td><input type="text" id="text" name="text_color_new" class="form-control color" value="000000"></input></td>
 									<td></td>
 								</tr>
 							</table>
@@ -1764,7 +1814,7 @@ case "facility_types":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: 30%;"><?php print get_text("Type");?></th>
@@ -1794,13 +1844,13 @@ case "facility_types":
 				}
 	?>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="namel[]" value="<?php print $row['name'];?>" disabled></input></td>
-										<td><input type="text" class="form-control" name="description[]" value="<?php print $row['description'];?>"></input></td>
-										<td><input type="text" class="form-control color" name="bg_color[]" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
-										<td><input type="text" class="form-control color" name="text_color[]" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
+										<td><input type="text" id="namel[]" name="namel[]" class="form-control" value="<?php print $row['name'];?>" disabled></input></td>
+										<td><input type="text" id="description[]" name="description[]" class="form-control" value="<?php print $row['description'];?>"></input></td>
+										<td><input type="text" id="bg_color[]" name="bg_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
+										<td><input type="text" id="text_color[]" name="text_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
 										<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" name="facility_types_id[]" value="<?php print $row['id'];?>">
+											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+											<input type="hidden" id="facility_types_id[]" name="facility_types_id[]" value="<?php print $row['id'];?>">
 										</td>
 									</tr>
 	<?php
@@ -1808,7 +1858,7 @@ case "facility_types":
 		} else {
 	?>
 									<tr class="form-group" style="height: 44px;">
-										<th colspan=5 style="text-align: center;"><?php print get_text("No data");?></th>
+										<th style="text-align: center;" colspan=5><?php print get_text("No data");?></th>
 									</tr>
 	<?php
 		}
@@ -1817,9 +1867,9 @@ case "facility_types":
 							</div>
 						</div>
 						<div class="col-md-1"></div>
-					</div>
-				</form>
-			</div>
+					</div>	
+				</div>
+			</form>
 		</body>
 	</html>
 	<?php
@@ -1827,6 +1877,8 @@ case "facility_types":
 	break;
 case "facility_status_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$display_new = 0;
 			foreach ($_POST['display_new'] as $VarName=>$VarValue) {
@@ -1836,8 +1888,8 @@ case "facility_status_update":
 				intval($_POST['sort_new']), $display_new, "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset fac_status added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -1883,15 +1935,21 @@ case "facility_status_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset fac_status updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset fac_status deleted") . ": " . $deleted_rows . "  ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "facility_status":
 	if (is_super()) {
 	?>
@@ -1913,19 +1971,20 @@ case "facility_status":
 			});
 
 		</script>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Facility status configuration") . " - "  . get_variable("page_caption");?>
+		<div id="main_container" class="container-fluid">
+			<form id="facility_status" name="facility_status">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Facility status configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form name="facility_status" method="post" action="configuration.php?function=facility_status_update">
+				<input type="hidden" id="function" name="function" value="facility_status_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1935,7 +1994,7 @@ case "facility_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_status.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1946,7 +2005,7 @@ case "facility_status":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
 								<tr style="height: 44px;">
 									<th style="width: 20%;"><?php print get_text("Status");?></th>
@@ -1958,8 +2017,8 @@ case "facility_status":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="status_val_new" placeholder="<?php print get_text("New entry");?>"></input></td>
-									<td><input type="text" class="form-control" name="description_new"></input></td>
+									<td><input type="text" id="status_val_new" name="status_val_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" id="description_new" name="description_new" class="form-control"></input></td>
 									<td>
 										<select id="display_new" name="display_new[]" multiple="multiple">
 											<option value=1><?php print get_text("Incident location");?></option>
@@ -1970,9 +2029,9 @@ case "facility_status":
 											<option value=32><?php print get_text("Log report");?></option>
 										</select>
 									</td>
-									<td><input type="text" class="form-control" name="sort_new"></input></td>
-									<td><input type="text" class="form-control color" name="bg_color_new" id="back" value="FFFFFF"></input></td>
-									<td><input type="text" class="form-control color" name="text_color_new" id="text" value="000000"></input></td>
+									<td><input type="text" id="sort_new" name="sort_new" class="form-control"></input></td>
+									<td><input type="text" id="back" name="bg_color_new" class="form-control color" value="FFFFFF"></input></td>
+									<td><input type="text" id="text" name="text_color_new" class="form-control color" value="000000"></input></td>
 									<td></td>
 								</tr>
 							</table>
@@ -1985,7 +2044,7 @@ case "facility_status":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: 20%;"><?php print get_text("Status");?></th>
@@ -2037,8 +2096,8 @@ case "facility_status":
 				}
 	?>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="status_val[]" value="<?php print $row['status_name'];?>" disabled></input></td>
-									<td><input type="text" class="form-control" name="description[]" value="<?php print $row['description'];?>"></input></td>
+									<td><input type="text" id="status_val[]" name="status_val[]" class="form-control" value="<?php print $row['status_name'];?>" disabled></input></td>
+									<td><input type="text" id="description[]" name="description[]" class="form-control" value="<?php print $row['description'];?>"></input></td>
 									<td>
 										<select id="display_<?php print $row['id'];?>" name="display_<?php print $row['id'];?>[]" multiple="multiple">
 											<option value=1<?php print $selected1;?>><?php print get_text("Incident location");?></option>
@@ -2049,12 +2108,12 @@ case "facility_status":
 											<option value=32<?php print $selected32;?>><?php print get_text("Log report");?></option>
 										</select>
 									</td>
-									<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"></input></td>
-									<td><input type="text" class="form-control color" name="bg_color[]" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
-									<td><input type="text" class="form-control color" name="text_color[]" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
+									<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"></input></td>
+									<td><input type="text" id="bg_color[]" name="bg_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
+									<td><input type="text" id="text_color[]" name="text_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
 									<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
-										<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-										<input type="hidden" name="fac_status_id[]" value="<?php print $row['id'];?>">
+										<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+										<input type="hidden" id="fac_status_id[]" name="fac_status_id[]" value="<?php print $row['id'];?>">
 									</td>
 								</tr>
 								<script>
@@ -2094,6 +2153,8 @@ case "facility_status":
 	break;
 case "unit_status_reset_update":
 	if (is_super() || is_admin()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['unit_type'])) {
 			$unit_types_where_str = "";
 			foreach ($_POST['unit_type'] as $VarName => $VarValue) {
@@ -2136,11 +2197,11 @@ case "unit_status_reset_update":
 
 			$result = db_query($query, __FILE__, __LINE__);
 			if ($result) {
-				$top_notice_str .= get_text("Units status values set to") . ": " . get_units_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Units status values set to") . ": " . get_units_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Units status values set to") . ": " . get_units_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Units status values set to") . ": " . get_units_status_name($_POST['frm_status']) . "  ";
 			} else {
-				$top_notice_str .= get_text("Could not set units status values to") . ": " . get_units_status_name($_POST['frm_status']) . "<br>";
-				$top_notice_log_str .= get_text("Could not set units status values to") . ": " . get_units_status_name($_POST['frm_status']) . "  ";
+				$message_str .= get_text("Could not set units status values to") . ": " . get_units_status_name($_POST['frm_status']) . "<br>";
+				$log_str .= get_text("Could not set units status values to") . ": " . get_units_status_name($_POST['frm_status']) . "  ";
 			}
 
 			$query_un_status = "SELECT `status_name`, " .
@@ -2175,9 +2236,16 @@ case "unit_status_reset_update":
 					do_receipt_message($row['id']);
 				}
 			}
+		} else {
+			$message_str .= get_text("Nothing to do!") . "<br>";
+			$log_str = NULL;
 		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+		}
+		print get_text($message_str) . "<br>";
 	}
-	break;
+	exit;
 case "unit_status_reset":
 	if (is_super() || is_admin()) {
 		$unit_type_selectr_str = "";
@@ -2213,7 +2281,7 @@ case "unit_status_reset":
 			$bg_color = "#000000";
 			$text_color = "#FFFFFF";
 		}
-		$the_status_sel .= "<select name='frm_status' class='form-control' style='max-width: 200px; background-color: " .
+		$the_status_sel .= "<select id='frm_status' name='frm_status' class='form-control' style='max-width: 200px; background-color: " .
 				$bg_color . "; color: " . $text_color . ";' onchange='this.style.backgroundColor=" .
 				"this.options[this.selectedIndex].style.backgroundColor; this.style.color=this.options[this.selectedIndex].style.color;'>";
 
@@ -2251,11 +2319,11 @@ case "unit_status_reset":
 			});
 
 			</script>
-			<div class="container-fluid" id="main_container">
-			<form name="frm_def_status" method="post" action="<?php print basename(__FILE__);?>">
-				<input type="hidden" name="function" value="unit_status_reset_update">
+			<div id="main_container" class="container-fluid">
+			<form id="frm_def_status" name="frm_def_status">
+				<input type="hidden" id="function" name="function" value="unit_status_reset_update">
 				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Set units to a common status") . " - "  . get_variable("page_caption");?>
 					</div>
 				</div>
@@ -2264,12 +2332,12 @@ case "unit_status_reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_def_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2280,7 +2348,7 @@ case "unit_status_reset":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 							<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 20%;"><?php print get_text("Unit type");?></th>
@@ -2308,12 +2376,14 @@ case "unit_status_reset":
 	break;
 case "unit_types_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
 			$result = insert_into_unit_types($_POST['name_new'], $_POST['description_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'],	$_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset unit_types added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		if (isset ($_POST['unit_types_id'][0])) {
@@ -2352,32 +2422,39 @@ case "unit_types_update":
 				}
 			}
 			if ($updated_rows != 0) {
-				$top_notice_str .= get_text("Dataset unit_types updated") . ": " . $updated_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset unit_types updated") . ": " . $updated_rows . "  ";
+				$message_str .= get_text("Dataset unit_types updated") . ": " . $updated_rows . "<br>";
+				$log_str .= get_text("Dataset unit_types updated") . ": " . $updated_rows . "  ";
 			}
 			if ($deleted_rows != 0) {
-				$top_notice_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "<br>";
-				$top_notice_log_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "  ";
+				$message_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "<br>";
+				$log_str .= get_text("Dataset unit_types deleted") . ": " . $deleted_rows . "  ";
 			}
 		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
+		}
 	}
-	break;
+	exit;
 case "unit_types":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Unit types configuration") . " - "  . get_variable("page_caption");?>
+		<div id="main_container" class="container-fluid">
+			<form id="unit_types" name="unit_types">
+				<input type="hidden" id="function" name="function" value="unit_types_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Unit types configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form name="unit_types" method="post" action="configuration.php?function=unit_types_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2387,7 +2464,7 @@ case "unit_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_types.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_types');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2398,7 +2475,7 @@ case "unit_types":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 							<table class="table table-striped table-condensed" style="text-align: left;">	
 								<tr style="height: 44px;">
 									<th style="width: 30%;"><?php print get_text("Type");?></th>
@@ -2408,10 +2485,10 @@ case "unit_types":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
-									<td><input type="text" class="form-control" name="description_new"></input></td>
-									<td><input type="text" class="form-control color" name="bg_color_new" id="back" value="FFFFFF"></input></td>
-									<td><input type="text" class="form-control color" name="text_color_new" id="text" value="000000"></input></td>
+									<td><input type="text" id="name_new" name="name_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" id="description_new" name="description_new" class="form-control"></input></td>
+									<td><input type="text" id="back" name="bg_color_new" class="form-control color" value="FFFFFF"></input></td>
+									<td><input type="text" id="text" name="text_color_new" class="form-control color" value="000000"></input></td>
 									<td></td>
 								</tr>
 							</table>
@@ -2424,8 +2501,8 @@ case "unit_types":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-								<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: 30%;"><?php print get_text("Type");?></th>
 										<th style="width: 45%;"><?php print get_text("Description");?></th>
@@ -2453,13 +2530,13 @@ case "unit_types":
 				}
 	?>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="namel[]" value="<?php print $row['name'];?>" disabled></input></td>
-										<td><input type="text" class="form-control" name="description[]" value="<?php print $row['description'];?>"></input></td>
-										<td><input type="text" class="form-control color" name="bg_color[]" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
-										<td><input type="text" class="form-control color" name="text_color[]" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
+										<td><input type="text" id="namel[]" name="namel[]" class="form-control" value="<?php print $row['name'];?>" disabled></input></td>
+										<td><input type="text" id="description[]" name="description[]" class="form-control" value="<?php print $row['description'];?>"></input></td>
+										<td><input type="text" id="bg_color[]" name="bg_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"></input></td>
+										<td><input type="text" id="text_color[]" name="text_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"></input></td>
 										<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" name="unit_types_id[]" value="<?php print $row['id'];?>">
+											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+											<input type="hidden" id="unit_types_id[]" name="unit_types_id[]" value="<?php print $row['id'];?>">
 										</td>
 									</tr>
 	<?php
@@ -2486,13 +2563,15 @@ case "unit_types":
 	break;
 case "unit_status_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['status_val_new']) && ($_POST['status_val_new'] != "")) {
 			$result = insert_into_unit_status($_POST['status_val_new'], $_POST['description_new'], 
 				$_POST['dispatch_new'], $_POST['sort_new'], "#" . $_POST['bg_color_new'], 
 				"#" . $_POST['text_color_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset un_status added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -2534,31 +2613,38 @@ case "unit_status_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset un_status updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset un_status deleted") . ": " . $deleted_rows . "  ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "unit_status":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Unit status configuration") . " - "  . get_variable("page_caption");?>
+		<div id="main_container" class="container-fluid">
+			<form id="unit_status" name="unit_status">
+				<input type="hidden" id="function" name="function" value="unit_status_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Unit status configuration") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form name="unit_status" method="post" action="configuration.php?function=unit_status_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2568,7 +2654,7 @@ case "unit_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_status.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_status');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2579,8 +2665,8 @@ case "unit_status":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 20%;"><?php print get_text("Status");?></th>
 									<th style="width: 30%;"><?php print get_text("Description");?></th>
@@ -2591,10 +2677,10 @@ case "unit_status":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="status_val_new" placeholder="<?php print get_text("New entry");?>"></input></td>
-									<td><input type="text" class="form-control" name="description_new"></input></td>
+									<td><input type="text" id="status_val_new" name="status_val_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" id="description_new" name="description_new" class="form-control"></input></td>
 									<td>
-										<select name="dispatch_new" class="form-control">
+										<select id="dispatch_new" name="dispatch_new" class="form-control">
 											<option value=<?php print $GLOBALS['DISPATCH_YES'];?> selected><?php print get_text("Can dispatch");?></option>
 											<option value=<?php print $GLOBALS['DISPATCH_ENFORCEABLE'];?>><?php print get_text("No, enforceable");?></option>
 											<option value=<?php print $GLOBALS['DISPATCH_NOT_ENFORCEABLE'];?>><?php print get_text("Not enforceable");?></option>
@@ -2602,9 +2688,9 @@ case "unit_status":
 											<option value=<?php print $GLOBALS['DISPATCH_NO_EVALUATION'];?>><?php print get_text("No evaluation");?></option>
 										</select>
 									</td>
-									<td><input type="text" class="form-control" name="sort_new"></input></td>
-									<td><input type="text" class="form-control color" name="bg_color_new" id="back" value="FFFFFF"></input></td>
-									<td><input type="text" class="form-control color" name="text_color_new" id="text" value="000000"></input></td>
+									<td><input type="text" id="sort_new" name="sort_new" class="form-control"></input></td>
+									<td><input type="text" id="back" name="bg_color_new" class="form-control color" value="FFFFFF"></input></td>
+									<td><input type="text" id="text" name="text_color_new" class="form-control color" value="000000"></input></td>
 									<td></td>
 								</tr>
 							</table>
@@ -2617,8 +2703,8 @@ case "unit_status":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-								<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: 20%;"><?php print get_text("Status");?></th>
 										<th style="width: 30%;"><?php print get_text("Description");?></th>
@@ -2649,10 +2735,10 @@ case "unit_status":
 				}
 	?>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="status_val[]" value="<?php print $row['status_name'];?>" readonly></input></td>
-										<td><input type="text" class="form-control" name="description[]" value="<?php print $row['description'];?>"<?php print $change_readonly_str;?>></input></td>
+										<td><input type="text" id="status_val[]" name="status_val[]" class="form-control" value="<?php print $row['status_name'];?>" readonly></input></td>
+										<td><input type="text" id="description[]" name="description[]" class="form-control" value="<?php print $row['description'];?>"<?php print $change_readonly_str;?>></input></td>
 										<td>
-											<select name="dispatch[]" class="form-control"<?php print $change_readonly_str;?>>
+											<select id="dispatch[]" name="dispatch[]" class="form-control"<?php print $change_readonly_str;?>>
 												<option value=<?php print $GLOBALS['DISPATCH_YES'] . $dispatch_select_str[0];?>><?php print get_text("Can dispatch");?></option>
 												<option value=<?php print $GLOBALS['DISPATCH_ENFORCEABLE'] . $dispatch_select_str[1];?>><?php print get_text("No, enforceable");?></option>
 												<option value=<?php print $GLOBALS['DISPATCH_NOT_ENFORCEABLE'] . $dispatch_select_str[2];?>><?php print get_text("Not enforceable");?></option>
@@ -2660,12 +2746,12 @@ case "unit_status":
 												<option value=<?php print $GLOBALS['DISPATCH_NO_EVALUATION'] . $dispatch_select_str[4];?>><?php print get_text("No evaluation");?></option>
 											</select>
 										</td>
-										<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"<?php print $change_readonly_str;?>></input></td>
-										<td><input type="text" class="form-control color" name="bg_color[]" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"<?php print $change_readonly_str;?>></input></td>
-										<td><input type="text" class="form-control color" name="text_color[]" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"<?php print $change_readonly_str;?>></input></td>
+										<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"<?php print $change_readonly_str;?>></input></td>
+										<td><input type="text" id="bg_color[]" name="bg_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['bg_color']), -6);?>"<?php print $change_readonly_str;?>></input></td>
+										<td><input type="text" id="text_color[]" name="text_color[]" class="form-control color" value="<?php print substr(color_name_to_hex($row['text_color']), -6);?>"<?php print $change_readonly_str;?>></input></td>
 										<td style="text-align: center;" <?php if ($delete_disabled_str != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" name="un_status_id[]" value="<?php print $row['id'];?>">
+											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+											<input type="hidden" id="un_status_id[]" name="un_status_id[]" value="<?php print $row['id'];?>">
 										</td>
 									</tr>
 	<?php
@@ -2693,6 +2779,8 @@ case "unit_status":
 case "presentation_tab_update":
 	$tab_id = 0;
 	$type_id = 0;
+	$message_str = "";
+	$log_str = "";
 	if (isset ($_POST['tab_id'])) {
 		$tab_id = $_POST['tab_id'];
 	}
@@ -2755,34 +2843,40 @@ case "presentation_tab_update":
 							}
 						}
 					}
-					$top_notice_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . "<br>";
-					$top_notice_log_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . ". ";
+					$message_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . "<br>";
+					$log_str .= get_text("Row") . " " . $_POST['row'][$VarValue] . "  " . get_text("Column") . " " . $_POST['column'][$VarValue] . ": " . $old_value_log_str . " => " . $new_value_log_str . ". ";
 				}
 			}
-			if ($top_notice_str != "") {
+			if ($message_str != "") {
 				switch ($type_id) {
 				case $GLOBALS['TYPE_FACILITY']:
-					$top_notice_str = get_text("Edit custom facilities representation") . "<br>" . $top_notice_str;
-					$top_notice_log_str = get_text("Edit custom facilities representation") . "  " . $top_notice_log_str;
+					$message_str = get_text("Edit custom facilities representation") . "<br>" . $top_notice_str;
+					$log_str = get_text("Edit custom facilities representation") . "  " . $top_notice_log_str;
 					break;
 				case $GLOBALS['TYPE_UNIT']:
-					$top_notice_str = get_text("Edit custom units representation") . "<br>" . $top_notice_str;
-					$top_notice_log_str = get_text("Edit custom units representation") . "  " . $top_notice_log_str;
+					$message_str = get_text("Edit custom units representation") . "<br>" . $top_notice_str;
+					$log_str = get_text("Edit custom units representation") . "  " . $top_notice_log_str;
 					break;
 				default:
 				}
 				set_custom_overview($tab_id, $new_overview);
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+				print get_text($message_str) . "<br>&function=presentation_list&type_id=". $type_id;
+			} else {
+				print get_text("Nothing to do!") . "<br>&function=presentation_list&type_id=" . $type_id;
 			}
 		}
 	}
-	break;
+	exit;
 case "presentation_tab":
 	$tab_id = 0;
+	$type_id = 0;
 	if (isset ($_GET['tab_id'])) {
 		$tab_id = $_GET['tab_id'];
 	}
 	if ($tab_id != 0) {
 		$custom_overview = get_custom_overview($tab_id);
+		$type_id = $custom_overview[0]["type_id"];
 		$item_list = array ();
 		$option_0 = "";
 		$no_elements = "";
@@ -2790,7 +2884,7 @@ case "presentation_tab":
 		if (is_super() || ($custom_overview[0]["item_id_3"] == $GLOBALS['TAB_CONFIG_ADD_EDIT'])) {
 			$helptext = "";
 			$page_caption = "";
-			switch ($custom_overview[0]["type_id"]) {
+			switch ($type_id) {
 			case $GLOBALS['TYPE_FACILITY']:
 				$page_caption = get_text("Edit custom facilities representation");
 				$item_list = get_item_list($GLOBALS['TYPE_FACILITY'], true);
@@ -2875,7 +2969,7 @@ case "presentation_tab":
 					<?php print $page_caption . ": "  . remove_nls(substr($custom_overview[0]["label_0"], 0, 15)) . get_tab_id($tab_id) . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
-			<form name="presentation_tab" method="post" action="configuration.php">
+			<form id="presentation_tab" name="presentation_tab">
 				<input type="hidden" name="function" value="presentation_tab_update">
 				<input type="hidden" name="tab_id" value="<?php print $tab_id;?>">
 				<div class="row">
@@ -2883,7 +2977,7 @@ case "presentation_tab":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=84 onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=84 onclick="goto_window('configuration.php?function=presentation_list&type_id=<?php print $type_id;?>');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2893,7 +2987,7 @@ case "presentation_tab":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=82 onClick="document.presentation_tab.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=82 onClick="send_configuration_form('presentation_tab');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2925,7 +3019,7 @@ case "presentation_tab":
 							$label_display_str = " style=\"display: none;\"";
 							$select_display_str = "display: none;";
 							switch ($custom_overview[$i]["item_id_" . $j]) {
-							case NULL:
+							case "":
 								$switch_symbol_str = "<span id=\"symbol_left_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-list\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('left', " . $i . ", " . $j. ");\"></span><span id=\"symbol_right_" . $i . "_" . $j. "\" class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\" style=\"margin: 4px;\" onClick=\"change_presentation_tab_field('right', " . $i . ", " . $j. ");\"></span>";
 								$switch_value = "EMPTY";
 								break;
@@ -2987,6 +3081,8 @@ case "presentation_list_update":
 	$result_admin_can_add = false;
 	$result_tab_new = false;
 	$type_id = 0;
+	$message_str = "";
+	$log_str = "";
 	if (isset ($_POST['type_id'])) {
 		$type_id = $_POST['type_id'];
 	}
@@ -3145,30 +3241,35 @@ case "presentation_list_update":
 		default:
 		}
 		if ($result_admin_can_add == TRUE) {
-			$top_notice_str .= $log_admin_can_add_str . "<br>";
-			$top_notice_log_str .= $log_admin_can_add_str . ". ";
+			$message_str .= $log_admin_can_add_str . "<br>";
+			$log_str .= $log_admin_can_add_str . ". ";
 		}
 		if ($result_tab_new == TRUE) {
-			$top_notice_str .= $log_tab_new_str . "<br>";
-			$top_notice_log_str .= $log_tab_new_str . ". ";
+			$message_str .= $log_tab_new_str . "<br>";
+			$log_str .= $log_tab_new_str . ". ";
 		}
 		if ($updated_tabs != 0) {
-			$top_notice_str .= $log_updated_tabs_str . "<br>";
-			$top_notice_log_str .= $log_updated_tabs_str . ". ";
+			$message_str .= $log_updated_tabs_str . "<br>";
+			$log_str .= $log_updated_tabs_str . ". ";
 		}
-		
 		if ($changed_tab_names_str != "") {
-			$top_notice_log_str .= get_text("Changed Tab name") . ": " . $changed_tab_names_str . " ";
+			$log_str .= get_text("Changed Tab name") . ": " . $changed_tab_names_str . " ";
 		}
 		if ($deleted_tabs != 0) {
-			$top_notice_str .= $log_deleted_tabs_str . "<br>";
-			$top_notice_log_str .= $log_deleted_tabs_str . ". ";
+			$message_str .= $log_deleted_tabs_str . "<br>";
+			$log_str .= $log_deleted_tabs_str . ". ";
 		}
 		if ($deleted_tab_names_str != "") {
-			$top_notice_log_str .= get_text("Deleted Tab name") . ": " . substr($deleted_tab_names_str, 0, -2) . ". ";
+			$log_str .= get_text("Deleted Tab name") . ": " . substr($deleted_tab_names_str, 0, -2) . ". ";
+		}
+		if ($log_str != "") {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "presentation_list":
 	$type_id = 0;
 	if (isset ($_GET['type_id'])) {
@@ -3206,7 +3307,7 @@ case "presentation_list":
 					<?php print $page_caption . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
-			<form name="presentation" method="post" action="configuration.php">
+			<form id="presentation" name="presentation">
 				<input type="hidden" name="function" value="presentation_list_update">
 				<input type="hidden" name="type_id" value="<?php print $type_id;?>">
 				<div class="row">
@@ -3214,7 +3315,7 @@ case "presentation_list":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button id="cancel_button" type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button id="cancel_button" type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3224,7 +3325,7 @@ case "presentation_list":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button id="submit_button" type="button" class="btn btn-xs btn-default" onClick="document.presentation.submit();"><?php print get_text("Save");?></button>
+									<button id="submit_button" type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('presentation');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3449,6 +3550,7 @@ case "presentation_list":
 	<?php
 	}
 	break;
+/*
 case "regions_update":
 	if (is_super()) {
 		if (isset ($_POST['name_new']) && ($_POST['name_new'] != "")) {
@@ -3504,19 +3606,19 @@ case "regions_update":
 case "regions":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
+		<div id="main_container" class="container-fluid">
 			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 					<?php print get_text("Regions Configuration") . " - "  . get_variable("page_caption");?>
 				</div>
 			</div>
-			<form name="regions" method="post" action="configuration.php?function=regions_update">
+			<form id="regions" name="regions" method="post" action="configuration.php?function=regions_update">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3532,8 +3634,8 @@ case "regions":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th style="width: 25%;"><?php print get_text("Name");?></th>
 									<th style="width: 50%;"><?php print get_text("Description");?></th>
@@ -3541,8 +3643,8 @@ case "regions":
 									<th style="width: 5%;"></th>
 								</tr>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="name_new" placeholder="<?php print get_text("New entry");?>"></input></td>
-									<td><input type="text" class="form-control" name="description_new"></input></td>
+									<td><input type="text" id="name_new" name="name_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
+									<td><input type="text" id="description_new" name="description_new" class="form-control"></input></td>
 									<td></td>
 									<td></td>
 								</tr>
@@ -3556,8 +3658,8 @@ case "regions":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-								<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: 25%;"><?php print get_text("Name");?></th>
 										<th style="width: 50%;"><?php print get_text("Description");?></th>
@@ -3585,12 +3687,12 @@ case "regions":
 				}
 	?>
 								<tr class="form-group">
-									<td><input type="text" class="form-control" name="name[]" value="<?php print $row['region_name'];?>" disabled></input></td>
-									<td><input type="text" class="form-control" name="description[]" value="<?php print $row['description'];?>"></input></td>
+									<td><input type="text" id="name[]" name="name[]" class="form-control" value="<?php print $row['region_name'];?>" disabled></input></td>
+									<td><input type="text" id="description[]" name="description[]" class="form-control" value="<?php print $row['description'];?>"></input></td>
 									<td></td>
 									<td style="text-align: center;">
-										<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-										<input type="hidden" name="region_id[]" value="<?php print $row['id'];?>">
+										<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+										<input type="hidden" id="region_id[]" name="region_id[]" value="<?php print $row['id'];?>">
 									</td>
 								</tr>
 	<?php
@@ -3843,13 +3945,13 @@ case "cleanse_regions":
 		// end of facility ids
 	?>
 				<body onload="check_frames();">
-				<div style='font-size: 20px; font-weight: bold; width:70%;'>
+				<div style="font-size: 20px; font-weight: bold; width:70%;">
 				<div>
-				Region Table Allocation List<div class='button_bar'>
-				<a class='buttons' href="configuration.php?function=cleanse_regions_update">Cleanse / Sanitize</a>
-				<a class='buttons' href="configuration.php">Cancel / Return to Config</a></div></div>
-				<div id='flag' class='flag'></div>
-				<div style='width:100%;'>
+				Region Table Allocation List<div class="button_bar">
+				<a class="buttons" href="configuration.php?function=cleanse_regions_update">Cleanse / Sanitize</a>
+				<a class="buttons" href="configuration.php">Cancel / Return to Config</a></div></div>
+				<div id="flag" class="flag"></div>
+				<div style="width: 100%;">
 	<?php
 		$counter = 0;
 		print "<table style='width: 100%; border: 1px;'>";
@@ -4036,11 +4138,11 @@ case "reset_regions_update":
 case "reset_regions":
 	if (is_super()) {
 	?>
-			<form name="reset_regions" method="post" action="configuration.php?function=reset_regions_update">
-				<div style='font-size: 14px; position: absolute; top: 20px; left: 30%;'>
-					<div class='heading' style='font-size: 24px; text-align: center;'><?php print get_text("Reset Regions");?></div>
+			<form id="reset_regions" name="reset_regions" method="post" action="configuration.php?function=reset_regions_update">
+				<div style="font-size: 14px; position: absolute; top: 20px; left: 30%;">
+					<div class="heading" style="font-size: 24px; text-align: center;"><?php print get_text("Reset Regions");?></div>
 					<br><br>
-					<div style='padding: 20px; border:1px outset #FFFFFF; position: relative; background-color: #F8F8F8;'>
+					<div style="padding: 20px; border:1px outset #FFFFFF; position: relative; background-color: #F8F8F8;">
 						<b><?php print get_text("Reset all resources back to first Region?");?></b><br>
 						<br><br>
 						<button onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
@@ -4053,15 +4155,17 @@ case "reset_regions":
 	</html>	
 	<?php
 	}
-	break;
+	break;*/
 case "incident_types_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['nature_new']) && ($_POST['nature_new'] != "")) {
 			$result = insert_into_incident_types($_POST['nature_new'], $_POST['description_new'], $_POST['protocol_new'], 
 				$_POST['severity_new'],	$_POST['group_new'], $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset in_types added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -4110,32 +4214,38 @@ case "incident_types_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset in_types updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset in_types updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset in_types updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset in_types updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset in_types deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset in_types deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset in_types deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset in_types deleted") . ": " . $deleted_rows . "  ";
 		}
-		
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
+		}
 	}
-	break;
+	exit;
 case "incident_types":
 	if (is_super()) {
 	?>
-			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Incident Types Configuration") . " - "  . get_variable("page_caption");?>
+			<div id="main_container" class="container-fluid">
+				<form id="incident_types" name="incident_types">
+					<input type="hidden" id="function" name="function" value="incident_types_update">
+					<div class="row infostring">
+						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Incident Types Configuration") . " - "  . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<form name="incident_types" method="post" action="configuration.php?function=incident_types_update">
 					<div class="row">
 						<div class="col-md-1">
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -4145,7 +4255,7 @@ case "incident_types":
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types.submit();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -4156,7 +4266,7 @@ case "incident_types":
 							</div>
 						</div>
 						<div class="col-md-10">
-							<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
 									<tr style="height: 44px;">
 										<th style="width: 15%;"><?php print get_text("Incident type");?></th>
@@ -4168,18 +4278,18 @@ case "incident_types":
 										<th style="width: 5%;"></th>
 									</tr>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="nature_new" placeholder="<?php print get_text("New entry");?>"></input></td>
+										<td><input type="text" id="nature_new" name="nature_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
 										<td>
-											<select name="severity_new" class="form-control">
+											<select id="severity_new" name="severity_new" class="form-control">
 												<option value=0 selected><?php print get_text("Normal");?></option>
 												<option value=1><?php print get_text("Medium");?></option>
 												<option value=2><?php print get_text("High");?></option>
 											</select>
 										</td>
-										<td><textarea type="text" class="form-control" name="description_new"></textarea></td>
-										<td><textarea type="text" class="form-control" name="protocol_new" id="back" value=""></textarea></td>
-										<td><input type="text" class="form-control" name="group_new"></input></td>
-										<td><input type="text" class="form-control" name="sort_new" id="text" value=""></input></td>
+										<td><textarea type="text" id="description_new" name="description_new" class="form-control"></textarea></td>
+										<td><textarea type="text" id="back" name="protocol_new" class="form-control" value=""></textarea></td>
+										<td><input type="text" id="group_new" name="group_new" class="form-control"></input></td>
+										<td><input type="text" id="text" name="sort_new" class="form-control" value=""></input></td>
 										<td></td>
 									</tr>
 								</table>
@@ -4192,7 +4302,7 @@ case "incident_types":
 						<div class="container-fluid" style="position: fixed;"></div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;">	
 									<tr style="height: 44px;">
 										<th style="width: 15%;"><?php print get_text("Incident type");?></th>
@@ -4219,21 +4329,21 @@ case "incident_types":
 				$severity_select_str[$row['set_severity']] = " selected";
 	?>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="nature[]" value="<?php print $row['type'];?>" disabled></input></td>
+										<td><input type="text" id="nature[]" name="nature[]" class="form-control" value="<?php print $row['type'];?>" disabled></input></td>
 										<td>
-											<select name="severity[]" class="form-control">
+											<select id="severity[]" name="severity[]" class="form-control">
 												<option value=0<?php print $severity_select_str[0];?>><?php print get_text("Normal");?></option>
 												<option value=1<?php print $severity_select_str[1];?>><?php print get_text("Medium");?></option>
 												<option value=2<?php print $severity_select_str[2];?>><?php print get_text("High");?></option>
 											</select>
 										</td>
-										<td><textarea type="text" class="form-control" name="description[]"><?php print $row['description'];?></textarea></td>
-										<td><textarea type="text" class="form-control" name="protocol[]"><?php print $row['protocol'];?></textarea></td>
-										<td><input type="text" class="form-control" name="group[]" value="<?php print $row['group'];?>"></input></td>
-										<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"></input></td>
+										<td><textarea type="text" id="description[]" name="description[]" class="form-control"><?php print $row['description'];?></textarea></td>
+										<td><textarea type="text" id="protocol[]" name="protocol[]" class="form-control"><?php print $row['protocol'];?></textarea></td>
+										<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"></input></td>
+										<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"></input></td>
 										<td style="text-align: center;">
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
-											<input type="hidden" name="incident_types_id[]" value="<?php print $row['id'];?>">
+											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $delete_disabled_str;?>>
+											<input type="hidden" id="incident_types_id[]" name="incident_types_id[]" value="<?php print $row['id'];?>">
 										</td>
 									</tr>
 	<?php
@@ -4241,7 +4351,7 @@ case "incident_types":
 		} else {
 	?>
 										<tr class="form-group" style="height: 44px;">
-											<th colspan=7 style="text-align: center;"><?php print get_text("No data");?></th>
+											<th style="text-align: center;" colspan=7><?php print get_text("No data");?></th>
 										</tr>
 	<?php
 		}
@@ -4260,6 +4370,8 @@ case "incident_types":
 	break;
 case "textblocks_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		if (isset ($_POST['frm_textblock_new']) && ($_POST['frm_textblock_new'] != "")) {
 			$group = "";
 			if (isset ($_POST['group_new']) && ($_POST['group_new'] != "")) {
@@ -4275,11 +4387,11 @@ case "textblocks_update":
 					$report_channels = $report_channels | $VarValue;
 				}
 			}
-			$result = insert_into_textblocks($_GET['type'], $group, $_POST['frm_textblock_new'], $code,
+			$result = insert_into_textblocks($_POST['type'], $group, $_POST['frm_textblock_new'], $code,
 				$report_channels, $_POST['sort_new'], $_SESSION['user_id'], $datetime_now);
 			if (db_affected_rows($result) > 0) {
-				$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " added") . ": " . db_affected_rows($result) . "<br>";
-				$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " added") . ": " . db_affected_rows($result) . "  ";
+				$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " added") . ": " . db_affected_rows($result) . "<br>";
+				$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " added") . ": " . db_affected_rows($result) . "  ";
 			}
 		}
 		$updated_rows = 0;
@@ -4317,7 +4429,7 @@ case "textblocks_update":
 				}
 
 				$query = "UPDATE `textblocks` SET " .
-								"`type` = '" . $_GET['type'] . "', " .
+					"`type` = '" . $_POST['type'] . "', " .
 					$group_str .
 					$code_str .
 					$report_channels_str .
@@ -4340,15 +4452,21 @@ case "textblocks_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " updated") . ": " . $updated_rows . "  ";
+			$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " updated") . ": " . $updated_rows . "  ";
 		}
 		if ($deleted_rows != 0) {
-			$top_notice_str .= get_text("Dataset textblocks " . $_GET['type'] . " deleted") . ": " . $deleted_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset textblocks " . $_GET['type'] . " deleted") . ": " . $deleted_rows . "  ";
+			$message_str .= get_text("Dataset textblocks " . $_POST['type'] . " deleted") . ": " . $deleted_rows . "<br>";
+			$log_str .= get_text("Dataset textblocks " . $_POST['type'] . " deleted") . ": " . $deleted_rows . "  ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "textblocks":
 	$header_text = "";
 	$textinput_caption = get_text("Textblock");
@@ -4422,19 +4540,21 @@ case "textblocks":
 	<?php
 		}
 	?>
-			<div class="container-fluid" id="main_container">
-				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-						<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
+			<div id="main_container" class="container-fluid">
+				<form id="textblocks" name="textblocks">
+					<input type="hidden" id="function" name="function" value="textblocks_update">
+					<input type="hidden" id="type" name="type" value="<?php print $_GET['textblocks'];?>">
+					<div class="row infostring">
+						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+							<?php print get_text("Textblocks") . " " . $header_text . " - "  . get_variable("page_caption");?>
+						</div>
 					</div>
-				</div>
-				<form name="textblocks" method="post" action="configuration.php?function=textblocks_update&type=<?php print $_GET['textblocks'];?>">
 					<div class="row">
 						<div class="col-md-1">
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -4444,7 +4564,7 @@ case "textblocks":
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks.submit();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -4455,7 +4575,7 @@ case "textblocks":
 							</div>
 						</div>
 						<div class="col-md-10">
-							<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
@@ -4469,9 +4589,9 @@ case "textblocks":
 										<th style="width: 5%;"></th>
 									</tr>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="frm_textblock_new" placeholder="<?php print get_text("New entry");?>"></input></td>
+										<td><input type="text" id="frm_textblock_new" name="frm_textblock_new" class="form-control" placeholder="<?php print get_text("New entry");?>"></input></td>
 	<?php if ($show_additional_options) { ?>
-										<td><input type="text" class="form-control" name="frm_apicode_new"></input></td>
+										<td><input type="text" id="frm_apicode_new" name="frm_apicode_new" class="form-control"></input></td>
 										<td>
 											<select id="reporting_channel_new" name="reporting_channel_new[]" multiple="multiple">
 												<option value=1><?php print get_text("Cellular phone");?></option>
@@ -4485,9 +4605,9 @@ case "textblocks":
 											</select>
 										</td>
 	<?php } else { ?>
-										<td><input type="text" class="form-control" name="group_new" value=""></input></td>
+										<td><input type="text" id="group_new" name="group_new" class="form-control" value=""></input></td>
 	<?php } ?>
-										<td><input type="text" class="form-control" name="sort_new" value=""></input></td>
+										<td><input type="text" id="sort_new" name="sort_new" class="form-control" value=""></input></td>
 										<td></td>
 									</tr>
 								</table>
@@ -4500,7 +4620,7 @@ case "textblocks":
 							<div class="container-fluid" style="position: fixed;"></div>
 						</div>
 						<div class="col-md-10">
-							<div class="panel panel-default" id="table_top" style="padding: 0px;">
+							<div id="table_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th style="width: <?php print $textinput_width;?>;"><?php print $textinput_caption;?></th>
@@ -4556,11 +4676,11 @@ case "textblocks":
 				}
 	?>
 									<tr class="form-group">
-										<td><input type="text" class="form-control" name="textblock[]" value="<?php print $row['text'];?>"<?php print $readonly;?>></input></td>
+										<td><input type="text" id="textblock[]" name="textblock[]" class="form-control" value="<?php print $row['text'];?>"<?php print $readonly;?>></input></td>
 	<?php
 					if ($show_additional_options) {
 	?>
-										<td><input type="text" class="form-control" name="apicode[]" value="<?php print $row['code'];?>"<?php print $readonly;?>></input></td>
+										<td><input type="text" id="apicode[]" name="apicode[]" class="form-control" value="<?php print $row['code'];?>"<?php print $readonly;?>></input></td>
 										<td>
 											<select id="reporting_channel_<?php print $row['id'];?>" name="reporting_channel_<?php print $row['id'];?>[]" multiple="multiple"<?php print $readonly;?>>
 												<option value=1<?php print $selected1;?>><?php print get_text("Cellular phone");?></option>
@@ -4587,12 +4707,12 @@ case "textblocks":
 
 										</script>
 	<?php 		} else { ?>
-										<td><input type="text" class="form-control" name="group[]" value="<?php print $row['group'];?>"<?php print $readonly;?>></input></td>
+										<td><input type="text" id="group[]" name="group[]" class="form-control" value="<?php print $row['group'];?>"<?php print $readonly;?>></input></td>
 	<?php 		} ?>
-										<td><input type="text" class="form-control" name="sort[]" value="<?php print $row['sort'];?>"<?php print $readonly;?>></input></td>
+										<td><input type="text" id="sort[]" name="sort[]" class="form-control" value="<?php print $row['sort'];?>"<?php print $readonly;?>></input></td>
 										<td style="text-align: center;" <?php if ($disabled != "") print get_help_text_str("not_deletable");?>>
-											<input type="checkbox" name="delete_<?php print $row['id'];?>"<?php print $disabled;?>>
-											<input type="hidden" name="textblocks_id[]" value="<?php print $row['id'];?>">
+											<input type="checkbox" id="delete_<?php print $row['id'];?>" name="delete_<?php print $row['id'];?>"<?php print $disabled;?>>
+											<input type="hidden" id="textblocks_id[]" name="textblocks_id[]" value="<?php print $row['id'];?>">
 										</td>
 									</tr>
 	<?php
@@ -4600,7 +4720,7 @@ case "textblocks":
 		} else {
 	?>
 										<tr class="form-group" style="height: 44px;">
-											<th colspan=4 style="text-align: center;"><?php print get_text("No data");?></th>
+											<th style="text-align: center;" colspan=4><?php print get_text("No data");?></th>
 										</tr>
 	<?php
 		}
@@ -4619,6 +4739,8 @@ case "textblocks":
 	break;
 case "captions_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		$updated_rows = 0;
 		foreach ($_POST as $VarName => $VarValue) {
 			if ($VarName != "function") {
@@ -4634,27 +4756,34 @@ case "captions_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset captions updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset captions updated") . ": " . $updated_rows . ", ";
+			$message_str .= get_text("Dataset captions updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset captions updated") . ": " . $updated_rows . ", ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "captions":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Incident Add/Edit captions - enter revisions") . " - "  . get_variable("page_caption");?>
+		<div id="main_container" class="container-fluid">
+			<form id="captions" name="captions">
+				<input type="hidden" id="function" name="function" value="captions_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Incident Add/Edit captions - enter revisions") . " - "  . get_variable("page_caption");?>
+					</div>
 				</div>
-			</div>
-			<form name="captions" method="post" action="<?php print basename(__FILE__);?>">
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4664,7 +4793,7 @@ case "captions":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.captions.submit();"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('captions');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4675,9 +4804,8 @@ case "captions":
 						</div>
 					</div>
 					<div class="col-md-10">
-						<div class="panel panel-default" id="table_top" style="padding: 0px;">
-							<input type="hidden" name="function" value="captions_update">
-							<table class='table table-striped table-condensed' style="text-align: left;">
+						<div id="table_top" class="panel panel-default" style="padding: 0px;">
+							<table class="table table-striped table-condensed" style="text-align: left;">
 								<tr style="height: 44px;">
 									<th><?php print get_text("Text");?></th>
 									<th><?php print get_text("Tag");?></th>
@@ -4692,7 +4820,7 @@ case "captions":
 		$i = 1;
 		while ($row =  stripslashes_deep(db_fetch_array($result))) {
 			if (substr($row['capt'], 0, 1) != "_" ) {
-				print "<tr class='form-group'><td>" . $i . "<input class='form-control' type='text' size=100 name='" . $row['id'] . "' value='" . trim($row['repl']) . "'></input></td><th>" . $row['capt'] . "</th></tr>\n";
+				print "<tr class='form-group'><td>" . $i . "<input type='text' name='" . $row['id'] . "' class='form-control' size=100 value='" . trim($row['repl']) . "'></input></td><th>" . $row['capt'] . "</th></tr>\n";
 				$i++;
 			}
 		}
@@ -4711,6 +4839,8 @@ case "captions":
 	break;
 case "hints_update":
 	if (is_super()) {
+		$message_str = "";
+		$log_str = NULL;
 		$updated_rows = 0;
 		foreach ($_POST as $VarName => $VarValue) {
 			if ($VarName != "function") {
@@ -4726,27 +4856,34 @@ case "hints_update":
 			}
 		}
 		if ($updated_rows != 0) {
-			$top_notice_str .= get_text("Dataset hints updated") . ": " . $updated_rows . "<br>";
-			$top_notice_log_str .= get_text("Dataset hints updated") . ": " . $updated_rows . ", ";
+			$message_str .= get_text("Dataset hints updated") . ": " . $updated_rows . "<br>";
+			$log_str .= get_text("Dataset hints updated") . ": " . $updated_rows . ", ";
+		}
+		if ($log_str != NULL) {
+			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
+			print get_text($message_str) . "<br>";
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "hints":
 	if (is_super()) {
 	?>
-		<div class="container-fluid" id="main_container">
-			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Incident Add/Edit hints - enter revisions") . " - "  . get_variable("page_caption");?>
-				</div>
-			</div>
-			<form name="hints" method="post" action="<?php print basename(__FILE__);?>">
+		<div id="main_container" class="container-fluid">
+			<form id="hints" name="hints">
+				<input type="hidden" id="function" name="function" value="hints_update">
+				<div class="row infostring">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Incident Add/Edit hints - enter revisions") . " - "  . get_variable("page_caption");?>
+					</div>
+				</div>		
 				<div class="row">
 					<div class="col-md-1">
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 						<div class="row" style="margin-top: 10px;">
@@ -4756,7 +4893,7 @@ case "hints":
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onClick="document.hints.submit();"><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('hints');"><?php print get_text("Save");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
@@ -4767,9 +4904,8 @@ case "hints":
 					</div>
 				</div>
 				<div class="col-md-10">
-					<div class="panel panel-default" id="table_top" style="padding: 0px;">
-						<input type="hidden" name="function" value="hints_update">
-						<table class='table table-striped table-condensed' style="text-align: left;">	
+					<div id="table_top" class="panel panel-default" style="padding: 0px;">
+						<table class="table table-striped table-condensed" style="text-align: left;">	
 							<tr style="height: 44px;">
 								<th><?php print get_text("Text");?></th>
 								<th><?php print get_text("Tag");?></th>
@@ -4782,7 +4918,7 @@ case "hints":
 
 		$result = db_query($query, __FILE__, __LINE__);
 		while ($row = stripslashes_deep(db_fetch_array($result))) {
-			print "<tr class='form-group'><td><textarea class='form-control' cols=100 rows=2 name='" . $row['id'] . "'>" . trim($row['hint']) . "</textarea></td><th>" . $row['tag'] . "</th></tr>\n";
+			print "<tr name='" . $row['id'] . "' class='form-group'><td><textarea class='form-control' name='" . $row['id'] . "' cols=100 rows=2>" . trim($row['hint']) . "</textarea></td><th>" . $row['tag'] . "</th></tr>\n";
 		}
 	?>
 							</table>
@@ -4799,27 +4935,35 @@ case "hints":
 	break;
 case "optimize":
 	if (is_super()) {
-		$result = db_query("OPTIMIZE TABLE ticket, action, user, settings", __FILE__, __LINE__);
-		$top_notice_str .= get_text("Database optimization complete.") . "<br>";
-		$top_notice_log_str .= get_text("Database optimization complete.") . "  ";
+		db_query("OPTIMIZE TABLE ticket, action, user, settings", __FILE__, __LINE__);
+		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Database optimization complete."), 0, "", "", "");
+		print get_text("Database optimization complete.") . "<br>";
 	}
-	break;
+	exit;
 case "do_reset":
 	if (is_super()) {
 		if ((isset ($_POST['frm_random_captcha'])) && ($_POST['frm_input_captcha'] == $_POST['frm_random_captcha'])) {
 			install(get_version(), $_POST['frm_locale'], $_POST['frm_option'], $_POST['frm_db_host'], $_POST['frm_db_dbname'], $_POST['frm_db_user'], $_POST['frm_db_password']);
 			$first_start_str = "";
-			if ($_POST['frm_option'] == "install") {
-				$first_start_str = "?first_start=yes";
+			switch ($_POST['frm_option']) {
+			case "install":
+				print "FIRST_START";
+				break;
+			case "reset_settings":
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Reseted settings."), 0, "", "", "");
+				print get_text("Settings reseted.") . "<br>";	
+				break;
+			case "write_credentials":
+				do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text("Reseted database-credentials only."), 0, "", "", "");
+				print get_text("Reseted database-credentials only.") . "<br>";
+				break;
+			default:
 			}
-	?>
-		<script>
-			parent.location.href="index.php<?php print $first_start_str;?>";
-		</script>
-	<?php
+		} else {
+			print get_text("Nothing to do!") . "<br>";
 		}
 	}
-	break;
+	exit;
 case "reset":
 	if (is_super()) {
 		$charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -4844,12 +4988,14 @@ case "reset":
 		$image = ob_get_contents();
 		ob_end_clean();
 	?>
-		<form name="frm_reset_db" method="post" action="configuration.php?function=do_reset">
-			<input type="hidden" name="frm_random_captcha" value="<?php print $captcha;?>">
-			<div class="container-fluid" id="main_container">
+		
+		<div id="main_container" class="container-fluid">
+			<form id="frm_reset_db" name="frm_reset_db">
+				<input type="hidden" id="function" name="function" value="do_reset">
+				<input type="hidden" id="frm_random_captcha" name="frm_random_captcha" value="<?php print $captcha;?>">
 				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
-					<?php print get_text("Reset Database functions") . " - " . get_variable("page_caption");?>
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+						<?php print get_text("Reset Database functions") . " - " . get_variable("page_caption");?>
 					</div>
 				</div>
 				<div class="row">
@@ -4857,7 +5003,7 @@ case "reset":
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4867,7 +5013,7 @@ case "reset":
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="window.location.href='configuration.php';"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('frm_reset_db');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4887,19 +5033,19 @@ case "reset":
 								<table class="table table-striped">
 									<tr>
 										<td><?php print get_text("Database");?>:</td>
-										<td><input type="text" size="30" maxlength="255" name="frm_db_dbname" value="<?php print $GLOBALS['db_name'];?>"></td>
+										<td><input type="text" id="frm_db_dbname" name="frm_db_dbname" size="30" maxlength="255" value="<?php print $GLOBALS['db_name'];?>"></td>
 									</tr>
 									<tr>
 										<td><?php print get_text("Username");?>: </td>
-										<td><input type="text" size="30" maxlength="255" name="frm_db_user" value="<?php print $GLOBALS['db_user'];?>"></td>
+										<td><input type="text" id="frm_db_user" name="frm_db_user" size="30" maxlength="255" value="<?php print $GLOBALS['db_user'];?>"></td>
 									</tr>
 									<tr>
 										<td><?php print get_text("Password");?>: </td>
-										<td><input type="password" size="30" maxlength="255" name="frm_db_password" value="<?php print $GLOBALS['db_password'];?>"></td>
+										<td><input type="password" id="frm_db_password" name="frm_db_password" size="30" maxlength="255" value="<?php print $GLOBALS['db_password'];?>"></td>
 									</tr>
 									<tr>
 										<td><?php print get_text("DB-Host");?>: </td>
-										<td><input type="text" size="30" maxlength="255" name="frm_db_host" value="<?php print $GLOBALS['db_host'];?>"></td>
+										<td><input type="text" id="frm_db_host" name="frm_db_host" size="30" maxlength="255" value="<?php print $GLOBALS['db_host'];?>"></td>
 									</tr>
 									<tr>
 										<td><?php print get_text("Localization");?>:</td>
@@ -4911,19 +5057,19 @@ case "reset":
 										<td><?php print get_text("Install Option");?>:</td>
 										<td>
 											<label class="radio-inline">
-												<input type="radio" value="install"<?php if (((isset ($_POST['frm_option'])) && ($_POST['frm_option'] == "install"))) {print " checked";}?> name="frm_option">&nbsp;
+												<input type="radio" id="frm_option1" name="frm_option" value="install"<?php if (((isset ($_POST['frm_option'])) && ($_POST['frm_option'] == "install"))) {print " checked";}?>>&nbsp;
 													<?php print get_text("Install database tables new (drop tables if exist)");?>
 											</label>
 											<br>
 											<label class="radio-inline">
-												<input type="radio" value="reset_settings"<?php if (((isset ($_POST['frm_option'])) && ($_POST['frm_option'] == "reset_settings")) ||
-													(!isset ($_POST['frm_option']))) {print " checked";}?> name="frm_option">&nbsp;
+												<input type="radio" id="frm_option2" name="frm_option" value="reset_settings"<?php if (((isset ($_POST['frm_option'])) && ($_POST['frm_option'] == "reset_settings")) ||
+													(!isset ($_POST['frm_option']))) {print " checked";}?>>&nbsp;
 												<?php print get_text("Reset settings (do not touch user data)");?>
 											</label>
 											<br>
 											<label class="radio-inline">
-												<input type="radio" value="write_credentials"<?php if (((isset ($_POST['frm_option'])) &&
-													($_POST['frm_option'] == "write_credentials"))) {print " checked";}?> name="frm_option">&nbsp;
+												<input type="radio" id="frm_option3" name="frm_option" value="write_credentials"<?php if (((isset ($_POST['frm_option'])) &&
+													($_POST['frm_option'] == "write_credentials"))) {print " checked";}?>>&nbsp;
 													<?php print get_text("Write db-configuration file only");?>
 											</label>
 										</td>
@@ -4933,7 +5079,7 @@ case "reset":
 										<td><img src="data:image/png;base64,<?php print base64_encode($image);?>"></td>
 									</tr>
 										<td><?php print get_text("Confirm CAPTCHA");?>:</td>
-										<td><input type="text" name="frm_input_captcha"></td>
+										<td><input type="text" id="frm_input_captcha" name="frm_input_captcha"></td>
 									</tr>
 								</table>
 							</div>
@@ -4941,8 +5087,8 @@ case "reset":
 					</div>
 					<div class="col-md-2"></div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</body>
 </html>
 	<?php
@@ -5308,7 +5454,7 @@ case "updates":
 						}
 						do_update_progression_info_box("show", "", 0);
 						do_update_progression_info_box("download", "start", update_download_time);
-						$.get("./configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
+						$.get("configuration.php?function=do_update&version=" + encodeURI(version) + "&zip_link=" + encodeURI(zip_link) + "&md5_link=" + encodeURI(md5_link) +
 							"&update_progress_time=" + update_progress_time + simulate_query_part_download, function(data) {
 						})
 						.done(function(data) {
@@ -5321,7 +5467,7 @@ case "updates":
 								return;
 							}
 							do_update_progression_info_box("unzip", "start", unzip_time);
-							$.get("./update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
+							$.get("update.php?function=do_unzip" + simulate_query_part_unzip, function(data) {
 							})
 							.done(function(data) {
 								var return_array = JSON.parse(data);
@@ -5333,7 +5479,7 @@ case "updates":
 									return;
 								}
 								do_update_progression_info_box("changes", "start", changes_time);
-								$.get("./update.php?function=do_changes" + simulate_query_part_changes, function(data) {
+								$.get("update.php?function=do_changes" + simulate_query_part_changes, function(data) {
 								})
 								.done(function(data) {
 									var return_array = JSON.parse(data);
@@ -5379,19 +5525,19 @@ case "updates":
 				}
 
 			</script>
-			<div class="container-fluid" id="main_container">
+			<div id="main_container" class="container-fluid">
 				<div class="row infostring">
-					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Updates") . " - "  . get_variable("page_caption");?>
 					</div>
 				</div>
-				<form name="captions" method="post" action="<?php print basename(__FILE__);?>">
+				<form id="captions" name="captions" method="post" action="<?php print basename(__FILE__);?>">
 					<div class="row">
 						<div class="col-md-1">
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
@@ -5402,7 +5548,7 @@ case "updates":
 							</div>
 						</div>
 						<div class="col-md-5">
-							<div class="panel panel-default" id="table_left_top" style="padding: 0px;">
+							<div id="table_left_top" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="text-align: left; table-layout: fixed;">
 									<tr>
 										<th style="width: 70%;"><?php print get_text("Pending updates");?></th>
@@ -5435,7 +5581,7 @@ case "updates":
 	?>
 								</table>
 							</div>
-							<div class="panel panel-default" id="table_left_bottom" style="padding: 0px;">
+							<div id="table_left_bottom" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed text_black" style="text-align: left; table-layout: fixed;">
 								
 									<tr>
@@ -5457,7 +5603,7 @@ case "updates":
 										<td<?php print get_title_str(get_variable("release_file"));?>><?php print get_variable("release_file");?></td>
 									</tr>
 									<tr>
-										<td colspan=2 style="white-space: normal !important;">
+										<td style="white-space: normal !important;" colspan=2>
 											<?php print get_help_text("Update-hint", true);?>
 										</td>
 									</tr>
@@ -5465,7 +5611,7 @@ case "updates":
 		if (get_working_in_development_environement() && $new_updates) {
 	?>
 									<tr>
-										<td colspan=2 class="text_red_bold"><?php print get_text("SVN project files still exist. Update is only simulated.");?></td>
+										<td class="text_red_bold" colspan=2><?php print get_text("Version control files still exist. Update is only simulated.");?></td>
 									</tr>
 	<?php
 		}
@@ -5477,7 +5623,7 @@ case "updates":
 			$title_text = substr($title_text, 0, -2);
 	?>
 									<tr>
-										<td colspan=2 class="text_red_bold"><?php print get_text("For an update, write permission is missing for") . ":";?></td>
+										<td class="text_red_bold" colspan=2><?php print get_text("For an update, write permission is missing for") . ":";?></td>
 									</tr>
 									<tr>
 										<td<?php print get_title_str($title_text);?> colspan=2>
@@ -5506,7 +5652,7 @@ case "updates":
 		}
 	?>
 									<tr>
-										<td colspan=2 style="text-align: center;">
+										<td style="text-align: center;" colspan=2>
 											<button type="button" class="btn btn-xs btn-default" onClick="do_update('<?php print $release_list_array[$next_update][VERSION];?>', '<?php print $release_list_array[$next_update][ZIP_LINK];?>', '<?php print $release_list_array[$next_update][MD5SUM];?>');"<?php print $disabled_str;?>><?php print get_text("Start update");?></button>
 										</td>
 									</tr>
@@ -5514,7 +5660,7 @@ case "updates":
 							</div>
 						</div>
 						<div class="col-md-5">
-							<div class="panel panel-default" id="table_right" style="padding: 0px;">
+							<div id="table_right" class="panel panel-default" style="padding: 0px;">
 								<table class="table table-striped table-condensed" style="text-align: left;">
 									<tr style="height: 44px;">
 										<th><?php print get_text("Release notes");?></th>
@@ -5549,7 +5695,7 @@ case "updates":
 					</div>
 				</form>
 			</div>
-			<div class="modal fade" id="update_infobox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div id="update_infobox" class="modal fade" role="dialog" aria-labelledby="myModalLabel" tabindex="-1">
 				<div class="modal-dialog" style="width: 1000px;" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -5560,17 +5706,17 @@ case "updates":
 						</div>
 						<div id="update_infobox_body" class="modal-body text_black">
 							<div class="progress">
-								<div id="download_progressbar" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+								<div id="download_progressbar" class="progress-bar progress-bar-warning" style="width: 70%;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Downloading update");?>
 								</div>
 							</div>
 							<div class="progress">
-								<div id="unzip_progressbar" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+								<div id="unzip_progressbar" class="progress-bar progress-bar-warning" style="width: 70%;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Unpacking files");?>
 								</div>
 							</div>
 							<div class="progress">
-								<div id="changes_progressbar" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:10%;">
+								<div id="changes_progressbar" class="progress-bar progress-bar-warning" style="width: 10%;" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
 									<?php print get_text("Change database");?>
 								</div>
 							</div>
@@ -5617,6 +5763,7 @@ case "updates":
 	break;
 default:
 	set_session_expire_time("on");
+	$top_notice_str = "";
 	$top_notice_head = "";
 	if (!empty ($_GET['top_notice'])) {
 		$top_notice_str .= $_GET['top_notice'] . "<br>";
@@ -5627,23 +5774,13 @@ default:
 	if ($top_notice_str != "") {
 		$top_notice_head = get_text("Configuration");
 	}
-	$top_notice_log_str = substr($top_notice_log_str, 0, -2);
-	if (!empty ($_GET['top_notice_logstr'])) {
-		$top_notice_log_str .= $_GET['top_notice_logstr'];
-	}
-	if (!empty ($_POST['top_notice_logstr'])) {
-		$top_notice_log_str .= $_POST['top_notice_logstr'];
-	}
-	if (!empty ($top_notice_log_str)) {
-		do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, $top_notice_log_str, 0, "", "", "");
-	}
 	?>
 		<script>
 			show_infobox("<?php print $top_notice_head;?>", "<?php print $top_notice_str;?>");
 		</script>
-		<div class="container-fluid" id="main_container">
+		<div id="main_container" class="container-fluid">
 			<div class="row infostring">
-				<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
+				<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 					<?php print get_text("Configuration") . " - " . get_variable("page_caption");?>
 				</div>
 			</div>
@@ -5674,7 +5811,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=profile" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=profile');">
 											<?php print get_text("Edit My Profile");?>
 										</a>
 									</li>
@@ -5686,7 +5823,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=user_add" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=user_add');">
 											<?php print get_text("Add user");?>
 										</a>
 									</li>
@@ -5701,7 +5838,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a onclick="location.href='export.php?do_export=user';">
+										<a onclick="location.href='export.php?do_export=user';" style="white-space: nowrap;">
 											<?php print get_text("Export");?>
 										</a>
 									</li>
@@ -5709,7 +5846,7 @@ default:
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">	
 								<form action="import.php" method="post" enctype="multipart/form-data">
-									<input id="users_upload" name="file" type="file" class="file" data-show-preview="false">
+									<input type="file" id="users_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="users">
 									<script>
 										$("#users_upload").fileinput({
@@ -5735,7 +5872,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_audio");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=audio" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=audio');">
 											<?php print get_text("Alarm audio files");?>
 										</a>
 									</li>
@@ -5747,7 +5884,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_settings");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=settings" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=settings');">
 											<?php print get_text("Edit Settings");?>
 										</a>
 									</li>
@@ -5756,7 +5893,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_incident_names");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=incident_numbers" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=incident_numbers');">
 											<?php print get_text("Incident Numbers");?>
 										</a>
 									</li>
@@ -5765,7 +5902,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_api_settings");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=api" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=api');">
 											<?php print get_text("Application Interface");?>
 										</a>
 									</li>
@@ -5774,7 +5911,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_fixtexts");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=fixtext" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=fixtext');">
 											<?php print get_text("Message fixtexts");?>
 										</a>
 									</li>
@@ -5795,7 +5932,7 @@ default:
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">
 								<form action="import.php" method="post" enctype="multipart/form-data">
-									<input id="settings_upload" name="file" type="file" class="file" data-show-preview="false">
+									<input type="file" id="settings_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="settings">
 									<script>
 										$("#settings_upload").fileinput({
@@ -5824,7 +5961,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_common_status");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facilities_status_reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facilities_status_reset');">
 											<?php print get_text("Set facilities status to a common setting");?>
 										</a>
 									</li>
@@ -5836,7 +5973,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_category");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facility_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facility_types');">
 											<?php print get_text("Facility type");?>
 										</a>
 									</li>
@@ -5845,7 +5982,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_facilities_status_value");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=facility_status" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=facility_status');">
 											<?php print get_text("Facility Status");?>
 										</a>
 									</li>
@@ -5858,7 +5995,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("facility_presentation");?> class="nav nav-pills" class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_FACILITY'];?>" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_FACILITY'];?>');">
 											<?php print (get_text("Presentation"));?>
 										</a>
 									</li>
@@ -5880,8 +6017,8 @@ default:
 								</ul>
 							</div>
 							<div<?php print get_help_text_str("set_facilities_status_after_import");?> class="col-xs-6" style="padding: 4px;">	
-								<form action="import.php" method="post" enctype="multipart/form-data">
-									<input id="facilties_upload" name="file" type="file" class="file" data-show-preview="false">
+								<form method="post" action="import.php" enctype="multipart/form-data">
+									<input type="file" id="facilties_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="facilities">
 									<script>
 										$("#facilties_upload").fileinput({
@@ -5915,7 +6052,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_common_status");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_status_reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_status_reset');">
 											<?php print get_text("Set units status to a common setting");?>
 										</a>
 									</li>
@@ -5927,7 +6064,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_category");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_types');">
 											<?php print get_text("Unit type");?>
 										</a>
 									</li>
@@ -5936,7 +6073,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_units_status_value");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=unit_status" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=unit_status');">
 											<?php print get_text("Unit status");?>
 										</a>
 									</li>
@@ -5949,7 +6086,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("unit_presentation");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_UNIT'];?>" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=presentation_list&type_id=<?php print $GLOBALS['TYPE_UNIT'];?>');">	
 											<?php print (get_text("Presentation"));?>
 										</a>
 									</li>
@@ -5972,7 +6109,7 @@ default:
 							</div>
 							<div<?php print get_help_text_str("set_units_status_after_import");?> class="col-xs-6" style="padding: 4px;">	
 								<form action="import.php" method="post" enctype="multipart/form-data">
-									<input id="units_upload" name="file" type="file" class="file" data-show-preview="false">
+									<input type="file" id="units_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="units">
 									<script>
 										$("#units_upload").fileinput({
@@ -5992,7 +6129,7 @@ default:
 		}
 	}
 	?>
-<!--=========================================================================================================================================-->
+<!--=========================================================================================================================================
 	<?php
 	if (is_super() && false) {
 	?>
@@ -6035,7 +6172,7 @@ default:
 	<?php
 	}
 	?>
-<!--=========================================================================================================================================-->
+    =========================================================================================================================================-->
 	<?php
 	if (is_super()) {
 		$default_incident_types_file = "default_incident_types." . get_variable("_locale") . ".csv";
@@ -6055,7 +6192,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_incident_types");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=incident_types" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=incident_types');">
 											<?php print get_text("Incident types");?>
 										</a>
 									</li>
@@ -6089,7 +6226,7 @@ default:
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">
 								<form action="import.php" method="post" enctype="multipart/form-data">
-									<input id="incident-types_upload_file" name="file" type="file" class="file" data-show-preview="false">
+									<input type="file" id="incident-types_upload_file" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="incident-types">
 									<script>
 										$("#incident-types_upload_file").fileinput({
@@ -6124,7 +6261,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=synopsis" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=synopsis');">
 											<?php print get_text("Textblocks synopsis");?>
 										</a>
 									</li>
@@ -6133,7 +6270,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=description" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=description');">
 											<?php print get_text("Textblocks description");?>
 										</a>
 									</li>
@@ -6142,7 +6279,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=action" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=action');">
 											<?php print get_text("Textblocks action");?>
 										</a>
 									</li>
@@ -6151,7 +6288,7 @@ default:
 							<div class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=assign" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=assign');">
 											<?php print get_text("Textblocks assign");?>
 										</a>
 									</li>
@@ -6162,7 +6299,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=close" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=close');">
 											<?php print get_text("Textblocks incident close");?>
 										</a>
 									</li>
@@ -6171,7 +6308,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=log" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=log');">
 											<?php print get_text("Textblocks log");?>
 										</a>
 									</li>
@@ -6180,7 +6317,7 @@ default:
 							<div<?php print get_help_text_str("set_textblocks");?> class="col-xs-2">
 								<ul class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=textblocks&textblocks=message" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=textblocks&textblocks=message');">
 											<?php print get_text("Textblocks message");?>
 										</a>
 									</li>
@@ -6213,8 +6350,8 @@ default:
 								</ul>
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">
-								<form action="import.php" method="post" enctype="multipart/form-data">	
-									<input id="textblocks_upload_file" name="file" type="file" class="file" data-show-preview="false">
+								<form method="post" action="import.php" enctype="multipart/form-data">	
+									<input type="file" id="textblocks_upload_file" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="textblocks">
 									<script>
 										$("#textblocks_upload_file").fileinput({
@@ -6243,7 +6380,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_captions");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=captions" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=captions');">
 											<?php print get_text("Captions");?>
 										</a>
 									</li>
@@ -6252,7 +6389,7 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("set_hints");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=hints" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=hints');">
 											<?php print get_text("Hints");?>
 										</a>
 									</li>
@@ -6270,8 +6407,8 @@ default:
 								</ul>
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">	
-								<form action="import.php" method="post" enctype="multipart/form-data">	
-									<input id="captions_hints_upload" name="file" type="file" class="file" data-show-preview="false">
+								<form method="post" action="import.php" enctype="multipart/form-data">	
+									<input type="file" id="captions_hints_upload" name="file" class="file" data-show-preview="false">
 								<input type="hidden" name="function" value="captions">
 									<script>
 										$("#captions_hints_upload").fileinput({
@@ -6299,17 +6436,20 @@ default:
 						<div class="row">
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("db_optimize");?> class="nav nav-pills">
-									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=optimize" style="white-space: nowrap;">
-											<?php print get_text("Optimize Database");?>
-										</a>
+									<li role="presentation">	
+										<form id="do_optimize" name="do_optimize">
+											<input type="hidden" id="function" name="function" value="optimize">
+											<a style="white-space: nowrap;" onclick="send_configuration_form('do_optimize');">
+												<?php print get_text("Optimize Database");?>
+											</a>
+										</form>
 									</li>
 								</ul>
 							</div>
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("db_reset");?> class="nav nav-pills">
 									<li role="presentation">
-										<a href="<?php print basename(__FILE__);?>?function=reset" style="white-space: nowrap;">
+										<a style="white-space: nowrap;" onclick="goto_window('configuration.php?function=reset');">
 											<?php print get_text("Reset Database");?>
 										</a>
 									</li>
@@ -6318,7 +6458,7 @@ default:
 							<div class="col-xs-2">
 								<ul <?php print get_help_text_str("Updates");?> class="nav nav-pills">
 									<li role="presentation" onclick="$('#update_button').prop('disabled', true); $('#update_button').html('<?php print get_text("Wait");?>');">
-										<a id="update_button" href="<?php print basename(__FILE__);?>?function=updates" style="white-space: nowrap;">
+										<a id="update_button" style="white-space: nowrap;" onclick="goto_window('configuration.php?function=updates');">
 											<?php print get_text("Updates");?>
 										</a>
 									</li>

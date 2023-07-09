@@ -191,10 +191,10 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("action");?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_trigger_chars("action");?> + 0;
 			var ticket_id = <?php print $ticket_id;?> + 0;// + 0 prevent Syntax-Error if php-Variable contains "0"
 
-			function validate() {
+			function validate_action_form() {
 				var error_message = "";
 				var asof = moment($("#asof").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var datetime_now = "<?php print $datetime_now;?>";
@@ -253,12 +253,14 @@ default:
 									= new_infos_array['parked_form_data']['action_form_data'][ticket_id][key]['value'];
 							}
 						}
-						$("#frm_description").val(form_content['frm_description']);
-						$("#frm_unit").val(form_content['frm_unit']).change();
-						do_unlock_readonly("asof");
-						$("#asof").val(form_content['asof_textfield']);
-						set_textblock("", frm_description);
-						$("#frm_description").focus();
+						if (form_content['asof'] !== undefined) {
+							$("#frm_description").val(form_content['frm_description']);
+							$("#frm_unit").val(form_content['frm_unit']).change();
+							do_unlock_readonly("asof");
+							$("#asof").val(form_content['asof']);
+							set_textblock("", frm_description);
+							$("#frm_description").focus();
+						}
 					}
 				} catch (e) {
 				}
@@ -275,18 +277,15 @@ default:
 				});
 				$("#asof").data("DateTimePicker").minDate(moment($("#written").val(), "YYYY-MM-DD HH:mm:ss"));
 				set_textblock("", frm_description);
+				set_window_present("action");
 				<?php show_prevent_browser_back_button();?>
 				var change_situation_first_set = 0;
-
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
-					set_window_present("action");
-					$("#screen_id").val(new_infos_array['screen']['screen_id']);
-					screen_id_main = new_infos_array['screen']['screen_id'];
-
 					if (change_situation_first_set == 0) {
 						get_parked_form_data();
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						change_situation_first_set = 1;
 					}
 					if (
@@ -295,7 +294,7 @@ default:
 						($("#frm_description").val().length > parking_form_data_min_trigger_chars) && 
 						(parking_form_data_min_trigger_chars != 0)
 					) {
-						var new_form_data = $("#action_add_form").serializeArray();
+						var new_form_data = $("#action_form").serializeArray();
 						var action_form_data = [];
 						try {
 							action_form_data = new_infos_array['parked_form_data']['action_form_data'][ticket_id];
@@ -333,12 +332,12 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="action_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(data); action_form.reset(); do_lock_readonly('asof');" tabindex=5><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=4><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_action_form();" tabindex=4><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>

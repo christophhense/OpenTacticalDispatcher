@@ -260,7 +260,7 @@ default:
 				});
 			}
 
-			function validate() {
+			function validate_unit_form() {
 				if ($("#frm_mob_disp").prop("checked")) {
 					$("#frm_mobile").val(1);
 				} else {
@@ -295,7 +295,7 @@ default:
 
 			function save_and_copy_unit(add) {
 				if (add) {
-					if (validate()) {
+					if (validate_unit_form()) {
 						$.post("units.php", $("#units_add_form").serialize(), function(data) {
 						})
 						.done(function() {
@@ -309,7 +309,7 @@ default:
 						});	
 					}
 				} else {
-					if (validate()) {
+					if (validate_unit_form()) {
 						$.post("units.php", $("#units_edit_form").serialize(), function(data) {
 						})
 						.done(function() {
@@ -326,7 +326,7 @@ default:
 			}
 
 			function submit_form(unit_form) {
-				if (validate()) {
+				if (validate_unit_form()) {
 					send_form_with_post(unit_form);
 				}
 			}
@@ -831,10 +831,11 @@ default:
 						get_units();
 				});
 			}
-			set_window_present("units");
+			
 			$(document).ready(function() {
 				get_units();
 				show_to_top_button("<?php print get_text("To top");?>");
+				set_window_present("units");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;

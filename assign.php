@@ -474,7 +474,7 @@ default:
 
 			<?php print $array_receiving_str["facility_coordinates"];?>
 
-			function validate() {
+			function validate_assign_form() {
 				var error_message = "";
 				if (!(moment($("#dispatched").val(), "<?php print $moment_date_format;?>").isValid())) {
 					error_message += "<?php print get_text("Invalid dispatched datetime");?><br>";
@@ -714,7 +714,7 @@ default:
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=7><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="validate_assign_form();" tabindex=7><?php print get_text("Save");?></button>
 							</div>
 						</div>
 						<div style="margin-top: 20px;">

@@ -280,7 +280,7 @@ case "insert":
 			$query_facilities = "SELECT `handle` FROM `facilities` WHERE `id` = " . $facility_id;
 			$result_facilities = db_query($query_facilities, __FILE__, __LINE__);
 			$row_facs = db_fetch_assoc($result_facilities);
-			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, "", remove_nls($row_facs['handle']), $facility_id, "", "", "");
+			do_log($GLOBALS['LOG_FACILITY_INCIDENT_OPEN'], $ticket_id, 0, remove_nls($row_facs['handle']), $facility_id, "", "", "");
 		}
 	}
 	break;
@@ -347,7 +347,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("ticket_add");?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_trigger_chars("ticket_add");?> + 0;
 			var inc_num_array_0 = <?php print trim($inc_num_array[0]);?> + 0;
 			var severities = [];
 			var protocols = [];
@@ -360,7 +360,7 @@ default:
 		<?php print $incident_location_select_array["facility_address"];?>
 		<?php print $incident_location_select_array["facility_coordinates"];?>
 
-			function validate() {
+			function validate_ticket_add_form() {
 				var error_message = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemstart = moment($("#problemstart").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -472,7 +472,7 @@ default:
 				}
 			}
 
-			function do_reset_form() {
+			function do_reset_add_form() {
 				$("#ticket_add_form").trigger("reset");
 				$("#frm_severity").css({"background-color": "#0000FF"});	//Blue
 				do_lock_readonly("problemstart");
@@ -567,12 +567,12 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_form();" tabindex=13><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_add_form();" tabindex=13><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=12><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_add_form();" tabindex=12><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>

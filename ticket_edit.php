@@ -344,7 +344,7 @@ default:
 				});
 			}
 
-			function validate() {
+			function validate_ticket_edit_form() {
 				var error_message = "";
 				var scheduled = moment($("#scheduled_date").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
 				var problemstart = moment($("#problemstart").val(), "<?php print $moment_date_format;?>").format("YYYY-MM-DD HH:mm:ss");
@@ -482,7 +482,7 @@ default:
 				<?php } ?>
 			}
 
-			function do_reset_form() {
+			function do_reset_edit_form() {
 				var default_severity = <?php print $row['severity'];?> + 0;		//+0 against syntax error, in case of DB-row==null
 				document.ticket_edit_form.reset();
 				switch (default_severity) {
@@ -533,9 +533,9 @@ default:
 					sideBySide: true
 				});
 				$("#scheduled_date").data("DateTimePicker").minDate(moment($("#problemstart").val(), "<?php print $moment_date_format;?>"));
-				set_window_present("ticket_edit");
 				get_units();
 				get_actions();
+				set_window_present("ticket_edit");
 				<?php show_prevent_browser_back_button();?>
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
@@ -583,12 +583,12 @@ default:
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_form();" tabindex=18><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="do_reset_edit_form();" tabindex=18><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate();" tabindex=17><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_edit_form();" tabindex=17><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div style="margin-top: 20px;">

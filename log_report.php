@@ -98,7 +98,7 @@ default:
 		<script>
 			var new_infos_array = [];
 			var screen_id_main = 0;
-			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_time("log_report");?> + 0;
+			var parking_form_data_min_trigger_chars = <?php print get_parking_form_data_trigger_chars("log_report");?> + 0;
 
 			function send_data() {
 				if (log_form.frm_comment.value) {
