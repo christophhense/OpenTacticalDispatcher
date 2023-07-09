@@ -3120,6 +3120,7 @@ case "presentation_list_update":
 				$admin_edit_new = $_POST['admin_edit_new'];
 			}
 			$result_tab_new = insert_presentation_tab($type_id, $_POST['tab_name_new'], $visible_new, $add_tickets_new, $sort_new, $admin_edit_new, $datetime_now, $tab_list[0]["admin_can_add"]);
+			//additional parameters switch to new tab
 		}
 		$updated_tabs = 0;
 		$changed_tab_names_str = "";
@@ -3265,6 +3266,7 @@ case "presentation_list_update":
 		if ($log_str != "") {
 			do_log($GLOBALS['LOG_CONFIGURATION_EDIT'], 0, 0, get_text($log_str), 0, "", "", "");
 			print get_text($message_str) . "<br>";
+			//additional parameters switch to new tab
 		} else {
 			print get_text("Nothing to do!") . "<br>";
 		}
@@ -3508,7 +3510,7 @@ case "presentation_list":
 											</td>
 											<td style="text-align: center;">
 												<?php if ($tab_id > 4) { ?>
-												<span <?php if ($edit_disabled_str != "") {print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"window.location.href=('configuration.php?function=presentation_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+												<span <?php if ($edit_disabled_str != "") {print get_help_text_str("not_editable") . " style=\"color: grey;\"";} else {print "onclick=\"goto_window('configuration.php?function=presentation_tab&tab_id=" . $tab_id . "')\"";}?> class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 												<?php } ?>
 											</td>
 											<td style="text-align: center;" <?php if ($edit_disabled_str != "") print get_help_text_str("not_editable");?>>
