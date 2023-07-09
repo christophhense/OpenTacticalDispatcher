@@ -223,13 +223,13 @@ case "profile":
 						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());		
 						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
 //				}
-					send_configuration_form("frm_profile");
+					send_configuration_name_form(theForm);
 				}
 			}
 
 		</script>
 		<div class="container-fluid" id="main_container">
-			<form id="frm_profile" name="frm_profile">
+			<form id="own_profile_form" name="own_profile_form">
 				<input type="hidden" id="function" name="function" value="profile_update">
 				<input type="hidden" id="frm_id" name="frm_id" value="<?php print $_SESSION['user_id'];?>">
 				<input type="hidden" id="frm_hash" name="frm_hash" value="<?php print $row['password'];?>">
@@ -248,12 +248,12 @@ case "profile":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.frm_profile.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.own_profile_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate_profile(this.form);"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_profile(document.own_profile_form);"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
@@ -323,7 +323,7 @@ case "user_add":
 
 		</script>
 		<div class="container-fluid" id="main_container">
-			<form id="user_add_form" name="user_add_Form">
+			<form id="user_add_form" name="user_add_form">
 				<input type="hidden" id="function" name="function" value="user_insert">
 				<input type="hidden" id="frm_func" name="frm_func" value="a">
 				<input type="hidden" id="frm_hash" name="frm_hash" value="">
@@ -344,12 +344,12 @@ case "user_add":
 							<?php if (is_admin() || is_super()) { ?>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.user_add_Form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.user_add_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_add_Form);"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_add_form);"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<?php } ?>
@@ -766,7 +766,7 @@ case "audio_update":
 case "audio":
 	?>
 		<div class="container-fluid" id="main_container">
-			<form id="frm_audio_files" name="frm_audio_files" method="post" action="<?php print basename(__FILE__);?>">
+			<form id="audio_files_form" name="audio_files_form">
 				<input type="hidden" id="function" name="function" value="audio_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -786,12 +786,12 @@ case "audio":
 	?>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.frm_audio_files.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.audio_files_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_audio_files');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('audio_files_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1085,13 +1085,13 @@ case "incident_numbers":
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message)
 					return false;
 				} else {
-					send_configuration_form("inc_num_Form");
+					send_configuration_form("incident_number_form");
 				}
 			}
 
 		</script>
 		<div class="container-fluid" id="main_container">
-			<form id="inc_num_Form" name="inc_num_Form">
+			<form id="incident_number_form" name="incident_number_form">
 				<input type="hidden" id="function" name="function" value="incident_numbers_update">
 				<input type="hidden" id="do_db" name="do_db" value="true">
 				<input type="hidden" id="frm_do_nature" name="frm_do_nature" value=<?php print $do_nature;?>>
@@ -1110,7 +1110,7 @@ case "incident_numbers":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.inc_num_Form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.incident_number_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1273,13 +1273,13 @@ case "api":
 			if (error_message != "") {
 				show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 			} else {
-				send_configuration_form("frm_api_config");
+				send_configuration_form("api_config_form");
 			}
 		}
 
 		</script>
 		<div class="container-fluid" id="main_container">
-			<form id="frm_api_config" name="frm_api_config">
+			<form id="api_config_form" name="api_config_form">
 				<input type="hidden" id="function" name="function" value="api_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -1296,7 +1296,7 @@ case "api":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.frm_api_config.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.api_config_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1629,7 +1629,7 @@ case "facilities_status_reset":
 
 		</script>
 		<div id="main_container" class="container-fluid">
-			<form id="frm_def_status" name="frm_def_status">
+			<form id="set_facilities_common_status_form" name="set_facilities_common_status_form">
 				<input type="hidden" id="function" name="function" value="facilities_status_reset_update">
 				<div class="row infostring">
 					<div class="col-md-12" id="infostring_middle" style="text-align: center; margin-bottom: 10px;">
@@ -1646,7 +1646,7 @@ case "facilities_status_reset":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_def_status');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('set_facilities_common_status_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1751,7 +1751,7 @@ case "facility_types":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="facility_types" name="facility_types">
+			<form id="facility_types_form" name="facility_types_form">
 			<input type="hidden" id="function" name="function" value="facility_types_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -1768,12 +1768,12 @@ case "facility_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_types.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_types_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_types');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_types_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -1968,7 +1968,7 @@ case "facility_status":
 
 		</script>
 		<div id="main_container" class="container-fluid">
-			<form id="facility_status" name="facility_status">
+			<form id="facility_status_form" name="facility_status_form">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 						<?php print get_text("Facility status configuration") . " - "  . get_variable("page_caption");?>
@@ -1985,12 +1985,12 @@ case "facility_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_status.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.facility_status_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_status');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_status_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2316,7 +2316,7 @@ case "unit_status_reset":
 
 		</script>
 		<div id="main_container" class="container-fluid">
-			<form id="frm_def_status" name="frm_def_status">
+			<form id="set_units_common_status_form" name="set_units_common_status_form">
 				<input type="hidden" id="function" name="function" value="unit_status_reset_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -2333,7 +2333,7 @@ case "unit_status_reset":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('frm_def_status');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('set_units_common_status_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2438,7 +2438,7 @@ case "unit_types":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="unit_types" name="unit_types">
+			<form id="unit_types_form" name="unit_types_form">
 				<input type="hidden" id="function" name="function" value="unit_types_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -2455,12 +2455,12 @@ case "unit_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_types.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_types_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_types');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_types_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -2628,7 +2628,7 @@ case "unit_status":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="unit_status" name="unit_status">
+			<form id="unit_status_form" name="unit_status_form">
 				<input type="hidden" id="function" name="function" value="unit_status_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -2645,12 +2645,12 @@ case "unit_status":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_status.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.unit_status_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_status');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_status_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3454,7 +3454,7 @@ case "incident_types":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="incident_types" name="incident_types">
+			<form id="incident_types_form" name="incident_types_form">
 				<input type="hidden" id="function" name="function" value="incident_types_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -3471,12 +3471,12 @@ case "incident_types":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3762,7 +3762,7 @@ case "textblocks":
 		}
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="textblocks" name="textblocks">
+			<form id="textblocks_form" name="textblocks_form">
 				<input type="hidden" id="function" name="function" value="textblocks_update">
 				<input type="hidden" id="type" name="type" value="<?php print $_GET['textblocks'];?>">
 				<div class="row infostring">
@@ -3780,12 +3780,12 @@ case "textblocks":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -3992,7 +3992,7 @@ case "captions":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="captions" name="captions">
+			<form id="captions_form" name="captions_form">
 				<input type="hidden" id="function" name="function" value="captions_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -4009,12 +4009,12 @@ case "captions":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.captions.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onClick="document.captions_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('captions');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('captions_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4092,7 +4092,7 @@ case "hints":
 	if (is_super()) {
 	?>
 		<div id="main_container" class="container-fluid">
-			<form id="hints" name="hints">
+			<form id="hints_form" name="hints_form">
 				<input type="hidden" id="function" name="function" value="hints_update">
 				<div class="row infostring">
 					<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
@@ -4109,12 +4109,12 @@ case "hints":
 							</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onClick="document.hints.reset();"><?php print get_text("Reset");?></button>
+								<button type="button" class="btn btn-xs btn-default" onClick="document.hints_form.reset();"><?php print get_text("Reset");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('hints');"><?php print get_text("Save");?></button>
+								<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('hints_form');"><?php print get_text("Save");?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
@@ -4210,7 +4210,7 @@ case "reset":
 		ob_end_clean();
 	?>	
 		<div id="main_container" class="container-fluid">
-			<form id="frm_reset_db" name="frm_reset_db">
+			<form id="reset_form" name="reset_form">
 				<input type="hidden" id="function" name="function" value="do_reset">
 				<input type="hidden" id="frm_random_captcha" name="frm_random_captcha" value="<?php print $captcha;?>">
 				<div class="row infostring">
@@ -4228,12 +4228,12 @@ case "reset":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="document.frm_reset_db.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="document.reset_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('frm_reset_db');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('reset_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
@@ -4746,7 +4746,7 @@ case "updates":
 
 			</script>
 			<div id="main_container" class="container-fluid">
-				<form id="update" name="update">
+				<form id="update_form" name="update_form">
 					<div class="row infostring">
 						<div id="infostring_middle" class="col-md-12" style="text-align: center; margin-bottom: 10px;">
 							<?php print get_text("Updates") . " - "  . get_variable("page_caption");?>
@@ -5063,7 +5063,7 @@ default:
 								</ul>
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">	
-								<form action="import.php" method="post" enctype="multipart/form-data">
+								<form method="post" action="import.php" enctype="multipart/form-data">
 									<input type="file" id="users_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="users">
 									<script>
@@ -5149,7 +5149,7 @@ default:
 								</ul>
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">
-								<form action="import.php" method="post" enctype="multipart/form-data">
+								<form method="post" action="import.php" enctype="multipart/form-data">
 									<input type="file" id="settings_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="settings">
 									<script>
@@ -5290,7 +5290,7 @@ default:
 								</ul>
 							</div>
 							<div<?php print get_help_text_str("set_units_status_after_import");?> class="col-xs-6" style="padding: 4px;">	
-								<form action="import.php" method="post" enctype="multipart/form-data">
+								<form method="post" action="import.php" enctype="multipart/form-data">
 									<input type="file" id="units_upload" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="units">
 									<script>
@@ -5405,7 +5405,7 @@ default:
 								</ul>
 							</div>
 							<div class="col-xs-6" style="padding: 4px;">
-								<form action="import.php" method="post" enctype="multipart/form-data">
+								<form method="post" action="import.php" enctype="multipart/form-data">
 									<input type="file" id="incident-types_upload_file" name="file" class="file" data-show-preview="false">
 									<input type="hidden" name="function" value="incident-types">
 									<script>
@@ -5617,9 +5617,9 @@ default:
 							<div class="col-xs-2">
 								<ul<?php print get_help_text_str("db_optimize");?> class="nav nav-pills">
 									<li role="presentation">	
-										<form id="do_optimize" name="do_optimize">
+										<form id="optimize_form" name="optimize_form">
 											<input type="hidden" id="function" name="function" value="optimize">
-											<a style="white-space: nowrap;" onclick="send_configuration_form('do_optimize');">
+											<a style="white-space: nowrap;" onclick="send_configuration_form('optimize_form');">
 												<?php print get_text("Optimize Database");?>
 											</a>
 										</form>
