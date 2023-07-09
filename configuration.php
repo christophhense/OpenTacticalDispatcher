@@ -2850,12 +2850,12 @@ case "presentation_tab_update":
 			if ($message_str != "") {
 				switch ($type_id) {
 				case $GLOBALS['TYPE_FACILITY']:
-					$message_str = get_text("Edit custom facilities representation") . "<br>" . $top_notice_str;
-					$log_str = get_text("Edit custom facilities representation") . "  " . $top_notice_log_str;
+					$message_str = get_text("Edit custom facilities representation") . "<br>" . $message_str;
+					$log_str = get_text("Edit custom facilities representation") . "  " . $log_str;
 					break;
 				case $GLOBALS['TYPE_UNIT']:
-					$message_str = get_text("Edit custom units representation") . "<br>" . $top_notice_str;
-					$log_str = get_text("Edit custom units representation") . "  " . $top_notice_log_str;
+					$message_str = get_text("Edit custom units representation") . "<br>" . $message_str;
+					$log_str = get_text("Edit custom units representation") . "  " . $log_str;
 					break;
 				default:
 				}
