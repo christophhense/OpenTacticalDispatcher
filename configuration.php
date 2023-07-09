@@ -5213,7 +5213,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=facilities';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -5285,7 +5285,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=units';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -5400,7 +5400,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=nature';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -5525,7 +5525,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=textblocks';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
@@ -5582,7 +5582,7 @@ default:
 								<ul class="nav nav-pills">
 									<li role="presentation">
 										<a onclick="location.href='export.php?do_export=captions';" style="white-space: nowrap;">
-											<?php print (get_text("Export"));?>
+											<?php print get_text("Export");?>
 										</a>
 									</li>
 								</ul>
