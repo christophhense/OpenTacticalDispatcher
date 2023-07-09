@@ -204,15 +204,12 @@ case "profile":
 	?>
 		<script>
 
-			function validate_profile(theForm) {
-			//function validate_profile() {
+			function validate_profile() {
 				var error_message = "";
-				if (theForm.frm_passwd.value!=theForm.frm_passwd_confirm.value) {
-				//if ($("#frm_passwd").val() != $("#frm_passwd_confirm").val())) {
+				if ($("#frm_passwd").val() != $("#frm_passwd_confirm").val()) {
 					error_message += "<?php print get_text("Passwd and confirmation must match.");?><br>";
-				} else {
-					if ((theForm.frm_passwd.value.trim() == "") || (theForm.frm_passwd.value.trim().length < 6)) {
-					//if (($("#frm_passwd").val().trim() == "") || ($("#frm_passwd").val().trim().length < 6)) {
+				} else {	
+					if (($("#frm_passwd").val() == "") || ($("#frm_passwd").val().length < 6)) {
 						error_message += "<?php print get_text("Passwd length 6 or more is required.");?><br>";
 					}
 				}
@@ -220,16 +217,14 @@ case "profile":
 					show_infobox("<?php print get_text("Please correct the following and re-submit");?>", error_message);
 					return false;
 				} else {
-//					if(theForm.frm_passwd.value != "") {
-//						theForm.frm_hash.value = hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
-						theForm.frm_hash.value = ((theForm.frm_passwd.value.trim() == "!!!!!!!!") || (theForm.frm_passwd.value.trim() == ""))? "": hex_md5(theForm.frm_passwd.value.trim().toLowerCase());
-						//$("#frm_hash").val() = (($("#frm_passwd").val().trim() == "!!!!!!!!") || ($("#frm_passwd").val().trim() == ""))? "" : hex_md5($("#frm_passwd").val().trim().toLowerCase());
-						theForm.frm_passwd.value = theForm.frm_passwd_confirm.value = "";
-						//$("#frm_passwd").val() = $("#frm_passwd_confirm").val() = "";
-//				}
-					send_configuration_name_form(theForm);
-					//send_configuration_name_form("own_profile_form");
-					//else "Nothing to do!"
+					if (($("#frm_passwd").val() == "!!!!!!!!") || ($("#frm_passwd").val() == "")) {
+						$("#frm_hash").val("");
+					} else {
+						$("#frm_hash").val(hex_md5($("#frm_passwd").val().trim().toLowerCase()));
+					}
+					$("#frm_passwd").val("");
+					$("#frm_passwd_confirm").val("");
+					send_configuration_form("own_profile_form");
 				}
 			}
 
@@ -259,7 +254,7 @@ case "profile":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="validate_profile(document.own_profile_form);"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" onclick="validate_profile();"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 						</div>
