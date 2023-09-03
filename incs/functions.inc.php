@@ -549,7 +549,7 @@ function show_dispatch_text($ticket_id, $search, $last) {
 		</tr>
 		<tr>
 			<td style="text-align: left; width: 0%;"></td>
-			<th style="text-align: left; width: 100%;"><h5><strong style="white-space: nowrap;" class="big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
+			<th style="text-align: left; width: 100%;"><h5><strong style="white-space: nowrap;" class="very-big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
 			<td style="text-align: right; width: 0%;"></td>
 		</tr>
 		<?php print get_dispatch_message($ticket_id, "message_text", "print")[0];?>

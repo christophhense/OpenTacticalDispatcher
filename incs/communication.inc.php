@@ -871,6 +871,10 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 		get_variable("_api_prefix_reporting_channel_5_encdg"),
 		get_variable("_api_prefix_phone_encdg")
 	);
+	$ps_points_from_left = 40;
+	$ps_points_from_right = 45;	//max. right value 535pt
+	$ps_font_size_big = 12;
+	$ps_font_size_verybig = 15;
 	foreach ($report_channels as $destination_prefix) {
 		if (array_key_exists($destination_prefix, $addresses)) {
 			$batch_start_stop_settings = explode(",", get_variable("_api_batch_start_stop_setng"));
@@ -906,11 +910,11 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			"10 scalefont\n" .
+			$ps_font_size_big . " scalefont\n" .
 			"setfont\n" .
-			"50 800 moveto \n" .
+			$ps_points_from_left . " 799 moveto \n" .
 			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
-			"50 785 moveto \n" .
+			$ps_points_from_left . " 782 moveto \n" .
 			"(" . get_text("Incident dispatch system") . ") show\n" .
 			"480 800 moveto \n";
 		$text_postscript_last_part = " show\n" .
@@ -921,9 +925,9 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			"15 scalefont\n" .
+			$ps_font_size_verybig . " scalefont\n" .
 			"setfont\n" .
-			"50 760 moveto \n" .
+			$ps_points_from_left . " 755 moveto \n" .
 			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
 			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
@@ -932,17 +936,16 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			"10 scalefont\n" .
+			$ps_font_size_big . " scalefont\n" .
 			"setfont\n";
-		$i = 740;
+		$i = 731;
 		foreach ($text_lines_array as $key) {
-			$text_postscript_last_part .= "50 " . $i . " moveto\n" .
+			$text_postscript_last_part .= $ps_points_from_left . " " . $i . " moveto\n" .
 				"(" . $key . ") show\n";
-			$i = $i - 15;
+			$i = $i - 18;
 		}
-		$i = $i - 15;
-		$key = get_text("Printed at") . " " . date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'];
-		$text_postscript_last_part .= "50 " . $i . " moveto\n" . "(" . $key . ") show\n";
+		$text_postscript_last_part .= $ps_points_from_left . " " . $i . " moveto\n" . "(" . get_text("Printed at") . " " . 
+			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
 		$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
 			$subscriber_url = substr($key["address"], 8);
