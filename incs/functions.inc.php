@@ -799,20 +799,14 @@ function show_assigns($id, $ticket_or_unit) {
 		$output_str .= "<th>" . get_text("by") . "</th>";
 		$output_str .= "</tr>";
 //------------------------------------------------------------------------------------------------------------------------------
-		$day_part_log_time = "";
+		$log_time_array = array("", "");
 		$i = 0;
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
 //------------------------------------------------------------------------------------------------------------------------------
 			if ($i == 0) {
-				$temp = preg_split("/ /", $row['problemstart_i']); // date and time
-				if ($temp[0] == $day_part_log_time) {
-					$the_date = $temp[1];
-				} else {
-					$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['problemstart_i'])) . "</span><br> " . $temp[1];
-				$day_part_log_time = $temp[0];
-				}
+				$log_time_array = get_date_and_time_part($row['problemstart_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['problemstart_i']))) . ">" .
-					$the_date . "</td><td>" . get_text("Run Start") . "</td><td colspan=3></td></tr>\n";
+				$log_time_array[1] . "</td><td>" . get_text("Run Start") . "</td><td colspan=3></td></tr>\n";
 				$i++;
 			}
 //------------------------------------------------------------------------------------------------------------------------------
@@ -834,15 +828,9 @@ function show_assigns($id, $ticket_or_unit) {
 				if (is_datetime($row['dispatched_i'])) {
 					$dispatched_datetime_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['dispatched_i'])));
 				}
-				$the_date = "";
+				$log_time_array[1] = "";
 				if (is_datetime($row['dispatched'])) {
-					$temp = preg_split("/ /", $row['dispatched_i']);
-					if ($temp[0] == $day_part_log_time) {
-						$the_date = $temp[1];
-					} else {
-						$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['dispatched_i'])) . "</span><br>" . $temp[1];
-						$day_part_log_time = $temp[0];
-					}
+					$log_time_array = get_date_and_time_part($row['dispatched_i'], $log_time_array[0]);
 				}
 				$dispatched_diff_title_str = "";
 				if (is_datetime($row['problemstart_i']) && is_datetime($row['dispatched_i'])) {
@@ -854,22 +842,15 @@ function show_assigns($id, $ticket_or_unit) {
 					$comments_title_str = get_title_str(get_text("Comments") . ": " .$row['comments']);
 					$comments_str = breakspace(get_text("Comments") . ": " . html_entity_decode(remove_nls($row['comments'])), 30);
 				}
-//				$output_str .= "<tr><td colspan=5 style=\"background-color: black;\"></td></tr>\n";
-				$output_str .= "<tr><td" . $dispatched_datetime_title_str . ">" . $the_date . "</td><td" . $dispatched_diff_title_str . ">" . get_text("Dispatched") . "</td>" .
+				$output_str .= "<tr><td" . $dispatched_datetime_title_str . ">" . $log_time_array[1] . "</td><td" . $dispatched_diff_title_str . ">" . get_text("Dispatched") . "</td>" .
 					"<td" . get_title_str($row['name']) . "><nobr>" . remove_nls($row['handle']) . "</nobr></td><td" . $comments_title_str . "><div class='td-div'>" .
 					$comments_str . "</div></td><td>" . get_user_name($row['dispatching_user_id']) . "</td></tr>\n";
 			}
 //------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['responding'])) {
-				$temp = preg_split("/ /", $row['responding_i']);
-				if ($temp[0] == $day_part_log_time) {
-					$the_date = $temp[1];
-				} else {
-					$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['responding_i'])) . "</span><br>" . $temp[1];
-					$day_part_log_time = $temp[0];
-				}
+				$log_time_array = get_date_and_time_part($row['responding_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['responding_i']))) . ">" .
-					$the_date . "</td><td" . get_title_str(datetime_difference($row['problemstart_i'], $row['responding_i'])) . ">" .
+					$log_time_array[1] . "</td><td" . get_title_str(datetime_difference($row['problemstart_i'], $row['responding_i'])) . ">" .
 					get_text("Responding") . "</td><td" . get_title_str($row['name']) . "></td><td></td><td></td></tr>\n";
 			}
 //------------------------------------------------------------------------------------------------------------------------------
@@ -878,15 +859,8 @@ function show_assigns($id, $ticket_or_unit) {
 				if (is_datetime($row['on_scene_i'])) {
 					$on_scene_datetime_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['on_scene_i'])));
 				}
-				$the_date = "";
 				if (is_datetime($row['on_scene'])) {
-					$temp = preg_split("/ /", $row['on_scene_i']);
-					if ($temp[0] == $day_part_log_time) {
-						$the_date = $temp[1];
-					} else {
-						$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['on_scene_i'])) . "</span><br>" . $temp[1];
-						$day_part_log_time = $temp[0];
-					}
+					$log_time_array = get_date_and_time_part($row['on_scene_i'], $log_time_array[0]);
 				}
 				$on_scene_diff_title_str = "";
 				if (is_datetime($row['problemstart_i']) && is_datetime($row['on_scene_i'])) {
@@ -903,19 +877,14 @@ function show_assigns($id, $ticket_or_unit) {
 					$on_scene_title_str = get_title_str(get_text("On-Scene location") . ": " . $on_scene_facility_name_str . $row['on_scene_location']);
 					$on_scene_str = breakspace(get_text("On-Scene location") . ": " . $on_scene_facility_name_str .  $row['on_scene_location'], 30);
 				}
-				$output_str .= "<tr><td" . $on_scene_datetime_title_str . ">" . $the_date . "</td><td" . $on_scene_diff_title_str . ">" . get_text("On-scene") . "</td>" .
-					"<td" . get_title_str($row['name']) . "></td><td colspan=2" . $on_scene_title_str . "><div class='td-div'>" . $on_scene_str . "</div></td></tr>\n";
+				$output_str .= "<tr><td" . $on_scene_datetime_title_str . ">" . $log_time_array[1] . "</td><td" . $on_scene_diff_title_str . ">" . 
+					get_text("On-scene") . "</td>" . "<td" . get_title_str($row['name']) . "></td><td colspan=2" . $on_scene_title_str . "><div class='td-div'>" . 
+					$on_scene_str . "</div></td></tr>\n";
 			}
 //------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['u2fenr'])) {
-				$temp = preg_split("/ /", $row['u2fenr_i']);
-				if ($temp[0] == $day_part_log_time) {
-					$the_date = $temp[1];
-				} else {
-					$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['u2fenr_i'])) . "</span><br>" . $temp[1];
-					$day_part_log_time = $temp[0];
-				}
-				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['u2fenr_i']))) . ">" . $the_date . "</td><td" .
+				$log_time_array = get_date_and_time_part($row['u2fenr_i'], $log_time_array[0]);
+				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['u2fenr_i']))) . ">" . $log_time_array[1] . "</td><td" .
 					get_title_str(datetime_difference($row['problemstart_i'], $row['u2fenr_i'])) . ">" . get_text("Fac en-route") . "</td><td" .
 					get_title_str($row['name']) . "></td><td><td></td></tr>\n";
 			}
@@ -925,15 +894,8 @@ function show_assigns($id, $ticket_or_unit) {
 				if (is_datetime($row['u2farr_i'])) {
 					$facility_arrived_datetime_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['u2farr_i'])));
 				}
-				$the_date = "";
 				if (is_datetime($row['u2farr'])) {
-					$temp = preg_split("/ /", $row['u2farr_i']);
-					if ($temp[0] == $day_part_log_time) {
-						$the_date = $temp[1];
-					} else {
-						$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['u2farr_i'])) . "</span><br>" . $temp[1];
-						$day_part_log_time = $temp[0];
-					}
+					$log_time_array = get_date_and_time_part($row['u2farr_i'], $log_time_array[0]);
 				}
 				$facility_arrived_diff_title_str = "";
 				if (is_datetime($row['problemstart_i']) && is_datetime($row['u2farr_i'])) {
@@ -950,21 +912,16 @@ function show_assigns($id, $ticket_or_unit) {
 					$receiving_title_str = get_title_str(wordwrap(get_text("Receiving location") . ": " . $receiving_facility_name_str . $row['receiving_location']));
 					$receiving_str = breakspace(get_text("Receiving location") . ": " . $receiving_facility_name_str . $row['receiving_location'], 30);
 				}
-				$output_str .= "<tr><td" . $facility_arrived_datetime_title_str . ">" . $the_date . "</td><td" . $facility_arrived_diff_title_str . ">" . get_text("Fac arr") . "</td>" .
-					"<td" . get_title_str($row['name']) . "></td><td colspan=2" . $receiving_title_str . "><div class='td-div'>" . $receiving_str . "</div></td></tr>\n";
+				$output_str .= "<tr><td" . $facility_arrived_datetime_title_str . ">" . $log_time_array[1] . "</td><td" . $facility_arrived_diff_title_str . ">" . 
+					get_text("Fac arr") . "</td>" . "<td" . get_title_str($row['name']) . "></td><td colspan=2" . $receiving_title_str . "><div class='td-div'>" . 
+					$receiving_str . "</div></td></tr>\n";
 			}
 //------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['clear'])) {
-				$temp = preg_split("/ /", $row['clear_i']);
-				if ($temp[0] == $day_part_log_time) {
-					$the_date = $temp[1];
-				} else {
-					$the_date = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['clear_i'])) . "</span><br>" . $temp[1];
-					$day_part_log_time = $temp[0];
-				}
-				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['clear_i']))) . ">" . $the_date . "</td><td" .
-					get_title_str(datetime_difference($row['problemstart_i'], $row['clear_i'])) . ">" . get_text("Clear") . "</td><td" .get_title_str($row['name']) .
-					"></td><td></td><td></td></tr>\n";
+				$log_time_array = get_date_and_time_part($row['clear_i'], $log_time_array[0]);
+				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['clear_i']))) . ">" . $log_time_array[1] . 
+					"</td><td" . get_title_str(datetime_difference($row['problemstart_i'], $row['clear_i'])) . ">" . get_text("Clear") . "</td><td" . 
+					get_title_str($row['name']) . "></td><td></td><td></td></tr>\n";
 			}
 //------------------------------------------------------------------------------------------------------------------------------
 			if (($start_miles != "") || ($on_scene_miles != "") || ($end_miles != "")) {
@@ -1023,23 +980,17 @@ function show_actions($ticket_id, $ticket_report) {
 
 	$result = db_query($query, __FILE__, __LINE__);
 	if ((db_num_rows($result)) > 0) {
-		$day_part_log_time = "";
+		$log_time_array = array("", "");
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
 			if ($ticket_report) {
 				$onclick_str = "";
 			} else {
 				$onclick_str = " onclick=\"location.href='action.php?back=ticket&ticket_id=" . $ticket_id . "&action_id=" . $row['action_id'] . "&function=edit'\"";
 			}
-			$temp_date_time = preg_split("/ /", $row['action_updated']);
-			if ($temp_date_time[0] == $day_part_log_time) {
-				$log_date_time_str = $temp_date_time[1];
-			} else {
-				$log_date_time_str = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['action_updated'])) . "</span><br> " . $temp_date_time[1];
-				$day_part_log_time = $temp_date_time[0];
-			}
+			$log_time_array = get_date_and_time_part($row['action_updated'], $log_time_array[0]);
 	?>
 	<tr<?php print $onclick_str;?>>
-		<td<?php print get_title_str(date(get_variable("date_format"), strtotime($row['action_updated'])) . $click_to_edit_str);?> nowrap><?php print $log_date_time_str;?></td>
+		<td<?php print get_title_str(date(get_variable("date_format"), strtotime($row['action_updated'])) . $click_to_edit_str);?> nowrap><?php print $log_time_array[1];?></td>
 		<td></td>
 		<td<?php print get_title_str($row['unit_name'] . $click_to_edit_str);?>><?php print remove_nls($row['unit_handle']);?></td>
 		<td<?php print get_title_str($row['action_description'] . "  " . get_text("Written") . ": " . date(get_variable("date_format"), strtotime($row['action_date'])) . $click_to_edit_str);?>>
@@ -1090,15 +1041,9 @@ function show_ticket_log($ticket_id) {
 		<th style="text-align: left;"><nobr><?php print get_text("by");?></nobr></th>
 	</tr>
 	<?php
-	$day_part_log_time = "";
+	$log_time_array = array("", "");
 	while ($row = stripslashes_deep(db_fetch_assoc($result))) {
-		$temp_log_time = preg_split("/ /", $row['datetime']);
-		if ($temp_log_time[0] == $day_part_log_time) {
-			$log_date_time = $temp_log_time[1];
-		} else {
-			$log_date_time = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['datetime'])) . "</span><br> " . $temp_log_time[1];
-			$day_part_log_time = $temp_log_time[0];
-		}
+		$log_time_array = get_date_and_time_part($row['datetime'], $log_time_array[0]);
 		if ($row['log_text']) {
 			$log_text_title_str = get_title_str($row['log_text']);
 			$log_text_str = breakspace(remove_nls($row['log_text']), 30);
@@ -1108,7 +1053,7 @@ function show_ticket_log($ticket_id) {
 		}
 		?>
 		<tr>
-			<td<?php print get_nowrap_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print $log_date_time;?></td>
+			<td<?php print get_nowrap_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print $log_time_array[1];?></td>
 			<td<?php print get_nowrap_title_str($types[$row['code']]);?>><?php print $types[$row['code']];?></td>
 			<td<?php print get_nowrap_title_str(remove_nls($row['unit_name']));?>><nobr><?php print remove_nls($row['unit_handle']);?></nobr></td>
 			<td<?php print $log_text_title_str;?>><div class="td-div"><?php print $log_text_str;?></div></td>
@@ -1238,15 +1183,9 @@ function show_log_report($function, $filter, $start_date, $end_date, $custom_whe
 		<th style="text-align: left; width: 5%;"><nobr><?php print get_text("by");?></nobr></th>
 	</tr>
 	<?php
-		$day_part_log_time = "";
+		$log_time_array = array("", "");
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
-			$temp_log_time = preg_split("/ /", $row['datetime']);
-			if ($temp_log_time[0] == $day_part_log_time) {
-				$log_date_time = $temp_log_time[1];
-			} else {
-				$log_date_time = "<span style='text-decoration: underline;'>" . date(get_variable("date_format_date_only"), strtotime($row['datetime'])) . "</span><br> " . $temp_log_time[1];
-				$day_part_log_time = $temp_log_time[0];
-			}
+			$log_time_array = get_date_and_time_part($row['datetime'], $log_time_array[0]);
 			$br_str = "";
 			if ($row['unit_name'] || $row['facility_name']) {
 				if (!empty ($row['unit_name']) && !empty ($row['facility_name'])) {
@@ -1261,7 +1200,7 @@ function show_log_report($function, $filter, $start_date, $end_date, $custom_whe
 			}
 	?>
 	<tr>
-		<td class="td-div"<?php print get_nowrap_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print $log_date_time;?></td>
+		<td class="td-div"<?php print get_nowrap_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><?php print $log_time_array[1];?></td>
 		<td class="td-div"<?php print get_nowrap_title_str(remove_nls($types[$row['code']]));?>><?php print $types[$row['code']];?></td>	
 		<td class="td-div"<?php print get_nowrap_title_str(remove_nls($row['incident_name']));?>><?php ($row['incident_name'] != "")? print $row['incident_name'] : "";?></td>
 		<td class="td-div"<?php print $unit_facility_title_str;?>><?php print remove_nls($row['unit_handle']) . "" . $br_str . remove_nls($row['facility_handle']);?></td>
@@ -3848,6 +3787,14 @@ function set_database_timezone() {
 	$mins -= $hrs * 60;
 	$offset = sprintf('%+d:%02d', $hrs * $sgn, $mins);
 	db_query("SET time_zone='" . $offset . "';", __FILE__, __LINE__);
+}
+
+function get_date_and_time_part($date_and_time, $day_part) {
+	$result = preg_split("/ /", $date_and_time);
+	if ($result[0] != $day_part) {
+		$result[1] = "<u>" . date(get_variable("date_format_date_only"), strtotime($date_and_time)) . "</u><br>" . $result[1];
+	}
+	return $result;
 }
 
 //====== titles

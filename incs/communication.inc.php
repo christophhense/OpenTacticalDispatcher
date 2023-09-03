@@ -553,7 +553,7 @@ function show_communication_table_left() {
 
 	$result = db_query($query, __FILE__, __LINE__);
 	if (db_num_rows($result)) {
-		$day_part_log_time = null;
+		$log_time_array = array("", "");
 		$i = 0;
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
 			$unit_id = 0;
@@ -578,13 +578,7 @@ function show_communication_table_left() {
 			if ($unit_dispached_array[0]) {
 				$unit_dispached = true;
 			}
-			$temp_log_time = preg_split("/ /", $row['datetime']);
-			if ($temp_log_time[0] == $day_part_log_time) {
-				$log_date_time = $temp_log_time[1];
-			} else {
-				$log_date_time = "<u>" . date(get_variable("date_format_date_only"), strtotime($row['datetime'])) . "</u><br> " . $temp_log_time[1];
-				$day_part_log_time = $temp_log_time[0];
-			}
+			$log_time_array = get_date_and_time_part($row['datetime'], $log_time_array[0]);
 			if (($row['api_log_cleared_datetime'] == null) || ($row['api_log_cleared_user'] == null)) {
 				$button_type = $row['code'];
 			} else {
@@ -719,7 +713,7 @@ function show_communication_table_left() {
 			}
 	?>
 		<tr style="height: 44px;">
-			<td <?php print get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><div<?php print $severity_blink_str;?> style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $log_date_time;?></div></td>
+			<td <?php print get_title_str(date(get_variable("date_format"), strtotime($row['datetime'])));?>><div<?php print $severity_blink_str;?> style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $log_time_array[1];?></div></td>
 			<td <?php print get_title_str($types[$row['code']]);?>><div<?php print $severity_blink_str;?> style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $types[$row['code']];?></div></td>
 			<td <?php print get_title_str($unit_name);?>><div<?php print $severity_blink_str;?> style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><nobr><?php print $unit_handle;?></nobr></div></td>
 			<td <?php print $done_title_str;?>><div style='overflow: visible; border-top: 0px;'><?php print $action_button;?></div></td>
@@ -802,15 +796,9 @@ function show_communication_table_right() {
 
 	$result = db_query($query, __FILE__, __LINE__);
 	if (db_num_rows($result)) {
-		$day_part_log_time = null;
+		$log_time_array = array("", "");
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
-			$temp_log_time = preg_split("/ /", $row['api_log_datetime']);
-			if ($temp_log_time[0] == $day_part_log_time) {
-				$log_date_time = $temp_log_time[1];
-			} else {
-				$log_date_time = "<u>" . date(get_variable("date_format_date_only"), strtotime($row['api_log_datetime'])) . "</u><br> " . $temp_log_time[1];
-				$day_part_log_time = $temp_log_time[0];
-			}
+			$log_time_array = get_date_and_time_part($row['api_log_datetime'], $log_time_array[0]);
 			if ($row['api_log_unit_id'] > 0) {
 				$unit_name = $row['unit_name'];
 				$unit_handle = remove_nls($row['unit_handle']);
@@ -824,7 +812,7 @@ function show_communication_table_right() {
 			}
 	?>
 		<tr style="height: 44px;">
-			<td <?php print get_title_str(date(get_variable("date_format"), strtotime($row['api_log_datetime'])));?>><div style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $log_date_time;?></div></td>
+			<td <?php print get_title_str(date(get_variable("date_format"), strtotime($row['api_log_datetime'])));?>><div style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $log_time_array[1];?></div></td>
 			<td <?php print get_title_str($types[$row['api_log_code']]);?>><div style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $types[$row['api_log_code']];?></div></td>
 			<td <?php print get_title_str($unit_name);?>><div style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><nobr><?php print $unit_handle;?></nobr></div></td>
 		  	<td <?php print get_title_str($row['api_log_destination']);?>><div style="overflow: hidden; text-overflow: ellipsis; border-top: 0px;"><?php print $destination;?></div></td>

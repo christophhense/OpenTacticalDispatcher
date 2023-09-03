@@ -1,4 +1,4 @@
-@version 22.10.1
+@version 23.09.1
 
 * Tested platforms
 
@@ -13,10 +13,10 @@
 	- Ubuntu 22.04 LTS
 		- Database:      10.6.12-MariaDB
 		- Webserver:     Apache/2.4.52
-		- PHP:           8.2.4
+		- PHP:           8.2.10
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 112.0, Zoom: 120%
-						 Chromium 112.0.5615.49, Zoom 125%
+		- Browser:       Firefox 117.0, Zoom: 120%
+						 Chromium 116.0.5845.140, Zoom 125%
 
 Activities sorted by application function.
 
@@ -40,6 +40,8 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		Change PHPMailer version to 6.8.0
 		Change network-printer font from Courier to Helvetica
+	CODE
+		Preparation of display date and time in function get_date_and_time_part()
 * Ticket - new
 	BUGFIX
 		Fix SQL-Error in logging facility assignment
@@ -64,6 +66,8 @@ Activities sorted by application function.
 	CHANGE
 		Remove href
 		postMessage outsourced to functions
+	CODE
+		Preparation of display date and time in function get_date_and_time_part()
 * Ticket - close
 	CHANGE
 		Form submit with ajax
@@ -94,6 +98,8 @@ Activities sorted by application function.
 	CHANGE
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
+	CODE
+		Preparation of display date and time in function get_date_and_time_part()
 * Units - overview
 	BUGFIX
 		Allowing overflow at too much types
@@ -147,6 +153,8 @@ Activities sorted by application function.
 		Rename form to reports_form
 		postMessage outsourced to functions
 		Get caption from Log report into <table>
+	CODE
+		Preparation of display date and time in function get_date_and_time_part()
 * Settings - overview
 	CHANGE
 		cancel-button switched to function goto_window
