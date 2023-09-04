@@ -1207,18 +1207,19 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 				break;
 			case "U":
 
-				$query_u = "SELECT  `handle` FROM `assigns` `a` " .
-					"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " .
-					"WHERE `a`.`ticket_id` = " . $ticket_id . " " .
-					"AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' " .
-					"ORDER BY `handle` ASC;";
+				$query_u = "SELECT `r`.`handle` AS `unit_handle`, `r`.`name` AS `unit_name`, `a`.`dispatched`, `a`.`responding`, " . 
+					"`a`.`on_scene`, `a`.`u2fenr`, `a`.`u2farr`, `a`.`receiving_location`, `f`.`handle` AS `facility_handle`, " . 
+					"`f`.`name` AS `facility_name`, `f`.`street` AS `facility_street`, `f`.`city` AS `facility_city` FROM `assigns` `a` " . 
+					"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " . 
+					"LEFT JOIN `facilities` `f` ON (`a`.`receiving_facility_id` = `f`.`id`) " . 
+					"WHERE `a`.`ticket_id` = " . $ticket_id . " AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' ORDER BY `a`.`dispatched` ASC";
 
 				$result_u = db_query($query_u, __FILE__, __LINE__);
 				if (db_num_rows($result_u) > 0) {
 					$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
 					$text = "";
 					while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-						$text .= remove_nls($u_row['handle']) . ", ";
+						$text .= remove_nls($u_row['unit_handle']) . ", ";
 					}
 					$text = substr($text, 0, -2);
 				}
