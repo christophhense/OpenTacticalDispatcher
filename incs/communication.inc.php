@@ -871,8 +871,11 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 		get_variable("_api_prefix_reporting_channel_5_encdg"),
 		get_variable("_api_prefix_phone_encdg")
 	);
+	/*Paper size
+	DIN A4	595 x 842
+	Letter	612 x 792*/
 	$ps_points_from_left = 40;
-	$ps_points_from_right = 45;	//max. right value 535pt
+	$ps_points_from_right = 40;
 	$ps_font_size_big = 12;
 	$ps_font_size_verybig = 15;
 	foreach ($report_channels as $destination_prefix) {
@@ -1207,8 +1210,8 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 				break;
 			case "U":
 
-				$query_u = "SELECT `r`.`handle` AS `unit_handle`, `r`.`name` AS `unit_name`, `a`.`dispatched`, `a`.`responding`, " . 
-					"`a`.`on_scene`, `a`.`u2fenr`, `a`.`u2farr`, `a`.`receiving_location`, `f`.`handle` AS `facility_handle`, " . 
+				$query_u = "SELECT `r`.`handle` AS `unit_handle`, `r`.`name` AS `unit_name`, `a`.`dispatched`, `a`.`responding`, `a`.`on_scene`, " . 
+					"`a`.`u2fenr`, `a`.`u2farr`, `a`.`receiving_facility_id`, `a`.`receiving_location`, `f`.`handle` AS `facility_handle`, " . 
 					"`f`.`name` AS `facility_name`, `f`.`street` AS `facility_street`, `f`.`city` AS `facility_city` FROM `assigns` `a` " . 
 					"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " . 
 					"LEFT JOIN `facilities` `f` ON (`a`.`receiving_facility_id` = `f`.`id`) " . 
