@@ -40,6 +40,7 @@ Activities sorted by application function.
 		postMessage outsourced to functions
 		Change PHPMailer version to 6.8.0
 		Change network-printer font from Courier to Helvetica
+		Set "handle" ranged right on network-printer
 	CODE
 		Preparation of display date and time in function get_date_and_time_part()
 * Ticket - new

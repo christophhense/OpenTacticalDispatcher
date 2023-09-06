@@ -874,8 +874,8 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	/*Paper size
 	DIN A4	595 x 842
 	Letter	612 x 792*/
-	$ps_points_from_left = 40;
-	$ps_points_from_right = 40;
+	$ps_pt_align_left = 40;
+	$ps_pt_align_right = 545;
 	$ps_font_size_big = 12;
 	$ps_font_size_verybig = 15;
 	foreach ($report_channels as $destination_prefix) {
@@ -915,13 +915,11 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"/Helvetica-ISOLatin1 exch definefont\n" .
 			$ps_font_size_big . " scalefont\n" .
 			"setfont\n" .
-			$ps_points_from_left . " 799 moveto \n" .
+			$ps_pt_align_left . " 799 moveto \n" .
 			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
-			$ps_points_from_left . " 782 moveto \n" .
-			"(" . get_text("Incident dispatch system") . ") show\n" .
-			"480 800 moveto \n";
-		$text_postscript_last_part = " show\n" .
-			"/Helvetica-Bold findfont\n" .
+			$ps_pt_align_left . " 782 moveto \n" .
+			"(" . get_text("Incident dispatch system") . ") show\n";
+		$text_postscript_last_part = "/Helvetica-Bold findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
 			"/Encoding ISOLatin1Encoding def\n" .
@@ -930,7 +928,7 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"/Helvetica-ISOLatin1 exch definefont\n" .
 			$ps_font_size_verybig . " scalefont\n" .
 			"setfont\n" .
-			$ps_points_from_left . " 755 moveto \n" .
+			$ps_pt_align_left . " 755 moveto \n" .
 			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
 			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
@@ -943,16 +941,23 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"setfont\n";
 		$i = 731;
 		foreach ($text_lines_array as $key) {
-			$text_postscript_last_part .= $ps_points_from_left . " " . $i . " moveto\n" .
+			$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n" .
 				"(" . $key . ") show\n";
 			$i = $i - 18;
 		}
-		$text_postscript_last_part .= $ps_points_from_left . " " . $i . " moveto\n" . "(" . get_text("Printed at") . " " . 
+		$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n(" . get_text("Printed at") . " " . 
 			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
 		$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
+			$text_postscript_subscriber_part = "/rightMargin " . $ps_pt_align_right . " def\n" . 
+				"/yPosition 799 def\n" . 
+				"/myString (" . $key["handle"] . ") def\n" . 
+				"myString dup stringwidth pop\n" . 
+				"rightMargin exch sub\n" . 
+				"yPosition moveto show\n";
 			$subscriber_url = substr($key["address"], 8);
-			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ")" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
+			$subscriber_message = mb_convert_encoding($text_postscript_first_part . $text_postscript_subscriber_part . 
+				$text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
 			$result = do_print($subscriber_url, $subscriber_message);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
