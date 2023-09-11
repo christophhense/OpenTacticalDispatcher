@@ -949,15 +949,9 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
 		$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
-			$text_postscript_subscriber_part = "/rightMargin " . $ps_pt_align_right . " def\n" . 
-				"/yPosition 799 def\n" . 
-				"/myString (" . $key["handle"] . ") def\n" . 
-				"myString dup stringwidth pop\n" . 
-				"rightMargin exch sub\n" . 
-				"yPosition moveto show\n";
 			$subscriber_url = substr($key["address"], 8);
-			$subscriber_message = mb_convert_encoding($text_postscript_first_part . $text_postscript_subscriber_part . 
-				$text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
+			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
+				$ps_pt_align_right . " exch sub\n799 moveto show\n" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
 			$result = do_print($subscriber_url, $subscriber_message);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
