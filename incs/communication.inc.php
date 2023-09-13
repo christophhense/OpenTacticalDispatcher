@@ -1056,11 +1056,12 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 		break;
 	default:
 	}
-	$pre_delimiter = $mid_delimiter = $post_delimiter = "";
+	$pre_delimiter = $pre_delimiter2 = $mid_delimiter = $post_delimiter = "";
 	switch ($text_type) {
 	case "hypertext":
-		$pre_delimiter = "<tr><td></td><td class='big'>";
-		$mid_delimiter = "";
+		$pre_delimiter = "<tr><td></td><td colspan=5 class='big'>";
+		$pre_delimiter2 = "<tr><td></td><td>";
+		$mid_delimiter = "</td><td>";
 		$post_delimiter = "</td><td></td></tr>";
 		break;
 	case "postscript":
@@ -1227,13 +1228,55 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 					"WHERE `a`.`ticket_id` = " . $ticket_id . " AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' ORDER BY `a`.`dispatched` ASC";
 
 				$result_u = db_query($query_u, __FILE__, __LINE__);
-				if (db_num_rows($result_u) > 0) {
-					$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
-					$text = "";
-					while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-						$text .= remove_nls($u_row['unit_handle']) . ", ";
+				if ($text_type != "hypertext") {
+					if (db_num_rows($result_u) > 0) {
+						$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
+						$text = "";
+						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+							$text .= remove_nls($u_row['unit_handle']) . ", ";
+						}
+						$text = substr($text, 0, -2);
 					}
-					$text = substr($text, 0, -2);
+				} else {
+					if (db_num_rows($result_u) > 0) {
+						$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
+							get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
+							get_text("Receiving location") . $post_delimiter;
+						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+							$text .= $pre_delimiter2 . remove_nls($u_row['unit_handle']) . "</td><td style='text-align: center;'>";
+							$text .= remove_nls(date("H:i:s", strtotime($u_row['dispatched']))) . "</td><td style='text-align: center;'>";
+							$current_status = $current_time = $current_receiving_location = "";
+							if (is_datetime($u_row['dispatched'])) {
+								$current_status = get_text("Dispatched");
+								$current_time = date("H:i:s", strtotime($u_row['dispatched']));
+							}
+							if (is_datetime($u_row['responding'])) {
+								$current_status = get_text("Responding");
+								$current_time = date("H:i:s", strtotime($u_row['responding']));
+							}
+							if (is_datetime($u_row['on_scene'])) {
+								$current_status = get_text("On-scene");
+								$current_time = date("H:i:s", strtotime($u_row['on_scene']));
+							}
+							if (is_datetime($u_row['u2fenr'])) {
+								$current_status = get_text("Fac en-route");
+								$current_time = date("H:i:s", strtotime($u_row['u2fenr']));
+							}
+							if (is_datetime($u_row['u2farr'])) {
+								$current_status = get_text("Fac arr");
+								$current_time = date("H:i:s", strtotime($u_row['u2farr']));
+							}
+							if ($u_row['receiving_facility_id'] > 0) {
+								$current_receiving_location = $u_row['facility_handle'] . " " . $u_row['facility_street'] . " " . $u_row['facility_city'];
+							} else {
+								$current_receiving_location = $u_row['receiving_location'];
+							}
+							$text .= remove_nls($current_status) . "</td><td style='text-align: center;'>";
+							$text .= remove_nls($current_time) . $mid_delimiter;
+							$text .= remove_nls($current_receiving_location) . $post_delimiter;
+						}
+					}
+					//$text = "";
 				}
 				unset ($result_u);
 				break;
@@ -1253,12 +1296,18 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 					$_SESSION[$err_str] = true;
 				}
 			}
-			$text = substr($text, $text_start[$i], $text_chars[$i]);
+			if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
+				$text = substr($text, $text_start[$i], $text_chars[$i]);
+			}
 			if ($short_message) {
 				$message_text .= $text . " ";
 			} else {
 				if (!$field_empty) {
-					$message_text .= $pre_delimiter . html_entity_decode($caption) . $text . $post_delimiter;
+					if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
+						$message_text .= $pre_delimiter . html_entity_decode($caption) . $text . $post_delimiter;
+					} else {
+						$message_text .= $text;
+					}
 				}
 			}
 		}

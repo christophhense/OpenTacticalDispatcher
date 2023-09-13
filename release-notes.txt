@@ -37,7 +37,9 @@ Activities sorted by application function.
 * Ticket - update
 	NONE
 * Ticket - disposition print
-	NONE
+	CHANGE
+		Smaller line spacing
+		Attached table of assigned units with additional information instead of comma separated list
 * Ticket - report
 	NONE
 * Ticket - close

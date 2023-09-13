@@ -544,19 +544,23 @@ function show_dispatch_text($ticket_id, $search, $last) {
 	<table class="table table-striped table-condensed" style="table-layout: fixed; text-align: left;<?php print $page_beak_str;?>">
 		<tr>
 			<td style="text-align: left; width: 0%;"></td>
-			<td style="text-align: left; width: 100%;" class="big"><?php print remove_nls(get_variable("title_string")) . "<br>" . get_text("Incident dispatch system");?></td>
+			<td style="text-align: left; width: 20%;" class="big"><?php print remove_nls(get_variable("title_string")) . "<br>" . get_text("Incident dispatch system");?></td>
+			<td style="text-align: right; width: 10%;"></td>
+			<td style="text-align: right; width: 10%;"></td>
+			<td style="text-align: right; width: 10%;"></td>
+			<td style="text-align: right; width: 50%;"></td>
 			<td style="text-align: right; width: 0%;"></td>
 		</tr>
-		<tr>
-			<td style="text-align: left; width: 0%;"></td>
-			<th style="text-align: left; width: 100%;"><h5><strong style="white-space: nowrap;" class="very-big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
-			<td style="text-align: right; width: 0%;"></td>
-		</tr>
-		<?php print get_dispatch_message($ticket_id, "message_text", "hypertext")[0];?>
-		<tr style="height: 26px;"><td></td><td></td><td></td></tr>
 		<tr>
 			<td></td>
-			<td class="big"><?php print get_text("Printed at") . " " . date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'];?></td>
+			<th colspan=5><h5><strong style="white-space: nowrap;" class="very-big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
+			<td></td>
+		</tr>
+		<?php print get_dispatch_message($ticket_id, "message_text", "hypertext")[0];?>
+		<tr style="height: 26px;"><td colspan=7></td></tr>
+		<tr>
+			<td></td>
+			<td colspan=5 class="big"><?php print get_text("Printed at") . " " . date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'];?></td>
 			<td></td>
 		</tr>
 	</table>
