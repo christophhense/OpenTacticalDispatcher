@@ -871,13 +871,6 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 		get_variable("_api_prefix_reporting_channel_5_encdg"),
 		get_variable("_api_prefix_phone_encdg")
 	);
-	/*Paper size
-	DIN A4	595 x 842
-	Letter	612 x 792*/
-	$ps_pt_align_left = 40;
-	$ps_pt_align_right = 545;
-	$ps_font_size_big = 12;
-	$ps_font_size_verybig = 15;
 	foreach ($report_channels as $destination_prefix) {
 		if (array_key_exists($destination_prefix, $addresses)) {
 			$batch_start_stop_settings = explode(",", get_variable("_api_batch_start_stop_setng"));
@@ -903,6 +896,14 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 		}
 	}
 	//========================= Print
+	/*Paper size
+	DIN A4	595 x 842
+	Letter	612 x 792
+	0 position in the bottom left corner*/
+	$ps_pt_align_left = 40;
+	$ps_pt_align_right = 545;
+	$ps_font_size_big = 12;
+	$ps_font_size_verybig = 15;
 	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
 		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
 		$text_postscript_first_part = "%!\n" .
@@ -1045,21 +1046,30 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 	$match_str = "";
 	$short_message = false;
 	switch ($text_sel) {
-		case null:
-		case "message_text":
-			$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
-			break;
-		case "message_shorttext":
-			$match_str = strtoupper(get_variable("_api_dispatch_shorttext_setng"));
-			$short_message = true;
-			break;
-		default:
+	case null:
+	case "message_text":
+		$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
+		break;
+	case "message_shorttext":
+		$match_str = strtoupper(get_variable("_api_dispatch_shorttext_setng"));
+		$short_message = true;
+		break;
+	default:
 	}
-	$pre_delimiter = "";
-	$post_delimiter = "\\r\\n";
-	if ($text_type == "print") {
+	$pre_delimiter = $mid_delimiter = $post_delimiter = "";
+	switch ($text_type) {
+	case "hypertext":
 		$pre_delimiter = "<tr><td></td><td class='big'>";
+		$mid_delimiter = "";
 		$post_delimiter = "</td><td></td></tr>";
+		break;
+	case "postscript":
+	case "plaintext":
+		$pre_delimiter = "";
+		$mid_delimiter = "";
+		$post_delimiter = "\\r\\n";
+		break;
+	default:
 	}
 	$text_settings_string = array ();
 	$text_setting = array ();
@@ -1286,17 +1296,17 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 	case "unit":	
 		if ($target_id[0] != 0) {
 			$assign_data = get_assigns($target_id[0], $ticket_id);
-			$dispatch_shorttext = get_dispatch_message($assign_data[1], "message_shorttext", "send");
+			$dispatch_shorttext = get_dispatch_message($assign_data[1], "message_shorttext", "plaintext");
 			if (($assign_data[1] > 0) && ($target_api_log_id == 0)) {
-				$dispatch_text = get_dispatch_message($assign_data[1], "message_text", "send");
+				$dispatch_text = get_dispatch_message($assign_data[1], "message_text", "plaintext");
 				$ticket_id = $assign_data[1];
 			} else {
 				$message_group = "unit_all";
 			}
 		} else {
-			$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "send");
+			$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "plaintext");
 			if (($ticket_id > 0) && ($target_api_log_id == 0)) {
-				$dispatch_text = get_dispatch_message($ticket_id, "message_text", "send");
+				$dispatch_text = get_dispatch_message($ticket_id, "message_text", "plaintext");
 			} else {
 				$message_group = "unit_all";
 			}
@@ -1308,7 +1318,7 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 	case "unit_all":
 	case "unit_service":
 	case "unit_tickets":
-		$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "send");
+		$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "plaintext");
 		$subject_text_default = $default_subjects[1];
 		$show_fixtext = true;
 		$textblocks = "message";
