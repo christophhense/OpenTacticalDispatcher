@@ -1042,6 +1042,37 @@ Scheduled	V
 Maxchar		Z	only for shorttext
 */
 
+function get_assign_infos($row) {
+	$return_array = array ("unit" => "","dispatched" => "","status" => "", "time" => "", "facility" => "");
+	$return_array["unit"] = $row['unit_handle'];
+	if (is_datetime($row['dispatched'])) {
+		$return_array["status"] = get_text("Dispatched");
+		$return_array["time"] = $return_array["dispatched"] = date("H:i:s", strtotime($row['dispatched']));
+	}
+	if (is_datetime($row['responding'])) {
+		$return_array["status"] = get_text("Responding");
+		$return_array["time"] = date("H:i:s", strtotime($row['responding']));
+	}
+	if (is_datetime($row['on_scene'])) {
+		$return_array["status"] = get_text("On-scene");
+		$return_array["time"] = date("H:i:s", strtotime($row['on_scene']));
+	}
+	if (is_datetime($row['u2fenr'])) {
+		$return_array["status"] = get_text("Fac en-route");
+		$return_array["time"] = date("H:i:s", strtotime($row['u2fenr']));
+	}
+	if (is_datetime($row['u2farr'])) {
+		$return_array["status"] = get_text("Fac arr");
+		$return_array["time"] = date("H:i:s", strtotime($row['u2farr']));
+	}
+	if ($row['receiving_facility_id'] > 0) {
+		$return_array["facility"] = $row['facility_handle'] . " " . $row['facility_street'] . " " . $row['facility_city'];
+	} else {
+		$return_array["facility"] = $row['receiving_location'];
+	}
+	return $return_array;
+}
+
 function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 	$match_str = "";
 	$short_message = false;
@@ -1065,6 +1096,9 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 		$post_delimiter = "</td><td></td></tr>";
 		break;
 	case "postscript":
+		$pre_delimiter = "";
+		$mid_delimiter = "";
+		$post_delimiter = "";
 	case "plaintext":
 		$pre_delimiter = "";
 		$mid_delimiter = "";
@@ -1228,55 +1262,43 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 					"WHERE `a`.`ticket_id` = " . $ticket_id . " AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' ORDER BY `a`.`dispatched` ASC";
 
 				$result_u = db_query($query_u, __FILE__, __LINE__);
-				if ($text_type != "hypertext") {
-					if (db_num_rows($result_u) > 0) {
-						$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
-						$text = "";
-						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-							$text .= remove_nls($u_row['unit_handle']) . ", ";
-						}
-						$text = substr($text, 0, -2);
-					}
-				} else {
-					if (db_num_rows($result_u) > 0) {
-						$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
+				if (db_num_rows($result_u) > 0) {
+					switch ($text_type) {
+						case "hypertext":
+							$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
 							get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
 							get_text("Receiving location") . $post_delimiter;
-						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-							$text .= $pre_delimiter2 . remove_nls($u_row['unit_handle']) . "</td><td style='text-align: center;'>";
-							$text .= remove_nls(date("H:i:s", strtotime($u_row['dispatched']))) . "</td><td style='text-align: center;'>";
-							$current_status = $current_time = $current_receiving_location = "";
-							if (is_datetime($u_row['dispatched'])) {
-								$current_status = get_text("Dispatched");
-								$current_time = date("H:i:s", strtotime($u_row['dispatched']));
+							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+								$assign_info = get_assign_infos($u_row);
+								$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>";
+								$text .= remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>";
+								$text .= remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>";
+								$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
+								$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
 							}
-							if (is_datetime($u_row['responding'])) {
-								$current_status = get_text("Responding");
-								$current_time = date("H:i:s", strtotime($u_row['responding']));
+							break;
+						case "postscript":
+						case "plaintext":
+							/*$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
+							$text = "";
+							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+								$text .= remove_nls($u_row['unit_handle']) . ", ";
 							}
-							if (is_datetime($u_row['on_scene'])) {
-								$current_status = get_text("On-scene");
-								$current_time = date("H:i:s", strtotime($u_row['on_scene']));
+							$text = substr($text, 0, -2);*/
+							$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "			" . 
+							get_text("Dispatched") . "		" . get_text("Status") . "		" . 
+							get_text("Receiving location") . $post_delimiter;
+							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+								$assign_info = get_assign_infos($u_row);
+								$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "	";
+								$text .= remove_nls($assign_info["dispatched"]) . "	";
+								$text .= remove_nls($assign_info["status"]) . "	";
+								$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
+								$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
 							}
-							if (is_datetime($u_row['u2fenr'])) {
-								$current_status = get_text("Fac en-route");
-								$current_time = date("H:i:s", strtotime($u_row['u2fenr']));
-							}
-							if (is_datetime($u_row['u2farr'])) {
-								$current_status = get_text("Fac arr");
-								$current_time = date("H:i:s", strtotime($u_row['u2farr']));
-							}
-							if ($u_row['receiving_facility_id'] > 0) {
-								$current_receiving_location = $u_row['facility_handle'] . " " . $u_row['facility_street'] . " " . $u_row['facility_city'];
-							} else {
-								$current_receiving_location = $u_row['receiving_location'];
-							}
-							$text .= remove_nls($current_status) . "</td><td style='text-align: center;'>";
-							$text .= remove_nls($current_time) . $mid_delimiter;
-							$text .= remove_nls($current_receiving_location) . $post_delimiter;
-						}
+							break;
+						default:
 					}
-					//$text = "";
 				}
 				unset ($result_u);
 				break;
