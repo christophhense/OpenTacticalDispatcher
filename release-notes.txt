@@ -63,6 +63,7 @@ Activities sorted by application function.
 * Ticket - disposition print
 	CHANGE
 		Smaller line spacing
+		Attached table of assigned units with additional information instead of comma separated list
 * Ticket - report
 	CHANGE
 		Remove href
