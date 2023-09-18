@@ -628,6 +628,7 @@ function get_api_availability($api_type = "api") {
 }
 
 function do_api_connection($api_type = "api", $source = "", $destination = "", $code = "", $text_str = "", $lat_lon_str = "", $test = false) {
+	require_once ("./incs/install.inc.php");
 	$connection_host = "";
 	$connection_parameter = array ();
 	switch ($api_type) {
