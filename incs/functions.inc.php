@@ -2110,12 +2110,21 @@ function get_guard_house_select_str($select_type, $guard_house_id) {
 	switch ($select_type) {
 	case "unit":
 		$option_0 = get_text("Select");
-
+/*
 		$query = "SELECT `facilities`.`id` AS `option_value`, " .
 			"`handle` AS `option_text`, " .
 			"`facility_types`.`name` AS `option_group` " .
 			"FROM `facilities` " .
 			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`);";
+*/
+		$query = "SELECT `facilities`.`id` AS `option_value`, " .
+			"`handle` AS `option_text`, " .
+			"`facility_types`.`name` AS `option_group` " .
+			"FROM `facilities` " .
+			"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
+			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
+			"WHERE (`allocates`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
+				"OR (`facilities`.`id` = " . $guard_house_id . ");";
 
 		$class = "form-control";
 		$title = "";

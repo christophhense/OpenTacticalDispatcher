@@ -109,6 +109,8 @@ Activities sorted by application function.
 		cancel-button switched to function goto_window
 		postMessage outsourced to functions
 * Units - new
+	BUGFIX
+		Hide deleted facitities on guardhouse select
 	CHANGE
 		Form submit with ajax
 		Remove href
@@ -117,6 +119,8 @@ Activities sorted by application function.
 		Copy und save with ajax
 		Renamed function validate() to form specific
 * Units - update
+	BUGFIX
+		Hide deleted facitities on guardhouse select
 	CHANGE
 		Form submit with ajax
 		Remove href
