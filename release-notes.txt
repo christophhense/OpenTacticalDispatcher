@@ -127,6 +127,7 @@ Activities sorted by application function.
 * Facilities - overview
 	BUGFIX
 		Allowing overflow at too much types
+		Hide unused facility types in legend
 	CHANGE
 		Form submit with ajax
 		Remove href
