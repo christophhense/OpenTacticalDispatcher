@@ -1,11 +1,11 @@
-@version 23.10.1
+@version 24.04.1
 
 * Tested platforms
 
-	- Windows 10 Pro (VLSC)
-		- Database:      10.4.27-MariaDB
-		- Webserver:     Apache/2.4.54 (Win64) OpenSSL/1.1.1p
-		- PHP:           8.2.0
+	- Windows 11 Prof
+		- Database:      5.5.59-MariaDB
+		- Webserver:     lighttpd/1.4.48
+		- PHP:           7.2.3
 		- Graphics mode: 1920 x 1080 (16:9)
 		- Browser:       Firefox 112.0.1, Zoom: 120%
 						 Google Chrome 112.0.5615.138, Zoom: 125%
@@ -21,278 +21,129 @@
 Activities sorted by application function.
 
 * Navigation
+	BUGFIX
 	CHANGE
-		Change popup to top notice Danger No Server Connection
+	CODE
+	FEATURE
 * Situation
-	CHANGE
-		Remove href
-		postMessage outsourced to functions
-	BUG
-		Reload scheduled tickets after auto-open
-		Repair tooltip for actions
+	NONE
 * Callboard
-	CHANGE
-		postMessage outsourced to functions
+	NONE
 * Communication
-	CHANGE
-		Remove href
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
-		Change PHPMailer version to 6.8.0
-		Change network-printer font from Courier to Helvetica
-		Set "handle" ranged right on network-printer
-	CODE
-		Preparation of display date and time in function get_date_and_time_part()
+	NONE
 * Ticket - new
-	BUGFIX
-		Fix SQL-Error in logging facility assignment
-	CHANGE
-		Form submit with ajax
-		postMessage outsourced to functions
-		cancel-button switched to function goto_window
-		Rename form to ticket_add_form
-		Renamed function validate() to form specific
+	NONE
 * Ticket - update
-	CHANGE
-		Form submit with ajax
-		Remove href
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
-		Rename form to ticket_edit_form
-		Renamed function validate() to form specific
+	NONE
 * Ticket - disposition print
-	CHANGE
-		Smaller line spacing
+	NONE
 * Ticket - report
-	CHANGE
-		Remove href
-		postMessage outsourced to functions
-	CODE
-		Preparation of display date and time in function get_date_and_time_part()
+	NONE
 * Ticket - close
-	CHANGE
-		Form submit with ajax
-		Remove href
-		postMessage outsourced to functions
-		Rename form to ticket_close_form
-		Renamed function validate() to form specific
+	NONE
 * Ticket - action
-	CHANGE
-		Form submit with ajax
-		Remove duplicate forms for add and edit
-		Renamed function validate() to form specific
-	BUGFIX
-		Add: Go back to the right situation-screen if comming from
-		Edit: Go back to ticket instead to situation
+	NONE
 * Ticket - dispatch
-	CHANGE
-		Form submit with ajax
-		postMessage outsourced to functions
-		Renamed function validate() to form specific
+	NONE
 * Ticket - disposition
-	CHANGE
-		Form submit with ajax
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
-		Renamed function validate() to form specific
+	NONE
 * Log report
-	CHANGE
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
-	CODE
-		Preparation of display date and time in function get_date_and_time_part()
+	NONE
 * Units - overview
-	BUGFIX
-		Allowing overflow at too much types
-	CHANGE
-		Remove href
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
+	NONE
 * Units - new
-	BUGFIX
-		Hide deleted facitities on guardhouse select
-	CHANGE
-		Form submit with ajax
-		Remove href
-		postMessage outsourced to functions
-		Change formname to units_add_form
-		Copy und save with ajax
-		Renamed function validate() to form specific
+	NONE
 * Units - update
-	BUGFIX
-		Hide deleted facitities on guardhouse select
-	CHANGE
-		Form submit with ajax
-		Remove href
-		postMessage outsourced to functions
-		Change formname to units_edit_form
-		Copy und save with ajax
-		Renamed function validate() to form specific
+	NONE
 * Facilities - overview
-	BUGFIX
-		Allowing overflow at too much types
-		Hide unused facility types in legend
-	CHANGE
-		Form submit with ajax
-		Remove href
-		cancel-button switched to function goto_window
-		postMessage outsourced to functions
-		Copy und save with ajax
+	NONE
 * Facilities - new
-	CHANGE
-		Form submit with ajax
-		Remove href
-		postMessage outsourced to functions
-		Change formname to facilities_add_form
-		Copy und save with ajax
-		Renamed function validate() to form specific
+	NONE
 * Facilities - update
-	CHANGE
-		Form submit with ajax
-		Remove href
-		postMessage outsourced to functions
-		Change formname to facilities_edit_form
-		Renamed function validate() to form specific
+	NONE
 * Reports
-	CHANGE
-		cancel-button switched to function goto_window
-		Rename form to reports_form
-		postMessage outsourced to functions
-		Get caption from Log report into <table>
-	CODE
-		Preparation of display date and time in function get_date_and_time_part()
+	NONE
 * Settings - overview
-	CHANGE
-		cancel-button switched to function goto_window
-		Remove href
+	NONE
 * Settings - user accounts - User accounts
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - own account
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - new
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - general - notification sounds
-	CHANGE
-		postMessage outsourced to functions
-		Form submit with ajax
+	NONE
 * Settings - general - General Settings
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - ticket name
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - API
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - fixmessage
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - facilities - put on the same status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - categorie
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - units - put on the same status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - units - categorie
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - units - status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - incident types - incident types
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - incident types - default incident types
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - incident types - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - textblocks - synopsis
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - comments
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - actions
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - disposition
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - close comments
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - log report
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - messages
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - default-textblocks
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - captions and hints - captions
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - captions and hints - hints
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - captions and hints - in-/export
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Settings - database and updates - optimize
-	CHANGE
-		Button submit with ajax
+	NONE
 * Settings - database and updates - reset
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - database and updates - updates
-	CHANGE
-		Get current version from programmcode
-		postMessage outsourced to functions
+	NONE
 * Settings - system information
 	NONE
 * Installation
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Configuration wizard
-	CHANGE
-		Get current version from programmcode
+	NONE
 * Program code and miscellaneous
-	CHANGE
-		Remove div-containers for storing data in navigation.php
-		Remove developer mode
-		Set session.cookie_samesite only at login
-		Set session.cookie_samesite to value "None"
-		add identification for Edge-Browser	
-		remove function cancel_button()
-		Change the number of characters in db-table captions and hints to save IPv6.
-		Change popup to top notice danger Error
-		Remove deprecated default values for mandatory php function params
+	NONE
