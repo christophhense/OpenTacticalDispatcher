@@ -55,7 +55,8 @@ Activities sorted by application function.
 * Units - new
 	NONE
 * Units - update
-	NONE
+	BUGFIX
+		Does not change unit if dispatched
 * Facilities - overview
 	NONE
 * Facilities - new
