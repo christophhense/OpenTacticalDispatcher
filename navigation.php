@@ -432,7 +432,6 @@ foreach ($sound_names_array as $value) {
 					}
 					if (get_infos_array['screen']['reset_button'] !== undefined && 
 						current_button_id != get_infos_array['screen']['reset_button']) {
-						console.log("Blinken abschalten");
 						highlight_button(get_infos_array['screen']['reset_button'], true);
 					}
 					if (current_main_script == "situation" && situation_type != "tickets_scheduled" && situation_type != "tickets_closed" && (
