@@ -57,6 +57,7 @@ Activities sorted by application function.
 * Units - update
 	BUGFIX
 		Does not change unit if dispatched
+		Setting new printer if data-service textarea manually cleared
 * Facilities - overview
 	NONE
 * Facilities - new

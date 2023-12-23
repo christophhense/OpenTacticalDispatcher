@@ -265,12 +265,15 @@ default:
 
 			function set_printer(printer_url) {
 				if (printer_url != false) {
-					var separator = ($("#frm_smsg_id").html().trim().length > 0)? ", " : "";
-					var new_addresses = $("#frm_smsg_id").html() + separator + "PRINTER:" + printer_url;
+					var separator = "";
+					if ($("#frm_smsg_id").val().trim().length > 0) {
+						var separator = ", ";
+					}
+					var new_addresses = $("#frm_smsg_id").val() + separator + "PRINTER:" + printer_url;
 					$("#frm_smsg_id").focus();
-					set_cursor_position(frm_smsg_id, $("#frm_smsg_id").html().length);
-					$("#frm_smsg_id").html(new_addresses);	
-					set_cursor_position(frm_smsg_id, $("#frm_smsg_id").html().length);
+					set_cursor_position("frm_smsg_id", $("#frm_smsg_id").html().length);
+					$("#frm_smsg_id").val(new_addresses);	
+					set_cursor_position("frm_smsg_id", $("#frm_smsg_id").html().length);
 				}
 			}
 
