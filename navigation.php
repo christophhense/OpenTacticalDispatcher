@@ -716,15 +716,19 @@ foreach ($sound_names_array as $value) {
 				send_request("./get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos)
 				do_api_connection_test(false, "");
+				var show_dispatch_buttons = "none";
 				switch (user_level) {
 				case "0":
 					$("#level").html("<?php print get_text("permission_super");?>");
+					show_dispatch_buttons = "inline";
 					break;
 				case "1":
 					$("#level").html("<?php print get_text("permission_admin");?>");
+					show_dispatch_buttons = "inline";
 					break;
 				case "2":
 					$("#level").html("<?php print get_text("permission_operator");?>");
+					show_dispatch_buttons = "inline";
 					break;
 				default:
 					$("#level").html("<?php print get_text("permission_guest");?>");
@@ -737,12 +741,10 @@ foreach ($sound_names_array as $value) {
 				$("#timeout_info").css("display", "inline");
 				$("#day_night").css("display", "inline");
 				$("#date_time").css("display", "inline");
-				if ((user_level != 0) && (user_level != 1) &&  (user_level != 2)) {
-					$("#add_ticket").css("display", "none");
-					$("#units").css("display", "none");
-					$("#facilities").css("display", "none");
-					$("#communication").css("display", "none");
-				}
+				$("#add_ticket").css("display", show_dispatch_buttons);
+				$("#units").css("display", show_dispatch_buttons);
+				$("#facilities").css("display", show_dispatch_buttons);
+				$("#communication").css("display", show_dispatch_buttons);
 				is_logged_in = true;
 				window.parent.callboard.location.href = "callboard.php";
 				window.parent.main.location.href="situation.php?screen_id=" + last_infos_array['screen']['screen_id'];

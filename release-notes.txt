@@ -2,7 +2,7 @@
 
 * Tested platforms
 
-	- Windows 11 Prof
+	- Windows 11 Pro
 		- Database:      5.5.59-MariaDB
 		- Webserver:     lighttpd/1.4.48
 		- PHP:           7.2.3
@@ -22,6 +22,7 @@ Activities sorted by application function.
 
 * Navigation
 	BUGFIX
+		Show / hide dispatch-buttons depending on user-level
 	CHANGE
 	CODE
 	FEATURE
