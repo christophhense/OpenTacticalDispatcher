@@ -5,6 +5,27 @@ require_once ("./incs/functions.inc.php");
 require_once ("./incs/units.inc.php");
 do_login(basename(__FILE__));
 
+function is_unit_not_assigned() {
+	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
+
+	$result = db_query($query, __FILE__, __LINE__);
+	$old_data = stripslashes_deep(db_fetch_assoc($result));
+
+	$query_assigns	= "SELECT * " .
+		"FROM `assigns` " .
+		"WHERE `unit_id` = " . $_POST['frm_id'] . " " .
+		"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00');";
+
+	$result_assigns = db_query($query_assigns, __FILE__, __LINE__);
+	$count_assigns = db_affected_rows($result_assigns);
+	unset ($result_assigns);
+	if ($count_assigns == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 $datetime_now = mysql_datetime();
 $function = "";
 
@@ -43,136 +64,141 @@ case "insert":
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_UNIT'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
 	do_log($GLOBALS['LOG_UNIT_ADD'], 0, $new_id, get_unit_edit_log_text("add", $new_id, $_POST, ""), 0, "", "", "");
-	print get_text("Saved");
+	print json_encode(array (
+		"message" => get_text("Saved"),	
+		"appearance" => "success"
+	));
 	exit;
 case "update":
 	set_session_expire_time("on");
+	if (is_unit_not_assigned()) {
+		$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
 
-	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
-
-	$result = db_query($query, __FILE__, __LINE__);
-	$old_data = stripslashes_deep(db_fetch_assoc($result));
-	$admin_only_query_str = "";
-	if (isset ($_POST['frm_adminperms'])) {
-		$admin_only_query_str = "`admin_only` = " . $_POST['frm_adminperms'] . ", ";
-	} else {
-		$_POST['frm_adminperms'] = $old_data['admin_only'];
-	}
-	if (empty ($_POST['frm_lat'])) {
-		$lat = "0.999999";
-	} else {
-		$lat = $_POST['frm_lat'];
-	}
-	if (empty ($_POST['frm_lng'])) {
-		$lng = "0.999999";
-	} else {
-		$lng = $_POST['frm_lng'];
-	}
-	$status_updated = $datetime_now;
-	if ($_POST['frm_status_update'] != 1) {
-		$status_updated = $_POST['frm_status_updated'];
-	}
-	$curr_groups = $_POST['frm_exist_groups'];
-	$groups = $_POST['frm_exist_groups'];
-	if ($_POST['frm_group']) {
-		$groups = ", " . implode(',', $_POST['frm_group']) . ",";
-	}
-	if (isset ($_POST['frm_un_status_id'])) {
-		$unit_status_id = $_POST['frm_un_status_id'];
-	} else {
-		$unit_status_id = $_POST['frm_un_status_last'];
-	}
-
-	$query = "UPDATE `units` SET " .
-		"`name` = " . 					quote_smart(trim($_POST['frm_name'])) . ", " .
-		"`guard_house_id` = " . 		quote_smart(trim($_POST['frm_guard_house'])) . ", " .
-		"`unit_phone` = " . 			quote_smart(trim($_POST['frm_phone'])) . ", " .
-		"`handle` = " . 				quote_smart(trim($_POST['frm_handle'])) . ", " .
-		"`icon_url` = " . 				quote_smart(trim($_POST['frm_icon_url'])) . ", " .
-		"`description` = " . 			quote_smart(trim($_POST['frm_descr'])) . ", " .
-		"`capabilities` = " . 			quote_smart(trim($_POST['frm_capab'])) . ", " .
-		"`unit_status_id` = " . 		$unit_status_id . ", " .
-		"`mobile` = " . 				quote_smart(trim($_POST['frm_mobile'])) . ", " .
-		"`multi` = " . 					quote_smart(trim($_POST['frm_multi'])) . ", " .
-		"`lat` = " . 					floatval($lat) . ", " .
-		"`lng` = " . 					floatval($lng) . ", " .
-		"`contact_name` = " . 			quote_smart(trim($_POST['frm_contact_name'])) . ", " .
-		$admin_only_query_str .
-		"`unit_email` = " .	 			quote_smart(trim($_POST['frm_unit_email'])) . ", " .
-		"`remote_data_services` = " . 	quote_smart(trim($_POST['frm_smsg_id'])) . ", " .
-		"`type` = " . 					$_POST['frm_type'] . ", " .
-		"`user_id` = " . 				$_SESSION['user_id'] . ", " .
-		"`updated` = " . 				quote_smart(trim($datetime_now)) . ", " .
-		"`status_updated` = " . 		quote_smart(trim($status_updated)) . " " .
-		"WHERE `id` = " . 				$_POST['frm_id'] . ";";
-
-	$result = db_query($query, __FILE__, __LINE__);
-	$list = $_POST['frm_exist_groups'];
-	$ex_grps = explode("," ,$list);
-	if ($curr_groups != $groups) {
-		foreach ($_POST['frm_group'] as $posted_grp) {
-			if (!in_array($posted_grp, $ex_grps)) {	
-				insert_into_allocates($posted_grp, $GLOBALS['TYPE_UNIT'], $_POST['frm_id'], $_SESSION['user_id'], $datetime_now);
-			}
+		$result = db_query($query, __FILE__, __LINE__);
+		$old_data = stripslashes_deep(db_fetch_assoc($result));
+		$admin_only_query_str = "";
+		if (isset ($_POST['frm_adminperms'])) {
+			$admin_only_query_str = "`admin_only` = " . $_POST['frm_adminperms'] . ", ";
+		} else {
+			$_POST['frm_adminperms'] = $old_data['admin_only'];
 		}
-		foreach ($ex_grps as $existing_grps) {
-			if (!in_array($existing_grps, $_POST['frm_group'])) {
-				if (empty ($existing_grps)) {
-					$existing_grps = 0;
+		if (empty ($_POST['frm_lat'])) {
+			$lat = "0.999999";
+		} else {
+			$lat = $_POST['frm_lat'];
+		}
+		if (empty ($_POST['frm_lng'])) {
+			$lng = "0.999999";
+		} else {
+			$lng = $_POST['frm_lng'];
+		}
+		$status_updated = $datetime_now;
+		if ($_POST['frm_status_update'] != 1) {
+			$status_updated = $_POST['frm_status_updated'];
+		}
+		$curr_groups = $_POST['frm_exist_groups'];
+		$groups = $_POST['frm_exist_groups'];
+		if ($_POST['frm_group']) {
+			$groups = ", " . implode(',', $_POST['frm_group']) . ",";
+		}
+		if (isset ($_POST['frm_un_status_id'])) {
+			$unit_status_id = $_POST['frm_un_status_id'];
+		} else {
+			$unit_status_id = $_POST['frm_un_status_last'];
+		}
+
+		$query = "UPDATE `units` SET " .
+			"`name` = " . 					quote_smart(trim($_POST['frm_name'])) . ", " .
+			"`guard_house_id` = " . 		quote_smart(trim($_POST['frm_guard_house'])) . ", " .
+			"`unit_phone` = " . 			quote_smart(trim($_POST['frm_phone'])) . ", " .
+			"`handle` = " . 				quote_smart(trim($_POST['frm_handle'])) . ", " .
+			"`icon_url` = " . 				quote_smart(trim($_POST['frm_icon_url'])) . ", " .
+			"`description` = " . 			quote_smart(trim($_POST['frm_descr'])) . ", " .
+			"`capabilities` = " . 			quote_smart(trim($_POST['frm_capab'])) . ", " .
+			"`unit_status_id` = " . 		$unit_status_id . ", " .
+			"`mobile` = " . 				quote_smart(trim($_POST['frm_mobile'])) . ", " .
+			"`multi` = " . 					quote_smart(trim($_POST['frm_multi'])) . ", " .
+			"`lat` = " . 					floatval($lat) . ", " .
+			"`lng` = " . 					floatval($lng) . ", " .
+			"`contact_name` = " . 			quote_smart(trim($_POST['frm_contact_name'])) . ", " .
+			$admin_only_query_str .
+			"`unit_email` = " .	 			quote_smart(trim($_POST['frm_unit_email'])) . ", " .
+			"`remote_data_services` = " . 	quote_smart(trim($_POST['frm_smsg_id'])) . ", " .
+			"`type` = " . 					$_POST['frm_type'] . ", " .
+			"`user_id` = " . 				$_SESSION['user_id'] . ", " .
+			"`updated` = " . 				quote_smart(trim($datetime_now)) . ", " .
+			"`status_updated` = " . 		quote_smart(trim($status_updated)) . " " .
+			"WHERE `id` = " . 				$_POST['frm_id'] . ";";
+
+		$result = db_query($query, __FILE__, __LINE__);
+		$list = $_POST['frm_exist_groups'];
+		$ex_grps = explode("," ,$list);
+		if ($curr_groups != $groups) {
+			foreach ($_POST['frm_group'] as $posted_grp) {
+				if (!in_array($posted_grp, $ex_grps)) {	
+					insert_into_allocates($posted_grp, $GLOBALS['TYPE_UNIT'], $_POST['frm_id'], $_SESSION['user_id'], $datetime_now);
 				}
+			}
+			foreach ($ex_grps as $existing_grps) {
+				if (!in_array($existing_grps, $_POST['frm_group'])) {
+					if (empty ($existing_grps)) {
+						$existing_grps = 0;
+					}
 
-				$query  = "DELETE FROM `allocates` " .
-					"WHERE `type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-					"AND `group` = " . $existing_grps . " " .
-					"AND `resource_id` = " . $_POST['frm_id'] . ";";
+					$query  = "DELETE FROM `allocates` " .
+						"WHERE `type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+						"AND `group` = " . $existing_grps . " " .
+						"AND `resource_id` = " . $_POST['frm_id'] . ";";
 
-				db_query($query, __FILE__, __LINE__);
+					db_query($query, __FILE__, __LINE__);
+				}
 			}
 		}
-	}
-	do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
-	if (!empty ($_POST['frm_status_update'])) {
+		do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_unit_edit_log_text("update", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
+		if (!empty ($_POST['frm_status_update'])) {
 
-		$query_un_status = "SELECT `status_name`, " .
-			"`description` " .
-			"FROM `unit_status` " .
-			"WHERE `id` = " . $unit_status_id . ";";
+			$query_un_status = "SELECT `status_name`, " .
+				"`description` " .
+				"FROM `unit_status` " .
+				"WHERE `id` = " . $unit_status_id . ";";
 
-		$result_un_status = db_query($query_un_status, __FILE__, __LINE__);
-		$row_un_status = stripslashes_deep(db_fetch_assoc($result_un_status));
-		$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
-		do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val, 0, "", "", "");
+			$result_un_status = db_query($query_un_status, __FILE__, __LINE__);
+			$row_un_status = stripslashes_deep(db_fetch_assoc($result_un_status));
+			$un_status_upd_val = $row_un_status['status_name'] . ", " . $row_un_status['description'];
+			do_log($GLOBALS['LOG_UNIT_STATUS'], 0, $_POST['frm_id'], $un_status_upd_val, 0, "", "", "");
+		}
+		print json_encode(array (
+			"message" => get_text("Saved"),	
+			"appearance" => "success"
+		));
+	} else {
+		do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_text("Error") . " - " . get_text("Resourced"), 0, "", "", "");
+		print json_encode(array (
+			"message" => get_text("Error"),	
+			"appearance" => "danger"
+		));
 	}
-	print get_text("Saved");
 	exit;
 case "delete":
 	set_session_expire_time("on");
-
-	$query = "SELECT * FROM `units` WHERE `id`= " . $_POST['frm_id'] . ";";
-
-	$result = db_query($query, __FILE__, __LINE__);
-	$old_data = stripslashes_deep(db_fetch_assoc($result));
-
-	$query_assigns	= "SELECT * " .
-		"FROM `assigns` " .
-		"WHERE `unit_id` = " . $_POST['frm_id'] . " " .
-		"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00');";
-
-	$result_assigns = db_query($query_assigns, __FILE__, __LINE__);
-	$count_assigns = db_affected_rows($result_assigns);
-	unset ($result_assigns);
-	$caption = "";
-	if ($count_assigns == 0) {
-
+	if (is_unit_not_assigned()) {
 		$query = "DELETE FROM `allocates` " .
 			"WHERE `resource_id` = " . $_POST['frm_id'] . " " .
 			"AND `type` = " . $GLOBALS['TYPE_UNIT'] . ";";
 
 		$result = db_query($query, __FILE__, __LINE__);
-		$caption = get_text("Deleted");
 		do_log($GLOBALS['LOG_UNIT_DELETED'], 0, $_POST['frm_id'], get_unit_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), 0, "", "", "");
+		print json_encode(array (
+			"message" => get_text("Deleted"),	
+			"appearance" => "success"
+		));
+	} else {
+		do_log($GLOBALS['LOG_UNIT_CHANGE'], 0, $_POST['frm_id'], get_text("Error") . " - " . get_text("Resourced"), 0, "", "", "");
+		print json_encode(array (
+			"message" => get_text("Error"),	
+			"appearance" => "danger"
+		));
 	}
-	print $caption;
 	exit;
 default:
 }
@@ -239,25 +265,16 @@ default:
 
 			function set_printer(printer_url) {
 				if (printer_url != false) {
-					var separator = ($("#frm_smsg_id").html().trim().length > 0)? ", " : "";
-					var new_addresses = $("#frm_smsg_id").html() + separator + "PRINTER:" + printer_url;
+					var separator = "";
+					if ($("#frm_smsg_id").val().trim().length > 0) {
+						var separator = ", ";
+					}
+					var new_addresses = $("#frm_smsg_id").val() + separator + "PRINTER:" + printer_url;
 					$("#frm_smsg_id").focus();
-					set_cursor_position(frm_smsg_id, $("#frm_smsg_id").html().length);
-					$("#frm_smsg_id").html(new_addresses);	
-					set_cursor_position(frm_smsg_id, $("#frm_smsg_id").html().length);
+					set_cursor_position("frm_smsg_id", $("#frm_smsg_id").html().length);
+					$("#frm_smsg_id").val(new_addresses);	
+					set_cursor_position("frm_smsg_id", $("#frm_smsg_id").html().length);
 				}
-			}
-
-			function send_form_with_post(unit_form) {
-				$.post("units.php", $(unit_form).serialize())
-				.done(function (data) {
-					show_top_notice("success", data);
-					goto_window("units.php");
-				})
-				.fail(function () {
-					show_top_notice("danger", "<?php print get_text("Error");?>");
-					goto_window("units.php");
-				});
 			}
 
 			function validate_unit_form() {
@@ -287,54 +304,43 @@ default:
 				}
 			}
 
-			function copy_unit() {
+			function submit_unit_form(unit_form, copie_form) {
+				if (validate_unit_form()) {
+					$.post("units.php", $(unit_form).serialize())
+					.done(function (data) {	
+						var return_array = JSON.parse(data);
+						var destination_window = "units.php";
+						if (copie_form != "" && copie_form != "delete") {
+							if (return_array["appearance"] == "success") {
+								return_array["message"] = "<?php print get_text("Saved and copied");?>";
+							}
+							if (return_array["appearance"] == "danger") {
+								return_array["appearance"] = "warning";
+								return_array["message"] = "<?php print get_text("Copied");?>";
+							}
+							$("#function").val("add");
+							destination_window = "units.php?" + $.param($(copie_form).serializeArray());
+						}
+						show_top_notice(return_array["appearance"], return_array["message"]);
+						goto_window(destination_window);
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("units.php");
+					});
+				}
+			}
+
+			function copy_unit_form() {
 				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#function").val("add");
 				goto_window("units.php?" + $.param($("#units_edit_form").serializeArray()));
 			}
 
-			function save_and_copy_unit(add) {
-				if (add) {
-					if (validate_unit_form()) {
-						$.post("units.php", $("#units_add_form").serialize(), function(data) {
-						})
-						.done(function() {
-							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#function").val("add");
-							goto_window("units.php?" + $.param($("#units_add_form").serializeArray()));
-						})
-						.fail(function() {
-							show_top_notice("danger", "<?php print get_text("Error");?>");
-							goto_window("units.php");
-						});	
-					}
-				} else {
-					if (validate_unit_form()) {
-						$.post("units.php", $("#units_edit_form").serialize(), function(data) {
-						})
-						.done(function() {
-							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#function").val("add");
-							goto_window("units.php?" + $.param($("#units_edit_form").serializeArray()));
-						})
-						.fail(function() {
-							show_top_notice("danger", "<?php print get_text("Error");?>");
-							goto_window("units.php");
-						});
-					}
-				}
-			}
-
-			function submit_form(unit_form) {
-				if (validate_unit_form()) {
-					send_form_with_post(unit_form);
-				}
-			}
-
 			function do_remove_unit(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					send_form_with_post("#units_edit_form")
+					submit_unit_form("#units_edit_form", "delete");
 				}
 			}
 
@@ -421,12 +427,12 @@ case "add":
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form('#units_add_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_unit_form('#units_add_form', '');"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
 											<ul class="dropdown-menu">
-											<li><a onclick="save_and_copy_unit(true);"><?php print get_text("Save and copy dataset");?></a></li>
+											<li><a onclick="submit_unit_form('#units_add_form', '#units_add_form');"><?php print get_text("Save and copy dataset");?></a></li>
 										</ul>
 									</div>
 								</div>
@@ -645,15 +651,15 @@ case "edit":
 								<div<?php print $save_title_text_str;?> class="col-md-12">
 									<div class="btn-group">
 									<?php if ($copy_button == true) { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="copy_unit();"><?php print get_text("Copy dataset");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="copy_unit_form();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_form('#units_edit_form');"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="submit_unit_form('#units_edit_form', '');"<?php print $edit_disabled_str;?>><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"<?php print $edit_disabled_str;?>>
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu">
-											<li><a onclick="copy_unit();"><?php print get_text("Copy dataset");?></a></li>
-											<li><a onclick="save_and_copy_unit();"><?php print get_text("Save and copy dataset");?></a></li>
+											<li><a onclick="copy_unit_form();"><?php print get_text("Copy dataset");?></a></li>
+											<li><a onclick="submit_unit_form('#units_edit_form', '#units_edit_form');"><?php print get_text("Save and copy dataset");?></a></li>
 										</ul>
 									<?php } ?>
 									</div>

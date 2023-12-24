@@ -1,14 +1,16 @@
 <?php
 function show_facilities_legend() {
 
-	$query = "SELECT DISTINCT `type`, " .
-		"`facility_types`.`name` AS `mytype`, " .
+	$query = "SELECT DISTINCT `facilities`.`type`, " .
+		"`facility_types`.`name` AS `facility_types_name`, " .
 		"`facility_types`.`bg_color`, " .
 		"`facility_types`.`text_color`, " .
-		"`facility_types`.`description` AS `mydescription` " .
+		"`facility_types`.`description` AS `facility_types_description` " .
 		"FROM `facilities` " .
+		"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
 		"LEFT JOIN `facility_types` ON `facility_types`.`id` = `facilities`.`type` " .
-		"ORDER BY `mytype`;";
+		"WHERE (`allocates`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " . 
+		"ORDER BY `facility_types_name`;";
 
 	$result = db_query($query, __FILE__, __LINE__);
 
@@ -16,7 +18,7 @@ function show_facilities_legend() {
 	$output_str = "<span align='center'><span align='center'> " . get_text("Facilities legend") . ": </span>&nbsp;";
 	while ($row = stripslashes_deep(db_fetch_array($result))) {
 		$output_str .= "<span class='label' style='background-color: " . $row['bg_color'] . "; color: " . $row['text_color'] . ";'" . 
-			get_title_str($row['mydescription']) . "> " . remove_nls($row['mytype']) . " </span>&nbsp; ";
+			get_title_str($row['facility_types_description']) . "> " . remove_nls($row['facility_types_name']) . " </span>&nbsp; ";
 	}
 	print $output_str .= "</span>";
 }
@@ -502,7 +504,7 @@ function show_facility_status_select($facility_status) {
 			$result_selected_facility_status = db_query($query_selected_facility_status, __FILE__, __LINE__);
 			$row_selected_facility_status = stripslashes_deep(db_fetch_assoc($result_selected_facility_status));
 			$style_str = " style=' background-color: " . $row_selected_facility_status['bg_color'] . "; color: " . $row_selected_facility_status['text_color'] . ";'";
-			$frm_status_updated_str = " document.facilities_edit_form.frm_status_update.value='1';";
+			$frm_status_updated_str = " document.facility_edit_form.frm_status_update.value='1';";
 			unset ($result_selected_facility_status);
 		}
 	?>

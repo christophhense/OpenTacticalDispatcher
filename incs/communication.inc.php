@@ -1143,7 +1143,7 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 			"`t`.`problemstart`, " .
 			"`t`.`booked_date`, " .
 			"`t`.`facility_id`, " .
-			"`f`.`handle` AS `facilitiy_handle` " .
+			"`f`.`handle` AS `facility_handle` " .
 			"FROM `tickets` `t` " .
 			"LEFT JOIN `facilities` `f` ON (`t`.`facility_id` = `f`.`id`) " .
 			"WHERE `t`.`id` = " . $ticket_id . " LIMIT 1";
@@ -1247,7 +1247,7 @@ function get_dispatch_message($ticket_id, $text_sel, $text_type) {
 			case "T":
 				if ($row['facility_id'] > 0) {
 					$caption = get_text("Facility") . ": ";
-					$text = remove_nls($row['facilitiy_handle']);
+					$text = remove_nls($row['facility_handle']);
 				} else {
 					$field_empty = true;
 				}

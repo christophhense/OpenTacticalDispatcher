@@ -2119,7 +2119,10 @@ function get_guard_house_select_str($select_type, $guard_house_id) {
 			"`handle` AS `option_text`, " .
 			"`facility_types`.`name` AS `option_group` " .
 			"FROM `facilities` " .
-			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`);";
+			"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
+			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
+			"WHERE (`allocates`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
+				"OR (`facilities`.`id` = " . $guard_house_id . ");";
 
 		$class = "form-control";
 		$title = "";

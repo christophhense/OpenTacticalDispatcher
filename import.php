@@ -677,19 +677,19 @@ case "facilities":
 	$line = "";
 	$fac_types = $fac_types_updated = $fac_types_del = 0;
 	$fac_status = $fac_status_updated = $fac_status_del = 0;
-	$facilitiy = $facilitiy_updated = $facilitiy_del = 0;
+	$facility = $facility_updated = $facility_del = 0;
 	$uploadfile = fopen($_FILES['file']['tmp_name'], "rb");
 
-	$query_facilitiy_type = "SELECT `id`, " .
+	$query_facility_type = "SELECT `id`, " .
 		"`name` " .
 		"FROM `facility_types`;";
 
-	$result_facilitiy_type = db_query($query_facilitiy_type, __FILE__, __LINE__);
+	$result_facility_type = db_query($query_facility_type, __FILE__, __LINE__);
 	$fac_type_pos = 1;
-	$facilitiy_types = array ();
-	while ($row_facilitiy_type = db_fetch_array($result_facilitiy_type)) {
-		$facilitiy_types[$fac_type_pos]['id'] = $row_facilitiy_type['id'];
-		$facilitiy_types[$fac_type_pos]['name'] = $row_facilitiy_type['name'];
+	$facility_types = array ();
+	while ($row_facility_type = db_fetch_array($result_facility_type)) {
+		$facility_types[$fac_type_pos]['id'] = $row_facility_type['id'];
+		$facility_types[$fac_type_pos]['name'] = $row_facility_type['name'];
 		$fac_type_pos++;
 	}
 	while (!feof($uploadfile)) {
@@ -872,29 +872,29 @@ case "facilities":
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 			}
-			$facilitiy_type = db_fetch_array($result_test);
+			$facility_type = db_fetch_array($result_test);
 
 			if ((strtolower($line[FACILITY_DELETE]) == "yes") || (strtolower($line[FACILITY_DELETE]) == "Ja")) {
 
-				$query_facilitiy_id = "SELECT `id` " .
+				$query_facility_id = "SELECT `id` " .
 					"FROM `facilities` " .
 					"WHERE `handle` = " . csv2mysql($line[FACILITY_HANDLE]) . " " .
-					"AND `type` = " . $facilitiy_type['id'];
+					"AND `type` = " . $facility_type['id'];
 
-				$result_facilitiy_id = db_query($query_facilitiy_id, __FILE__, __LINE__);
-				$facilitiy_id_or_str = "";
-				while ($facilitiy_row = db_fetch_array($result_facilitiy_id)) {
-					$facilitiy_id_or_str .= " OR `resource_id` = " . $facilitiy_row['id'];
+				$result_facility_id = db_query($query_facility_id, __FILE__, __LINE__);
+				$facility_id_or_str = "";
+				while ($facility_row = db_fetch_array($result_facility_id)) {
+					$facility_id_or_str .= " OR `resource_id` = " . $facility_row['id'];
 				}
 
-				$query_facilitiy_del = "DELETE FROM `allocates` " .
-					"WHERE (`resource_id` = 0" . $facilitiy_id_or_str . ") " .
+				$query_facility_del = "DELETE FROM `allocates` " .
+					"WHERE (`resource_id` = 0" . $facility_id_or_str . ") " .
 					"AND `type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
 					"LIMIT 1;";
 
-				$result_delete = db_query($query_facilitiy_del, __FILE__, __LINE__);
+				$result_delete = db_query($query_facility_del, __FILE__, __LINE__);
 				if (db_affected_rows($result_delete) > 0) {
-					$facilitiy_del++;
+					$facility_del++;
 				}
 			} else {
 				$do_import = true;
@@ -905,7 +905,7 @@ case "facilities":
 				$query_test = "SELECT `id` " .
 					"FROM `facilities` " .
 					"WHERE `handle` = " . csv2mysql($line[FACILITY_HANDLE]) . " " .
-					"AND `type` = " . $facilitiy_type['id'];
+					"AND `type` = " . $facility_type['id'];
 
 				$result_test = db_query($query_test, __FILE__, __LINE__);
 				if (db_num_rows($result_test) != 0) {
@@ -941,7 +941,7 @@ case "facilities":
 				if ($do_import) {
 					$new_id = insert_into_facilities(csv2raw($line[FACILITY_NAME]), csv2raw($line[FACILITY_HANDLE]), csv2raw($line[FACILITY_OBJECT_ID]), csv2raw($line[FACILITY_PAGER1]),
 						csv2raw($line[FACILITY_PAGER2]), csv2raw($line[FACILITY_STREET]), csv2raw($line[FACILITY_CITY]), csv2raw($line[FACILITY_SEC_CONTACT]),
-						csv2raw($line[FACILITY_SEC_PHONE]), csv2raw($line[FACILITY_SEC_MAIL]), $facilitiy_type['id'], 1,
+						csv2raw($line[FACILITY_SEC_PHONE]), csv2raw($line[FACILITY_SEC_MAIL]), $facility_type['id'], 1,
 						csv2raw($line[FACILITY_DESCRIPTION]), csv2raw($line[FACILITY_CAPABILITIES]), csv2raw($line[FACILITY_OPENING]), csv2raw($line[FACILITY_ACCESS]),
 						csv2raw($line[FACILITY_CONTACT]), csv2raw($line[FACILITY_PHONE]), csv2raw($line[FACILITY_MAIL]), $facility_admin_only,
 						csv2raw($line[FACILITY_ICON]), "", $fac_lat, $fac_lng,
@@ -979,14 +979,14 @@ case "facilities":
 						$group_id = db_fetch_array($result_test);
 						insert_into_allocates($group_id['id'], $GLOBALS['TYPE_FACILITY'], $new_id, $user_id, $datetime_now);
 					}
-					$facilitiy++;
+					$facility++;
 				} else {
 					if ($do_update) {
 
-						$query_facilitiy = "UPDATE `facilities` SET " .
+						$query_facility = "UPDATE `facilities` SET " .
 							"`name` = " . csv2mysql($line[FACILITY_NAME]) . ", " .
 							"`icon_url` = " . csv2mysql($line[FACILITY_ICON]) . ", " .
-							"`type` = '" . $facilitiy_type['id'] . "', " .
+							"`type` = '" . $facility_type['id'] . "', " .
 							"`street` = " . csv2mysql($line[FACILITY_STREET]) . ", " .
 							"`city` = " . csv2mysql($line[FACILITY_CITY]) . ", " .
 							"`description` = " . csv2mysql($line[FACILITY_DESCRIPTION]) . ", " .
@@ -1007,16 +1007,16 @@ case "facilities":
 							"`object_id` = " . csv2mysql($line[FACILITY_OBJECT_ID]) . " " .
 							"WHERE `id` = '" . $update_id . "';";
 
-						$result_update = db_query($query_facilitiy, __FILE__, __LINE__);
+						$result_update = db_query($query_facility, __FILE__, __LINE__);
 						if (db_affected_rows($result_update) > 0) {
 
-							$query_facilitiy = "UPDATE `facilities` SET " .
+							$query_facility = "UPDATE `facilities` SET " .
 								"`updated` = '" . $datetime_now . "', " .
 								"`client_address`= '" . $client_address . "', " .
 								"`user_id` = " . $user_id . " " .
 								"WHERE `id` = '" . $update_id . "';";
 
-							db_query($query_facilitiy, __FILE__, __LINE__);
+							db_query($query_facility, __FILE__, __LINE__);
 							$updated = true;
 						}
 						$regions = array ();
@@ -1060,7 +1060,7 @@ case "facilities":
 							}
 						}
 						if ($updated) {
-							$facilitiy_updated++;
+							$facility_updated++;
 						} else {
 							$doublette++;
 						}
@@ -1096,17 +1096,17 @@ case "facilities":
 		$top_notice_log_str .= get_text("Dataset fac_status deleted") . ": " . $fac_status_del . ", ";
 		$top_notice_str .= get_text("Dataset fac_status deleted") . ": " . $fac_status_del . "<br>";
 	}
-	if ($facilitiy > 0) {
-		$top_notice_log_str .= get_text("Dataset facility added") . ": " . $facilitiy . ", ";
-		$top_notice_str .= get_text("Dataset facility added") . ": " . $facilitiy . "<br>";
+	if ($facility > 0) {
+		$top_notice_log_str .= get_text("Dataset facility added") . ": " . $facility . ", ";
+		$top_notice_str .= get_text("Dataset facility added") . ": " . $facility . "<br>";
 	}
-	if ($facilitiy_updated > 0) {
-		$top_notice_log_str .= get_text("Dataset facility updated") . ": " . $facilitiy_updated . ", ";
-		$top_notice_str .= get_text("Dataset facility updated") . ": " . $facilitiy_updated . "<br>";
+	if ($facility_updated > 0) {
+		$top_notice_log_str .= get_text("Dataset facility updated") . ": " . $facility_updated . ", ";
+		$top_notice_str .= get_text("Dataset facility updated") . ": " . $facility_updated . "<br>";
 	}
-	if ($facilitiy_del > 0) {
-		$top_notice_log_str .= get_text("Dataset facility deleted") . ": " . $facilitiy_del . ", ";
-		$top_notice_str .= get_text("Dataset facility deleted") . ": " . $facilitiy_del . "<br>";
+	if ($facility_del > 0) {
+		$top_notice_log_str .= get_text("Dataset facility deleted") . ": " . $facility_del . ", ";
+		$top_notice_str .= get_text("Dataset facility deleted") . ": " . $facility_del . "<br>";
 	}
 	break;
 case "incident-types":
