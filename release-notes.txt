@@ -53,7 +53,8 @@ Activities sorted by application function.
 * Units - overview
 	NONE
 * Units - new
-	NONE
+	CHANGE
+		JS-Code for ajax submit
 * Units - update
 	BUGFIX
 		Does not change unit if dispatched
@@ -61,9 +62,11 @@ Activities sorted by application function.
 * Facilities - overview
 	NONE
 * Facilities - new
-	NONE
+	CHANGE
+		JS-Code for ajax submit
 * Facilities - update
-	NONE
+	CHANGE
+		JS-Code for ajax submit
 * Reports
 	NONE
 * Settings - overview
