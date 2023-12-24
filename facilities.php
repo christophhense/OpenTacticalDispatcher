@@ -52,7 +52,10 @@ case "insert":
 		insert_into_allocates($grp_val, $GLOBALS['TYPE_FACILITY'], $new_id, $_SESSION['user_id'], $datetime_now);
 	}
 	do_log($GLOBALS['LOG_FACILITY_ADD'], 0, 0, get_facility_edit_log_text("add", $new_id, $_POST, ""), $new_id, "", "", "");
-	print get_text("Saved");
+	print json_encode(array (
+		"message" => get_text("Saved"),	
+		"appearance" => "success"
+	));
 	exit;
 case "update":
 	set_session_expire_time("on");
@@ -141,7 +144,10 @@ case "update":
 		$fac_status_upd_val = $row_fac_status['status_name'] . ", " . $row_fac_status['description'];
 		do_log($GLOBALS['LOG_FACILITY_STATUS'], 0, 0, $fac_status_upd_val, $_POST['frm_id'], "", "", "");
 	}
-	print get_text("Saved");
+	print json_encode(array (
+		"message" => get_text("Saved"),	
+		"appearance" => "success"
+	));
 	exit;
 case "delete":
 
@@ -157,7 +163,10 @@ case "delete":
 	$result = db_query($query, __FILE__, __LINE__);
 	$log_text = get_text("TBL_ID") . ": #" . $_POST['frm_id'];
 	do_log($GLOBALS['LOG_FACILITY_DELETED'], 0, 0, get_facility_edit_log_text("delete", $_POST['frm_id'], $_POST, $old_data), $_POST['frm_id'], "", "", "");
-	print get_text("Deleted");
+	print json_encode(array (
+		"message" => get_text("Deleted"),	
+		"appearance" => "success"
+	));
 	exit;
 default:
 }
@@ -192,18 +201,6 @@ default:
 		<?php print show_day_night_style();?>
 		<script>
 
-			function send_form_with_post(facilitiy_form) {
-				$.post("facilities.php", $(facilitiy_form).serialize())
-				.done(function (data) {
-					show_top_notice("success", data);
-					goto_window("facilities.php");
-				})
-				.fail(function () {
-					show_top_notice("danger", "<?php print get_text("Error");?>");
-					goto_window("facilities.php");
-				});
-			}
-
 			function validate_facility_form() {
 				var error_message = "";
 				if ($("#frm_handle").val() == "") {
@@ -226,54 +223,36 @@ default:
 				}
 			}
 
-			function copy_facility() {
+			function submit_facility_form(facility_form, copie_form) {
+				if (validate_facility_form()) {
+					$.post("facilities.php", $(facility_form).serialize())
+					.done(function (data) {
+						var return_array = JSON.parse(data);
+						var destination_window = "facilities.php";
+						if (copie_form != "" && copie_form != "delete") {
+							$("#function").val("add");
+							destination_window = "facilities.php?" + $.param($(copie_form).serializeArray());
+						}
+						show_top_notice(return_array["appearance"], return_array["message"]);
+						goto_window(destination_window);
+					})
+					.fail(function () {
+						show_top_notice("danger", "<?php print get_text("Error");?>");
+						goto_window("facilities.php");
+					});
+				}
+			}
+
+			function copy_facility_form() {
 				show_top_notice("success", "<?php print get_text("Copied");?>");
 				$("#function").val("add");
-				goto_window("facilities.php?" + $.param($("#facilities_edit_form").serializeArray()));
-			}
-
-			function save_and_copy_facility(add) {
-				if (add) {
-					if (validate_facility_form()) {
-						$.post("facilities.php", $("#facilities_add_form").serialize(), function() {
-						})
-						.done(function() {
-							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#function").val("add");
-							goto_window("facilities.php?" + $.param($("#facilities_add_form").serializeArray()));
-						})
-						.fail(function() {
-							show_top_notice("danger", "<?php print get_text("Error");?>");
-							goto_window("facilities.php");
-						});
-					}
-				} else {
-					if (validate_facility_form()) {
-						$.post("facilities.php", $("#facilities_edit_form").serialize(), function(data) {
-						})
-						.done(function() {
-							show_top_notice("success", "<?php print get_text("Saved and copied");?>");
-							$("#function").val("add");
-							goto_window("facilities.php?" + $.param($("#facilities_edit_form").serializeArray()));
-						})
-						.fail(function() {
-							show_top_notice("danger", "<?php print get_text("Error");?>");
-							goto_window("facilities.php");
-						});
-					}
-				}
-			}
-
-			function submit_form(facility_form) {
-				if (validate_facility_form()) {
-					send_form_with_post(facility_form);
-				}
+				goto_window("facilities.php?" + $.param($("#facility_edit_form").serializeArray()));
 			}
 
 			function do_remove_facility(result) {
 				if (result == true) {
 					$("#frm_remove").val("true");
-					send_form_with_post("#facilities_edit_form");
+					submit_facility_form("#facility_edit_form", "delete");
 				}
 			}
 
@@ -339,7 +318,7 @@ case "add":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="facilities_add_form" name="facilities_add_form">
+			<form id="facility_add_form" name="facility_add_form">
 				<input id="function" name="function" type="hidden" value="insert">
 				<input id="frm_group[]" name="frm_group[]" type="hidden" value="1">
 				<input id="frm_lat" name="frm_lat" type="hidden" value="<?php if (isset ($_GET['frm_lat'])) {print $_GET['frm_lat'];}?>">
@@ -360,18 +339,18 @@ case "add":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facilities_add_form').trigger('reset');"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facility_add_form').trigger('reset');"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
 									<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_form('#facilities_add_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_facility_form('#facility_add_form', '');"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu">
-											<li><a onclick="save_and_copy_facility(true);"><?php print get_text("Save and copy dataset");?></a></li>
+											<li><a onclick="submit_facility_form('#facility_add_form', '#facility_add_form');"><?php print get_text("Save and copy dataset");?></a></li>
 										</ul>
 									</div>
 								</div>
@@ -545,7 +524,7 @@ case "edit":
 	<body onload="check_frames();">
 		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
 		<div class="container-fluid" id="main_container">
-			<form id="facilities_edit_form" name="facilities_edit_form">
+			<form id="facility_edit_form" name="facility_edit_form">
 				<input id="function" name="function" type="hidden" value="update">
 				<input id="frm_group[]" name="frm_group[]" type="hidden" value="1">
 				<input id="frm_id" name="frm_id" type="hidden" value="<?php print $_GET['id'];?>">
@@ -570,22 +549,22 @@ case "edit":
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facilities_edit_form').trigger('reset');"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facility_edit_form').trigger('reset');"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div<?php print $save_title_text_str;?> class="col-md-12">
 									<div class="btn-group">
 									<?php if ($copy_button == true) { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="copy_facility();"><?php print get_text("Copy dataset");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="copy_facility_form();"><?php print get_text("Copy dataset");?></button>
 									<?php } else { ?>
-										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_form('#facilities_edit_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_facility_form('#facility_edit_form', '#facility_edit_form');"><?php print get_text("Save");?></button>
 										<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu">
-											<li><a onclick="copy_facility();"><?php print get_text("Copy dataset");?></a></li>
-											<li><a onclick="save_and_copy_facility();"><?php print get_text("Save and copy dataset");?></a></li>
+											<li><a onclick="copy_facility_form();"><?php print get_text("Copy dataset");?></a></li>
+											<li><a onclick="submit_facility_form('#facility_edit_form', '#facility_edit_form');"><?php print get_text("Save and copy dataset");?></a></li>
 										</ul>
 									<?php } ?>
 									</div>
