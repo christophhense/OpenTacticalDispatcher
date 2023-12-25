@@ -3,6 +3,349 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+function get_assign_infos($row) {
+	$return_array = array ("unit" => "","dispatched" => "","status" => "", "time" => "", "facility" => "");
+	$return_array["unit"] = $row['unit_handle'];
+	if (is_datetime($row['dispatched'])) {
+		$return_array["status"] = get_text("Dispatched");
+		$return_array["time"] = $return_array["dispatched"] = date("H:i:s", strtotime($row['dispatched']));
+	}
+	if (is_datetime($row['responding'])) {
+		$return_array["status"] = get_text("Responding");
+		$return_array["time"] = date("H:i:s", strtotime($row['responding']));
+	}
+	if (is_datetime($row['on_scene'])) {
+		$return_array["status"] = get_text("On-scene");
+		$return_array["time"] = date("H:i:s", strtotime($row['on_scene']));
+	}
+	if (is_datetime($row['u2fenr'])) {
+		$return_array["status"] = get_text("Fac en-route");
+		$return_array["time"] = date("H:i:s", strtotime($row['u2fenr']));
+	}
+	if (is_datetime($row['u2farr'])) {
+		$return_array["status"] = get_text("Fac arr");
+		$return_array["time"] = date("H:i:s", strtotime($row['u2farr']));
+	}
+	if ($row['receiving_facility_id'] > 0) {
+		$return_array["facility"] = $row['facility_handle'] . " " . $row['facility_street'] . " " . $row['facility_city'];
+	} else {
+		$return_array["facility"] = $row['receiving_location'];
+	}
+	return $return_array;
+}
+
+function get_dispatch_message($ticket_id, $text_sel, $text_type) {
+	/*	message-text codes
+		Actions		A
+		ADDRESS		B	UPPERCASE on facility
+		Priority	C
+		Inc type	D
+		Written		E
+		Updated		F
+		Reporte		G
+		Phone 		H
+		Status		I
+		Address		J
+		Descrip'n	K
+		Dispos'n	L
+		Position	M
+		Name		N
+		==========  O	
+		Start/end	S
+		Facility 	T	Row hidden if no facility
+		Handle		U
+		Scheduled	V
+		Maxchar		Z	only for shorttext
+	*/
+	$match_str = "";
+	$short_message = false;
+	switch ($text_sel) {
+		case null:
+		case "message_text":
+			$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
+			break;
+		case "message_shorttext":
+			$match_str = strtoupper(get_variable("_api_dispatch_shorttext_setng"));
+			$short_message = true;
+			break;
+		default:
+	}
+	$pre_delimiter = $pre_delimiter2 = $mid_delimiter = $post_delimiter = "";
+	switch ($text_type) {
+		case "hypertext":
+			$pre_delimiter = "<tr><td></td><td colspan=5 class='big'>";
+			$pre_delimiter2 = "<tr><td></td><td>";
+			$mid_delimiter = "</td><td>";
+			$post_delimiter = "</td><td></td></tr>";
+			break;
+		case "postscript":
+			$pre_delimiter = "";
+			$mid_delimiter = "";
+			$post_delimiter = "\n";
+			break;
+		case "plaintext":
+			$pre_delimiter = "";
+			$mid_delimiter = "";
+			$post_delimiter = "\\r\\n";
+			break;
+		default:
+	}
+	$text_settings_string = array ();
+	$text_setting = array ();
+	$text_selects = array ();
+	$text_start = array ();
+	$text_chars = array ();
+	$message_text = "";
+	$max_chars_shorttext = 0;
+	$text_settings_string = explode(";", remove_nls($match_str));
+	foreach ($text_settings_string as $value) {
+		preg_match("/^[a-zA-Z]{1}\s?[0-9]{1,3}\s?,\s?[0-9]{1,3}/", trim($value), $text_setting);
+		if (isset ($text_setting[0])) {
+			array_push($text_selects, substr($text_setting[0], 0, 1));
+			$text_setting = explode(",", substr($text_setting[0], 1));
+			array_push($text_start, trim($text_setting[0]));
+			array_push($text_chars, trim($text_setting[1]));
+		}
+	}
+	if ($ticket_id > 0) {
+
+		$query = "SELECT `t`.`incident_name`, " .
+			"`t`.`severity`, " .
+			"`t`.`incident_type_id`, " .
+			"`t`.`datetime`, " .
+			"`t`.`updated`, " .
+			"`t`.`contact`, " .
+			"`t`.`phone`, " .
+			"`t`.`status`, " .
+			"`t`.`location`, " .
+			"`t`.`description`, " .
+			"`t`.`comments`, " .
+			"`t`.`call_taker_id`, " .
+			"`t`.`description`, " .
+			"`t`.`lat`, " .
+			"`t`.`lng`, " .
+			"`t`.`problemstart`, " .
+			"`t`.`booked_date`, " .
+			"`t`.`facility_id`, " .
+			"`f`.`handle` AS `facility_handle` " .
+			"FROM `tickets` `t` " .
+			"LEFT JOIN `facilities` `f` ON (`t`.`facility_id` = `f`.`id`) " .
+			"WHERE `t`.`id` = " . $ticket_id . " LIMIT 1";
+
+		$result = db_query($query, __FILE__, __LINE__);
+		$row = stripslashes_deep(db_fetch_array($result));
+		$_problemend = "";
+		if ((isset ($row['problemend'])) && is_datetime($row['problemend'])) {
+			$_problemend = "  " . get_text("Run End") . ":" . $row['problemend'];
+		}
+		for ($i = 0; $i < count($text_selects); $i++) {
+			$caption = "";
+			$text = "";
+			$field_empty = false;
+			switch ($text_selects[$i]) {
+				case "A":
+					$caption = get_text("Actions") . ": ";
+
+					$query = "SELECT * " .
+						"FROM `actions` " .
+						"WHERE `ticket_id` = " . $ticket_id;
+
+					$result = db_query($query, __FILE__, __LINE__);
+					if (db_affected_rows($result) > 0) {
+						while ($act_row = stripslashes_deep(db_fetch_array($result))) {
+							$text .= date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . wordwrap($act_row['description'], 70)."\n";
+						}
+					}
+					unset ($result);
+					break;
+				case "B":
+					$caption = get_text("Addr") . ": ";
+					if (isset ($row['location'])) {
+						if ($row['facility_id'] > 0) {
+							$text = strtoupper(remove_nls($row['location']));
+						} else {
+							$text = remove_nls($row['location']);
+						}
+					}
+					break;
+				case "C":
+					$caption = get_text("Severity") . ": ";
+					$text = get_text(get_severity($row['severity']));
+					break;
+				case "D":
+					$caption = get_text("Incident type") . ": ";
+					$text = get_type($row['incident_type_id']);
+					break;
+				case "E":
+					$caption = get_text("Written") . ": ";
+					$text = (empty ($row['datetime']))? "" : format_date($row['datetime']) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);
+					break;
+				case "F":
+					$caption = get_text("Updated") . ": ";
+					$text = format_date($row['updated']);
+					break;
+				case "G":
+					$caption = get_text("Reported by") . ": ";
+					$text = $row['contact'];
+					break;
+				case "H":
+					$caption = get_text("Callback phone") . ": ";
+					$text = (empty ($row['phone']))?  "" : $row['phone'];
+					break;
+				case "I":
+					$caption = get_text("Status") . ": ";
+					$text = get_status($row['status']);
+					break;
+				case "J":
+					$caption = get_text("Addr") . ": ";
+					if (isset ($row['location'])) {
+						$text = remove_nls($row['location']);
+					}
+					break;
+				case "K":
+					$caption = get_text("Synopsis") . ": ";
+					$text = (empty ($row['description']))? "" : remove_nls($row['description']);
+					break;
+				case "L":
+					$caption = get_text("Comments") . ": ";
+					$text = (empty ($row['comments']))? "" : remove_nls($row['comments']);
+					break;
+				case "M":
+					$caption = get_text("Position") . ": ";
+					$utm = toUTM($row['lat'], $row['lng']);
+					$text = $row['lat'] . " " . $row['lng'] . ", " . $utm[3] . $utm[2] . $utm[0] . $utm[1] . "\n";
+					break;
+				case "N":
+					$caption = get_text("Incident name") . ": ";
+					if (isset ($row['incident_name'])) {
+						$text = remove_nls($row['incident_name']);
+					}
+					break;
+				case "O":
+					$caption = "============================================================";
+					break;
+				case "S":
+					$caption = get_text("Run Start") . ": ";
+					$text = format_date($row['problemstart']) . $_problemend;
+					break;
+				case "T":
+					if ($row['facility_id'] > 0) {
+						$caption = get_text("Facility") . ": ";
+						$text = remove_nls($row['facility_handle']);
+					} else {
+						$field_empty = true;
+					}
+					break;
+				case "U":
+
+					$query_u = "SELECT `r`.`handle` AS `unit_handle`, `r`.`name` AS `unit_name`, `a`.`dispatched`, `a`.`responding`, `a`.`on_scene`, " . 
+						"`a`.`u2fenr`, `a`.`u2farr`, `a`.`receiving_facility_id`, `a`.`receiving_location`, `f`.`handle` AS `facility_handle`, " . 
+						"`f`.`name` AS `facility_name`, `f`.`street` AS `facility_street`, `f`.`city` AS `facility_city` FROM `assigns` `a` " . 
+						"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " . 
+						"LEFT JOIN `facilities` `f` ON (`a`.`receiving_facility_id` = `f`.`id`) " . 
+						"WHERE `a`.`ticket_id` = " . $ticket_id . " AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' ORDER BY `a`.`dispatched` ASC";
+
+					$result_u = db_query($query_u, __FILE__, __LINE__);
+					if (db_num_rows($result_u) > 0) {
+						switch ($text_type) {
+							case "hypertext":
+								$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
+								get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
+								get_text("Receiving location") . $post_delimiter;
+								while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+									$assign_info = get_assign_infos($u_row);
+									$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>";
+									$text .= remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>";
+									$text .= remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>";
+									$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
+									$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
+								}
+								break;
+							case "postscript":
+								/*$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
+								$text = "";
+								while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+									$text .= remove_nls($u_row['unit_handle']) . ", ";
+								}
+								$text = substr($text, 0, -2);
+								100 200 moveto
+								"(" . get_text("Incident dispatch system") . ") show\n";
+								*/
+								$text = "";
+								$text .= "8 scalefont\n" . 
+									"setfont\n";
+								$text .= $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "			" . 
+								get_text("Dispatched") . "		" . get_text("Status") . "		" . 
+								get_text("Receiving location") . $post_delimiter;
+								while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
+									$assign_info = get_assign_infos($u_row);
+									$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "	";
+									$text .= remove_nls($assign_info["dispatched"]) . "	";
+									$text .= remove_nls($assign_info["status"]) . "	";
+									$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
+									$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
+								}
+								$text .= "12 scalefont\n" . 
+									"setfont\n";
+								break;
+							case "plaintext":
+								$text = $pre_delimiter2 . get_text("Attachment: Dispatched Units") . $post_delimiter;
+								break;
+							default:
+						}
+					}
+					unset ($result_u);
+					break;
+				case "V":
+					if (is_datetime($row['booked_date'])) {
+						$caption = get_text("Scheduled Date");
+						$text = format_date($row['booked_date']) . $_problemend;
+					}
+					break;
+				case "Z":
+					$text = "";
+					break;
+				default:
+					$err_str = "mail error: '" . $match_str[$i] . "' @ " .  __LINE__;
+					if (!(array_key_exists($err_str, $_SESSION))) {
+						do_log($GLOBALS['LOG_ERROR'], 0, 0, $err_str, 0, "", "", "");
+						$_SESSION[$err_str] = true;
+					}
+			}
+			if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
+				$text = substr($text, $text_start[$i], $text_chars[$i]);
+			}
+			if ($short_message) {
+				$message_text .= $text . " ";
+			} else {
+				if (!$field_empty) {
+					if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
+						$message_text .= $pre_delimiter . html_entity_decode($caption) . $text . $post_delimiter;
+					} else {
+						$message_text .= $text;
+					}
+				}
+			}
+		}
+	}
+	for ($i = 0; $i < count($text_selects); $i++) {
+		switch ($text_selects[$i]) {
+			case "Z":
+				$max_chars_shorttext = $text_chars[$i];
+				break;
+			default:
+		}
+	}
+	$message = array ();
+	$message[0] = html_entity_decode($message_text);
+	if (($max_chars_shorttext > 0) && ($max_chars_shorttext < 1024)) {
+		$message[1] = $max_chars_shorttext;
+	} else {
+		$message[1] = 1024;
+	}
+	return $message;
+}
+
 function do_email($addresses, $subject, $text, $attachment) {
 	require "./lib/PHPMailer-6.8.0/src/PHPMailer.php";
     require "./lib/PHPMailer-6.8.0/src/SMTP.php";
@@ -145,13 +488,201 @@ function do_print($url, $text) {
 	$ipp->setSides(1);
 	$ipp->setData($text);
 	$ipp->setUserName(get_variable("title_string"));
+	//$ipp->setJobName("Hello World2");
 	$ipp->debug_level = 0; // Debugging very verbose
 	$ipp->setLog("/tmp/printipp","file",0);
-//	$ipp->setAuthentication($username,$password); //Set system user name and password when server needs authentication for operation. (e.g. cancelJob() on CUPS with standard settings). If the server do not support Basic nor Digest authentication, you need to install SASL to use authentication. See INSTALL
+	//$ipp->setAuthentication($username,$password); //Set system user name and password when server needs authentication for operation. (e.g. cancelJob() on CUPS with standard settings). If the server do not support Basic nor Digest authentication, you need to install SASL to use authentication. See INSTALL
 	$result_data = array ("", "", "");
 	$result_data[0] = $ipp->printJob();
 	$result_data[1] = $ipp->getDebug();
 	return $result_data;
+}
+
+function send_message($addresses, $text_type, $subject, $text, $shorttext, $ticket_id) {
+	require_once ("./incs/api.inc.php");
+	$sent_ok = 0;
+	$sent_error = 0;
+	$code = "MESSAGE";
+	switch ($text_type) {
+		case "DISPATCH_MESSAGE":
+			$code = "DISPATCH_MESSAGE";
+			break;
+		case "INDIVIDUAL_MESSAGE":
+			$code = "MESSAGE";
+			break;
+		default:
+			$fixtexts = array ();
+			$fixtexts = get_fixtext();
+			$subject = $text = $shorttext = $fixtexts[$text_type]["Text"];
+			$code = $fixtexts[$text_type]["code"];
+	}
+	//print_r($addresses); print "<br>Ticket-ID: " . $ticket_id . "<br>Code: " . $code . "<br>Subject: " . $subject . "<br>Text: " . $text . "<br>Shorttext:  " . $shorttext; exit ();
+	$result = array ();
+	//========================= API
+	$destination_prefix = "";
+	$report_channels = array (
+		get_variable("_api_prefix_reporting_channel_1_encdg"),
+		get_variable("_api_prefix_reporting_channel_2_encdg"),
+		get_variable("_api_prefix_reporting_channel_3_encdg"),
+		get_variable("_api_prefix_reporting_channel_4_encdg"),
+		get_variable("_api_prefix_reporting_channel_5_encdg"),
+		get_variable("_api_prefix_phone_encdg")
+	);
+	foreach ($report_channels as $destination_prefix) {
+		if (array_key_exists($destination_prefix, $addresses)) {
+			$batch_start_stop_settings = explode(",", get_variable("_api_batch_start_stop_setng"));
+			$batch_start_setting = trim($batch_start_stop_settings[0]);
+			$batch_stop_setting = trim($batch_start_stop_settings[1]);
+			if ((count($addresses[$destination_prefix]) > 1) && ($batch_start_setting != "") && ($batch_stop_setting != "")) {
+				do_api_message("", $destination_prefix, $batch_start_setting, "", "", "");
+			}
+			foreach ($addresses[$destination_prefix] as $key) {
+				$result = do_api_message(get_assign_id($key["address"]), $key["address"], $code, $shorttext, "", "");
+				if ($result[0] == "OK") {
+					$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
+					$sent_ok++;
+				} else {
+					$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
+					$sent_error++;
+				}
+				do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . $key["address"] . " " . $shorttext, 0, "", "", "");
+			}
+			if ((count($addresses[$destination_prefix]) > 1) && ($batch_start_setting != "") && ($batch_stop_setting != "")) {
+				do_api_message("", $destination_prefix, $batch_stop_setting, "", "", "");
+			}
+		}
+	}
+	//========================= Print
+	/*	Paper size
+		DIN A4	  595 x 842
+		US Letter 612 x 792
+		0 position in the bottom left corner
+	*/
+	if ($text_type == "DISPATCH_MESSAGE") {
+		$text = get_dispatch_message($ticket_id, "message_text", "postscript")[0];
+	}
+	$ps_pt_align_left = 40;
+	$ps_pt_align_right = 545;
+	$ps_font_size_big = 12;
+	$ps_font_size_verybig = 15;
+	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
+		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
+		$text_postscript_first_part = "%!\n" .
+			"/Helvetica findfont\n" .
+			"dup length dict begin\n" .
+			"{def} forall\n" .
+			"/Encoding ISOLatin1Encoding def\n" .
+			"currentdict\n" .
+			"end\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
+			$ps_font_size_big . " scalefont\n" .
+			"setfont\n" .
+			$ps_pt_align_left . " 799 moveto \n" .
+			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
+			$ps_pt_align_left . " 782 moveto \n" .
+			"(" . get_text("Incident dispatch system") . ") show\n";
+		$text_postscript_last_part = "/Helvetica-Bold findfont\n" .
+			"dup length dict begin\n" .
+			"{def} forall\n" .
+			"/Encoding ISOLatin1Encoding def\n" .
+			"currentdict\n" .
+			"end\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
+			$ps_font_size_verybig . " scalefont\n" .
+			"setfont\n" .
+			$ps_pt_align_left . " 755 moveto \n" .
+			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
+			"/Helvetica findfont\n" .
+			"dup length dict begin\n" .
+			"{def} forall\n" .
+			"/Encoding ISOLatin1Encoding def\n" .
+			"currentdict\n" .
+			"end\n" .
+			"/Helvetica-ISOLatin1 exch definefont\n" .
+			$ps_font_size_big . " scalefont\n" .
+			"setfont\n";
+		$i = 731;
+		foreach ($text_lines_array as $key) {
+			$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n" .
+				"(" . $key . ") show\n";
+			$i = $i - 18;
+		}
+		$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n(" . get_text("Printed at") . " " . 
+			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
+		$text_postscript_last_part .= "showpage\n";
+		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
+			$subscriber_url = substr($key["address"], 8);
+			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
+				$ps_pt_align_right . " exch sub\n799 moveto show\n" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
+			$result = do_print($subscriber_url, $subscriber_message);
+			if ($result[0] == "successfull-ok") {
+				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
+				$sent_ok++;
+			} else {
+				$message_type = $GLOBALS['LOG_PRINT_JOB_ERROR'];
+				$sent_error++;
+			}
+			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text, 0, "", "", "");
+		}
+	}
+	//========================= E-Mail
+	if (array_key_exists("EMAIL", $addresses)) {
+		if ($text_type == "DISPATCH_MESSAGE") {
+			$text = get_dispatch_message($ticket_id, "message_text", "hypertext")[0];	
+		} else {
+			//mach html daraus		
+		}
+		$result = do_email($addresses["EMAIL"], $_POST['frm_subject'], $_POST['frm_text'], $_POST['frm_attachment']);
+		$message_text = "";
+		if ($result[0] == "OK") {
+			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_SEND'];
+			$sent_ok++;
+		} else {
+			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_ERROR'];
+			$message_text .= $result[1] . "  ";
+			$sent_error++;
+		}
+		$message_text .= get_text("Subject") . ": " . $subject . "  " . get_text("Message text")  . ": " . $text;
+		foreach ($addresses["EMAIL"] as $key => $value) {
+			$log_text = "";
+			$unit_id = 0;
+			$facility_id = 0;
+			switch ($value["type"]) {
+				case "unit":
+					$unit_id = $value["id"];
+					$log_text .= substr($value["address"], 6) . "  " . $message_text;
+					break;
+				case "facility":
+					$facility_id = $value["id"];
+					$log_text .= substr($value["address"], 6) . "  " . $message_text;
+					break;
+				default:
+					//Specify recipient in the log text
+					$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $message_text;
+			}
+			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id, "", "", "");
+		}
+	}
+	//========================= Return info
+	$return_array = array (get_text("No receiver available"), "danger");
+	if (($sent_ok > 0) && ($sent_error < 1)) {
+		$return_array[0] = get_text("Message sent");
+		$return_array[1] = "success";
+	}
+	if (($sent_ok > 0) && ($sent_error > 0)) {
+		$return_array[0] = get_text("Not reach all recipients");
+		$return_array[1] = "warning";
+	}
+	if (($sent_ok < 1) && ($sent_error > 0)) {
+		$return_array[0] = get_text("Message not sent");
+		$return_array[1] = "danger";
+	}
+	if (($sent_ok == 0) && ($sent_error == 0)) {
+		do_log($GLOBALS['LOG_SMS_MESSAGE_ERROR'], $ticket_id, 0, get_text("No receiver available") . ":  " . $shorttext, 0, "", "", "");
+	}
+	$return_array[2] = $sent_ok;
+	$return_array[3] = $sent_error;
+	return $return_array;
 }
 
 function update_communication($api_log_id, $api_log_action) {
@@ -257,176 +788,176 @@ function update_communication($api_log_id, $api_log_action) {
 				//======================================
 				$text = "";
 				switch ($api_log_action) {
-				case "api_log_voice_promt":
-				case "api_log_private_call":
-					$url_str =  "ticket_edit.php?ticket_id=" . $ticket_id . "&unit_id=" . $unit_id;
-					if ($ticket_id == 0) {
-						switch ($code) {
-						case $GLOBALS['LOG_EMGCY_LO']:
-						case $GLOBALS['LOG_EMGCY_HI']:
-						case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
-						case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
-						case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
-						case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
-						default:
-							$url_str = "log_report.php";
-							if ($unit_id != 0) {
-								$url_str = "log_report.php?unit_id=" . $unit_id;
-							}
-						}
-					}
-					switch ($api_log_action) {
 					case "api_log_voice_promt":
-						$message_array = get_receipt_message($code);
-						if ($message_array["code"] != "") {
-							$do_api_result = do_api_message(get_assign_id($unit_id), $source, $message_array["code"], $message_array["text"], "", "");
-							$result_array[0] = get_text("Message not sent");
-							$result_array[1] = "danger";
-							$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
-							if ($do_api_result[0] == "OK") {
-								$result_array[0] = get_text("Message sent");
-								$result_array[1] = "success";
-								$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
-							}
-							do_log($message_type, $ticket_id, $unit_id, get_text("Receiver") . ": " . $source . " " . $message_array["text"], 0, "", "", "");
-						}
-						break;
 					case "api_log_private_call":
-						$do_api_result = do_api_message($_SESSION['user_id'], $source, get_variable("_api_private_call_encdg"), $_SESSION['user_name'], "", "");
-						$result_array[0] = get_text("Message not sent");
-						$result_array[1] = "danger";
-						$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
-						if ($do_api_result[0] == "OK") {
-							$result_array[0] = get_text("Private call requested");
-							$result_array[1] = "success";
-							$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
+						$url_str =  "ticket_edit.php?ticket_id=" . $ticket_id . "&unit_id=" . $unit_id;
+						if ($ticket_id == 0) {
+							switch ($code) {
+								case $GLOBALS['LOG_EMGCY_LO']:
+								case $GLOBALS['LOG_EMGCY_HI']:
+								case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
+								case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
+								case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
+								case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+								default:
+									$url_str = "log_report.php";
+									if ($unit_id != 0) {
+										$url_str = "log_report.php?unit_id=" . $unit_id;
+									}
+							}
 						}
-						do_log($message_type, $ticket_id, $unit_id, get_text("Private Call") . " " . get_text("Receiver") . ": " . $source, 0, "", "", "");
-						break;
-					default:
-					}
-					$result_array[2] = $url_str;
-					break;
-				case "api_log_reply":
-					if ($row['text'] != "") {
-						$text = "  " . get_text("Text") . ": " . $row['text'];
-					}
-					if (($row['unit_id'] == 0) || ($row['unit_id'] == "")) {
-						$text = "  " . $row['source'] . $text;
-					}
-					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
-					$result_array[0] = "";
-					$result_array[1] = "";
-					$result_array[2] = "communication.php?function=send_message&message_group=unit&target_api_log_id=" . urlencode($api_log_id) . "&ticket_id=" . $ticket_id;
-					break;
-				case "api_log_add_to_log":
-					$ticket_id = 0;
-				case "api_log_add_to_ticket_log":
-					$text = "";
-
-					switch ($code) {
-					case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
-					case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
-					case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
-					case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
-					case $GLOBALS['LOG_UNIT_STATUS']:
-
-						$query_source = "SELECT `source`, " .
-							"`unit_id`, " .
-							"`code`, " .
-							"`datetime` " .
-							"FROM `api_log` " .
-							"WHERE `id` = " . $api_log_id . " " .
-							"LIMIT 1;";
-
-						$result_source = db_query($query_source, __FILE__, __LINE__);
-						if (db_num_rows($result_source)) {
-							$row_source = stripslashes_deep(db_fetch_assoc($result_source));
-							$unit_id = $row_source['unit_id'];
-							$code = $row_source['code'];
-							$api_log_datetime = $row_source['datetime'];
+						switch ($api_log_action) {
+							case "api_log_voice_promt":
+								$message_array = get_receipt_message($code);
+								if ($message_array["code"] != "") {
+									$do_api_result = do_api_message(get_assign_id($unit_id), $source, $message_array["code"], $message_array["text"], "", "");
+									$result_array[0] = get_text("Message not sent");
+									$result_array[1] = "danger";
+									$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
+									if ($do_api_result[0] == "OK") {
+										$result_array[0] = get_text("Message sent");
+										$result_array[1] = "success";
+										$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
+									}
+									do_log($message_type, $ticket_id, $unit_id, get_text("Receiver") . ": " . $source . " " . $message_array["text"], 0, "", "", "");
+								}
+								break;
+							case "api_log_private_call":
+								$do_api_result = do_api_message($_SESSION['user_id'], $source, get_variable("_api_private_call_encdg"), $_SESSION['user_name'], "", "");
+								$result_array[0] = get_text("Message not sent");
+								$result_array[1] = "danger";
+								$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
+								if ($do_api_result[0] == "OK") {
+									$result_array[0] = get_text("Private call requested");
+									$result_array[1] = "success";
+									$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
+								}
+								do_log($message_type, $ticket_id, $unit_id, get_text("Private Call") . " " . get_text("Receiver") . ": " . $source, 0, "", "", "");
+								break;
+							default:
 						}
-						unset ($result_source);
+						$result_array[2] = $url_str;
 						break;
-					default:
+					case "api_log_reply":
 						if ($row['text'] != "") {
 							$text = "  " . get_text("Text") . ": " . $row['text'];
 						}
 						if (($row['unit_id'] == 0) || ($row['unit_id'] == "")) {
 							$text = "  " . $row['source'] . $text;
 						}
-					}
-					do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
-					$result_array[0] = get_text("Saved");
-					$result_array[1] = "success";
-					break;
-				case "api_log_no_action":
-					do_log($GLOBALS['LOG_NO_ACTION'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
-					$result_array[0] = get_text("Saved");
-					$result_array[1] = "success";
-					break;
-				case "api_log_new_ticket":
-					$result_array[0] = get_text("Saved");
-					$result_array[1] = "success";
-					break;
-				case "api_log_update_call_progression":
+						do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
+						$result_array[0] = "";
+						$result_array[1] = "";
+						$result_array[2] = "communication.php?function=send_message&message_group=unit&target_api_log_id=" . urlencode($api_log_id) . "&ticket_id=" . $ticket_id;
+						break;
+					case "api_log_add_to_log":
+						$ticket_id = 0;
+					case "api_log_add_to_ticket_log":
+						$text = "";
 
-					$query = "SELECT `id` " .
-						"FROM `assigns` " .
-						"WHERE `unit_id` = " . $unit_id . " " .
-						"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00') " .
-						"ORDER BY `id` ASC " .
-						"LIMIT 1;";
+						switch ($code) {
+							case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
+							case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
+							case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
+							case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+							case $GLOBALS['LOG_UNIT_STATUS']:
 
-					$result = db_query($query, __FILE__, __LINE__);
+								$query_source = "SELECT `source`, " .
+									"`unit_id`, " .
+									"`code`, " .
+									"`datetime` " .
+									"FROM `api_log` " .
+									"WHERE `id` = " . $api_log_id . " " .
+									"LIMIT 1;";
 
-					if (db_num_rows($result)) {
-						$row_assigns = db_fetch_assoc($result);
+								$result_source = db_query($query_source, __FILE__, __LINE__);
+								if (db_num_rows($result_source)) {
+									$row_source = stripslashes_deep(db_fetch_assoc($result_source));
+									$unit_id = $row_source['unit_id'];
+									$code = $row_source['code'];
+									$api_log_datetime = $row_source['datetime'];
+								}
+								unset ($result_source);
+								break;
+							default:
+								if ($row['text'] != "") {
+									$text = "  " . get_text("Text") . ": " . $row['text'];
+								}
+								if (($row['unit_id'] == 0) || ($row['unit_id'] == "")) {
+									$text = "  " . $row['source'] . $text;
+								}
+						}
+						do_log($GLOBALS['LOG_COMMENT'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
+						$result_array[0] = get_text("Saved");
+						$result_array[1] = "success";
+						break;
+					case "api_log_no_action":
+						do_log($GLOBALS['LOG_NO_ACTION'], $ticket_id, $unit_id, $types[$code] . "  " . date(get_variable("date_format"), strtotime($api_log_datetime)) . $text, 0, "", "", "");
+						$result_array[0] = get_text("Saved");
+						$result_array[1] = "success";
+						break;
+					case "api_log_new_ticket":
+						$result_array[0] = get_text("Saved");
+						$result_array[1] = "success";
+						break;
+					case "api_log_update_call_progression":
 
-						$query = "SELECT `datetime`, " .
-							"`code` " .
-							"FROM `api_log` " .
-							"WHERE `id` = " . $api_log_id . ";";
+						$query = "SELECT `id` " .
+							"FROM `assigns` " .
+							"WHERE `unit_id` = " . $unit_id . " " .
+							"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00') " .
+							"ORDER BY `id` ASC " .
+							"LIMIT 1;";
 
 						$result = db_query($query, __FILE__, __LINE__);
 
 						if (db_num_rows($result)) {
-							$row_api_log = db_fetch_assoc($result);
-							switch ($row_api_log['code']) {
-							case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
-								$result_array[0] = get_text("Saved");
-								$result_array[1] = "success";
-								$result_array[3] = $row_assigns['id'];
-								$result_array[4] = $row_api_log['datetime'];
-								$result_array[5] = "frm_responding";
-								break;
-							case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
-								$result_array[0] = get_text("Saved");
-								$result_array[1] = "success";
-								$result_array[3] = $row_assigns['id'];
-								$result_array[4] = $row_api_log['datetime'];
-								$result_array[5] = "frm_on_scene";
-								break;
-							case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
-								$result_array[0] = get_text("Saved");
-								$result_array[1] = "success";
-								$result_array[3] = $row_assigns['id'];
-								$result_array[4] = $row_api_log['datetime'];
-								$result_array[5] = "frm_u2fenr";
-								break;
-							case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
-								$result_array[0] = get_text("Saved");
-								$result_array[1] = "success";
-								$result_array[3] = $row_assigns['id'];
-								$result_array[4] = $row_api_log['datetime'];
-								$result_array[5] = "frm_u2farr";
-								break;
-							default:
+							$row_assigns = db_fetch_assoc($result);
+
+							$query = "SELECT `datetime`, " .
+								"`code` " .
+								"FROM `api_log` " .
+								"WHERE `id` = " . $api_log_id . ";";
+
+							$result = db_query($query, __FILE__, __LINE__);
+
+							if (db_num_rows($result)) {
+								$row_api_log = db_fetch_assoc($result);
+								switch ($row_api_log['code']) {
+									case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
+										$result_array[0] = get_text("Saved");
+										$result_array[1] = "success";
+										$result_array[3] = $row_assigns['id'];
+										$result_array[4] = $row_api_log['datetime'];
+										$result_array[5] = "frm_responding";
+										break;
+									case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
+										$result_array[0] = get_text("Saved");
+										$result_array[1] = "success";
+										$result_array[3] = $row_assigns['id'];
+										$result_array[4] = $row_api_log['datetime'];
+										$result_array[5] = "frm_on_scene";
+										break;
+									case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
+										$result_array[0] = get_text("Saved");
+										$result_array[1] = "success";
+										$result_array[3] = $row_assigns['id'];
+										$result_array[4] = $row_api_log['datetime'];
+										$result_array[5] = "frm_u2fenr";
+										break;
+									case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+										$result_array[0] = get_text("Saved");
+										$result_array[1] = "success";
+										$result_array[3] = $row_assigns['id'];
+										$result_array[4] = $row_api_log['datetime'];
+										$result_array[5] = "frm_u2farr";
+										break;
+									default:
+								}
 							}
 						}
-					}
-					break;
-				default:
+						break;
+					default:
 				}
 			} else {
 				$result_array = array (get_text("Message already edited"), "warning", "");
@@ -461,9 +992,9 @@ function show_communication_table_left() {
 				$row = db_fetch_assoc($result);
 				$oldest_call_id[$unit_id] = $row['id'];
 			}
-//			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from database: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
+			//@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from database: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		} else {
-//			@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
+			//@error_log("function previous_call_present(" . $unit_id . ", " . $api_log_id . ") Data from variable: " . (($oldest_call_id[$unit_id] == $api_log_id)? "false":"true"));
 		}
 		if ($oldest_call_id[$unit_id] == $api_log_id) {
 			return false;
@@ -490,9 +1021,9 @@ function show_communication_table_left() {
 				$row = db_fetch_assoc($result);
 				$oldest_assign_id[$unit_id] = $row['id'];
 			}
-//			@error_log("function get_oldest_assign(" . $unit_id . ") Data from database: " . $oldest_assign_id[$unit_id]);
+			//@error_log("function get_oldest_assign(" . $unit_id . ") Data from database: " . $oldest_assign_id[$unit_id]);
 		} else {
-//			@error_log("function get_oldest_assign(" . $unit_id . ") Data from variable: " . $oldest_assign_id[$unit_id]);
+			//@error_log("function get_oldest_assign(" . $unit_id . ") Data from variable: " . $oldest_assign_id[$unit_id]);
 		}
 		return $oldest_assign_id[$unit_id];
 	}
@@ -599,100 +1130,100 @@ function show_communication_table_left() {
 			$action_ticket_log = "<li onclick='$(\"#button_" . $i . "\").prop(\"disabled\", true); $(\"#button_" . $i . "\").html(\"" . get_text("Wait") . "\"); send_data(" .  $row['api_log_id'] . ", \"api_log_add_to_ticket_log\", 0, " . $unit_id . ");'><a href='#'>" . get_text("Add to ticket-log") . "</a></li>";
 			$action_no_action = "<li onclick='$(\"#button_" . $i . "\").prop(\"disabled\", true); $(\"#button_" . $i . "\").html(\"" . get_text("Wait") . "\"); send_data(" .  $row['api_log_id'] . ", \"api_log_no_action\", 0, " . $unit_id . ");'><a href='#'>" . get_text("No action") . "</a></li>";
 			$done_title_str = "";
-			switch ($button_type) {
-			case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
-			case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
-			case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
-			case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
-				$unit_situation = "not_in_dispatch";
-				if (previous_call_present($unit_id, $row['api_log_id'])) {
-					$unit_situation = "pre-calls_available";
-				} else {
-					if (get_oldest_assign($unit_id) != 0) {
-						$unit_situation = "in_dispatch";
+				switch ($button_type) {
+				case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
+				case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
+				case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
+				case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+					$unit_situation = "not_in_dispatch";
+					if (previous_call_present($unit_id, $row['api_log_id'])) {
+						$unit_situation = "pre-calls_available";
+					} else {
+						if (get_oldest_assign($unit_id) != 0) {
+							$unit_situation = "in_dispatch";
+						}
 					}
-				}
-				switch ($unit_situation) {
-				case "pre-calls_available":
-					$action_button = $action_button_disabled;
+					switch ($unit_situation) {
+						case "pre-calls_available":
+							$action_button = $action_button_disabled;
+							break;
+						case "in_dispatch":
+							$action_button .= $action_update_call_progression;
+							$action_button .= $action_no_action;
+							break;
+						default:
+							$action_button .= $action_ticket_select;
+							$action_button .= $action_voice_promt;
+							$action_button .= $action_log;
+							$action_button .= $action_no_action;
+					}
 					break;
-				case "in_dispatch":
-					$action_button .= $action_update_call_progression;
+				case $GLOBALS['LOG_CALL_REQ']:
+					$action_button .= $action_voice_promt;
+					if (get_variable("_api_callreq_repl") > 3) {
+						$action_button .= $action_private_call;
+					}
+					$action_button .= $action_no_action;
+					break;
+				case $GLOBALS['LOG_EMGCY_LO']:
+					$action_button = "<div class='btn-group'><button type='button' class='btn btn-warning dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
+					$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
+					$action_button .= $action_voice_promt;
+					if (get_variable("_api_emgcy_lo_repl") > 3) {
+						$action_button .= $action_private_call;
+					}
+					$action_button .= $action_no_action;
+					$severity_blink_str = " class='severity_priority textblink'";
+					break;
+				case $GLOBALS['LOG_EMGCY_HI']:
+					$action_button = "<div class='btn-group'><button type='button' class='btn btn-danger dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
+					$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
+					$action_button .= $action_voice_promt;
+					if (get_variable("_api_emgcy_hi_repl") > 3) {
+						$action_button .= $action_private_call;
+					}
+					$action_button .= $action_no_action;
+					$severity_blink_str = " class='severity_high textblink'";
+					break;
+				case $GLOBALS['LOG_MESSAGE_RECEIVE']:
+					if ($auto_ticket) {
+						$action_button = "<div class='btn-group'><button type='button' class='btn btn-danger dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
+						$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
+						$severity_blink_str = " class='severity_high textblink'";
+					}
+					if ($valid_reply_address) {
+						$action_button .= $action_reply;
+					}
+					if ($auto_ticket) {
+						$action_button .= $action_new_ticket;
+					}
+					if ($unit_dispached) {
+						$action_button .= $action_ticket_log;
+					}
+					$action_button .= $action_log;
+					$action_button .= $action_no_action;
+					break;
+				case $GLOBALS['LOG_INFO']:
+					$action_button .= $action_log;
+					$action_button .= $action_no_action;
+					
+					break;
+				case $GLOBALS['LOG_ERROR']:
+					$action_button = "<div class='btn-group'><button type='button' class='btn btn-warning dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
+					$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
+					$action_button .= $action_log;
+					$action_button .= $action_no_action;
+					$severity_blink_str = " class='severity_priority'";
+					break;
+				case $GLOBALS['LOG_CALL_MANACKN']:
+					$action_button .= $action_voice_promt;
 					$action_button .= $action_no_action;
 					break;
 				default:
-					$action_button .= $action_ticket_select;
-					$action_button .= $action_voice_promt;
-					$action_button .= $action_log;
-					$action_button .= $action_no_action;
-				}
-				break;
-			case $GLOBALS['LOG_CALL_REQ']:
-				$action_button .= $action_voice_promt;
-				if (get_variable("_api_callreq_repl") > 3) {
-					$action_button .= $action_private_call;
-				}
-				$action_button .= $action_no_action;
-				break;
-			case $GLOBALS['LOG_EMGCY_LO']:
-				$action_button = "<div class='btn-group'><button type='button' class='btn btn-warning dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
-				$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
-				$action_button .= $action_voice_promt;
-				if (get_variable("_api_emgcy_lo_repl") > 3) {
-					$action_button .= $action_private_call;
-				}
-				$action_button .= $action_no_action;
-				$severity_blink_str = " class='severity_priority textblink'";
-				break;
-			case $GLOBALS['LOG_EMGCY_HI']:
-				$action_button = "<div class='btn-group'><button type='button' class='btn btn-danger dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
-				$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
-				$action_button .= $action_voice_promt;
-				if (get_variable("_api_emgcy_hi_repl") > 3) {
-					$action_button .= $action_private_call;
-				}
-				$action_button .= $action_no_action;
-				$severity_blink_str = " class='severity_high textblink'";
-				break;
-			case $GLOBALS['LOG_MESSAGE_RECEIVE']:
-				if ($auto_ticket) {
-					$action_button = "<div class='btn-group'><button type='button' class='btn btn-danger dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
-					$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
-					$severity_blink_str = " class='severity_high textblink'";
-				}
-				if ($valid_reply_address) {
-					$action_button .= $action_reply;
-				}
-				if ($auto_ticket) {
-					$action_button .= $action_new_ticket;
-				}
-				if ($unit_dispached) {
-					$action_button .= $action_ticket_log;
-				}
-				$action_button .= $action_log;
-				$action_button .= $action_no_action;
-				break;
-			case $GLOBALS['LOG_INFO']:
-				$action_button .= $action_log;
-				$action_button .= $action_no_action;
-				
-				break;
-			case $GLOBALS['LOG_ERROR']:
-				$action_button = "<div class='btn-group'><button type='button' class='btn btn-warning dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
-				$action_button .= get_text("Select") . " <span class='caret'></span></button><ul class='dropdown-menu'>";
-				$action_button .= $action_log;
-				$action_button .= $action_no_action;
-				$severity_blink_str = " class='severity_priority'";
-				break;
-			case $GLOBALS['LOG_CALL_MANACKN']:
-				$action_button .= $action_voice_promt;
-				$action_button .= $action_no_action;
-				break;
-			default:
-				$done_text = get_text("Edited") . " " . date(get_variable("date_format_time_only"), strtotime($row['api_log_cleared_datetime'])) . "<br>" . get_text("by") . " " .  get_user_name($row['api_log_cleared_user']);
-				$done_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['api_log_cleared_datetime'])));
-				$severity_blink_str = "";
-				$hide_text_row = true;
+					$done_text = get_text("Edited") . " " . date(get_variable("date_format_time_only"), strtotime($row['api_log_cleared_datetime'])) . "<br>" . get_text("by") . " " .  get_user_name($row['api_log_cleared_user']);
+					$done_title_str = get_title_str(date(get_variable("date_format"), strtotime($row['api_log_cleared_datetime'])));
+					$severity_blink_str = "";
+					$hide_text_row = true;
 			}
 			$action_button .= "</ul></div>";
 			if ($done_text != "") {
@@ -786,13 +1317,13 @@ function show_communication_table_right() {
 		"LEFT JOIN `users` `u` 	ON (`api_log`.`cleared_user_id` = `u`.`id`) " .
 		"LEFT JOIN `units` ON (`api_log`.`unit_id` = `units`.`id`) " .
 		"WHERE ((`code` = " . $GLOBALS['LOG_PTT'] . " " .
-//			"OR `code` = " . $GLOBALS['LOG_PHONE_CALL'] . " " .
-//			"OR `code` = " . $GLOBALS['LOG_GROUP_CALL'] . " " .
-//			"OR `code` = " . $GLOBALS['LOG_PRIVATE_CALL'] .
+		//"OR `code` = " . $GLOBALS['LOG_PHONE_CALL'] . " " .
+		//"OR `code` = " . $GLOBALS['LOG_GROUP_CALL'] . " " .
+		//"OR `code` = " . $GLOBALS['LOG_PRIVATE_CALL'] .
 		") AND ((DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . get_variable("_api_log_max_display_setng") . " MINUTE) <= `api_log`.`datetime`))) " .
 		"ORDER BY `api_log`.`id` DESC;";						//TODO Über Variable steuern => immer alle unbearbeiteten!!!
-	//TODO Control via variable => 5 after 3 before 5 after 1?
-	//TODO Control interval via variable => always all unprocessed!!!
+		//TODO Control via variable => 5 after 3 before 5 after 1?
+		//TODO Control interval via variable => always all unprocessed!!!
 
 	$result = db_query($query, __FILE__, __LINE__);
 	if (db_num_rows($result)) {
@@ -839,518 +1370,6 @@ function show_communication_table_right() {
 	<?php
 }
 
-//===================================send message
-
-function send_message($addresses, $text_type, $subject, $text, $shorttext, $ticket_id) {
-	require_once ("./incs/api.inc.php");
-	$sent_ok = 0;
-	$sent_error = 0;
-	$code = "MESSAGE";
-	switch ($text_type) {
-	case "DISPATCH_MESSAGE":
-		$code = "DISPATCH_MESSAGE";
-		break;
-	case "INDIVIDUAL_MESSAGE":
-		$code = "MESSAGE";
-		break;
-	default:
-		$fixtexts = array ();
-		$fixtexts = get_fixtext();
-		$subject = $text = $shorttext = $fixtexts[$text_type]["Text"];
-		$code = $fixtexts[$text_type]["code"];
-	}
-//	print_r($addresses); print "<br>Ticket-ID: " . $ticket_id . "<br>Code: " . $code . "<br>Subject: " . $subject . "<br>Text: " . $text . "<br>Shorttext:  " . $shorttext; exit ();
-	$result = array ();
-	//========================= API
-	$destination_prefix = "";
-	$report_channels = array (
-		get_variable("_api_prefix_reporting_channel_1_encdg"),
-		get_variable("_api_prefix_reporting_channel_2_encdg"),
-		get_variable("_api_prefix_reporting_channel_3_encdg"),
-		get_variable("_api_prefix_reporting_channel_4_encdg"),
-		get_variable("_api_prefix_reporting_channel_5_encdg"),
-		get_variable("_api_prefix_phone_encdg")
-	);
-	foreach ($report_channels as $destination_prefix) {
-		if (array_key_exists($destination_prefix, $addresses)) {
-			$batch_start_stop_settings = explode(",", get_variable("_api_batch_start_stop_setng"));
-			$batch_start_setting = trim($batch_start_stop_settings[0]);
-			$batch_stop_setting = trim($batch_start_stop_settings[1]);
-			if ((count($addresses[$destination_prefix]) > 1) && ($batch_start_setting != "") && ($batch_stop_setting != "")) {
-				do_api_message("", $destination_prefix, $batch_start_setting, "", "", "");
-			}
-			foreach ($addresses[$destination_prefix] as $key) {
-				$result = do_api_message(get_assign_id($key["address"]), $key["address"], $code, $shorttext, "", "");
-				if ($result[0] == "OK") {
-					$message_type = $GLOBALS['LOG_SMS_MESSAGE_SEND'];
-					$sent_ok++;
-				} else {
-					$message_type = $GLOBALS['LOG_SMS_MESSAGE_ERROR'];
-					$sent_error++;
-				}
-				do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . $key["address"] . " " . $shorttext, 0, "", "", "");
-			}
-			if ((count($addresses[$destination_prefix]) > 1) && ($batch_start_setting != "") && ($batch_stop_setting != "")) {
-				do_api_message("", $destination_prefix, $batch_stop_setting, "", "", "");
-			}
-		}
-	}
-	//========================= Print
-	/*Paper size
-	DIN A4	595 x 842
-	Letter	612 x 792
-	0 position in the bottom left corner*/
-	$ps_pt_align_left = 40;
-	$ps_pt_align_right = 545;
-	$ps_font_size_big = 12;
-	$ps_font_size_verybig = 15;
-	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
-		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
-		$text_postscript_first_part = "%!\n" .
-			"/Helvetica findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
-			"setfont\n" .
-			$ps_pt_align_left . " 799 moveto \n" .
-			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
-			$ps_pt_align_left . " 782 moveto \n" .
-			"(" . get_text("Incident dispatch system") . ") show\n";
-		$text_postscript_last_part = "/Helvetica-Bold findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_verybig . " scalefont\n" .
-			"setfont\n" .
-			$ps_pt_align_left . " 755 moveto \n" .
-			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
-			"/Helvetica findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
-			"setfont\n";
-		$i = 731;
-		foreach ($text_lines_array as $key) {
-			$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n" .
-				"(" . $key . ") show\n";
-			$i = $i - 18;
-		}
-		$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n(" . get_text("Printed at") . " " . 
-			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
-		$text_postscript_last_part .= "showpage\n";
-		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
-			$subscriber_url = substr($key["address"], 8);
-			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
-				$ps_pt_align_right . " exch sub\n799 moveto show\n" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
-			$result = do_print($subscriber_url, $subscriber_message);
-			if ($result[0] == "successfull-ok") {
-				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
-				$sent_ok++;
-			} else {
-				$message_type = $GLOBALS['LOG_PRINT_JOB_ERROR'];
-				$sent_error++;
-			}
-			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text, 0, "", "", "");
-		}
-	}
-	//========================= E-Mail
-	if (array_key_exists("EMAIL", $addresses)) {
-		$result = do_email($addresses["EMAIL"], $_POST['frm_subject'], $_POST['frm_text'], $_POST['frm_attachment']);
-		$message_text = "";
-		if ($result[0] == "OK") {
-			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_SEND'];
-			$sent_ok++;
-		} else {
-			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_ERROR'];
-			$message_text .= $result[1] . "  ";
-			$sent_error++;
-		}
-		$message_text .= get_text("Subject") . ": " . $subject . "  " . get_text("Message text")  . ": " . $text;
-		foreach ($addresses["EMAIL"] as $key => $value) {
-			$log_text = "";
-			$unit_id = 0;
-			$facility_id = 0;
-			switch ($value["type"]) {
-			case "unit":
-				$unit_id = $value["id"];
-				$log_text .= substr($value["address"], 6) . "  " . $message_text;
-				break;
-			case "facility":
-				$facility_id = $value["id"];
-				$log_text .= substr($value["address"], 6) . "  " . $message_text;
-				break;
-			default:
-				//Specify recipient in the log text
-				$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $message_text;
-			}
-			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id, "", "", "");
-		}
-	}
-	//========================= Return info
-	$return_array = array (get_text("No receiver available"), "danger");
-	if (($sent_ok > 0) && ($sent_error < 1)) {
-		$return_array[0] = get_text("Message sent");
-		$return_array[1] = "success";
-	}
-	if (($sent_ok > 0) && ($sent_error > 0)) {
-		$return_array[0] = get_text("Not reach all recipients");
-		$return_array[1] = "warning";
-	}
-	if (($sent_ok < 1) && ($sent_error > 0)) {
-		$return_array[0] = get_text("Message not sent");
-		$return_array[1] = "danger";
-	}
-	if (($sent_ok == 0) && ($sent_error == 0)) {
-		do_log($GLOBALS['LOG_SMS_MESSAGE_ERROR'], $ticket_id, 0, get_text("No receiver available") . ":  " . $shorttext, 0, "", "", "");
-	}
-	$return_array[2] = $sent_ok;
-	$return_array[3] = $sent_error;
-	return $return_array;
-}
-
-/*
-Actions		A
-ADDRESS		B	UPPERCASE on facility
-Priority	C
-Inc type	D
-Written		E
-Updated		F
-Reporte		G
-Phone 		H
-Status		I
-Address		J
-Descrip'n	K
-Dispos'n	L
-Position	M
-Name		N
-==========  O	
-Start/end	S
-Facility 	T	Row hidden if no facility
-Handle		U
-Scheduled	V
-Maxchar		Z	only for shorttext
-*/
-
-function get_assign_infos($row) {
-	$return_array = array ("unit" => "","dispatched" => "","status" => "", "time" => "", "facility" => "");
-	$return_array["unit"] = $row['unit_handle'];
-	if (is_datetime($row['dispatched'])) {
-		$return_array["status"] = get_text("Dispatched");
-		$return_array["time"] = $return_array["dispatched"] = date("H:i:s", strtotime($row['dispatched']));
-	}
-	if (is_datetime($row['responding'])) {
-		$return_array["status"] = get_text("Responding");
-		$return_array["time"] = date("H:i:s", strtotime($row['responding']));
-	}
-	if (is_datetime($row['on_scene'])) {
-		$return_array["status"] = get_text("On-scene");
-		$return_array["time"] = date("H:i:s", strtotime($row['on_scene']));
-	}
-	if (is_datetime($row['u2fenr'])) {
-		$return_array["status"] = get_text("Fac en-route");
-		$return_array["time"] = date("H:i:s", strtotime($row['u2fenr']));
-	}
-	if (is_datetime($row['u2farr'])) {
-		$return_array["status"] = get_text("Fac arr");
-		$return_array["time"] = date("H:i:s", strtotime($row['u2farr']));
-	}
-	if ($row['receiving_facility_id'] > 0) {
-		$return_array["facility"] = $row['facility_handle'] . " " . $row['facility_street'] . " " . $row['facility_city'];
-	} else {
-		$return_array["facility"] = $row['receiving_location'];
-	}
-	return $return_array;
-}
-
-function get_dispatch_message($ticket_id, $text_sel, $text_type) {
-	$match_str = "";
-	$short_message = false;
-	switch ($text_sel) {
-	case null:
-	case "message_text":
-		$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
-		break;
-	case "message_shorttext":
-		$match_str = strtoupper(get_variable("_api_dispatch_shorttext_setng"));
-		$short_message = true;
-		break;
-	default:
-	}
-	$pre_delimiter = $pre_delimiter2 = $mid_delimiter = $post_delimiter = "";
-	switch ($text_type) {
-	case "hypertext":
-		$pre_delimiter = "<tr><td></td><td colspan=5 class='big'>";
-		$pre_delimiter2 = "<tr><td></td><td>";
-		$mid_delimiter = "</td><td>";
-		$post_delimiter = "</td><td></td></tr>";
-		break;
-	case "postscript":
-		$pre_delimiter = "";
-		$mid_delimiter = "";
-		$post_delimiter = "";
-	case "plaintext":
-		$pre_delimiter = "";
-		$mid_delimiter = "";
-		$post_delimiter = "\\r\\n";
-		break;
-	default:
-	}
-	$text_settings_string = array ();
-	$text_setting = array ();
-	$text_selects = array ();
-	$text_start = array ();
-	$text_chars = array ();
-	$message_text = "";
-	$max_chars_shorttext = 0;
-	$text_settings_string = explode(";", remove_nls($match_str));
-	foreach ($text_settings_string as $value) {
-		preg_match("/^[a-zA-Z]{1}\s?[0-9]{1,3}\s?,\s?[0-9]{1,3}/", trim($value), $text_setting);
-		if (isset ($text_setting[0])) {
-			array_push($text_selects, substr($text_setting[0], 0, 1));
-			$text_setting = explode(",", substr($text_setting[0], 1));
-			array_push($text_start, trim($text_setting[0]));
-			array_push($text_chars, trim($text_setting[1]));
-		}
-	}
-	if ($ticket_id > 0) {
-
-		$query = "SELECT `t`.`incident_name`, " .
-			"`t`.`severity`, " .
-			"`t`.`incident_type_id`, " .
-			"`t`.`datetime`, " .
-			"`t`.`updated`, " .
-			"`t`.`contact`, " .
-			"`t`.`phone`, " .
-			"`t`.`status`, " .
-			"`t`.`location`, " .
-			"`t`.`description`, " .
-			"`t`.`comments`, " .
-			"`t`.`call_taker_id`, " .
-			"`t`.`description`, " .
-			"`t`.`lat`, " .
-			"`t`.`lng`, " .
-			"`t`.`problemstart`, " .
-			"`t`.`booked_date`, " .
-			"`t`.`facility_id`, " .
-			"`f`.`handle` AS `facility_handle` " .
-			"FROM `tickets` `t` " .
-			"LEFT JOIN `facilities` `f` ON (`t`.`facility_id` = `f`.`id`) " .
-			"WHERE `t`.`id` = " . $ticket_id . " LIMIT 1";
-
-		$result = db_query($query, __FILE__, __LINE__);
-		$row = stripslashes_deep(db_fetch_array($result));
-		$_problemend = "";
-		if ((isset ($row['problemend'])) && is_datetime($row['problemend'])) {
-			$_problemend = "  " . get_text("Run End") . ":" . $row['problemend'];
-		}
-		for ($i = 0; $i < count($text_selects); $i++) {
-			$caption = "";
-			$text = "";
-			$field_empty = false;
-			switch ($text_selects[$i]) {
-			case "A":
-				$caption = get_text("Actions") . ": ";
-
-				$query = "SELECT * " .
-					"FROM `actions` " .
-					"WHERE `ticket_id` = " . $ticket_id;
-
-				$result = db_query($query, __FILE__, __LINE__);
-				if (db_affected_rows($result) > 0) {
-					while ($act_row = stripslashes_deep(db_fetch_array($result))) {
-						$text .= date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . wordwrap($act_row['description'], 70)."\n";
-					}
-				}
-				unset ($result);
-				break;
-			case "B":
-				$caption = get_text("Addr") . ": ";
-				if (isset ($row['location'])) {
-					if ($row['facility_id'] > 0) {
-						$text = strtoupper(remove_nls($row['location']));
-					} else {
-						$text = remove_nls($row['location']);
-					}
-				}
-				break;
-			case "C":
-				$caption = get_text("Severity") . ": ";
-				$text = get_text(get_severity($row['severity']));
-				break;
-			case "D":
-				$caption = get_text("Incident type") . ": ";
-				$text = get_type($row['incident_type_id']);
-				break;
-			case "E":
-				$caption = get_text("Written") . ": ";
-				$text = (empty ($row['datetime']))? "" : format_date($row['datetime']) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);
-				break;
-			case "F":
-				$caption = get_text("Updated") . ": ";
-				$text = format_date($row['updated']);
-				break;
-			case "G":
-				$caption = get_text("Reported by") . ": ";
-				$text = $row['contact'];
-				break;
-			case "H":
-				$caption = get_text("Callback phone") . ": ";
-				$text = (empty ($row['phone']))?  "" : $row['phone'];
-				break;
-			case "I":
-				$caption = get_text("Status") . ": ";
-				$text = get_status($row['status']);
-				break;
-			case "J":
-				$caption = get_text("Addr") . ": ";
-				if (isset ($row['location'])) {
-					$text = remove_nls($row['location']);
-				}
-				break;
-			case "K":
-				$caption = get_text("Synopsis") . ": ";
-				$text = (empty ($row['description']))? "" : remove_nls($row['description']);
-				break;
-			case "L":
-				$caption = get_text("Comments") . ": ";
-				$text = (empty ($row['comments']))? "" : remove_nls($row['comments']);
-				break;
-			case "M":
-				$caption = get_text("Position") . ": ";
-				$utm = toUTM($row['lat'], $row['lng']);
-				$text = $row['lat'] . " " . $row['lng'] . ", " . $utm[3] . $utm[2] . $utm[0] . $utm[1] . "\n";
-				break;
-			case "N":
-				$caption = get_text("Incident name") . ": ";
-				if (isset ($row['incident_name'])) {
-					$text = remove_nls($row['incident_name']);
-				}
-				break;
-			case "O":
-				$caption = "============================================================";
-				break;
-			case "S":
-				$caption = get_text("Run Start") . ": ";
-				$text = format_date($row['problemstart']) . $_problemend;
-				break;
-			case "T":
-				if ($row['facility_id'] > 0) {
-					$caption = get_text("Facility") . ": ";
-					$text = remove_nls($row['facility_handle']);
-				} else {
-					$field_empty = true;
-				}
-				break;
-			case "U":
-
-				$query_u = "SELECT `r`.`handle` AS `unit_handle`, `r`.`name` AS `unit_name`, `a`.`dispatched`, `a`.`responding`, `a`.`on_scene`, " . 
-					"`a`.`u2fenr`, `a`.`u2farr`, `a`.`receiving_facility_id`, `a`.`receiving_location`, `f`.`handle` AS `facility_handle`, " . 
-					"`f`.`name` AS `facility_name`, `f`.`street` AS `facility_street`, `f`.`city` AS `facility_city` FROM `assigns` `a` " . 
-					"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " . 
-					"LEFT JOIN `facilities` `f` ON (`a`.`receiving_facility_id` = `f`.`id`) " . 
-					"WHERE `a`.`ticket_id` = " . $ticket_id . " AND `clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00' ORDER BY `a`.`dispatched` ASC";
-
-				$result_u = db_query($query_u, __FILE__, __LINE__);
-				if (db_num_rows($result_u) > 0) {
-					switch ($text_type) {
-						case "hypertext":
-							$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
-							get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
-							get_text("Receiving location") . $post_delimiter;
-							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-								$assign_info = get_assign_infos($u_row);
-								$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>";
-								$text .= remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>";
-								$text .= remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>";
-								$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
-								$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
-							}
-							break;
-						case "postscript":
-						case "plaintext":
-							/*$caption = get_text("Units") . "(" . db_num_rows($result_u) . "): ";
-							$text = "";
-							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-								$text .= remove_nls($u_row['unit_handle']) . ", ";
-							}
-							$text = substr($text, 0, -2);*/
-							$text = $pre_delimiter2 . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "			" . 
-							get_text("Dispatched") . "		" . get_text("Status") . "		" . 
-							get_text("Receiving location") . $post_delimiter;
-							while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
-								$assign_info = get_assign_infos($u_row);
-								$text .= $pre_delimiter2 . remove_nls($assign_info["unit"]) . "	";
-								$text .= remove_nls($assign_info["dispatched"]) . "	";
-								$text .= remove_nls($assign_info["status"]) . "	";
-								$text .= remove_nls($assign_info["time"]) . $mid_delimiter;
-								$text .= remove_nls($assign_info["facility"]) . $post_delimiter;
-							}
-							break;
-						default:
-					}
-				}
-				unset ($result_u);
-				break;
-			case "V":
-				if (is_datetime($row['booked_date'])) {
-					$caption = get_text("Scheduled Date");
-					$text = format_date($row['booked_date']) . $_problemend;
-				}
-				break;
-			case "Z":
-				$text = "";
-				break;
-			default:
-				$err_str = "mail error: '" . $match_str[$i] . "' @ " .  __LINE__;
-				if (!(array_key_exists($err_str, $_SESSION))) {
-					do_log($GLOBALS['LOG_ERROR'], 0, 0, $err_str, 0, "", "", "");
-					$_SESSION[$err_str] = true;
-				}
-			}
-			if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
-				$text = substr($text, $text_start[$i], $text_chars[$i]);
-			}
-			if ($short_message) {
-				$message_text .= $text . " ";
-			} else {
-				if (!$field_empty) {
-					if ($text_selects[$i] != "U" || $text_sel == "message_shorttext") {
-						$message_text .= $pre_delimiter . html_entity_decode($caption) . $text . $post_delimiter;
-					} else {
-						$message_text .= $text;
-					}
-				}
-			}
-		}
-	}
-	for ($i = 0; $i < count($text_selects); $i++) {
-		switch ($text_selects[$i]) {
-		case "Z":
-			$max_chars_shorttext = $text_chars[$i];
-			break;
-		}
-	}
-	$message = array ();
-	$message[0] = html_entity_decode($message_text);
-	if (($max_chars_shorttext > 0) && ($max_chars_shorttext < 1024)) {
-		$message[1] = $max_chars_shorttext;
-	} else {
-		$message[1] = 1024;
-	}
-	return $message;
-}
-
 function show_send_message_table_left($message_group, $target_id, $target_api_log_id, $ticket_id) {
 	$on_scene_receiving_location_disabled_str = " hidden";
 	$subject_text_default = "";
@@ -1362,49 +1381,49 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 	$default_subjects = explode(",", get_variable("_api_default_subject_setng"));
 	$show_fixtext = false;
 	switch ($message_group) {
-	case "unit_ticket":
-//		$on_scene_receiving_location_disabled_str = "";
-	case "unit":	
-		if ($target_id[0] != 0) {
-			$assign_data = get_assigns($target_id[0], $ticket_id);
-			$dispatch_shorttext = get_dispatch_message($assign_data[1], "message_shorttext", "plaintext");
-			if (($assign_data[1] > 0) && ($target_api_log_id == 0)) {
-				$dispatch_text = get_dispatch_message($assign_data[1], "message_text", "plaintext");
-				$ticket_id = $assign_data[1];
+		case "unit_ticket":
+			//$on_scene_receiving_location_disabled_str = "";
+		case "unit":	
+			if ($target_id[0] != 0) {
+				$assign_data = get_assigns($target_id[0], $ticket_id);
+				$dispatch_shorttext = get_dispatch_message($assign_data[1], "message_shorttext", "plaintext");
+				if (($assign_data[1] > 0) && ($target_api_log_id == 0)) {
+					$dispatch_text = get_dispatch_message($assign_data[1], "message_text", "plaintext");
+					$ticket_id = $assign_data[1];
+				} else {
+					$message_group = "unit_all";
+				}
 			} else {
-				$message_group = "unit_all";
+				$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "plaintext");
+				if (($ticket_id > 0) && ($target_api_log_id == 0)) {
+					$dispatch_text = get_dispatch_message($ticket_id, "message_text", "plaintext");
+				} else {
+					$message_group = "unit_all";
+				}
 			}
-		} else {
+			$subject_text_dispatch = $default_subjects[0];
+			$subject_text_default = $default_subjects[1];
+			$show_fixtext = true;
+			break;	
+		case "unit_all":
+		case "unit_service":
+		case "unit_tickets":
 			$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "plaintext");
-			if (($ticket_id > 0) && ($target_api_log_id == 0)) {
-				$dispatch_text = get_dispatch_message($ticket_id, "message_text", "plaintext");
-			} else {
-				$message_group = "unit_all";
-			}
-		}
-		$subject_text_dispatch = $default_subjects[0];
-		$subject_text_default = $default_subjects[1];
-		$show_fixtext = true;
-		break;	
-	case "unit_all":
-	case "unit_service":
-	case "unit_tickets":
-		$dispatch_shorttext = get_dispatch_message($ticket_id, "message_shorttext", "plaintext");
-		$subject_text_default = $default_subjects[1];
-		$show_fixtext = true;
-		$textblocks = "message";
-		break;
-	case "facility_all":
-	case "facility":
-		$subject_text_default = $default_subjects[2];
-		$textblocks = "message";
-		break;
-	case "user_all":
-	case "user":
-		$subject_text_default = $default_subjects[3];
-		$textblocks = "message";
-		break;
-	default:
+			$subject_text_default = $default_subjects[1];
+			$show_fixtext = true;
+			$textblocks = "message";
+			break;
+		case "facility_all":
+		case "facility":
+			$subject_text_default = $default_subjects[2];
+			$textblocks = "message";
+			break;
+		case "user_all":
+		case "user":
+			$subject_text_default = $default_subjects[3];
+			$textblocks = "message";
+			break;
+		default:
 	}
 	$dispatch_message_disabled_str = " disabled";
 	$individual_message_selected_str = " selected";
@@ -1478,134 +1497,134 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 
 		function set_message_group(message_group) {
 			switch (message_group) {
-			case "unit_all":
-			case "unit_service":
-			case "unit_tickets":
-				$("#options_bar").css("visibility", "visible");
-				$("#frm_subject").prop("readonly", false);
-				$("#frm_text").prop("readonly", false);
-				$("#textblocks_dropdown").prop("disabled", false);
-				$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
-				$("#input_shorttext").css("visibility", "visible");
-				$("#frm_subject").val("<?php print $subject_text_default;?>");
-				$("#caption_message_text").html("<?php print get_text("Message text");?>:");
-				$("#frm_text").val("");
-				$("#frm_shorttext").val("");
-				$("#frm_text").focus();
-				count_chars();
-				current_message_group = "unit_all";
-				break;
-			case "unit":
-			case "unit_ticket":
-				$("#options_bar").css("visibility", "visible");
-				$("#frm_subject").prop("readonly", true);
-				$("#frm_text").prop("readonly", true);
-				$("#textblocks_dropdown").prop("disabled", true);
-				$("#textblocks_dropdown").css("backgroundColor", "#EEE");
-				$("#input_shorttext").css("visibility", "visible");
-				$("#frm_subject").val("<?php print $subject_text_dispatch;?>");
-				$("#caption_message_text").html("<?php print get_text("Dispatch text");?>:");
-				$("#frm_text").val("<?php print $dispatch_text[0];?>");
-				$("#frm_shorttext").val("<?php print $dispatch_shorttext[0];?>".substr(0, shorttext_max_char));
-				count_chars();
-				current_message_group = "unit";
-				break;
-			case "facility_all":
-			case "facility":
-				$("#frm_subject").prop("readonly", false);
-				$("#frm_text").prop("readonly", false);
-				$("#textblocks_dropdown").prop("disabled", false);
-				$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
-				$("#input_shorttext").css("visibility", "hidden");
-				$("#frm_subject").val("<?php print $subject_text_default;?>");
-				$("#caption_message_text").html("<?php print get_text("Message text");?>:");
-				$("#frm_text").focus();
-				current_message_group = "facility_all";
-				break;
-			case "user_all":
-			case "user":
-				$("#frm_subject").prop("readonly", false);
-				$("#frm_text").prop("readonly", false);
-				$("#textblocks_dropdown").prop("disabled", false);
-				$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
-				$("#input_shorttext").css("visibility", "hidden");
-				$("#frm_subject").val("<?php print $subject_text_default;?>");
-				$("#caption_message_text").html("<?php print get_text("Message text");?>:");
-				$("#frm_text").focus();
-				current_message_group = "user_all";
-				break;
-			case "fixtext":
-				$("#frm_subject").prop("readonly", true);
-				$("#frm_text").prop("readonly", true);
-				$("#textblocks_dropdown").prop("disabled", true);
-				$("#textblocks_dropdown").css("backgroundColor", "#EEE");
-				$("#input_shorttext").css("visibility", "visible");
-				$("#frm_subject").val($("#text_type option:selected").text());
-				$("#caption_message_text").html("<?php print get_text("Message fixtexts");?>:");
-				$("#frm_text").val($("#text_type option:selected").text());
-				$("#frm_shorttext").val($("#text_type option:selected").text().substr(0, shorttext_max_char));
-				count_chars();
-				current_message_group = "fixtext";
-				break;
-			default:
+				case "unit_all":
+				case "unit_service":
+				case "unit_tickets":
+					$("#options_bar").css("visibility", "visible");
+					$("#frm_subject").prop("readonly", false);
+					$("#frm_text").prop("readonly", false);
+					$("#textblocks_dropdown").prop("disabled", false);
+					$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
+					$("#input_shorttext").css("visibility", "visible");
+					$("#frm_subject").val("<?php print $subject_text_default;?>");
+					$("#caption_message_text").html("<?php print get_text("Message text");?>:");
+					$("#frm_text").val("");
+					$("#frm_shorttext").val("");
+					$("#frm_text").focus();
+					count_chars();
+					current_message_group = "unit_all";
+					break;
+				case "unit":
+				case "unit_ticket":
+					$("#options_bar").css("visibility", "visible");
+					$("#frm_subject").prop("readonly", true);
+					$("#frm_text").prop("readonly", true);
+					$("#textblocks_dropdown").prop("disabled", true);
+					$("#textblocks_dropdown").css("backgroundColor", "#EEE");
+					$("#input_shorttext").css("visibility", "visible");
+					$("#frm_subject").val("<?php print $subject_text_dispatch;?>");
+					$("#caption_message_text").html("<?php print get_text("Dispatch text");?>:");
+					$("#frm_text").val("<?php print $dispatch_text[0];?>");
+					$("#frm_shorttext").val("<?php print $dispatch_shorttext[0];?>".substr(0, shorttext_max_char));
+					count_chars();
+					current_message_group = "unit";
+					break;
+				case "facility_all":
+				case "facility":
+					$("#frm_subject").prop("readonly", false);
+					$("#frm_text").prop("readonly", false);
+					$("#textblocks_dropdown").prop("disabled", false);
+					$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
+					$("#input_shorttext").css("visibility", "hidden");
+					$("#frm_subject").val("<?php print $subject_text_default;?>");
+					$("#caption_message_text").html("<?php print get_text("Message text");?>:");
+					$("#frm_text").focus();
+					current_message_group = "facility_all";
+					break;
+				case "user_all":
+				case "user":
+					$("#frm_subject").prop("readonly", false);
+					$("#frm_text").prop("readonly", false);
+					$("#textblocks_dropdown").prop("disabled", false);
+					$("#textblocks_dropdown").css("backgroundColor", "#FFFFFF");
+					$("#input_shorttext").css("visibility", "hidden");
+					$("#frm_subject").val("<?php print $subject_text_default;?>");
+					$("#caption_message_text").html("<?php print get_text("Message text");?>:");
+					$("#frm_text").focus();
+					current_message_group = "user_all";
+					break;
+				case "fixtext":
+					$("#frm_subject").prop("readonly", true);
+					$("#frm_text").prop("readonly", true);
+					$("#textblocks_dropdown").prop("disabled", true);
+					$("#textblocks_dropdown").css("backgroundColor", "#EEE");
+					$("#input_shorttext").css("visibility", "visible");
+					$("#frm_subject").val($("#text_type option:selected").text());
+					$("#caption_message_text").html("<?php print get_text("Message fixtexts");?>:");
+					$("#frm_text").val($("#text_type option:selected").text());
+					$("#frm_shorttext").val($("#text_type option:selected").text().substr(0, shorttext_max_char));
+					count_chars();
+					current_message_group = "fixtext";
+					break;
+				default:
 			}
 		}
 
 		function set_message_type(message_type) {
 			disable_reporting_channel(".*", false);
 			switch (message_type) {
-			case "DISPATCH_MESSAGE":
-				set_message_group("unit");
-				break;
-			case "INDIVIDUAL_MESSAGE":
-				set_message_group("unit_all");
-				break;
-			default:
-				if (message_type.substr(0, 8) == "FIXTEXT_") {
-					set_message_group("fixtext");
-					if ((fixtext_report_channels[message_type] & 128) == 0) {		
-						if ("<?php print $api_reporting_channel_regexp[7];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[7];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 64) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[6];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[6];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 32) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[5];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[5];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 16) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[4];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[4];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 8) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[3];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[3];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 4) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[2];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[2];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 2) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[1];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[1];?>", true);
-						}
-					}
-					if ((fixtext_report_channels[message_type] & 1) == 0) {
-						if ("<?php print $api_reporting_channel_regexp[0];?>" != "") {
-							disable_reporting_channel("<?php print $api_reporting_channel_regexp[0];?>", true);
-						}
-					}
-				} else {
+				case "DISPATCH_MESSAGE":
+					set_message_group("unit");
+					break;
+				case "INDIVIDUAL_MESSAGE":
 					set_message_group("unit_all");
-				}
+					break;
+				default:
+					if (message_type.substr(0, 8) == "FIXTEXT_") {
+						set_message_group("fixtext");
+						if ((fixtext_report_channels[message_type] & 128) == 0) {		
+							if ("<?php print $api_reporting_channel_regexp[7];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[7];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 64) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[6];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[6];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 32) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[5];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[5];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 16) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[4];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[4];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 8) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[3];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[3];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 4) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[2];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[2];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 2) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[1];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[1];?>", true);
+							}
+						}
+						if ((fixtext_report_channels[message_type] & 1) == 0) {
+							if ("<?php print $api_reporting_channel_regexp[0];?>" != "") {
+								disable_reporting_channel("<?php print $api_reporting_channel_regexp[0];?>", true);
+							}
+						}
+					} else {
+						set_message_group("unit_all");
+					}
 			}
 		}
 
@@ -1858,20 +1877,20 @@ function show_facility($row, $count_receiver) {
 
 function show_user($row, $count_receiver) {
 	switch ($row['level']) {
-	case 0:
-		$background_color = "#FF0000";
-		break;
-	case 1:
-		$background_color = "#008000";
-		break;
-	case 2:
-		$background_color = "#0000FF";
-		break;
-	case 3:
-		$background_color = "#808080";
-		break;
-	default:
-		$background_color = "#808080";
+		case 0:
+			$background_color = "#FF0000";
+			break;
+		case 1:
+			$background_color = "#008000";
+			break;
+		case 2:
+			$background_color = "#0000FF";
+			break;
+		case 3:
+			$background_color = "#808080";
+			break;
+		default:
+			$background_color = "#808080";
 	}
 	$checked_str = "";
 	if ($row['group'] == 0) {
@@ -1960,382 +1979,382 @@ function show_send_message_table_right($message_group, $target_id, $target_api_l
 	$destination_regexp = "";
 	$unknown_address = "";
 	switch ($message_group) {
-	case "unit_all":
-	case "unit_service":
-		$checked_all_str = " checked";
+		case "unit_all":
+		case "unit_service":
+			$checked_all_str = " checked";
 
-		$query = "SELECT DISTINCT " .
-			"UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'0' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city`, " .
-			"(SELECT  COUNT(*) FROM `assigns` " .
-				"WHERE `assigns`.`unit_id` = `unit_id` " .
-				"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00')) AS `nr_assigned` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
-				"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
-				"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "'));";
+			$query = "SELECT DISTINCT " .
+				"UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'0' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city`, " .
+				"(SELECT  COUNT(*) FROM `assigns` " .
+					"WHERE `assigns`.`unit_id` = `unit_id` " .
+					"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00')) AS `nr_assigned` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
+					"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
+					"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "'));";
 
-		$result_units = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_units);
-		break;
-	case "unit_tickets":
-		$checked_all_str = " checked";
+			$result_units = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_units);
+			break;
+		case "unit_tickets":
+			$checked_all_str = " checked";
 
-		$query = "SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'0' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
-				"((`unit_phone` REGEXP '" . get_regexp_phone() . "') OR " .
-				"(`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
-				"(`as`.`clear` IS NULL OR DATE_FORMAT(`as`.`clear`,'%y') = '00');";
+			$query = "SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'0' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
+					"((`unit_phone` REGEXP '" . get_regexp_phone() . "') OR " .
+					"(`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
+					"(`as`.`clear` IS NULL OR DATE_FORMAT(`as`.`clear`,'%y') = '00');";
 
-		$result_units = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_units);
-		break;
-	case "unit_ticket":
-		$where_str = "(`u`.`id` IN (" . implode(",", $target_id) . "))";
-		if ($target_id[0] == 0) {
-			$where_str = "(`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` =  " . $ticket_id . "))";
-		}
-		$checked_all_str = " checked";
-
-		$query = "SELECT DISTINCT " .
-			"UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'0' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
-				"((`unit_phone` REGEXP '" . get_regexp_phone() . "') OR " .
-				"(`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " . $where_str . ";";
-
-		$result_units = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_units);
-		break;
-	case "unit":
-		if ($target_api_log_id != 0) {
-
-			$query_api_log = "SELECT `source`, " .
-				"`source_regexp`, " .
-				"`unit_id` " .
-				"FROM `api_log` " .
-				"WHERE `id` = " . $target_api_log_id;
-
-			$result_api_log = db_query($query_api_log, __FILE__, __LINE__);
-			$row_api_log = stripslashes_deep(db_fetch_array($result_api_log));
-			$target_id[0] = $row_api_log['unit_id'];
-			$destination_regexp = $row_api_log['source_regexp'];
-			if ($row_api_log['unit_id'] == 0) {
-				$unknown_address = $row_api_log['source'];
+			$result_units = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_units);
+			break;
+		case "unit_ticket":
+			$where_str = "(`u`.`id` IN (" . implode(",", $target_id) . "))";
+			if ($target_id[0] == 0) {
+				$where_str = "(`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` =  " . $ticket_id . "))";
 			}
-		}
-		$where1_str = " AND (`as`.`ticket_id` = 0)";
-		$where2_str = "";
-		if ($target_id[0] != 0) {
-			$where2_str = " AND (`u`.`id` != " . $target_id[0] . ")";
-			$assign_data = get_assigns($target_id[0], $ticket_id);
-			if ($assign_data[1]) {
-				$where1_str = " AND (`as`.`ticket_id` = " . $assign_data[1] . ")";
-				$where2_str = " AND (`u`.`id` NOT IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` =  " . $assign_data[1] . "))";
+			$checked_all_str = " checked";
+
+			$query = "SELECT DISTINCT " .
+				"UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'0' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
+					"((`unit_phone` REGEXP '" . get_regexp_phone() . "') OR " .
+					"(`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " . $where_str . ";";
+
+			$result_units = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_units);
+			break;
+		case "unit":
+			if ($target_api_log_id != 0) {
+
+				$query_api_log = "SELECT `source`, " .
+					"`source_regexp`, " .
+					"`unit_id` " .
+					"FROM `api_log` " .
+					"WHERE `id` = " . $target_api_log_id;
+
+				$result_api_log = db_query($query_api_log, __FILE__, __LINE__);
+				$row_api_log = stripslashes_deep(db_fetch_array($result_api_log));
+				$target_id[0] = $row_api_log['unit_id'];
+				$destination_regexp = $row_api_log['source_regexp'];
+				if ($row_api_log['unit_id'] == 0) {
+					$unknown_address = $row_api_log['source'];
+				}
 			}
-		}
+			$where1_str = " AND (`as`.`ticket_id` = 0)";
+			$where2_str = "";
+			if ($target_id[0] != 0) {
+				$where2_str = " AND (`u`.`id` != " . $target_id[0] . ")";
+				$assign_data = get_assigns($target_id[0], $ticket_id);
+				if ($assign_data[1]) {
+					$where1_str = " AND (`as`.`ticket_id` = " . $assign_data[1] . ")";
+					$where2_str = " AND (`u`.`id` NOT IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` =  " . $assign_data[1] . "))";
+				}
+			}
 
-		$query = "(SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'0' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE ((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
-				"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
-				"(`u`.`id` = " . $target_id[0] . ") AND (`a`.`id` IS NOT NULL)) " .
-			"UNION (SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'1' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
-				"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
-				"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
-				"(`u`.`id` != " . $target_id[0] . ") " . $where1_str . ") " .
-			"UNION (SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
-			"`t`.`id` AS `type_id`, " .
-			"`t`.`bg_color` AS `background_color`, " .
-			"`t`.`text_color` AS `text_color`, " .
-			"`u`.`id` AS `unit_id`, " .
-			"`u`.`name` AS `unit_name`, " .
-			"`u`.`handle` AS `handle`, " .
-			"`u`.`multi` AS `multi`, " .
-			"`u`.`unit_phone`, " .
-			"`u`.`remote_data_services`, " .
-			"`u`.`unit_email`, " .
-			"'2' AS `group`, " .
-			"`s`.`description` AS `stat_descr`, " .
-			"`s`.`sort` AS `stat_sort`, " .
-			"`s`.`dispatch` AS `stat_dispatch`, " .
-			"`u`.`description` AS `unit_descr`, " .
-			"`t`.`description` AS `type_descr`, " .
-			"`t`.`name` AS `type_name`, " .
-			"`f`.`handle` AS `guard_house_handle`, " .
-			"`f`.`street` AS `guard_house_street`, " .
-			"`f`.`city` AS `guard_house_city` " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
-			"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
-			"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
-				"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
-				"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
-				"(`unit_email` REGEXP '" . get_regexp_email() . "'))" .
-				$where2_str . ");";
+			$query = "(SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'0' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE ((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
+					"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
+					"(`u`.`id` = " . $target_id[0] . ") AND (`a`.`id` IS NOT NULL)) " .
+				"UNION (SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'1' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
+					"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
+					"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "')) AND " .
+					"(`u`.`id` != " . $target_id[0] . ") " . $where1_str . ") " .
+				"UNION (SELECT DISTINCT UNIX_TIMESTAMP(`u`.`updated`) AS `updated`, " .
+				"`t`.`id` AS `type_id`, " .
+				"`t`.`bg_color` AS `background_color`, " .
+				"`t`.`text_color` AS `text_color`, " .
+				"`u`.`id` AS `unit_id`, " .
+				"`u`.`name` AS `unit_name`, " .
+				"`u`.`handle` AS `handle`, " .
+				"`u`.`multi` AS `multi`, " .
+				"`u`.`unit_phone`, " .
+				"`u`.`remote_data_services`, " .
+				"`u`.`unit_email`, " .
+				"'2' AS `group`, " .
+				"`s`.`description` AS `stat_descr`, " .
+				"`s`.`sort` AS `stat_sort`, " .
+				"`s`.`dispatch` AS `stat_dispatch`, " .
+				"`u`.`description` AS `unit_descr`, " .
+				"`t`.`description` AS `type_descr`, " .
+				"`t`.`name` AS `type_name`, " .
+				"`f`.`handle` AS `guard_house_handle`, " .
+				"`f`.`street` AS `guard_house_street`, " .
+				"`f`.`city` AS `guard_house_city` " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `allocates` `a` ON `u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"LEFT JOIN `assigns` `as` ON (`u`.`id` = `as`.`unit_id`) " .
+				"LEFT JOIN `facilities` `f` ON (`u`.`guard_house_id` = `f`.`id`) " .
+				"WHERE (`dispatch` < 3) AND (`a`.`id` IS NOT NULL) AND " .
+					"((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
+					"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') OR " .
+					"(`unit_email` REGEXP '" . get_regexp_email() . "'))" .
+					$where2_str . ");";
 
-		$result_units = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_units);
-		if ($receiver_count == 1) {
+			$result_units = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_units);
+			if ($receiver_count == 1) {
+				$checked_all_str = " checked";
+			}
+			if ($assign_data[0] != 0) {
+				$flag_head_str = "<span" . get_title_str("<nobr>" . get_help_text("flag_ticket") . "</nobr>") . " class='glyphicon glyphicon-flag' aria-hidden='true' style='font-size: 12px; padding-left: 2px;'>";
+			}
+			break;
+		case "facility_all":
 			$checked_all_str = " checked";
-		}
-		if ($assign_data[0] != 0) {
-			$flag_head_str = "<span" . get_title_str("<nobr>" . get_help_text("flag_ticket") . "</nobr>") . " class='glyphicon glyphicon-flag' aria-hidden='true' style='font-size: 12px; padding-left: 2px;'>";
-		}
-		break;
-	case "facility_all":
-		$checked_all_str = " checked";
 
-		$query = "SELECT DISTINCT `facilities`.`updated` AS `updated`, " .
-			"`facilities`.`id` AS `fac_id`, " .
-			"`facilities`.`description` AS `facility_description`, " .
-			"`facility_types`.`name` AS `fac_type_name`, " .
-			"`facility_types`.`bg_color` AS `fac_background_color`, " .
-			"`facility_types`.`text_color` AS `fac_text_color`, " .
-			"`facilities`.`name` AS `facility_name`, " .
-			"`facilities`.`handle`, " .
-			"`facility_status`.`status_name` AS `fac_status_val`, " .
-			"`facility_status`.`description` AS `fac_status_desc`, " .
-			"`facilities`.`facility_status_id` AS `fac_status_id`, " .
-			"`facilities`.`security_email`, " .
-			"`facilities`.`contact_email`, " .
-			"'0' AS `group` " .
-			"FROM `facilities` " .
-			"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
-			"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
-			"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
-			"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
-			"ORDER BY `group`, `handle`;";
+			$query = "SELECT DISTINCT `facilities`.`updated` AS `updated`, " .
+				"`facilities`.`id` AS `fac_id`, " .
+				"`facilities`.`description` AS `facility_description`, " .
+				"`facility_types`.`name` AS `fac_type_name`, " .
+				"`facility_types`.`bg_color` AS `fac_background_color`, " .
+				"`facility_types`.`text_color` AS `fac_text_color`, " .
+				"`facilities`.`name` AS `facility_name`, " .
+				"`facilities`.`handle`, " .
+				"`facility_status`.`status_name` AS `fac_status_val`, " .
+				"`facility_status`.`description` AS `fac_status_desc`, " .
+				"`facilities`.`facility_status_id` AS `fac_status_id`, " .
+				"`facilities`.`security_email`, " .
+				"`facilities`.`contact_email`, " .
+				"'0' AS `group` " .
+				"FROM `facilities` " .
+				"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
+				"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
+				"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
+				"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
+				"ORDER BY `group`, `handle`;";
 
-		$result_facilities = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_facilities);
-		$additional_receiver_type = "facility";
-		break;
-	case "facility":
+			$result_facilities = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_facilities);
+			$additional_receiver_type = "facility";
+			break;
+		case "facility":
 
-		$query = "(SELECT `facilities`.`updated` AS `updated`, " .
-			"`facilities`.`id` AS `fac_id`, " .
-			"`facilities`.`description` AS `facility_description`, " .
-			"`facility_types`.`name` AS `fac_type_name`, " .
-			"`facility_types`.`bg_color` AS `fac_background_color`, " .
-			"`facility_types`.`text_color` AS `fac_text_color`, " .
-			"`facilities`.`name` AS `facility_name`, " .
-			"`facilities`.`handle`, " .
-			"`facility_status`.`status_name` AS `fac_status_val`, " .
-			"`facility_status`.`description` AS `fac_status_desc`, " .
-			"`facilities`.`facility_status_id` AS `fac_status_id`, " .
-			"`facilities`.`security_email`, " .
-			"`facilities`.`contact_email`, " .
-			"`facilities`.`object_id`, " .
-			"'0' AS `group` " .
-			"FROM `facilities` " .
-			"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
-			"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
-			"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
-			"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
-			"AND `facilities`.`id` = " . $target_id[0] . ") " .
-			"UNION (" .
-			"SELECT `facilities`.`updated` AS `updated`, " .
-			"`facilities`.`id` AS `fac_id`, " .
-			"`facilities`.`description` AS `facility_description`, " .
-			"`facility_types`.`name` AS `fac_type_name`, " .
-			"`facility_types`.`bg_color` AS `fac_background_color`, " .
-			"`facility_types`.`text_color` AS `fac_text_color`, " .
-			"`facilities`.`name` AS `facility_name`, " .
-			"`facilities`.`handle`, " .
-			"`facility_status`.`status_name` AS `fac_status_val`, " .
-			"`facility_status`.`description` AS `fac_status_desc`, " .
-			"`facilities`.`facility_status_id` AS `fac_status_id`, " .
-			"`facilities`.`security_email`, " .
-			"`facilities`.`contact_email`, " .
-			"`facilities`.`object_id`, " .
-			"'1' AS `group` " .
-			"FROM `facilities` " .
-			"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
-			"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
-			"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
-			"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
-			"AND `facilities`.`id` != " . $target_id[0] . ") " .
-			"ORDER BY `group`, `handle`;";
+			$query = "(SELECT `facilities`.`updated` AS `updated`, " .
+				"`facilities`.`id` AS `fac_id`, " .
+				"`facilities`.`description` AS `facility_description`, " .
+				"`facility_types`.`name` AS `fac_type_name`, " .
+				"`facility_types`.`bg_color` AS `fac_background_color`, " .
+				"`facility_types`.`text_color` AS `fac_text_color`, " .
+				"`facilities`.`name` AS `facility_name`, " .
+				"`facilities`.`handle`, " .
+				"`facility_status`.`status_name` AS `fac_status_val`, " .
+				"`facility_status`.`description` AS `fac_status_desc`, " .
+				"`facilities`.`facility_status_id` AS `fac_status_id`, " .
+				"`facilities`.`security_email`, " .
+				"`facilities`.`contact_email`, " .
+				"`facilities`.`object_id`, " .
+				"'0' AS `group` " .
+				"FROM `facilities` " .
+				"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
+				"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
+				"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
+				"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
+				"AND `facilities`.`id` = " . $target_id[0] . ") " .
+				"UNION (" .
+				"SELECT `facilities`.`updated` AS `updated`, " .
+				"`facilities`.`id` AS `fac_id`, " .
+				"`facilities`.`description` AS `facility_description`, " .
+				"`facility_types`.`name` AS `fac_type_name`, " .
+				"`facility_types`.`bg_color` AS `fac_background_color`, " .
+				"`facility_types`.`text_color` AS `fac_text_color`, " .
+				"`facilities`.`name` AS `facility_name`, " .
+				"`facilities`.`handle`, " .
+				"`facility_status`.`status_name` AS `fac_status_val`, " .
+				"`facility_status`.`description` AS `fac_status_desc`, " .
+				"`facilities`.`facility_status_id` AS `fac_status_id`, " .
+				"`facilities`.`security_email`, " .
+				"`facilities`.`contact_email`, " .
+				"`facilities`.`object_id`, " .
+				"'1' AS `group` " .
+				"FROM `facilities` " .
+				"LEFT JOIN `allocates` `a` ON `facilities`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . " " .
+				"LEFT JOIN `facility_types` ON `facilities`.`type` = `facility_types`.`id` " .
+				"LEFT JOIN `facility_status` ON `facilities`.`facility_status_id` = `facility_status`.`id` " .
+				"WHERE CONCAT(`security_email`, `contact_email`) REGEXP '" . get_regexp_email() . "' AND (`a`.`id` IS NOT NULL)  " .
+				"AND `facilities`.`id` != " . $target_id[0] . ") " .
+				"ORDER BY `group`, `handle`;";
 
-		$result_facilities = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_facilities);
-		if ($receiver_count == 1) {
+			$result_facilities = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_facilities);
+			if ($receiver_count == 1) {
+				$checked_all_str = " checked";
+			}
+			$additional_receiver_type = "facility";
+			break;
+		case "user_all":
 			$checked_all_str = " checked";
-		}
-		$additional_receiver_type = "facility";
-		break;
-	case "user_all":
-		$checked_all_str = " checked";
 
-		$query = "SELECT DISTINCT `id`, `level`, `email`, `level`, " .
-			"`name` AS `user_name`, " .
-			"'0' AS `group` " .
-			"FROM `users` " .
-			"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
-				"ORDER BY `group`, `level`, `name`;";
+			$query = "SELECT DISTINCT `id`, `level`, `email`, `level`, " .
+				"`name` AS `user_name`, " .
+				"'0' AS `group` " .
+				"FROM `users` " .
+				"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
+					"ORDER BY `group`, `level`, `name`;";
 
-		$result_users = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_users);
-		$additional_receiver_type = "user";
-		break;
-	case "user":
+			$result_users = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_users);
+			$additional_receiver_type = "user";
+			break;
+		case "user":
 
-		$query = "(SELECT DISTINCT *, " .
-			"`name` AS `user_name`, " .
-			"'0' AS `group` " .
-			"FROM `users` " .
-			"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
-				"AND `id` = " . $target_id[0] . ") " .
-					"UNION " .
-					"(SELECT *, " .
-					"`name` AS `user_name`, " .
-					"'1' AS `group` " .
-					"FROM `users` " .
-					"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
-				"AND `id` != " . $target_id[0] . ") " .
-				"ORDER BY `group`, `level`, `name`;";
+			$query = "(SELECT DISTINCT *, " .
+				"`name` AS `user_name`, " .
+				"'0' AS `group` " .
+				"FROM `users` " .
+				"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
+					"AND `id` = " . $target_id[0] . ") " .
+						"UNION " .
+						"(SELECT *, " .
+						"`name` AS `user_name`, " .
+						"'1' AS `group` " .
+						"FROM `users` " .
+						"WHERE `email` REGEXP '" . get_regexp_email() . "' AND `password` <> '55606758fdb765ed015f0612112a6ca7' " .
+					"AND `id` != " . $target_id[0] . ") " .
+					"ORDER BY `group`, `level`, `name`;";
 
-		$result_users = db_query($query, __FILE__, __LINE__);
-		$receiver_count = db_affected_rows($result_users);
-		if ($receiver_count == 1) {
-			$checked_all_str = " checked";
-		}
-		$additional_receiver_type = "user";
-		break;
-	default:
+			$result_users = db_query($query, __FILE__, __LINE__);
+			$receiver_count = db_affected_rows($result_users);
+			if ($receiver_count == 1) {
+				$checked_all_str = " checked";
+			}
+			$additional_receiver_type = "user";
+			break;
+		default:
 	}
 	?>
 	<script>
@@ -2498,31 +2517,31 @@ function show_send_message_table_right($message_group, $target_id, $target_api_l
 	$count_receiver = 1;
 	$checkboxes = array ();
 	switch ($message_group) {
-	case "unit_all":
-	case "unit_service":
-	case "unit_tickets":
-	case "unit_ticket":
-	case "unit":
-		while ($row = stripslashes_deep(db_fetch_array($result_units))) {
-			$checkboxes[$count_receiver] = show_unit($row, $assign_data[0], $count_receiver, $destination_regexp);
-			$count_receiver++;
-		}
-		break;
-	case "facility_all":
-	case "facility":
-		while ($row = stripslashes_deep(db_fetch_array($result_facilities))) {
-			$checkboxes[$count_receiver] = show_facility($row, $count_receiver);
-			$count_receiver++;
-		}
-		break;
-	case "user_all":
-	case "user":	
-		while ($row = stripslashes_deep(db_fetch_array($result_users))) {
-			$checkboxes[$count_receiver] = show_user($row, $count_receiver);
-			$count_receiver++;
-		}
-		break;
-	default:
+		case "unit_all":
+		case "unit_service":
+		case "unit_tickets":
+		case "unit_ticket":
+		case "unit":
+			while ($row = stripslashes_deep(db_fetch_array($result_units))) {
+				$checkboxes[$count_receiver] = show_unit($row, $assign_data[0], $count_receiver, $destination_regexp);
+				$count_receiver++;
+			}
+			break;
+		case "facility_all":
+		case "facility":
+			while ($row = stripslashes_deep(db_fetch_array($result_facilities))) {
+				$checkboxes[$count_receiver] = show_facility($row, $count_receiver);
+				$count_receiver++;
+			}
+			break;
+		case "user_all":
+		case "user":	
+			while ($row = stripslashes_deep(db_fetch_array($result_users))) {
+				$checkboxes[$count_receiver] = show_user($row, $count_receiver);
+				$count_receiver++;
+			}
+			break;
+		default:
 	}
 	$checkboxes[0] = $count_receiver - 1;
 	?>

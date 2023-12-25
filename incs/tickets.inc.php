@@ -15,67 +15,67 @@ function show_ticketlist($function, $screen_id, $unit_id) {
 	$col_width_actions = 3;
 	$col_width_as_of = 8;
 	switch ($function) {
-	case "dispatch":
-		$border_top_str = "";
-		$col_width_blank = 0;
-		$col_width_dispatch_button = 15;
-		$col_width_location = 25;
-		$col_width_type = 15;
-		$col_width_synopsis = 35;
-		$col_width_name = 10;
-		$col_width_units = 0;
-		$col_width_actions = 0;
-		$col_width_as_of = 0;
-		$result = get_units_data("WHERE `u`.`id` = " . $unit_id, "", "", "");
-		$row = stripslashes_deep(db_fetch_assoc($result));
-		break;
-	default:
+		case "dispatch":
+			$border_top_str = "";
+			$col_width_blank = 0;
+			$col_width_dispatch_button = 15;
+			$col_width_location = 25;
+			$col_width_type = 15;
+			$col_width_synopsis = 35;
+			$col_width_name = 10;
+			$col_width_units = 0;
+			$col_width_actions = 0;
+			$col_width_as_of = 0;
+			$result = get_units_data("WHERE `u`.`id` = " . $unit_id, "", "", "");
+			$row = stripslashes_deep(db_fetch_assoc($result));
+			break;
+		default:
 	}
 	?>
-<table class="table table-striped table-condensed" style="table-layout:fixed;">
-	<tr>
-		<?php if ($col_width_blank != 0) { ?>
-		<th style="width: 1%; text-align: left;<?php print $border_top_str;?>"></th>
-		<?php }  if ($function == "dispatch" && $col_width_dispatch_button != 0) { ?>
-		<th style="width: <?php print $col_width_dispatch_button;?>%; text-align: left;<?php print $border_top_str;?>" <?php print  get_title_unit_str($row);?>>
-			<span class="label" style="background-color: <?php print $row['background_color'];?>; color: <?php print $row['text_color'];?>; font-weight: bold; font-size: 12px;">
-				<?php print	remove_nls($row['handle']);?>
-			</span>
-		</th>
-		<?php } ?>
-		<th style="width: <?php print $col_width_location;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_loca");?>>
-			<?php print get_text("Incident location");?>
-		</th>
-		<th style="width: <?php print $col_width_type;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_incident_type");?>>
-			<?php print get_text("Incident type");?>
-		</th>
-		<th style="width: <?php print $col_width_synopsis;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_synop");?>>
-			<?php print get_text("Synopsis");?>
-		</th>
-		<th style="width: <?php print $col_width_name;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_name");?>>
-			<?php print get_text("inc_name_short");?>
-		</th>
-		<?php if ($col_width_units != 0) { ?>
-		<th style="width: <?php print $col_width_units;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_title_str(get_text("Units"));?>>
-			<?php print get_text("U");?>
-		</th>
-		<?php } ?>
-		<?php if ($col_width_actions != 0) { ?>
-		<th style="width: <?php print $col_width_actions;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_title_str(get_text("Actions"));?>>
-			<?php print get_text("A");?>
-		</th>
-		<?php } ?>
-		<th style="width: <?php print $col_width_as_of;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_help_text_str("_asof");?>>
-			<?php print get_text("As of");?>
-		</th>
-	</tr>
-	<?php if ($function == "dispatch") { ?>
-	<tr onclick="edit_ticket(0, <?php print $unit_id;?>);">
-		<td>
-			<div class="label dispatched col-md-12" style="height: auto; text-align: left;"><?php print get_text("New");?></div>
-		</td>
-		<td colspan=4></td>
-	</tr>
+	<table class="table table-striped table-condensed" style="table-layout:fixed;">
+		<tr>
+			<?php if ($col_width_blank != 0) { ?>
+			<th style="width: 1%; text-align: left;<?php print $border_top_str;?>"></th>
+			<?php }  if ($function == "dispatch" && $col_width_dispatch_button != 0) { ?>
+			<th style="width: <?php print $col_width_dispatch_button;?>%; text-align: left;<?php print $border_top_str;?>" <?php print  get_title_unit_str($row);?>>
+				<span class="label" style="background-color: <?php print $row['background_color'];?>; color: <?php print $row['text_color'];?>; font-weight: bold; font-size: 12px;">
+					<?php print	remove_nls($row['handle']);?>
+				</span>
+			</th>
+			<?php } ?>
+			<th style="width: <?php print $col_width_location;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_loca");?>>
+				<?php print get_text("Incident location");?>
+			</th>
+			<th style="width: <?php print $col_width_type;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_incident_type");?>>
+				<?php print get_text("Incident type");?>
+			</th>
+			<th style="width: <?php print $col_width_synopsis;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_synop");?>>
+				<?php print get_text("Synopsis");?>
+			</th>
+			<th style="width: <?php print $col_width_name;?>%; text-align: left;<?php print $border_top_str;?>" <?php print get_help_text_str("_name");?>>
+				<?php print get_text("inc_name_short");?>
+			</th>
+			<?php if ($col_width_units != 0) { ?>
+			<th style="width: <?php print $col_width_units;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_title_str(get_text("Units"));?>>
+				<?php print get_text("U");?>
+			</th>
+			<?php } ?>
+			<?php if ($col_width_actions != 0) { ?>
+			<th style="width: <?php print $col_width_actions;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_title_str(get_text("Actions"));?>>
+				<?php print get_text("A");?>
+			</th>
+			<?php } ?>
+			<th style="width: <?php print $col_width_as_of;?>%; text-align: center;<?php print $border_top_str;?>" <?php print get_help_text_str("_asof");?>>
+				<?php print get_text("As of");?>
+			</th>
+		</tr>
+		<?php if ($function == "dispatch") { ?>
+		<tr onclick="edit_ticket(0, <?php print $unit_id;?>);">
+			<td>
+				<div class="label dispatched col-md-12" style="height: auto; text-align: left;"><?php print get_text("New");?></div>
+			</td>
+			<td colspan=4></td>
+		</tr>
 	<?php }
 	$closed_interval_settings = explode(",", get_variable("closed_interval"));
 	$closed_ticket_time = trim($closed_interval_settings[0]);
@@ -191,15 +191,15 @@ function show_ticketlist($function, $screen_id, $unit_id) {
 			$ticket_description = remove_nls($row['ticket_description']);
 		}
 		switch ($row['severity']) {
-	 	case $GLOBALS['SEVERITY_MEDIUM']:
-			$severityclass = "severity_medium";
-			break;
-		case $GLOBALS['SEVERITY_HIGH']:
-			$severityclass = "severity_high";
-			break;
-		default:
-			$severityclass = "severity_normal";
-			break;
+			case $GLOBALS['SEVERITY_MEDIUM']:
+				$severityclass = "severity_medium";
+				break;
+			case $GLOBALS['SEVERITY_HIGH']:
+				$severityclass = "severity_high";
+				break;
+			default:
+				$severityclass = "severity_normal";
+				break;
 		}
 		if (isset($actions) && array_key_exists($row['ticket_id'], $actions)) {
 			$count_actions = $actions[$row['ticket_id']];
@@ -229,52 +229,52 @@ function show_ticketlist($function, $screen_id, $unit_id) {
 			$title_ticket .= get_text("Actions") . ":<br>";
 			$title_ticket .= $title_action_str[0];
 		}
-		?>
-	<tr>
-		<?php if ($col_width_blank != 0) { ?>
-		<td></td>
-		<?php } if ($function == "dispatch" && $col_width_dispatch_button != 0) { ?>
-		<td<?php print get_nowrap_title_str($title_ticket);?> onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print $unit_id;?>);">
-			<div class="label dispatched col-md-12" style="height: auto; text-align: left;"><?php print get_text("Dispatch_Units_short");?></div>
-		</td>
-		<?php } ?>
-		<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print $unit_id;?>);">
-			<?php print $blink_str;?><nobr><?php print $strike;?>
-				<div style="overflow: hidden; text-overflow: ellipsis;">
-					<?php print $address_street;?>
-				</div>
-			<?php print $strikend;?></nobr><?php print $blink_end_str;?>
-		</td>
-		<td style="text-align: left;"<?php print get_title_type_str($row);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
-			<?php print $blink_str;?><nobr><?php print $strike;?>
-				<div style="overflow: hidden; text-overflow: ellipsis;">
-					<?php print remove_nls($row['type']);?>
-				</div>
-			<?php print $strikend;?></nobr><?php print $blink_end_str;?>
-		</td>
-		<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
-			<?php print $blink_str;?><nobr><?php print $strike;?>
-				<div style="overflow: hidden; text-overflow: ellipsis;">
-					<?php print $ticket_description;?>
-				</div>
-			<?php print $strikend;?></nobr><?php print $blink_end_str;?>
-		</td>
-		<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
-			<?php print $blink_str;?><nobr><?php print $strike;?>
-				<div style="overflow: hidden; text-overflow: ellipsis;">
-					<?php print $scheduled_on_situation_marker . remove_nls($row['incident_name']);?>
-				</div>
-			<?php print $strikend;?></nobr><?php print $blink_end_str;?>
-		</td>
+	?>
+		<tr>
+			<?php if ($col_width_blank != 0) { ?>
+			<td></td>
+			<?php } if ($function == "dispatch" && $col_width_dispatch_button != 0) { ?>
+			<td<?php print get_nowrap_title_str($title_ticket);?> onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print $unit_id;?>);">
+				<div class="label dispatched col-md-12" style="height: auto; text-align: left;"><?php print get_text("Dispatch_Units_short");?></div>
+			</td>
+			<?php } ?>
+			<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print $unit_id;?>);">
+				<?php print $blink_str;?><nobr><?php print $strike;?>
+					<div style="overflow: hidden; text-overflow: ellipsis;">
+						<?php print $address_street;?>
+					</div>
+				<?php print $strikend;?></nobr><?php print $blink_end_str;?>
+			</td>
+			<td style="text-align: left;"<?php print get_title_type_str($row);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
+				<?php print $blink_str;?><nobr><?php print $strike;?>
+					<div style="overflow: hidden; text-overflow: ellipsis;">
+						<?php print remove_nls($row['type']);?>
+					</div>
+				<?php print $strikend;?></nobr><?php print $blink_end_str;?>
+			</td>
+			<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
+				<?php print $blink_str;?><nobr><?php print $strike;?>
+					<div style="overflow: hidden; text-overflow: ellipsis;">
+						<?php print $ticket_description;?>
+					</div>
+				<?php print $strikend;?></nobr><?php print $blink_end_str;?>
+			</td>
+			<td style="text-align: left;"<?php print get_nowrap_title_str($title_ticket);?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
+				<?php print $blink_str;?><nobr><?php print $strike;?>
+					<div style="overflow: hidden; text-overflow: ellipsis;">
+						<?php print $scheduled_on_situation_marker . remove_nls($row['incident_name']);?>
+					</div>
+				<?php print $strikend;?></nobr><?php print $blink_end_str;?>
+			</td>
 		<?php if ($col_width_units != 0) { ?>
-		<td style="text-align: center;"<?php print $title_units_str[1];?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
-			<?php print $blink_str . $row['units_assigned'] . $blink_end_str;?>
-		</td>
+			<td style="text-align: center;"<?php print $title_units_str[1];?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
+				<?php print $blink_str . $row['units_assigned'] . $blink_end_str;?>
+			</td>
 		<?php } ?>
 		<?php if ($col_width_actions != 0) { ?>
-		<td style="text-align: center;"<?php print $title_action_str[1];?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
-			<?php print $blink_str . $count_actions . $blink_end_str;?>
-		</td>
+			<td style="text-align: center;"<?php print $title_action_str[1];?> class="<?php print $severityclass;?>" onclick="edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);">
+				<?php print $blink_str . $count_actions . $blink_end_str;?>
+			</td>
 		<?php } ?>
 		<?php
 		$as_of_datetime = $row['updated'];
@@ -290,12 +290,12 @@ function show_ticketlist($function, $screen_id, $unit_id) {
 		}
 		if ($function == "dispatch") {
 	?>
-		<td></td>
+			<td></td>
 	<?php } else { ?>
-		<td<?php print get_title_str($strike . date(get_variable("date_format"), $as_of_datetime) . $strike_end);?> align='center' onclick='edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);'>
-			<?php print $blink_str . " " . $strike_date_time . date(get_variable("date_format_time_only"), $as_of_datetime) . $strike_end_date_time . " " . $blink_end_str;?>
-		</td>
-	</tr>
+			<td<?php print get_title_str($strike . date(get_variable("date_format"), $as_of_datetime) . $strike_end);?> align='center' onclick='edit_ticket(<?php print $row['ticket_id'];?>, <?php print ($unit_id);?>);'>
+				<?php print $blink_str . " " . $strike_date_time . date(get_variable("date_format_time_only"), $as_of_datetime) . $strike_end_date_time . " " . $blink_end_str;?>
+			</td>
+		</tr>
 	<?php
 		}
 		$count_tickets++;
@@ -309,10 +309,11 @@ function show_ticketlist($function, $screen_id, $unit_id) {
 			$no_tickets_text = get_text("No closed tickets this period!");
 		}
 	?>
-	<tr><th colspan=8 style="text-align: center;"><?php print $no_tickets_text;?></th></tr>
+		<tr><th colspan=8 style="text-align: center;"><?php print $no_tickets_text;?></th></tr>
 	<?php } ?>
-</table>
-<div style="display: none;" id="count_severity_normal"><?php print $count_severity[$GLOBALS['SEVERITY_NORMAL']];?></div>
-<div style="display: none;" id="count_severity_medium"><?php print $count_severity[$GLOBALS['SEVERITY_MEDIUM']];?></div>
-<div style="display: none;" id="count_severity_high"><?php print $count_severity[$GLOBALS['SEVERITY_HIGH']];?></div>
-<?php } ?>
+	</table>
+	<div style="display: none;" id="count_severity_normal"><?php print $count_severity[$GLOBALS['SEVERITY_NORMAL']];?></div>
+	<div style="display: none;" id="count_severity_medium"><?php print $count_severity[$GLOBALS['SEVERITY_MEDIUM']];?></div>
+	<div style="display: none;" id="count_severity_high"><?php print $count_severity[$GLOBALS['SEVERITY_HIGH']];?></div>
+	<?php } 
+?>

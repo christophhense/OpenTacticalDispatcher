@@ -88,41 +88,41 @@ function install($version, $locale, $option, $host, $name, $user, $password) {
 	open_database($host, $name, $user, $password);
 	$output_text = "";
 	switch ($option) {
-	case "install":	
-		do_sql_file("./sql/database_settings.sql");
-		do_sql_file("./sql/database_userdata.sql");	
-		do_sql_file("./sql/drop_database_settings.sql");
-		do_sql_file("./sql/drop_database_userdata.sql");
-		do_sql_file("./sql/database_settings.sql");
-		do_sql_file("./sql/database_userdata.sql");
-		$output_text .= "<li> Installation of Database complete!";
-		do_sql_file("./sql/settings." . $locale . ".sql");
-		do_sql_file("./sql/captions." . $locale . ".sql");
-		do_sql_file("./sql/hints." . $locale . ".sql");
-		do_sql_file("./sql/regions." . $locale . ".sql");
-		do_sql_file("./sql/users.sql");
-		write_version($version, $locale);
-		$output_text .= "<li> Installation of tables-data complete!";
-		$output_text .= write_conf($host, $name, $user, $password);
-		break;
-	case "reset_settings":
-		do_sql_file("./sql/drop_database_settings.sql");
-		do_sql_file("./sql/database_settings.sql");
-		write_version($version, $locale);
-		do_sql_file("./sql/settings." . $locale . ".sql");
-		do_sql_file("./sql/captions." . $locale . ".sql");
-		do_sql_file("./sql/hints." . $locale . ".sql");
-		$output_text .= "<li> Reset settings done!</li>";
-		write_version($version, $locale);
-		$output_text .= "<li> Write config done!</li>";
-		$output_text .= write_conf($host, $name, $user, $password);
-		break;
-	case "write_credentials":
-		$output_text .= write_conf($host, $name, $user, $password);
-		break;
-	default:
-		$output_text .= "<li> <font class=\"warn\">'" . $option . "' is not a valid option!</font></li>";
-		@error_log($output_text . "\r\n");
+		case "install":	
+			do_sql_file("./sql/database_settings.sql");
+			do_sql_file("./sql/database_userdata.sql");	
+			do_sql_file("./sql/drop_database_settings.sql");
+			do_sql_file("./sql/drop_database_userdata.sql");
+			do_sql_file("./sql/database_settings.sql");
+			do_sql_file("./sql/database_userdata.sql");
+			$output_text .= "<li> Installation of Database complete!";
+			do_sql_file("./sql/settings." . $locale . ".sql");
+			do_sql_file("./sql/captions." . $locale . ".sql");
+			do_sql_file("./sql/hints." . $locale . ".sql");
+			do_sql_file("./sql/regions." . $locale . ".sql");
+			do_sql_file("./sql/users.sql");
+			write_version($version, $locale);
+			$output_text .= "<li> Installation of tables-data complete!";
+			$output_text .= write_conf($host, $name, $user, $password);
+			break;
+		case "reset_settings":
+			do_sql_file("./sql/drop_database_settings.sql");
+			do_sql_file("./sql/database_settings.sql");
+			write_version($version, $locale);
+			do_sql_file("./sql/settings." . $locale . ".sql");
+			do_sql_file("./sql/captions." . $locale . ".sql");
+			do_sql_file("./sql/hints." . $locale . ".sql");
+			$output_text .= "<li> Reset settings done!</li>";
+			write_version($version, $locale);
+			$output_text .= "<li> Write config done!</li>";
+			$output_text .= write_conf($host, $name, $user, $password);
+			break;
+		case "write_credentials":
+			$output_text .= write_conf($host, $name, $user, $password);
+			break;
+		default:
+			$output_text .= "<li> <font class=\"warn\">'" . $option . "' is not a valid option!</font></li>";
+			@error_log($output_text . "\r\n");
 	}
 	return $output_text;
 }

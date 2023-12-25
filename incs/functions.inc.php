@@ -198,7 +198,7 @@ function db_affected_rows($result, $file = "", $line = "") {
 function db_num_fields($query) {	//needed in export.php
 	$GLOBALS['LAST_STATEMENT']->execute();
 	return $GLOBALS['LAST_STATEMENT']->columnCount();
-/*	$statement = $GLOBALS['DATABASE_LINK']->prepare($query);
+	/*$statement = $GLOBALS['DATABASE_LINK']->prepare($query);
 	$statement->execute();
 	return $GLOBALS['LAST_STATEMENT']->columnCount();*/
 }
@@ -216,7 +216,7 @@ function db_real_escape_string($string) {
 }
 
 function db_get_server_info() {
-//	return $GLOBALS['DATABASE_LINK']->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
+	//return $GLOBALS['DATABASE_LINK']->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
 	return $GLOBALS['DATABASE_LINK']->getAttribute(constant("PDO::ATTR_SERVER_VERSION"));
 }
 
@@ -629,27 +629,27 @@ function show_head($ticket_id, $search, $ticket_report) {
 	}
 	$row = stripslashes_deep(db_fetch_array($result));
 	switch ($row['severity']) {
-	case $GLOBALS['SEVERITY_MEDIUM']:
-		$severityclass = " class='severity_medium'";
-		break;
-	case $GLOBALS['SEVERITY_HIGH']:
-		$severityclass = " class='severity_high'";
-		break;
-	default:
-		$severityclass = " class='severity_normal'";
+		case $GLOBALS['SEVERITY_MEDIUM']:
+			$severityclass = " class='severity_medium'";
+			break;
+		case $GLOBALS['SEVERITY_HIGH']:
+			$severityclass = " class='severity_high'";
+			break;
+		default:
+			$severityclass = " class='severity_normal'";
 	}
 	?>
-<tr>
-	<th style="width: 20%;<?php print $border_top_str;?>"><?php print get_text("Incident location");?>:</th>
-	<td style="width: 80%;<?php print $border_top_str;?>" colspan=4><div class="td-div"<?php print get_title_str($row['ticket_location']);?>><?php print highlight($search, breakspace(remove_nls($row['ticket_location']), 30));?></div></td>
-</tr>
+	<tr>
+		<th style="width: 20%;<?php print $border_top_str;?>"><?php print get_text("Incident location");?>:</th>
+		<td style="width: 80%;<?php print $border_top_str;?>" colspan=4><div class="td-div"<?php print get_title_str($row['ticket_location']);?>><?php print highlight($search, breakspace(remove_nls($row['ticket_location']), 30));?></div></td>
+	</tr>
 	<?php
 	if ($row['fac_name']) {
 	?>
-<tr>
-	<th><?php print get_text("Facility");?>:</th>
-	<td colspan=4><div class="td-div"<?php print get_title_str($row['fac_name']);?>><?php print highlight($search, breakspace(remove_nls($row['fac_name']), 30));?></div></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Facility");?>:</th>
+		<td colspan=4><div class="td-div"<?php print get_title_str($row['fac_name']);?>><?php print highlight($search, breakspace(remove_nls($row['fac_name']), 30));?></div></td>
+	</tr>
 	<?php
 	}
 	$coords =  $row['lat'] . "," . $row['lng'];
@@ -657,46 +657,46 @@ function show_head($ticket_id, $search, $ticket_report) {
 	//  if (($row['lat'] != 0.999999) || ($row['lng'] != 0.999999)) {
 	if (false) {
 	?>
-<tr>
-	<th onclick="do_coords(<?php print $row['lat'] . "," . $row['lng'];?>);"><?php print get_text("Position");?>:</th>
-	<td colspan=4<?php print get_title_str(get_lat($row['lat']) . "&nbsp;&nbsp;&nbsp;" . get_lng($row['lng']));?>><?php print get_lat($row['lat']) . "&nbsp;&nbsp;&nbsp;" . get_lng($row['lng']) . $grid_type;?></td>
-</tr>
+	<tr>
+		<th onclick="do_coords(<?php print $row['lat'] . "," . $row['lng'];?>);"><?php print get_text("Position");?>:</th>
+		<td colspan=4<?php print get_title_str(get_lat($row['lat']) . "&nbsp;&nbsp;&nbsp;" . get_lng($row['lng']));?>><?php print get_lat($row['lat']) . "&nbsp;&nbsp;&nbsp;" . get_lng($row['lng']) . $grid_type;?></td>
+	</tr>
 	<?php
 	}
 	?>
-<tr>
-	<th><?php print get_text("Callback phone");?>:</th>
-	<td colspan=4<?php print get_title_str($row['phone']);?>><?php print $row['phone'];?></td>
-</tr>
-<tr>
-	<th><?php print get_text("Synopsis");?>:</th>
-	<td colspan=4><div class="td-div"<?php print get_title_str($row['ticket_description']);?>><?php print highlight($search, nl2br(breakspace(remove_nls($row['ticket_description']), 30)));?></div></td>
-</tr>
-<tr>
-	<th><?php print get_text("Reported by");?>:</th>
-	<td colspan=4<?php print get_title_str($row['contact']);?>><?php print highlight($search,$row['contact']);?></td>
-</tr>
-<tr>
-	<th><?php print get_text("Incident type");?>:</th>
-	<td colspan=4><span<?php print $severityclass . get_title_str(get_type($row['incident_type_id']));?>><?php print get_type($row['incident_type_id']);?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold;"><?php print get_text("Severity");?>:</span>&nbsp;&nbsp;<span<?php print $severityclass . get_title_str(get_text(get_severity($row['severity'])));?>><?php print get_text(get_severity($row['severity']));?></span></td>
-</tr>
-<tr>
-	<th><?php print get_text("Protocol");?>:</th>
-	<td colspan=4<?php print get_title_str($row['protocol']);?>><?php print $row['protocol'];?></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Callback phone");?>:</th>
+		<td colspan=4<?php print get_title_str($row['phone']);?>><?php print $row['phone'];?></td>
+	</tr>
+	<tr>
+		<th><?php print get_text("Synopsis");?>:</th>
+		<td colspan=4><div class="td-div"<?php print get_title_str($row['ticket_description']);?>><?php print highlight($search, nl2br(breakspace(remove_nls($row['ticket_description']), 30)));?></div></td>
+	</tr>
+	<tr>
+		<th><?php print get_text("Reported by");?>:</th>
+		<td colspan=4<?php print get_title_str($row['contact']);?>><?php print highlight($search,$row['contact']);?></td>
+	</tr>
+	<tr>
+		<th><?php print get_text("Incident type");?>:</th>
+		<td colspan=4><span<?php print $severityclass . get_title_str(get_type($row['incident_type_id']));?>><?php print get_type($row['incident_type_id']);?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold;"><?php print get_text("Severity");?>:</span>&nbsp;&nbsp;<span<?php print $severityclass . get_title_str(get_text(get_severity($row['severity'])));?>><?php print get_text(get_severity($row['severity']));?></span></td>
+	</tr>
+	<tr>
+		<th><?php print get_text("Protocol");?>:</th>
+		<td colspan=4<?php print get_title_str($row['protocol']);?>><?php print $row['protocol'];?></td>
+	</tr>
 	<?php
 	if ($row['comments']) {
 	?>
-<tr>
-	<th><?php print get_text("Comments");?>:</th><td colspan=4<?php print get_title_str($row['comments']);?>><div class="td-div"><?php print highlight($search, nl2br(breakspace(remove_nls($row['comments']), 30)));?></div></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Comments");?>:</th><td colspan=4<?php print get_title_str($row['comments']);?>><div class="td-div"><?php print highlight($search, nl2br(breakspace(remove_nls($row['comments']), 30)));?></div></td>
+	</tr>
 	<?php
 	}
 	?>
-<tr>
-	<th><?php print get_text("Incident name");?>:</th>
-	<td colspan=4<?php print get_title_str($row['incident_name']);?>><?php print highlight($search,$row['incident_name']);?></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Incident name");?>:</th>
+		<td colspan=4<?php print get_title_str($row['incident_name']);?>><?php print highlight($search,$row['incident_name']);?></td>
+	</tr>
 	<?php
 	$elapsed = get_elapsed_time($row);
 	$elaped_str = "";
@@ -704,21 +704,21 @@ function show_head($ticket_id, $search, $ticket_report) {
 		$elaped_str = " (" . $elapsed . ")";
 	}
 	?>
-<tr>
-	<th><?php print get_text("Status");?>:</th>
-	<td colspan=4<?php print get_title_str(get_text(get_status($row['status'])) . $elaped_str);?>><?php print get_text(get_status($row['status'])) . $elaped_str;?></td>
-</tr>
-<tr>
-	<th><?php print get_text("Run Start");?>:</th>
-	<th colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></th>
-</tr>
+	<tr>
+		<th><?php print get_text("Status");?>:</th>
+		<td colspan=4<?php print get_title_str(get_text(get_status($row['status'])) . $elaped_str);?>><?php print get_text(get_status($row['status'])) . $elaped_str;?></td>
+	</tr>
+	<tr>
+		<th><?php print get_text("Run Start");?>:</th>
+		<th colspan=4<?php print get_title_str(format_date($row['problemstart']));?>><?php print format_date($row['problemstart']);?></th>
+	</tr>
 	<?php
 	if ($row['booked_date'] != null) {
 	?>
-<tr>
-	<th><?php print get_text("Scheduled Date");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['booked_date']));?>><?php print format_date($row['booked_date']);?></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Scheduled Date");?>:</th>
+		<td colspan=4<?php print get_title_str(format_date($row['booked_date']));?>><?php print format_date($row['booked_date']);?></td>
+	</tr>
 	<?php
 	}
 	$by_str = "";
@@ -726,10 +726,10 @@ function show_head($ticket_id, $search, $ticket_report) {
 		$by_str = "&nbsp;" . get_text("by") . "&nbsp;" . get_user_name($row['call_taker']);
 	}
 	?>
-<tr>
-	<th><?php print get_text("Incident added");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['datetime']) . $by_str);?>><?php print format_date($row['datetime']) . $by_str;?></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Incident added");?>:</th>
+		<td colspan=4<?php print get_title_str(format_date($row['datetime']) . $by_str);?>><?php print format_date($row['datetime']) . $by_str;?></td>
+	</tr>
 	<?php
 	if (intval($row['problemend']) > 1) {
 		$elaped_str = " (" . $elapsed . ")";
@@ -741,10 +741,10 @@ function show_head($ticket_id, $search, $ticket_report) {
 		$problem_end_str = format_date($row['problemend']);
 	}
 	?>
-<tr>
-	<th><?php print get_text("Run End");?>:</th>
-	<th colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></th>
-</tr>
+	<tr>
+		<th><?php print get_text("Run End");?>:</th>
+		<th colspan=4<?php print get_title_str($problem_end_str . $elaped_str);?>><?php print $problem_end_str . $elaped_str;?></th>
+	</tr>
  	<?php
  	$by_str = "";
 	if ($row['updated']) {
@@ -752,10 +752,10 @@ function show_head($ticket_id, $search, $ticket_report) {
 			$by_str = "&nbsp;" . get_text("by") . "&nbsp;" . get_user_name($row['user_id']);
 		}
 	?>
-<tr>
-	<th><?php print get_text("Edited");?>:</th>
-	<td colspan=4<?php print get_title_str(format_date($row['updated']) . $by_str);?>><?php print highlight($search, nl2br(format_date($row['updated']))) . $by_str;?></td>
-</tr>
+	<tr>
+		<th><?php print get_text("Edited");?>:</th>
+		<td colspan=4<?php print get_title_str(format_date($row['updated']) . $by_str);?>><?php print highlight($search, nl2br(format_date($row['updated']))) . $by_str;?></td>
+	</tr>
 	<?php
 	}
 }
@@ -792,9 +792,9 @@ function show_assigns($id, $ticket_or_unit) {
 
 	$output_str = "";
 	if (db_num_rows($result)) {
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 		$output_str = "\n<tr><td colspan=5 style='text-align: center;'><h5><strong  style=\"white-space: nowrap;\">" . get_text("Dispatched Units") . "</strong></h5></td></tr>\n";
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 		$output_str .= "<tr>";
 		$output_str .= "<th>" . get_text("DateTime") . "</th>";
 		$output_str .= "<th>" . get_text("Status") . "</th>";
@@ -802,18 +802,18 @@ function show_assigns($id, $ticket_or_unit) {
 		$output_str .= "<th>" . get_text("Text") . "</th>";
 		$output_str .= "<th>" . get_text("by") . "</th>";
 		$output_str .= "</tr>";
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 		$log_time_array = array("", "");
 		$i = 0;
 		while ($row = stripslashes_deep(db_fetch_assoc($result))) {
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if ($i == 0) {
 				$log_time_array = get_date_and_time_part($row['problemstart_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['problemstart_i']))) . ">" .
 				$log_time_array[1] . "</td><td>" . get_text("Run Start") . "</td><td colspan=3></td></tr>\n";
 				$i++;
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			$start_miles = ($row['start_m'] != null)? $row['start_m'] : "";
 			$on_scene_miles = ($row['os_miles'] != null)? $row['os_miles'] : "";
 			$end_miles = ($row['end_m'] != null) ? $row['end_m'] : "";
@@ -826,7 +826,7 @@ function show_assigns($id, $ticket_or_unit) {
 					$tot_miles = "";
 				}
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['dispatched']) || $row['comments'] != "") {
 				$dispatched_datetime_title_str = "";
 				if (is_datetime($row['dispatched_i'])) {
@@ -850,14 +850,14 @@ function show_assigns($id, $ticket_or_unit) {
 					"<td" . get_title_str($row['name']) . "><nobr>" . remove_nls($row['handle']) . "</nobr></td><td" . $comments_title_str . "><div class='td-div'>" .
 					$comments_str . "</div></td><td>" . get_user_name($row['dispatching_user_id']) . "</td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['responding'])) {
 				$log_time_array = get_date_and_time_part($row['responding_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['responding_i']))) . ">" .
 					$log_time_array[1] . "</td><td" . get_title_str(datetime_difference($row['problemstart_i'], $row['responding_i'])) . ">" .
 					get_text("Responding") . "</td><td" . get_title_str($row['name']) . "></td><td></td><td></td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['on_scene']) || $row['on_scene_location'] != "") {
 				$on_scene_datetime_title_str = "";
 				if (is_datetime($row['on_scene_i'])) {
@@ -885,14 +885,14 @@ function show_assigns($id, $ticket_or_unit) {
 					get_text("On-scene") . "</td>" . "<td" . get_title_str($row['name']) . "></td><td colspan=2" . $on_scene_title_str . "><div class='td-div'>" . 
 					$on_scene_str . "</div></td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['u2fenr'])) {
 				$log_time_array = get_date_and_time_part($row['u2fenr_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['u2fenr_i']))) . ">" . $log_time_array[1] . "</td><td" .
 					get_title_str(datetime_difference($row['problemstart_i'], $row['u2fenr_i'])) . ">" . get_text("Fac en-route") . "</td><td" .
 					get_title_str($row['name']) . "></td><td><td></td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['u2farr']) || $row['receiving_location'] != "") {
 				$facility_arrived_datetime_title_str = "";
 				if (is_datetime($row['u2farr_i'])) {
@@ -920,14 +920,14 @@ function show_assigns($id, $ticket_or_unit) {
 					get_text("Fac arr") . "</td>" . "<td" . get_title_str($row['name']) . "></td><td colspan=2" . $receiving_title_str . "><div class='td-div'>" . 
 					$receiving_str . "</div></td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (is_datetime($row['clear'])) {
 				$log_time_array = get_date_and_time_part($row['clear_i'], $log_time_array[0]);
 				$output_str .= "<tr><td" . get_title_str(date(get_variable("date_format"), strtotime($row['clear_i']))) . ">" . $log_time_array[1] . 
 					"</td><td" . get_title_str(datetime_difference($row['problemstart_i'], $row['clear_i'])) . ">" . get_text("Clear") . "</td><td" . 
 					get_title_str($row['name']) . "></td><td></td><td></td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if (($start_miles != "") || ($on_scene_miles != "") || ($end_miles != "")) {
 				$output_str .= "<tr><td colspan='6'>";
 				if ($start_miles != "") {
@@ -941,11 +941,11 @@ function show_assigns($id, $ticket_or_unit) {
 				}
 				$output_str .= "</td></tr>\n";
  			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 			if ($tot_miles != "") {
 				$output_str .= "<tr><td colspan='5'>" . get_text("TOTAL MILES") . ": " . $tot_miles . "</td></tr>\n";
 			}
-//------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------------
 		}	
 	}
 	print $output_str;
@@ -1120,21 +1120,21 @@ function generate_log_where_str($function, $filter, $start_date, $end_date, $cus
 	}
 	$where_str = "";
 	switch ($function) {
-	case "reports":
-		$where_str .= " WHERE ((`l`.`datetime` >= '" . date("Y-m-d H:i:s", $start_date) . "') AND (`l`.`datetime` < '" . date("Y-m-d H:i:s", $end_date) . "')) AND (";
-		$where_str .= $or_str;
-		$where_str .= ") " . $custom_where;
-		$where_str .= " ORDER BY `l`.`datetime` ASC";
-		break;
-	case "get_infos":
-		$where_str .= " WHERE (DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . $report_log_log . " MINUTE) <= `l`.`datetime`) AND (";
-		$where_str .= $or_str;
-		$where_str .= ") ORDER BY `l`.`datetime` DESC LIMIT 1";
-		break;
-	default:
-		$where_str .= " WHERE (DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . $report_log_log . " MINUTE) <= `l`.`datetime`) AND (";
-		$where_str .= $or_str;
-		$where_str .= ") ORDER BY `l`.`datetime` DESC";	
+		case "reports":
+			$where_str .= " WHERE ((`l`.`datetime` >= '" . date("Y-m-d H:i:s", $start_date) . "') AND (`l`.`datetime` < '" . date("Y-m-d H:i:s", $end_date) . "')) AND (";
+			$where_str .= $or_str;
+			$where_str .= ") " . $custom_where;
+			$where_str .= " ORDER BY `l`.`datetime` ASC";
+			break;
+		case "get_infos":
+			$where_str .= " WHERE (DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . $report_log_log . " MINUTE) <= `l`.`datetime`) AND (";
+			$where_str .= $or_str;
+			$where_str .= ") ORDER BY `l`.`datetime` DESC LIMIT 1";
+			break;
+		default:
+			$where_str .= " WHERE (DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL " . $report_log_log . " MINUTE) <= `l`.`datetime`) AND (";
+			$where_str .= $or_str;
+			$where_str .= ") ORDER BY `l`.`datetime` DESC";	
 	}
 	return $where_str;
 }
@@ -1424,59 +1424,59 @@ function get_type($id) {
 function show_day_night_style() {
 	if ((!(isset ($_SESSION['day_night']))) || (isset ($_SESSION['day_night']) && ($_SESSION['day_night'] == "day"))) {
 		?>
-<style>
-	body, text, h4 {
-		background-color: #FFFFFF;
-		color: #000000;
-	}
-		table th, td {
-		background-color: transparent;
-	}
-	.panel {
-		background-color: transparent;
-	}
-</style>
+	<style>
+		body, text, h4 {
+			background-color: #FFFFFF;
+			color: #000000;
+		}
+			table th, td {
+			background-color: transparent;
+		}
+		.panel {
+			background-color: transparent;
+		}
+	</style>
 	<?php
 	} else {
 	?>
-<style>
-	body, text, h4 {
-		background-color: #000000;
-		color: #FFFFFF;
-	}
-	table th, td {
-		background-color: <?php print get_variable("night_color");?>;
-	}
-	.panel {
-		background-color: <?php print get_variable("night_color");?>;
-	}
-	.modal-content {
-		background-color: <?php print get_variable("night_color");?>;
-	}
-	.modal-body {
-		background-color: <?php print get_variable("night_color");?>;
-	}
-	.infobox-head {
-		background-color: <?php print get_variable("night_color");?>;
-	}
-</style>
+	<style>
+		body, text, h4 {
+			background-color: #000000;
+			color: #FFFFFF;
+		}
+		table th, td {
+			background-color: <?php print get_variable("night_color");?>;
+		}
+		.panel {
+			background-color: <?php print get_variable("night_color");?>;
+		}
+		.modal-content {
+			background-color: <?php print get_variable("night_color");?>;
+		}
+		.modal-body {
+			background-color: <?php print get_variable("night_color");?>;
+		}
+		.infobox-head {
+			background-color: <?php print get_variable("night_color");?>;
+		}
+	</style>
 	<?php
 	}
 }
 
 function get_status($status) {
 	switch ($status)	{
-	case 1:
-		return get_text("Closed");
-		break;
-	case 2:
-		return get_text("Open");
-		break;
-	case 3:
-		return get_text("Scheduled");
-		break;
-	default:
-		return get_text("Status error");
+		case 1:
+			return get_text("Closed");
+			break;
+		case 2:
+			return get_text("Open");
+			break;
+		case 3:
+			return get_text("Scheduled");
+			break;
+		default:
+			return get_text("Status error");
 	}
 }
 
@@ -1497,18 +1497,18 @@ function get_user_name($unit_id) {
 
 function get_severity($severity) {
 	switch($severity) {
-	case $GLOBALS['SEVERITY_NORMAL']:
-		return get_text("Normal");
-		break;
-	case $GLOBALS['SEVERITY_MEDIUM']:
-		return get_text("Medium");
-		break;
-	case $GLOBALS['SEVERITY_HIGH']:
-		return get_text("High");
-		break;
-	default:
-		return "Severity error";
-		break;
+		case $GLOBALS['SEVERITY_NORMAL']:
+			return get_text("Normal");
+			break;
+		case $GLOBALS['SEVERITY_MEDIUM']:
+			return get_text("Medium");
+			break;
+		case $GLOBALS['SEVERITY_HIGH']:
+			return get_text("High");
+			break;
+		default:
+			return "Severity error";
+			break;
 	}
 }
 
@@ -1767,159 +1767,159 @@ function get_unit_select_str($select_type, $unit_id, $ticket_id) {
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "report":
-		$option_0 = get_text("Select");
+		case "report":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"WHERE `r`.`id` IN (SELECT DISTINCT `unit_id` FROM `assigns`) " .
-			"OR `r`.`id` IN (SELECT DISTINCT `unit_id` FROM `log`) " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"WHERE `r`.`id` IN (SELECT DISTINCT `unit_id` FROM `assigns`) " .
+				"OR `r`.`id` IN (SELECT DISTINCT `unit_id` FROM `log`) " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_unit";
-		$form_name = "frm_unit";
-		$class = "form-control";
-		$title = "";
-		$style = "";
-		$onchange = "query_changed();";
-		$no_elements = get_text("No units available!");
-		$tabindex = "";
-		break;
-	case "log":
-		$option_0 = get_text("Unit");
+			$form_id = "frm_unit";
+			$form_name = "frm_unit";
+			$class = "form-control";
+			$title = "";
+			$style = "";
+			$onchange = "query_changed();";
+			$no_elements = get_text("No units available!");
+			$tabindex = "";
+			break;
+		case "log":
+			$option_0 = get_text("Unit");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `allocates` `a` ON (`r`.`id` = `a`.`resource_id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"LEFT JOIN `unit_status` `s` ON (`r`.`unit_status_id` = `s`.`id`) " .
-			"WHERE `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"AND (`s`.`dispatch` < 3 OR `r`.`unit_status_id` = 0 " .
-			"OR (SELECT COUNT(*) as `numfound` FROM `assigns` " .
-			"WHERE `assigns`.`unit_id` = `r`.`id` " .
-			"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00')) > 0) " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `allocates` `a` ON (`r`.`id` = `a`.`resource_id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"LEFT JOIN `unit_status` `s` ON (`r`.`unit_status_id` = `s`.`id`) " .
+				"WHERE `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"AND (`s`.`dispatch` < 3 OR `r`.`unit_status_id` = 0 " .
+				"OR (SELECT COUNT(*) as `numfound` FROM `assigns` " .
+				"WHERE `assigns`.`unit_id` = `r`.`id` " .
+				"AND (`clear` IS NULL OR DATE_FORMAT(`clear`,'%y') = '00')) > 0) " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "unit_id";
-		$form_name = "unit_id";
-		$class = "sit label";
-		$title = "";
-		$style = "width: 40%; float: left; margin-top: 5px;";
-		$onchange = "";
-		$no_elements = get_text("No units in service!");
-		$tabindex = "3";
-		break;
-	case "action":
-		$option_0 = get_text("Unit");
+			$form_id = "unit_id";
+			$form_name = "unit_id";
+			$class = "sit label";
+			$title = "";
+			$style = "width: 40%; float: left; margin-top: 5px;";
+			$onchange = "";
+			$no_elements = get_text("No units in service!");
+			$tabindex = "3";
+			break;
+		case "action":
+			$option_0 = get_text("Unit");
 
-		$query = "SELECT DISTINCT `unit_id` AS `option_value`, " .
-			"`u`.`handle` AS `option_text`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `assigns` " .
-			"LEFT JOIN `units` `u` ON (`assigns`.`unit_id` = `u`.`id`) " .
-			"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
-			"WHERE `ticket_id` = " . $ticket_id . " " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT DISTINCT `unit_id` AS `option_value`, " .
+				"`u`.`handle` AS `option_text`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `assigns` " .
+				"LEFT JOIN `units` `u` ON (`assigns`.`unit_id` = `u`.`id`) " .
+				"LEFT JOIN `unit_types` `t` ON (`u`.`type` = `t`.`id`) " .
+				"WHERE `ticket_id` = " . $ticket_id . " " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$class = "sit label";
-		$title = "";
-		$style = "margin-top: 5px;";
-		$form_id = "frm_unit";
-		$form_name = "frm_unit";
-		$onchange = "";
-		$no_elements = get_text("No units dispatched!");
-		$tabindex = "3";
-		break;
-	case "reporting_channel":
-		$option_0 = get_text("Select");
+			$class = "sit label";
+			$title = "";
+			$style = "margin-top: 5px;";
+			$form_id = "frm_unit";
+			$form_name = "frm_unit";
+			$onchange = "";
+			$no_elements = get_text("No units dispatched!");
+			$tabindex = "3";
+			break;
+		case "reporting_channel":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"WHERE (`r`.`remote_data_services` <> '' OR `r`.`unit_phone` <> '' OR `r`.`unit_email` <> '') AND (`a`.`id` IS NOT NULL) " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"WHERE (`r`.`remote_data_services` <> '' OR `r`.`unit_phone` <> '' OR `r`.`unit_email` <> '') AND (`a`.`id` IS NOT NULL) " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_reporting_channel";
-		$form_name = "frm_reporting_channel";
-		$class = "form-control";
-		$title = get_help_text("_ResRepChan");
-		$style = "";
-		$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, ''); this.options[0].selected=true;";
-		$no_elements = get_text("No units available!");
-		$tabindex = "10";
-		break;
-	case "reporting_channel_smsg_id":
-		$option_0 = get_text("Select");
+			$form_id = "frm_reporting_channel";
+			$form_name = "frm_reporting_channel";
+			$class = "form-control";
+			$title = get_help_text("_ResRepChan");
+			$style = "";
+			$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, ''); this.options[0].selected=true;";
+			$no_elements = get_text("No units available!");
+			$tabindex = "10";
+			break;
+		case "reporting_channel_smsg_id":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"WHERE `r`.`remote_data_services` <> '' AND `a`.`id` IS NOT NULL " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"WHERE `r`.`remote_data_services` <> '' AND `a`.`id` IS NOT NULL " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_reporting_channel_smsg_id";
-		$form_name = "frm_reporting_channel_smsg_id";
-		$class = "sit label";
-		$title = get_help_text("_ResRepChan");
-		$style = "margin-top: 5px;";
-		$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'smsg_id'); this.options[0].selected=true;";
-		$no_elements = get_text("No units available!");
-		$tabindex = "5";
-		break;
-	case "reporting_channel_phone":
-		$option_0 = get_text("Select");
+			$form_id = "frm_reporting_channel_smsg_id";
+			$form_name = "frm_reporting_channel_smsg_id";
+			$class = "sit label";
+			$title = get_help_text("_ResRepChan");
+			$style = "margin-top: 5px;";
+			$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'smsg_id'); this.options[0].selected=true;";
+			$no_elements = get_text("No units available!");
+			$tabindex = "5";
+			break;
+		case "reporting_channel_phone":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"WHERE `r`.`unit_phone` <> '' AND `a`.`id` IS NOT NULL " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"WHERE `r`.`unit_phone` <> '' AND `a`.`id` IS NOT NULL " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_reporting_channel_phone";
-		$form_name = "frm_reporting_channel_phone";
-		$class = "sit label";
-		$title = get_help_text("_ResRepChan");
-		$style = "margin-top: 5px;";
-		$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'phone'); this.options[0].selected=true;";
-		$no_elements = get_text("No units available!");
-		$tabindex = "7";
-		break;
-	case "reporting_channel_email":
-		$option_0 = get_text("Select");
+			$form_id = "frm_reporting_channel_phone";
+			$form_name = "frm_reporting_channel_phone";
+			$class = "sit label";
+			$title = get_help_text("_ResRepChan");
+			$style = "margin-top: 5px;";
+			$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'phone'); this.options[0].selected=true;";
+			$no_elements = get_text("No units available!");
+			$tabindex = "7";
+			break;
+		case "reporting_channel_email":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `r`.`handle` AS `option_text`, " .
-			"`r`.`id` AS `option_value`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `units` `r` " .
-			"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
-			"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
-			"WHERE `r`.`unit_email` <> '' AND `a`.`id` IS NOT NULL " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `r`.`handle` AS `option_text`, " .
+				"`r`.`id` AS `option_value`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `units` `r` " .
+				"LEFT JOIN `unit_types` `t` ON (`r`.`type` = `t`.`id`) " .
+				"LEFT JOIN `allocates` `a` ON `r`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . " " .
+				"WHERE `r`.`unit_email` <> '' AND `a`.`id` IS NOT NULL " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_reporting_channel_email";
-		$form_name = "frm_reporting_channel_email";
-		$class = "sit label";
-		$title = get_help_text("_ResRepChan");
-		$style = "margin-top: 5px;";
-		$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'email'); this.options[0].selected=true;";
-		$no_elements = get_text("No units available!");
-		$tabindex = "9";
-		break;
-	default:
+			$form_id = "frm_reporting_channel_email";
+			$form_name = "frm_reporting_channel_email";
+			$class = "sit label";
+			$title = get_help_text("_ResRepChan");
+			$style = "margin-top: 5px;";
+			$onchange = "get_reporting_channel(this.options[this.selectedIndex].value, 'email'); this.options[0].selected=true;";
+			$no_elements = get_text("No units available!");
+			$tabindex = "9";
+			break;
+		default:
 	}
 	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $unit_id, $no_elements, $tabindex);
 }
@@ -1936,71 +1936,71 @@ function get_facility_select_str($select_type, $facility_id) {
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "log":
-		$option_0 = get_text("Facilities");
+		case "log":
+			$option_0 = get_text("Facilities");
 
-		$query = "SELECT DISTINCT `f`.`id` AS `option_value`, " .
-			"`f`.`handle` AS `option_text`, " .
-			"`f`.`type`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `facilities` `f` " .
-//			"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
-			"LEFT JOIN `facility_status` `s` ON (`f`.`facility_status_id` = `s`.`id`) " .
-			"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
-			"WHERE `s`.`display` & 32 OR `f`.`id` = " . $facility_id . " " .
-			"ORDER BY `f`.`type` ASC, `f`.`handle` ASC;";
+			$query = "SELECT DISTINCT `f`.`id` AS `option_value`, " .
+				"`f`.`handle` AS `option_text`, " .
+				"`f`.`type`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `facilities` `f` " .
+				//"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
+				"LEFT JOIN `facility_status` `s` ON (`f`.`facility_status_id` = `s`.`id`) " .
+				"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
+				"WHERE `s`.`display` & 32 OR `f`.`id` = " . $facility_id . " " .
+				"ORDER BY `f`.`type` ASC, `f`.`handle` ASC;";
 
-		$form_id = "facility_id";
-		$form_name = "facility_id";
-		$class = "sit label";
-		$title = "";
-		$style = "width: 40%; float: right; margin-top: 5px;";
-		$onchange = "";
-		$no_elements = get_text("No facilities available!");
-		$tabindex = "4";
-		break;
-	case "report_on_scene_location":
-		$option_0 = get_text("Facilities");
+			$form_id = "facility_id";
+			$form_name = "facility_id";
+			$class = "sit label";
+			$title = "";
+			$style = "width: 40%; float: right; margin-top: 5px;";
+			$onchange = "";
+			$no_elements = get_text("No facilities available!");
+			$tabindex = "4";
+			break;
+		case "report_on_scene_location":
+			$option_0 = get_text("Facilities");
 
-		$query = "SELECT `f`. `id` AS `option_value`, " .
-			"`f`.`handle` AS `option_text`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `facilities` `f`" .
-			"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
-			"WHERE `f`.`id` IN (SELECT DISTINCT `facility_id` FROM `tickets`) " .
-			"OR `f`.`id` IN (SELECT DISTINCT `on_scene_facility_id` FROM `assigns`) " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `f`. `id` AS `option_value`, " .
+				"`f`.`handle` AS `option_text`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `facilities` `f`" .
+				"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
+				"WHERE `f`.`id` IN (SELECT DISTINCT `facility_id` FROM `tickets`) " .
+				"OR `f`.`id` IN (SELECT DISTINCT `on_scene_facility_id` FROM `assigns`) " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_incident_facility";
-		$form_name = "frm_incident_facility";
-		$class = "sit label";
-		$title = "";
-		$style = "margin-top: 5px;";
-		$onchange = "query_changed();";
-		$no_elements = get_text("No facilities available!");
-		$tabindex = "";
-		break;
-	case "report_receiving_location":
-		$option_0 = get_text("Facilities");
+			$form_id = "frm_incident_facility";
+			$form_name = "frm_incident_facility";
+			$class = "sit label";
+			$title = "";
+			$style = "margin-top: 5px;";
+			$onchange = "query_changed();";
+			$no_elements = get_text("No facilities available!");
+			$tabindex = "";
+			break;
+		case "report_receiving_location":
+			$option_0 = get_text("Facilities");
 
-		$query = "SELECT `f`. `id` AS `option_value`, " .
-			"`f`.`handle` AS `option_text`, " .
-			"`t`.`name` AS `option_group` " .
-			"FROM `facilities` `f`" .
-			"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
-			"WHERE `f`.`id` IN (SELECT DISTINCT `receiving_facility_id` FROM `assigns`) " .
-			"ORDER BY `option_group` ASC, `option_text` ASC;";
+			$query = "SELECT `f`. `id` AS `option_value`, " .
+				"`f`.`handle` AS `option_text`, " .
+				"`t`.`name` AS `option_group` " .
+				"FROM `facilities` `f`" .
+				"LEFT JOIN `facility_types` `t` ON (`f`.`type` = `t`.`id`) " .
+				"WHERE `f`.`id` IN (SELECT DISTINCT `receiving_facility_id` FROM `assigns`) " .
+				"ORDER BY `option_group` ASC, `option_text` ASC;";
 
-		$form_id = "frm_receiving_facility";
-		$form_name = "frm_receiving_facility";
-		$class = "sit label";
-		$title = "";
-		$style = "margin-top: 5px;";
-		$onchange = "query_changed();";
-		$no_elements = get_text("No facilities available!");
-		$tabindex = "";
-		break;
-	default:
+			$form_id = "frm_receiving_facility";
+			$form_name = "frm_receiving_facility";
+			$class = "sit label";
+			$title = "";
+			$style = "margin-top: 5px;";
+			$onchange = "query_changed();";
+			$no_elements = get_text("No facilities available!");
+			$tabindex = "";
+			break;
+		default:
 	}
 	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $facility_id, $no_elements, $tabindex);
 }
@@ -2014,60 +2014,60 @@ function get_textblock_select_str($select_type, $form_name, $form_id, $selected,
 	$no_elements = get_text("No textblocks available!");
 	$tabindex = "";
 	switch ($select_type) {
-	case "action":
-		$tabindex = "2";
-		break;
-	case "assign":
-		$tabindex = "4";
-		break;
-	case "close":
-		$tabindex = "2";
-		break;
-	case "description":
-		$tabindex = "10";
-		break;
-	case "log":
-		$tabindex = "2";
-		break;
-	case "message":
-		$tabindex = "6";
-		break;
-	case "synopsis":
-		$tabindex = "5";
-		break;
-	default:
+		case "action":
+			$tabindex = "2";
+			break;
+		case "assign":
+			$tabindex = "4";
+			break;
+		case "close":
+			$tabindex = "2";
+			break;
+		case "description":
+			$tabindex = "10";
+			break;
+		case "log":
+			$tabindex = "2";
+			break;
+		case "message":
+			$tabindex = "6";
+			break;
+		case "synopsis":
+			$tabindex = "5";
+			break;
+		default:
 	}
 	switch ($select_type) {
-	case "fixtext":
-		$option_0 = get_text("Message fixtexts");
-		if ($show_hide_select != "") {
-			$style = "display: " . $show_hide_select . ";";
-		}
+		case "fixtext":
+			$option_0 = get_text("Message fixtexts");
+			if ($show_hide_select != "") {
+				$style = "display: " . $show_hide_select . ";";
+			}
 
-		$query = "SELECT `group` AS `option_group`, " .
-			"`id` AS `option_value`, " .
-			"`text` AS `option_text` " .
-			"FROM `textblocks` " .
-			"WHERE `type`  = 'fixtext' " .
-			"ORDER BY `sort` ASC;";
+			$query = "SELECT `group` AS `option_group`, " .
+				"`id` AS `option_value`, " .
+				"`text` AS `option_text` " .
+				"FROM `textblocks` " .
+				"WHERE `type`  = 'fixtext' " .
+				"ORDER BY `sort` ASC;";
 
-		$class = "form-control";
-		$title = "";
-		$onchange = "";
-		break;
-	default:
-		$option_0 = get_text("Textblocks");
+			$class = "form-control";
+			$title = "";
+			$onchange = "";
+			break;
+		default:
+			$option_0 = get_text("Textblocks");
 
-		$query = "SELECT `group` AS `option_group`, " .
-			"`text` AS `option_text` " .
-			"FROM `textblocks` " .
-			"WHERE `type` = '" . $select_type . "' " .
-			"ORDER BY `option_group` ASC, `sort` ASC;";
+			$query = "SELECT `group` AS `option_group`, " .
+				"`text` AS `option_text` " .
+				"FROM `textblocks` " .
+				"WHERE `type` = '" . $select_type . "' " .
+				"ORDER BY `option_group` ASC, `sort` ASC;";
 
-		$class = "sit label";
-		$title = "";
-		$style = "margin-top: 5px;";
-		$onchange = "set_textblock(this.options[this.selectedIndex].text, " . $form_name . "); this.options[0].selected=true;";
+			$class = "sit label";
+			$title = "";
+			$style = "margin-top: 5px;";
+			$onchange = "set_textblock(this.options[this.selectedIndex].text, " . $form_name . "); this.options[0].selected=true;";
 	}
 	return get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $selected, $no_elements, $tabindex);
 }
@@ -2081,23 +2081,23 @@ function get_user_select_str($select_type, $form_name) {
 	$onchange = "";
 	$no_elements = "";
 	switch ($select_type) {
-	case "report":
-		$option_0 = get_text("Select");
+		case "report":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `id` AS `option_value`, " .
-			"`name` AS `option_text` " .
-			"FROM `users` " .
-			"WHERE `id` IN (SELECT DISTINCT `call_taker_id` FROM `tickets`) " .
-			"OR `id` IN (SELECT DISTINCT `user_id` FROM `tickets`) " .
-			"OR `id` IN (SELECT DISTINCT `user_id` FROM `log`);";
+			$query = "SELECT `id` AS `option_value`, " .
+				"`name` AS `option_text` " .
+				"FROM `users` " .
+				"WHERE `id` IN (SELECT DISTINCT `call_taker_id` FROM `tickets`) " .
+				"OR `id` IN (SELECT DISTINCT `user_id` FROM `tickets`) " .
+				"OR `id` IN (SELECT DISTINCT `user_id` FROM `log`);";
 
-		$class = "form-control";
-		$title = "";
-		$style = "";
-		$onchange = "query_changed();";
-		$no_elements = "";
-		break;
-	default:
+			$class = "form-control";
+			$title = "";
+			$style = "";
+			$onchange = "query_changed();";
+			$no_elements = "";
+			break;
+		default:
 	}
 	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, 0, $no_elements, "");
 }
@@ -2112,43 +2112,43 @@ function get_guard_house_select_str($select_type, $guard_house_id) {
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "unit":
-		$option_0 = get_text("Select");
+		case "unit":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `facilities`.`id` AS `option_value`, " .
-			"`handle` AS `option_text`, " .
-			"`facility_types`.`name` AS `option_group` " .
-			"FROM `facilities` " .
-			"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
-			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
-			"WHERE (`allocates`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
-				"OR (`facilities`.`id` = " . $guard_house_id . ");";
+			$query = "SELECT `facilities`.`id` AS `option_value`, " .
+				"`handle` AS `option_text`, " .
+				"`facility_types`.`name` AS `option_group` " .
+				"FROM `facilities` " .
+				"LEFT JOIN `allocates` ON (`facilities`.`id` = `allocates`.`resource_id`) " .
+				"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
+				"WHERE (`allocates`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
+					"OR (`facilities`.`id` = " . $guard_house_id . ");";
 
-		$class = "form-control";
-		$title = "";
-		$style = "";
-		$onchange = "";
-		$no_elements = get_text("No facilities available!");
-		$tabindex = "14";
-		break;
-	case "report":
-		$option_0 = get_text("Select");
+			$class = "form-control";
+			$title = "";
+			$style = "";
+			$onchange = "";
+			$no_elements = get_text("No facilities available!");
+			$tabindex = "14";
+			break;
+		case "report":
+			$option_0 = get_text("Select");
 
-		$query = "SELECT `facilities`.`id` AS `option_value`, " .
-			"`handle` AS `option_text`, " .
-			"`facility_types`.`name` AS `option_group` " .
-			"FROM `facilities` " .
-			"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
-			"WHERE `facilities`.`id` IN (SELECT DISTINCT `guard_house_id` FROM `units`);";
+			$query = "SELECT `facilities`.`id` AS `option_value`, " .
+				"`handle` AS `option_text`, " .
+				"`facility_types`.`name` AS `option_group` " .
+				"FROM `facilities` " .
+				"LEFT JOIN `facility_types` ON (`facilities`.`type` = `facility_types`.`id`) " .
+				"WHERE `facilities`.`id` IN (SELECT DISTINCT `guard_house_id` FROM `units`);";
 
-		$class = "form-control";
-		$title = "";
-		$style = "";
-		$onchange = "query_changed();";
-		$no_elements = get_text("No facilities available!");
-		$tabindex = "";
-		break;
-	default:
+			$class = "form-control";
+			$title = "";
+			$style = "";
+			$onchange = "query_changed();";
+			$no_elements = get_text("No facilities available!");
+			$tabindex = "";
+			break;
+		default:
 	}
 	return get_select_str($query, "frm_guard_house", "frm_guard_house", $class, $title, $style, $onchange, $option_0, $guard_house_id, $no_elements, $tabindex);
 }
@@ -2163,63 +2163,63 @@ function get_incident_type_select_str($select_type, $form_name, $selected_inc_ty
 	$no_elements = "";
 	$tabindex = "";
 	switch ($select_type) {
-	case "ticket_add_form":
-		$option_0 = get_text("Select");
-
-		$query = "SELECT `id` AS `option_value`, " .
-			"`group` AS `option_group`, " .
-			"`type` AS `option_text`, " .
-			"`protocol` " .
-			"FROM `incident_types` " .
-			"WHERE (`group` != 'DELETED') " .
-			"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
-
-		$class = "form-control mandatory";
-		$title = "";
-		$style = "";
-		$onchange = "do_severity_protocol(this.options[selectedIndex].value.trim());";
-		$no_elements = get_text("No data");	
-		$tabindex = "8";
-		break;
-	case "ticket_edit_form":
-		if ($selected_inc_type == 0) {
+		case "ticket_add_form":
 			$option_0 = get_text("Select");
-		}
 
-		$query = "SELECT `id` AS `option_value`, " .
-			"`group` AS `option_group`, " .
-			"`type` AS `option_text`, " .
-			"`protocol` " .
-			"FROM `incident_types` " .
-			"WHERE (`group` != 'DELETED') " .
-			"OR (`id` = " . $selected_inc_type . ") " .
-			"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
+			$query = "SELECT `id` AS `option_value`, " .
+				"`group` AS `option_group`, " .
+				"`type` AS `option_text`, " .
+				"`protocol` " .
+				"FROM `incident_types` " .
+				"WHERE (`group` != 'DELETED') " .
+				"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
 
-		$class = "form-control mandatory";
-		$title = "";
-		$style = "";
-		$onchange = "do_severity_protocol(this.options[selectedIndex].value.trim());";
-		$no_elements = get_text("No data");
-		$tabindex = "8";
-		break;
-	case "reports_form":
-		$option_0 = get_text("Select");
+			$class = "form-control mandatory";
+			$title = "";
+			$style = "";
+			$onchange = "do_severity_protocol(this.options[selectedIndex].value.trim());";
+			$no_elements = get_text("No data");	
+			$tabindex = "8";
+			break;
+		case "ticket_edit_form":
+			if ($selected_inc_type == 0) {
+				$option_0 = get_text("Select");
+			}
 
-		$query = "SELECT `id` AS `option_value`, " .
-			"`group` AS `option_group`, " .
-			"`type` AS `option_text`, " .
-			"`protocol` " .
-			"FROM `incident_types` " .
-			"WHERE `id` IN (SELECT DISTINCT `incident_type_id` FROM `tickets`) " .
-			"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
+			$query = "SELECT `id` AS `option_value`, " .
+				"`group` AS `option_group`, " .
+				"`type` AS `option_text`, " .
+				"`protocol` " .
+				"FROM `incident_types` " .
+				"WHERE (`group` != 'DELETED') " .
+				"OR (`id` = " . $selected_inc_type . ") " .
+				"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
 
-		$class = "form-control";
-		$title = "";
-		$style = "";
-		$onchange = "query_changed();";
-		$no_elements = get_text("No data");	
-		break;
-	default:
+			$class = "form-control mandatory";
+			$title = "";
+			$style = "";
+			$onchange = "do_severity_protocol(this.options[selectedIndex].value.trim());";
+			$no_elements = get_text("No data");
+			$tabindex = "8";
+			break;
+		case "reports_form":
+			$option_0 = get_text("Select");
+
+			$query = "SELECT `id` AS `option_value`, " .
+				"`group` AS `option_group`, " .
+				"`type` AS `option_text`, " .
+				"`protocol` " .
+				"FROM `incident_types` " .
+				"WHERE `id` IN (SELECT DISTINCT `incident_type_id` FROM `tickets`) " .
+				"ORDER BY `group` ASC, `sort` ASC, `type` ASC;";
+
+			$class = "form-control";
+			$title = "";
+			$style = "";
+			$onchange = "query_changed();";
+			$no_elements = get_text("No data");	
+			break;
+		default:
 	}
 	return get_select_str($query, $form_name, $form_name, $class, $title, $style, $onchange, $option_0, $selected_inc_type, $no_elements, $tabindex);
 }
@@ -2246,30 +2246,30 @@ function get_priority_select_str($select_type, $form_name, $selected_severity) {
 	$selected_high_str = "";
 	$bgcolor = "#0000FF";
 	switch ($select_type) {
-	case "ticket_add_form":
-		$selected_normal_str = " selected";
-		$bgcolor = "#0000FF";
-		$onchange_str = "do_set_severity(this.selectedIndex); do_inc_name(this.options[selectedIndex].value.trim());";
-		break;
-	case "ticket_edit_form":
-		switch ($selected_severity) {
-		case $GLOBALS['SEVERITY_NORMAL']:
+		case "ticket_add_form":
 			$selected_normal_str = " selected";
 			$bgcolor = "#0000FF";
+			$onchange_str = "do_set_severity(this.selectedIndex); do_inc_name(this.options[selectedIndex].value.trim());";
 			break;
-		case $GLOBALS['SEVERITY_MEDIUM']:
-			$selected_medium_str = " selected";
-			$bgcolor = "#008000";
-			break;
-		case $GLOBALS['SEVERITY_HIGH']:
-			$selected_high_str = " selected";
-			$bgcolor = "#FF0000";
+		case "ticket_edit_form":
+			switch ($selected_severity) {
+				case $GLOBALS['SEVERITY_NORMAL']:
+					$selected_normal_str = " selected";
+					$bgcolor = "#0000FF";
+					break;
+				case $GLOBALS['SEVERITY_MEDIUM']:
+					$selected_medium_str = " selected";
+					$bgcolor = "#008000";
+					break;
+				case $GLOBALS['SEVERITY_HIGH']:
+					$selected_high_str = " selected";
+					$bgcolor = "#FF0000";
+					break;
+				default:
+			}
+			$onchange_str = "do_protocol(this.options[selectedIndex].value.trim());";
 			break;
 		default:
-		}
-		$onchange_str = "do_protocol(this.options[selectedIndex].value.trim());";
-		break;
-	default:
 	}
 	$return_str .= "<select" . get_help_text_str("_prio") . " id=\"" . $form_name . "\" name=\"" . $form_name . "\" style=\"color: #FFFFFF; background-color: " .
 		$bgcolor . ";\" class=\"form-control\" ";
@@ -2417,36 +2417,36 @@ function get_ticket_status_select_str($select_type, $form_id, $form_name, $selec
 	$used_status = array ();
 	$disabled_str = "";
 	switch ($select_type) {
-	case "edit":
-		$onchange_str = " onchange=\"do_status_change();";
-		$disabled_str = " disabled";
-		break;
-	case "report":
-		$option_0_str = "<option value=0 selected>" . get_text("Select") . "</option>";
+		case "edit":
+			$onchange_str = " onchange=\"do_status_change();";
+			$disabled_str = " disabled";
+			break;
+		case "report":
+			$option_0_str = "<option value=0 selected>" . get_text("Select") . "</option>";
 
-		$query = "SELECT DISTINCT `status` " .
-			"FROM `tickets`;";
+			$query = "SELECT DISTINCT `status` " .
+				"FROM `tickets`;";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		while ($row = stripslashes_deep(db_fetch_array($result))) {
-			$used_status[] = $row['status'];
-		}
-		$onchange_str = " onchange=\"query_changed();";
-		break;
-	default:
+			$result = db_query($query, __FILE__, __LINE__);
+			while ($row = stripslashes_deep(db_fetch_array($result))) {
+				$used_status[] = $row['status'];
+			}
+			$onchange_str = " onchange=\"query_changed();";
+			break;
+		default:
 	}
 	$select_open_str = "";
 	$select_closed_str = "";
 	$select_scheduled_str = "";
 	switch ($selected_status) {
-	case $GLOBALS['STATUS_OPEN']:
-		$select_open_str = " selected";
-		break;
-	case $GLOBALS['STATUS_CLOSED']:
-		$select_closed_str = " selected";
-		break;
-	case $GLOBALS['STATUS_SCHEDULED']:
-		$select_scheduled_str = " selected";
+		case $GLOBALS['STATUS_OPEN']:
+			$select_open_str = " selected";
+			break;
+		case $GLOBALS['STATUS_CLOSED']:
+			$select_closed_str = " selected";
+			break;
+		case $GLOBALS['STATUS_SCHEDULED']:
+			$select_scheduled_str = " selected";
 		break;
 	default:
 	}
@@ -2508,12 +2508,12 @@ function get_status_select_str($select_type, $unit_facility, $status_id, $back) 
 	if (is_super() || is_admin() || is_operator()) {
 		$back_value = "situation";
 		switch ($back) {
-		case "units":
-			$back_value = "units";
-			break;
-		case "facilities":
-			$back_value = "facilities";
-			break;
+			case "units":
+				$back_value = "units";
+				break;
+			case "facilities":
+				$back_value = "facilities";
+				break;
 		default:
 		}
 		$click_str = " onClick='window.location.href=\"log_report.php?back=" . $back_value . "&" . $type_key . "=" . $unit_facility ."\"'";
@@ -2539,13 +2539,13 @@ function show_unit_facility_status_select($unit_facility) {
 			$i++;
 		}
 	?>
-<div id="<?php print $key_str;?>_status_menue" name="<?php print $key_str;?>_status_menue" class="panel panel-default status_table" style="padding: 0px; position: fixed; display: none; z-index: 2000;">
-	<div id="<?php print $key_str;?>_status_items" style="display:none;"><?php print $i;?></div>
-	<div id="<?php print $key_str;?>_id" style="display:none;"></div>
-	<table id="<?php print $key_str;?>_status_table" class="table table-striped table-condensed status_table" style="width: 120px; background-color: #FFFFFF; font-weight: bold;">
-		<?php print $status_menue_str;?>
-	</table>
-</div>
+	<div id="<?php print $key_str;?>_status_menue" name="<?php print $key_str;?>_status_menue" class="panel panel-default status_table" style="padding: 0px; position: fixed; display: none; z-index: 2000;">
+		<div id="<?php print $key_str;?>_status_items" style="display:none;"><?php print $i;?></div>
+		<div id="<?php print $key_str;?>_id" style="display:none;"></div>
+		<table id="<?php print $key_str;?>_status_table" class="table table-striped table-condensed status_table" style="width: 120px; background-color: #FFFFFF; font-weight: bold;">
+			<?php print $status_menue_str;?>
+		</table>
+	</div>
 	<?php
 	}
 }
@@ -2557,15 +2557,15 @@ function get_incident_location_select_str($function, $facility_id) {
 	$return_array["facility_coordinates"] = "\n";
 	$tabindex_str = "";
 	switch ($function) {
-	case "ticket_add_form":
-		$onchange_str = " onchange=\"do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
-		$tabindex_str = " tabindex=2";
-		break;
-	case "ticket_edit_form":
-		$onchange_str = " onchange=\"document.ticket_edit_form.frm_facility_changed.value = parseInt(document.ticket_edit_form.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
-		$tabindex_str = " tabindex=2";
-		break;
-	default:
+		case "ticket_add_form":
+			$onchange_str = " onchange=\"do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
+			$tabindex_str = " tabindex=2";
+			break;
+		case "ticket_edit_form":
+			$onchange_str = " onchange=\"document.ticket_edit_form.frm_facility_changed.value = parseInt(document.ticket_edit_form.frm_facility_changed.value) + 1; do_facility_to_ticket_location(this.options[selectedIndex].value.trim());\"";
+			$tabindex_str = " tabindex=2";
+			break;
+		default:
 	}
 	if (($facility_id != null) || ($function == "ticket_add_form")) {
 
@@ -2630,25 +2630,25 @@ function get_incident_location_select_str($function, $facility_id) {
 function get_admin_permission_select_str($function, $selected) {
 	$tabindex = "";
 	switch ($function) {
-	case "unit":
-		$tabindex = "18";
-		break;
-	case "facility":
-		$tabindex = "20";
-		break;
-	default:
+		case "unit":
+			$tabindex = "18";
+			break;
+		case "facility":
+			$tabindex = "20";
+			break;
+		default:
 	}
 	if ($tabindex != "") {
 		$tabindex = " tabindex=" . $tabindex . " ";
 	}
 	$select_str_0 = $select_str_1 = "";
 	switch ($selected) {
-	case 0:
-		$select_str_0 = " selected";
-		break;
-	case 1:
-		$select_str_1 = " selected";
-		break;
+		case 0:
+			$select_str_0 = " selected";
+			break;
+		case 1:
+			$select_str_1 = " selected";
+			break;
 	default:
 	}
 	$disabled_str =" disabled";
@@ -2656,10 +2656,10 @@ function get_admin_permission_select_str($function, $selected) {
 	$disabled_str ="";
 	}
 	?>
-<select id="frm_adminperms" name="frm_adminperms" class="form-control"<?php print $tabindex;?> <?php print $disabled_str;?>>
-	<option value=0<?php print $select_str_0;?>><?php print get_text("Admin and superadmin");?></option>
-	<option value=1<?php print $select_str_1;?>><?php print get_text("Superadmin only");?></option>
-</select>
+	<select id="frm_adminperms" name="frm_adminperms" class="form-control"<?php print $tabindex;?> <?php print $disabled_str;?>>
+		<option value=0<?php print $select_str_0;?>><?php print get_text("Admin and superadmin");?></option>
+		<option value=1<?php print $select_str_1;?>><?php print get_text("Superadmin only");?></option>
+	</select>
 	<?php
 }
 //====== configuration
@@ -2680,205 +2680,205 @@ function get_variable($which) {
 	}
 	$value = false;
 	switch ($which) {
-	case "auto_dispatch":
-		$value = "1, 1, 1";
-		if (preg_match("/^\s?[01]{1}\s?,\s?[0-2]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "auto_poll":
-		$value = "10";
-		$values = explode(",", $variables[$which]);
-		if (preg_match("/^\s?[0-9]{1,3}\s?$/", $variables[$which]) &&
-			$values[0] > 1 && $values[0] < 99
-		) {
-			$value = $variables[$which];
-		}
-		break;
-	case "callboard":
-		$value = "1, 80, 35, 80, 300";
-		if (preg_match("/^[0-2]{1}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "closed_interval":
-		$value = "0, 1440";
-		if (preg_match("/^\s?[0-9]{1,4}\s?,\s?[0-9]{1,4}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "date_format":
-		$value = "Y-m-d H:i:s";
-		if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "date_format_time_only":
-		$value = "H:i:s";
-		if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "date_format_time_only_clock":
-		$value = "H:i";
-		if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "date_format_date_only":
-		$value = "Y-m-d";
-		if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "date_format_year_only":
-		$value = "Y";
-		if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "framesize":
-		$value = 115;
-		if (preg_match("/^[0-9]{1,3}$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "heading_blink":
-		$value = 10;
-		if (preg_match("/^[0-9]{1,2}$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "hide_booked":
-		$value = 30;
-		if (preg_match("/^[0-9]{1,4}$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "page_caption":
-		$value = "String too long or wrong characters used!";
-		if (preg_match("/^[0-9a-zA-Z\\-\\_\\ " . $variables["_vowel_mutation"] . "]{1,40}$/", $variables[$which])) {
-			$value = remove_nls($variables[$which]);
-		}
-		break;
-	case "parking_form_data":
-		$value = "10, 90, 10, 90, 10, 90, 10, 90";
-		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
-			$value = remove_nls($variables[$which]);
-		}
-		break;
-	case "reported_by_phone":
-		$value = "0, 0, 1, 0, 1";
-		if (preg_match("/^\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "report_last":
-		$value = "720, 0, 1, 1";
-		if (preg_match("/^\s?[0-9]{1,5}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "report_log":
-		$value = "720, 720, 720, 0, 1, 1";
-		if (preg_match("/^\s?[0-9]{1,5}\s?,\s?[0-9]{1,5}\s?,\s?[0-9]{1,5}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "session_time_limit":
-		$value = "30, 5";
-		$values = explode(",", $variables[$which]);
-		if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,2}\s?$/", $variables[$which])) {
-			if ($values[0] != 0) {
-				if (($values[0] > $values[1]) && ($values[0] <= 99)) {
+		case "auto_dispatch":
+			$value = "1, 1, 1";
+			if (preg_match("/^\s?[01]{1}\s?,\s?[0-2]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "auto_poll":
+			$value = "10";
+			$values = explode(",", $variables[$which]);
+			if (preg_match("/^\s?[0-9]{1,3}\s?$/", $variables[$which]) &&
+				$values[0] > 1 && $values[0] < 99
+			) {
+				$value = $variables[$which];
+			}
+			break;
+		case "callboard":
+			$value = "1, 80, 35, 80, 300";
+			if (preg_match("/^[0-2]{1}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?,\s?[0-9]{2,3}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "closed_interval":
+			$value = "0, 1440";
+			if (preg_match("/^\s?[0-9]{1,4}\s?,\s?[0-9]{1,4}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "date_format":
+			$value = "Y-m-d H:i:s";
+			if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "date_format_time_only":
+			$value = "H:i:s";
+			if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "date_format_time_only_clock":
+			$value = "H:i";
+			if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "date_format_date_only":
+			$value = "Y-m-d";
+			if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "date_format_year_only":
+			$value = "Y";
+			if (preg_match("/^((\\[a-zA-Z]\s?)|[:_\-,;.\/\|\s]|[dDjlNSwzWFmMntLoYyaABgGhHisuIOPTZcrU]){1,40}$/",  $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "framesize":
+			$value = 115;
+			if (preg_match("/^[0-9]{1,3}$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "heading_blink":
+			$value = 10;
+			if (preg_match("/^[0-9]{1,2}$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "hide_booked":
+			$value = 30;
+			if (preg_match("/^[0-9]{1,4}$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "page_caption":
+			$value = "String too long or wrong characters used!";
+			if (preg_match("/^[0-9a-zA-Z\\-\\_\\ " . $variables["_vowel_mutation"] . "]{1,40}$/", $variables[$which])) {
+				$value = remove_nls($variables[$which]);
+			}
+			break;
+		case "parking_form_data":
+			$value = "10, 90, 10, 90, 10, 90, 10, 90";
+			if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?,\s?[0-9]{1,2}\s?,\s?[0-9]{1,3}\s?$/", $variables[$which])) {
+				$value = remove_nls($variables[$which]);
+			}
+			break;
+		case "reported_by_phone":
+			$value = "0, 0, 1, 0, 1";
+			if (preg_match("/^\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?,\s?[01]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "report_last":
+			$value = "720, 0, 1, 1";
+			if (preg_match("/^\s?[0-9]{1,5}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "report_log":
+			$value = "720, 720, 720, 0, 1, 1";
+			if (preg_match("/^\s?[0-9]{1,5}\s?,\s?[0-9]{1,5}\s?,\s?[0-9]{1,5}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?,\s?[0-1]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "session_time_limit":
+			$value = "30, 5";
+			$values = explode(",", $variables[$which]);
+			if (preg_match("/^\s?[0-9]{1,2}\s?,\s?[0-9]{1,2}\s?$/", $variables[$which])) {
+				if ($values[0] != 0) {
+					if (($values[0] > $values[1]) && ($values[0] <= 99)) {
+						$value = $variables[$which];
+					}
+				} else {
+					$value = "0, 0";
+				}
+			}
+			break;
+		case "sort_units":
+			$value = 2;
+			if (preg_match("/^\s?[1-4]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "sort_facilities":
+			$value = 1;
+			if (preg_match("/^\s?[1-4]{1}\s?$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "title_string":
+			$value = "String too long or wrong characters used!";
+			if (preg_match("/^[0-9a-zA-Z\\-\\_\\ " . $variables["_vowel_mutation"] . "]{1,40}$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "tolerance":
+			$value = 90;
+			if (preg_match("/^[0-9]{1,4}$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		case "night_color":
+			$value = "#C0C0C0";
+			if (preg_match("/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/", $variables[$which])) {
+				$value = $variables[$which];
+			}
+			break;
+		//case "_api_hosts":		
+		case "_api_destination_host":
+			if (trim($variables[$which]) == "") {
+				$value = "";
+			} else {
+				$value = "localhost:3142";
+				if (preg_match("/^(http[s]*\\:\\/\\/)*([0-9a-zA-Z\\-\\_\\ ]{1,40})|([0-9\\.]{7,16})|([\\[0-9a-fA-F\\:\]]{3,39})(\\:[0-9]{1,4})*(\\/{1}[a-zA-Z\\-\\_\\.\\/])*$/", $variables[$which])) {
 					$value = $variables[$which];
 				}
+			}
+			break;
+		case "_api_phone_host":
+			if (trim($variables[$which]) == "") {
+				$value = "";
 			} else {
-				$value = "0, 0";
+				$value = "localhost:3142";
+				if (preg_match("/^(http[s]*\\:\\/\\/)*([0-9a-zA-Z\\-\\_\\ ]{1,40})|([0-9\\.]{7,16})|([\\[0-9a-fA-F\\:\]]{3,39})(\\:[0-9]{1,4})*(\\/{1}[a-zA-Z\\-\\_\\.\\/])*$/", $variables[$which])) {
+					$value = $variables[$which];
+				}
 			}
-		}
-		break;
-	case "sort_units":
-		$value = 2;
-		if (preg_match("/^\s?[1-4]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "sort_facilities":
-		$value = 1;
-		if (preg_match("/^\s?[1-4]{1}\s?$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "title_string":
-		$value = "String too long or wrong characters used!";
-		if (preg_match("/^[0-9a-zA-Z\\-\\_\\ " . $variables["_vowel_mutation"] . "]{1,40}$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "tolerance":
-		$value = 90;
-		if (preg_match("/^[0-9]{1,4}$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-	case "night_color":
-		$value = "#C0C0C0";
-		if (preg_match("/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/", $variables[$which])) {
-			$value = $variables[$which];
-		}
-		break;
-//	case "_api_hosts":		
-	case "_api_destination_host":
-		if (trim($variables[$which]) == "") {
-			$value = "";
-		} else {
-			$value = "localhost:3142";
-			if (preg_match("/^(http[s]*\\:\\/\\/)*([0-9a-zA-Z\\-\\_\\ ]{1,40})|([0-9\\.]{7,16})|([\\[0-9a-fA-F\\:\]]{3,39})(\\:[0-9]{1,4})*(\\/{1}[a-zA-Z\\-\\_\\.\\/])*$/", $variables[$which])) {
+			break;
+		case "_api_destination_password":
+			$value = "743894a0e4a801fc3";
+			//if (preg_match("/^[0-9a-zA-Z\\-\\_\\ ]{1,40}$/", $variables[$which])) {
+			if (true) {
 				$value = $variables[$which];
 			}
-		}
-		break;
-	case "_api_phone_host":
-		if (trim($variables[$which]) == "") {
-			$value = "";
-		} else {
-			$value = "localhost:3142";
-			if (preg_match("/^(http[s]*\\:\\/\\/)*([0-9a-zA-Z\\-\\_\\ ]{1,40})|([0-9\\.]{7,16})|([\\[0-9a-fA-F\\:\]]{3,39})(\\:[0-9]{1,4})*(\\/{1}[a-zA-Z\\-\\_\\.\\/])*$/", $variables[$which])) {
-				$value = $variables[$which];
-			}
-		}
-		break;
-	case "_api_destination_password":
-		$value = "743894a0e4a801fc3";
-//		if (preg_match("/^[0-9a-zA-Z\\-\\_\\ ]{1,40}$/", $variables[$which])) {
-		if (true) {
-			$value = $variables[$which];
-		}
-		break;
+			break;
 
-	case "_api_log_max_display_setng":
-		$value = "30";
-		if (($variables[$which] >= 1) && ($variables[$which] <= 10080)) {
-			$value = $variables[$which];
-		}
-		break;
-	case "_api_log_max_age_setng":
-		$value = "1440";
-		if ((($variables[$which] >= 60) && ($variables[$which] <= 10080)) || ($variables[$which] == 0)) {
-			$value = $variables[$which];
-		}
-		break;
-	case "_locale":
-		$value = "de-DE";
-		if ($variables[$which] != "") {
-			$value = $variables[$which];
-		}
-		break;
-	default:
-		if (array_key_exists($which, $variables)) {
-			$value = $variables[$which];
-		}
+		case "_api_log_max_display_setng":
+			$value = "30";
+			if (($variables[$which] >= 1) && ($variables[$which] <= 10080)) {
+				$value = $variables[$which];
+			}
+			break;
+		case "_api_log_max_age_setng":
+			$value = "1440";
+			if ((($variables[$which] >= 60) && ($variables[$which] <= 10080)) || ($variables[$which] == 0)) {
+				$value = $variables[$which];
+			}
+			break;
+		case "_locale":
+			$value = "de-DE";
+			if ($variables[$which] != "") {
+				$value = $variables[$which];
+			}
+			break;
+		default:
+			if (array_key_exists($which, $variables)) {
+				$value = $variables[$which];
+			}
 	}
 	return $value;
 }
@@ -2886,19 +2886,19 @@ function get_variable($which) {
 function get_parking_form_data_trigger_chars($function) {
 	$trigger_chars_position = 0;
 	switch($function) {
-	case "ticket_add":
-		$trigger_chars_position = 0;
-		break;
-	case "action":
-		$trigger_chars_position = 2;
-		break;
-	case "ticket_close":
-		$trigger_chars_position = 4;
-		break;
-	case "log_report":
-		$trigger_chars_position = 6;
-		break;
-	default:
+		case "ticket_add":
+			$trigger_chars_position = 0;
+			break;
+		case "action":
+			$trigger_chars_position = 2;
+			break;
+		case "ticket_close":
+			$trigger_chars_position = 4;
+			break;
+		case "log_report":
+			$trigger_chars_position = 6;
+			break;
+		default:
 	}
 	$settings = explode(",", get_variable("parking_form_data"));
 	return trim($settings[$trigger_chars_position]);
@@ -2973,44 +2973,44 @@ function get_fixtext_report_channels_str() {
 function get_api_configuration($message_group) {
 	$match_array = array ();
 	switch ($message_group) {
-	case "facility_all":
-	case "facility":
-	case "user_all":
-	case "user":
-		$match_array["EMAIL"]["REGEXP"] = "^EMAIL:" . get_regexp_email() . "$";
-		$match_array["EMAIL"]["CAPTION"] = get_text("Email");
-		$match_array["EMAIL"]["SELECT_FIXTEXT"] = false;
-		$match_array["EMAIL"]["SELECT_MESSAGE"] = true;
-		break;
-	default:
-		$match_array["EMAIL"]["REGEXP"] = "^EMAIL:" . get_regexp_email() . "$";
-		$match_array["EMAIL"]["CAPTION"] = get_text("Email");
-		$match_array["EMAIL"]["SELECT_FIXTEXT"] = false;
-		$match_array["EMAIL"]["SELECT_MESSAGE"] = true;
+		case "facility_all":
+		case "facility":
+		case "user_all":
+		case "user":
+			$match_array["EMAIL"]["REGEXP"] = "^EMAIL:" . get_regexp_email() . "$";
+			$match_array["EMAIL"]["CAPTION"] = get_text("Email");
+			$match_array["EMAIL"]["SELECT_FIXTEXT"] = false;
+			$match_array["EMAIL"]["SELECT_MESSAGE"] = true;
+			break;
+		default:
+			$match_array["EMAIL"]["REGEXP"] = "^EMAIL:" . get_regexp_email() . "$";
+			$match_array["EMAIL"]["CAPTION"] = get_text("Email");
+			$match_array["EMAIL"]["SELECT_FIXTEXT"] = false;
+			$match_array["EMAIL"]["SELECT_MESSAGE"] = true;
 
-		$match_array[get_variable("_api_prefix_phone_encdg")]["REGEXP"] = "^PHONE:" . get_regexp_phone() . "$";
-		$match_array[get_variable("_api_prefix_phone_encdg")]["CAPTION"] = get_variable("_api_prefix_phone_capt");
-		$match_array[get_variable("_api_prefix_phone_encdg")]["SELECT_FIXTEXT"] = true;
-		$match_array[get_variable("_api_prefix_phone_encdg")]["SELECT_MESSAGE"] = true;
-		
-		$match_array[get_variable("_api_prefix_printer_encdg")]["REGEXP"] = "^PRINTER:ipp:\/\/.*$";
-		$match_array[get_variable("_api_prefix_printer_encdg")]["CAPTION"] = get_variable("_api_prefix_printer_capt");
-		$match_array[get_variable("_api_prefix_printer_encdg")]["SELECT_FIXTEXT"] = false;
-		$match_array[get_variable("_api_prefix_printer_encdg")]["SELECT_MESSAGE"] = true;
-		for ($i = 1; $i < 5; $i++) {
-			if (
-				(get_variable("_api_prefix_reporting_channel_" . $i . "_regexp") != "") &&
-				(get_variable("_api_prefix_reporting_channel_" . $i . "_encdg") != "") &&
-				(get_variable("_api_prefix_reporting_channel_" . $i . "_capt") != "")
-			) {
-				$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["REGEXP"] = "^" .
-					get_variable("_api_prefix_reporting_channel_" . $i . "_encdg") . ":" .
-					get_variable("_api_prefix_reporting_channel_" . $i . "_regexp") . "$";
-				$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["CAPTION"] = get_variable("_api_prefix_reporting_channel_" . $i . "_capt");
-				$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["SELECT_FIXTEXT"] = true;
-				$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["SELECT_MESSAGE"] = true;
+			$match_array[get_variable("_api_prefix_phone_encdg")]["REGEXP"] = "^PHONE:" . get_regexp_phone() . "$";
+			$match_array[get_variable("_api_prefix_phone_encdg")]["CAPTION"] = get_variable("_api_prefix_phone_capt");
+			$match_array[get_variable("_api_prefix_phone_encdg")]["SELECT_FIXTEXT"] = true;
+			$match_array[get_variable("_api_prefix_phone_encdg")]["SELECT_MESSAGE"] = true;
+			
+			$match_array[get_variable("_api_prefix_printer_encdg")]["REGEXP"] = "^PRINTER:ipp:\/\/.*$";
+			$match_array[get_variable("_api_prefix_printer_encdg")]["CAPTION"] = get_variable("_api_prefix_printer_capt");
+			$match_array[get_variable("_api_prefix_printer_encdg")]["SELECT_FIXTEXT"] = false;
+			$match_array[get_variable("_api_prefix_printer_encdg")]["SELECT_MESSAGE"] = true;
+			for ($i = 1; $i < 5; $i++) {
+				if (
+					(get_variable("_api_prefix_reporting_channel_" . $i . "_regexp") != "") &&
+					(get_variable("_api_prefix_reporting_channel_" . $i . "_encdg") != "") &&
+					(get_variable("_api_prefix_reporting_channel_" . $i . "_capt") != "")
+				) {
+					$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["REGEXP"] = "^" .
+						get_variable("_api_prefix_reporting_channel_" . $i . "_encdg") . ":" .
+						get_variable("_api_prefix_reporting_channel_" . $i . "_regexp") . "$";
+					$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["CAPTION"] = get_variable("_api_prefix_reporting_channel_" . $i . "_capt");
+					$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["SELECT_FIXTEXT"] = true;
+					$match_array[get_variable("_api_prefix_reporting_channel_" . $i . "_encdg")]["SELECT_MESSAGE"] = true;
+				}
 			}
-		}
 	}
 	return $match_array;
 }
@@ -3068,37 +3068,37 @@ function get_is_auto_ticket_line($line) {
 }
 
 function get_auto_ticket_configuration($function) {
-/*
-	Provide profiles for different command and control centers
-	Park settings in global variable (only read everything once)
-	Set profile for pattern based on the settings
-	Possibly Set profile based on the transmitted interface
-	Distribute data to text fields in ticket_add.php from line 86 
-*/
+	/*
+		Provide profiles for different command and control centers
+		Park settings in global variable (only read everything once)
+		Set profile for pattern based on the settings
+		Possibly Set profile based on the transmitted interface
+		Distribute data to text fields in ticket_add.php from line 86 
+	*/
 	$auto_ticket_configuration = array ();
 	switch ($function) {
-	case "settings":
-		$auto_ticket_configuration["profile_name"] = "ACME-town";
-		$auto_ticket_configuration["contact"] = "Control center ACME-town";
-		$auto_ticket_configuration["phone"] = "+00 12345 67890";
-		$auto_ticket_configuration["severity"] = $GLOBALS['SEVERITY_MEDIUM'];
-			break;
-	default:
-		$auto_ticket_configuration[0]["CAPTION"] = "ACME-town_0";
-		$auto_ticket_configuration[0]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){3}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
-		$auto_ticket_configuration[0]["TEXT_ALLOCATION"] = "";
-		$auto_ticket_configuration[1]["CAPTION"] = "ACME-town_1";
-		$auto_ticket_configuration[1]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){4}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
-		$auto_ticket_configuration[1]["TEXT_ALLOCATION"] = "";
-		$auto_ticket_configuration[2]["CAPTION"] = "ACME-town_2";
-		$auto_ticket_configuration[2]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){2}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
-		$auto_ticket_configuration[2]["TEXT_ALLOCATION"] = "";
-		$auto_ticket_configuration[3]["CAPTION"] = "ACME-town_3";
-		$auto_ticket_configuration[3]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){3}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
-		$auto_ticket_configuration[3]["TEXT_ALLOCATION"] = "";
-		$auto_ticket_configuration[4]["CAPTION"] = "ACME-town_4";
-		$auto_ticket_configuration[4]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){4}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
-		$auto_ticket_configuration[4]["TEXT_ALLOCATION"] = "";
+		case "settings":
+			$auto_ticket_configuration["profile_name"] = "ACME-town";
+			$auto_ticket_configuration["contact"] = "Control center ACME-town";
+			$auto_ticket_configuration["phone"] = "+00 12345 67890";
+			$auto_ticket_configuration["severity"] = $GLOBALS['SEVERITY_MEDIUM'];
+				break;
+		default:
+			$auto_ticket_configuration[0]["CAPTION"] = "ACME-town_0";
+			$auto_ticket_configuration[0]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){3}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
+			$auto_ticket_configuration[0]["TEXT_ALLOCATION"] = "";
+			$auto_ticket_configuration[1]["CAPTION"] = "ACME-town_1";
+			$auto_ticket_configuration[1]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){4}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
+			$auto_ticket_configuration[1]["TEXT_ALLOCATION"] = "";
+			$auto_ticket_configuration[2]["CAPTION"] = "ACME-town_2";
+			$auto_ticket_configuration[2]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){2}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
+			$auto_ticket_configuration[2]["TEXT_ALLOCATION"] = "";
+			$auto_ticket_configuration[3]["CAPTION"] = "ACME-town_3";
+			$auto_ticket_configuration[3]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){3}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
+			$auto_ticket_configuration[3]["TEXT_ALLOCATION"] = "";
+			$auto_ticket_configuration[4]["CAPTION"] = "ACME-town_4";
+			$auto_ticket_configuration[4]["REGEXP"] = "[0-3][0-9]\-[0-1][0-9]\-[0-9]{2}\s[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]\s([^;]*;){2}([0-9]*);([^;]*;){4}([0-9]*);([^;]*;){3}([0-9]*);([0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]);([0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]);";
+			$auto_ticket_configuration[4]["TEXT_ALLOCATION"] = "";
 	}
 	return $auto_ticket_configuration;
 }
@@ -3282,123 +3282,123 @@ function get_message_click_str($function, $targets_ids, $ticket_id, $handle, $co
 	$contact_where_str = "";
 	$title = "";
 	switch ($function) {
-	case "units":
-		$title = get_help_text("message_all_units");
-		$send_message_to = "'unit_all'";
-		break;
-	case "situation":
-		$title = get_help_text("message_all_units");
-		$contact_where_str = " AND (`dispatch` < 3)";
-		$send_message_to = "'unit_service'";
-		break;
-	case "assigns":
-		$title = get_help_text("message_all_ticket");
-		$contact_where_str = " AND (`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` = " . $ticket_id . "))";
-		$send_message_to = "'unit_ticket'";
-		break;
-	case "callboard":
-		$title = get_help_text("message_all_tickets");
-		$contact_where_str = " AND (`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `clear` IS NULL))";
-		$send_message_to = "'unit_tickets'";
-		break;
-	case "unit":
-		$send_message_to = "'unit'";
-		$title = get_text("Click to message") . ": " . $handle;
-		break;
-	case "facilities":
-		$send_message_to = "'facility_all'";
-		$title = get_help_text("message_all_facilities");
-		break;
-	case "facility":
-		$send_message_to = "'facility'";
-		$title = get_text("Click to message") . ": " . $handle;
-		break;
-	case "user_all":
-		$send_message_to = "'user_all'";
-		$title = get_help_text("message_all_users");
-		break;
-	case "user":
-		$send_message_to = "'user'";
-		$title = get_text("Click to message") . ": " . $handle;
-		break;
-	default:
+		case "units":
+			$title = get_help_text("message_all_units");
+			$send_message_to = "'unit_all'";
+			break;
+		case "situation":
+			$title = get_help_text("message_all_units");
+			$contact_where_str = " AND (`dispatch` < 3)";
+			$send_message_to = "'unit_service'";
+			break;
+		case "assigns":
+			$title = get_help_text("message_all_ticket");
+			$contact_where_str = " AND (`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `ticket_id` = " . $ticket_id . "))";
+			$send_message_to = "'unit_ticket'";
+			break;
+		case "callboard":
+			$title = get_help_text("message_all_tickets");
+			$contact_where_str = " AND (`u`.`id` IN (SELECT `unit_id` FROM `assigns` WHERE `clear` IS NULL))";
+			$send_message_to = "'unit_tickets'";
+			break;
+		case "unit":
+			$send_message_to = "'unit'";
+			$title = get_text("Click to message") . ": " . $handle;
+			break;
+		case "facilities":
+			$send_message_to = "'facility_all'";
+			$title = get_help_text("message_all_facilities");
+			break;
+		case "facility":
+			$send_message_to = "'facility'";
+			$title = get_text("Click to message") . ": " . $handle;
+			break;
+		case "user_all":
+			$send_message_to = "'user_all'";
+			$title = get_help_text("message_all_users");
+			break;
+		case "user":
+			$send_message_to = "'user'";
+			$title = get_text("Click to message") . ": " . $handle;
+			break;
+		default:
 	}
 	switch ($function) {
-	case "units":
-	case "situation":
-	case "assigns":
-	case "callboard":
+		case "units":
+		case "situation":
+		case "assigns":
+		case "callboard":
 
-		$query = "SELECT * " .
-			"FROM `units` `u` " .
-			"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
-			"LEFT JOIN `allocates` `a` ON (`u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . ") " .
-			"WHERE ((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
-			"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') " .
-			"OR (`unit_email` REGEXP '" . get_regexp_email() . "')) " .
-			$contact_where_str . " AND (`a`.`id` IS NOT NULL);";
+			$query = "SELECT * " .
+				"FROM `units` `u` " .
+				"LEFT JOIN `unit_status` `s` ON (`u`.`unit_status_id` = `s`.`id`) " .
+				"LEFT JOIN `allocates` `a` ON (`u`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_UNIT'] . ") " .
+				"WHERE ((`unit_phone` REGEXP '" . get_regexp_phone() . "') " .
+				"OR (`remote_data_services` REGEXP '" . get_regexp_smsg_id() . "') " .
+				"OR (`unit_email` REGEXP '" . get_regexp_email() . "')) " .
+				$contact_where_str . " AND (`a`.`id` IS NOT NULL);";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		if ((db_affected_rows($result)) && valid_mailserver()) {
-			$message_to_all = true;
-		}
-		break;
-	case "facilities":
+			$result = db_query($query, __FILE__, __LINE__);
+			if ((db_affected_rows($result)) && valid_mailserver()) {
+				$message_to_all = true;
+			}
+			break;
+		case "facilities":
 
-		$query = "SELECT * " .
-			"FROM `facilities` `f` " .
-			"LEFT JOIN `allocates` `a` ON (`f`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
-			"WHERE (CONCAT(`security_email`, `contact_email`) " .
-			"REGEXP '" . get_regexp_email() . "') AND (`a`.`id` IS NOT NULL);";
+			$query = "SELECT * " .
+				"FROM `facilities` `f` " .
+				"LEFT JOIN `allocates` `a` ON (`f`.`id` = `a`.`resource_id` AND `a`.`type` = " . $GLOBALS['TYPE_FACILITY'] . ") " .
+				"WHERE (CONCAT(`security_email`, `contact_email`) " .
+				"REGEXP '" . get_regexp_email() . "') AND (`a`.`id` IS NOT NULL);";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		if ((db_affected_rows($result)) && valid_mailserver()) {
-			$message_to_all = true;
-		}
-		break;
-	case "user_all":
+			$result = db_query($query, __FILE__, __LINE__);
+			if ((db_affected_rows($result)) && valid_mailserver()) {
+				$message_to_all = true;
+			}
+			break;
+		case "user_all":
 
-		$query = "SELECT * " .
-			"FROM `users` " .
-			"WHERE `email` " .
-			"REGEXP '" . get_regexp_email() . "' " .
-			"AND `password` != '55606758fdb765ed015f0612112a6ca7';";
+			$query = "SELECT * " .
+				"FROM `users` " .
+				"WHERE `email` " .
+				"REGEXP '" . get_regexp_email() . "' " .
+				"AND `password` != '55606758fdb765ed015f0612112a6ca7';";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		if ((db_affected_rows($result)) && valid_mailserver()) {
-			$message_to_all = true;
-		}
-		break;
-	default:
+			$result = db_query($query, __FILE__, __LINE__);
+			if ((db_affected_rows($result)) && valid_mailserver()) {
+				$message_to_all = true;
+			}
+			break;
+		default:
 	}
 	switch ($function) {
-	case "units":
-	case "situation":
-	case "assigns":
-	case "callboard":
-	case "unit":
-		if ((get_message_to_unit_available($contact_1, $contact_2, $contact_3) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
-			return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
-				"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
-				", " . $targets_ids . ", " . $ticket_id . ");\"></span>";
-		}
-	case "facility":
-	case "facilities":
-		if ((get_message_to_facility_available($contact_1, $contact_2) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
-			return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
-				"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
-				", " . $targets_ids . ", " . $ticket_id . ");\"></span>";
-		}
-		break;
-	case "user":
-	case "user_all":
-		if ((get_message_to_user_available($contact_1) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
-			return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
-				"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
-				", " . $targets_ids . ");\"></span>";
-		}
-		break;
-	default:
+		case "units":
+		case "situation":
+		case "assigns":
+		case "callboard":
+		case "unit":
+			if ((get_message_to_unit_available($contact_1, $contact_2, $contact_3) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
+				return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
+					"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
+					", " . $targets_ids . ", " . $ticket_id . ");\"></span>";
+			}
+		case "facility":
+		case "facilities":
+			if ((get_message_to_facility_available($contact_1, $contact_2) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
+				return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
+					"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
+					", " . $targets_ids . ", " . $ticket_id . ");\"></span>";
+			}
+			break;
+		case "user":
+		case "user_all":
+			if ((get_message_to_user_available($contact_1) || $message_to_all) && (is_operator() || is_admin() || is_super())) {
+				return "<span class=\"glyphicon glyphicon-envelope\" aria-hidden=\"true\" style=\"font-size: 12px; " .
+					"padding-right: 2px;\"" . get_title_str($title) . "onclick=\"do_send_message(" . $send_message_to .
+					", " . $targets_ids . ");\"></span>";
+			}
+			break;
+		default:
 	}
 }
 
@@ -3406,18 +3406,19 @@ function get_message_click_str($function, $targets_ids, $ticket_id, $handle, $co
 
 function get_level_text($level) {
 	switch ($level) {
-	case $GLOBALS['LEVEL_SUPER']:
-		return get_text("permission_super");
-		break;
-	case $GLOBALS['LEVEL_ADMINISTRATOR']:
-		return get_text("permission_admin");
-		break;
-	case $GLOBALS['LEVEL_OPERATOR']:
-		return get_text("permission_operator");
-		break;
-	case $GLOBALS['LEVEL_GUEST']:
-		return get_text("permission_guest");
-		break;
+		case $GLOBALS['LEVEL_SUPER']:
+			return get_text("permission_super");
+			break;
+		case $GLOBALS['LEVEL_ADMINISTRATOR']:
+			return get_text("permission_admin");
+			break;
+		case $GLOBALS['LEVEL_OPERATOR']:
+			return get_text("permission_operator");
+			break;
+		case $GLOBALS['LEVEL_GUEST']:
+			return get_text("permission_guest");
+			break;
+		default:
 	}
 }
 
@@ -3545,7 +3546,7 @@ function get_facility_handle($id) {
 }
 
 //====== gis
-require_once ("./incs/phpcoord.inc.php");				// UTM converter
+require_once ("./incs/phpcoord.inc.php");	// UTM converter
 function toUTM($coordsIn) {
 	$temp = explode(",", $coordsIn);
 	$coords = new LatLng(trim($temp[0]), trim($temp[1]));
@@ -3595,15 +3596,15 @@ function get_lat($in_lat) {
 	}
 	$format = get_variable("_lat_lng");
 	switch ($format) {
-	case 0:
-		return $in_lat;
-		break;
-	case 1:
-		return lat2dms($in_lat);
-		break;
-	case 2:
-		return lat2ddm($in_lat);
-		break;
+		case 0:
+			return $in_lat;
+			break;
+		case 1:
+			return lat2dms($in_lat);
+			break;
+		case 2:
+			return lat2ddm($in_lat);
+			break;
 	}
 }
 
@@ -3613,15 +3614,15 @@ function get_lng($in_lng) {
 	}
 	$format = get_variable("_lat_lng");
 	switch ($format) {
-	case 0:
-		return $in_lng;
-		break;
-	case 1:	
-		return lng2dms($in_lng);
-		break;
-	case 2:
-		return lng2ddm($in_lng);
-		break;
+		case 0:
+			return $in_lng;
+			break;
+		case 1:	
+			return lng2dms($in_lng);
+			break;
+		case 2:
+			return lng2ddm($in_lng);
+			break;
 	}
 }
 
@@ -3847,13 +3848,13 @@ function get_title_unit_str($row) {
 	}
 	if ($row['multi'] != "") {
 		switch ($row['multi']) {
-		case 0:
-			$title_unit .= "<nobr>" . get_text("Dispatchable") . ":&nbsp;" . get_text("Not dispatchable") . "</nobr><br>";
-			break;
-		case 2:
-			$title_unit .= "<nobr>" . get_text("Dispatchable") . ":&nbsp;" . get_text("Multiple dispatchable") . "</nobr><br>";
-			break;
-		default:
+			case 0:
+				$title_unit .= "<nobr>" . get_text("Dispatchable") . ":&nbsp;" . get_text("Not dispatchable") . "</nobr><br>";
+				break;
+			case 2:
+				$title_unit .= "<nobr>" . get_text("Dispatchable") . ":&nbsp;" . get_text("Multiple dispatchable") . "</nobr><br>";
+				break;
+			default:
 		}
 	}
 	if ((get_num_groups()) && (count(get_allocates(4, $_SESSION['user_id'])) > 1)) {
@@ -4154,25 +4155,25 @@ function get_table_id_title_str($table, $id) {
 	$return_str = "";
 	if (is_super()) {
 		switch ($table) {
-		case "action":
-			$return_str = get_title_str(get_text("Database-Table") . ": actions - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		case "assign":
-			$return_str = get_title_str(get_text("Database-Table") . ": assigns - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		case "user":
-			$return_str = get_title_str(get_text("Database-Table") . ": users - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		case "facility":
-			$return_str = get_title_str(get_text("Database-Table") . ": facilities - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		case "ticket":
-			$return_str = get_title_str(get_text("Database-Table") . ": tickets - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		case "unit":
-			$return_str = get_title_str(get_text("Database-Table") . ": units - " . get_text("Table-ID") . ": #" . $id);
-			break;
-		default:
+			case "action":
+				$return_str = get_title_str(get_text("Database-Table") . ": actions - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			case "assign":
+				$return_str = get_title_str(get_text("Database-Table") . ": assigns - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			case "user":
+				$return_str = get_title_str(get_text("Database-Table") . ": users - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			case "facility":
+				$return_str = get_title_str(get_text("Database-Table") . ": facilities - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			case "ticket":
+				$return_str = get_title_str(get_text("Database-Table") . ": tickets - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			case "unit":
+				$return_str = get_title_str(get_text("Database-Table") . ": units - " . get_text("Table-ID") . ": #" . $id);
+				break;
+			default:
 		}
 	}
 	return $return_str;
@@ -4222,21 +4223,21 @@ function get_parking_form_data_helptext($function) {
 	$time = 0;
 	$raw = false;
 	switch($function) {
-	case "ticket_add":
-		$chars = 0;
-		$time = 1;
-		$raw = true;
-	case "ticket_close":
-		$chars = 4;
-		$time = 5;
-		$raw = true;
-	case "log_report":
-		$chars = 6;
-		$time = 7;
-	case "action":
-		$chars = 2;
-		$time = 3;
-	default:
+		case "ticket_add":
+			$chars = 0;
+			$time = 1;
+			$raw = true;
+		case "ticket_close":
+			$chars = 4;
+			$time = 5;
+			$raw = true;
+		case "log_report":
+			$chars = 6;
+			$time = 7;
+		case "action":
+			$chars = 2;
+			$time = 3;
+		default:
 	}
 	$settings = explode(",", get_variable("parking_form_data"));
 	$text_str = "";

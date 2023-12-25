@@ -207,83 +207,83 @@ function do_login($requested_page, $logout = false) {
 		$moment_time_format = php_to_moment(get_variable("date_format_time_only_clock"));
 		$moment_date_format = php_to_moment(get_variable("date_format_date_only_clock"));
 	?>
-<!doctype html>
-<html lang="<?php print get_variable("_locale");?>">
-	<head>
-		<title><?php print get_variable("page_caption");?></title>
-		<meta charset="utf-8">
-		<meta http-equiv="Content-Type" content="text/html;">
-		<meta http-equiv="Expires" content="0">
-		<meta http-equiv="Cache-Control" content="no-cache">
-		<meta http-equiv="Pragma" content="no-cache">
-		<meta http-equiv="Content-Script-Type" content="text/javascript">
-		<link href="./css/bootstrap.min.css" rel="stylesheet">
-		<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
-		<link href="./css/stylesheet.css" rel="stylesheet">
-		<script src="./js/jquery-2.1.4.min.js" type="text/javascript"></script>
-		<script src="./js/moment-with-locales.js" type="text/javascript"></script>
-		<script src="./js/functions.js" type="text/javascript"></script>
-		<script defer="defer">
-			window.parent.navigationbar.href="navigation.php";
+	<!doctype html>
+	<html lang="<?php print get_variable("_locale");?>">
+		<head>
+			<title><?php print get_variable("page_caption");?></title>
+			<meta charset="utf-8">
+			<meta http-equiv="Content-Type" content="text/html;">
+			<meta http-equiv="Expires" content="0">
+			<meta http-equiv="Cache-Control" content="no-cache">
+			<meta http-equiv="Pragma" content="no-cache">
+			<meta http-equiv="Content-Script-Type" content="text/javascript">
+			<link href="./css/bootstrap.min.css" rel="stylesheet">
+			<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
+			<link href="./css/stylesheet.css" rel="stylesheet">
+			<script src="./js/jquery-2.1.4.min.js" type="text/javascript"></script>
+			<script src="./js/moment-with-locales.js" type="text/javascript"></script>
+			<script src="./js/functions.js" type="text/javascript"></script>
+			<script defer="defer">
+				window.parent.navigationbar.href="navigation.php";
 
-			$(document).ready(function() {
-				moment.locale("<?php print get_variable("_locale");?>");
-				$("#time_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
-				$("#date_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
-				activate_show_hide_password();
-				var change_situation_first_set = 0;
-				window.addEventListener("message", function(event) {
-					if (event.origin != window.location.origin) return;
-					get_infos_array = JSON.parse(event.data);
-					$("#time_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
-					$("#date_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_date_format;?>"));
+				$(document).ready(function() {
+					moment.locale("<?php print get_variable("_locale");?>");
+					$("#time_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
+					$("#date_of_day").html(moment("<?php print $datetime_now;?>", "YYYY-MM-DD HH:mm:ss").format("<?php print $moment_date_format;?>"));
+					activate_show_hide_password();
+					var change_situation_first_set = 0;
+					window.addEventListener("message", function(event) {
+						if (event.origin != window.location.origin) return;
+						get_infos_array = JSON.parse(event.data);
+						$("#time_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_time_format;?>") + " <?php print get_text("o'clock");?>");
+						$("#date_of_day").html(moment(get_infos_array['screen']['date_time']).format("<?php print $moment_date_format;?>"));
+					});
 				});
-			});
 
-		</script>
-	</head>
-	<body onload="document.login_form.frm_user.focus();">
-		<script type="text/javascript" src="./js/wz_tooltip.js"></script>
-		<div class="container-fluid" style="margin-left: 18px;">
-			<div class="row" style="height: 180px;">
-				<div class="col-md-6"></div>
-				<div class="col-md-5">
-					<div id="time_of_day" style="font-size: 600%;"></div>
-					<div id="date_of_day" style="font-size: 250%;"></div>
-				</div>
-				<div class="col-md-1"></div>
-			</div>
-			<div class="row">
-				<div class="col-md-1"></div>
-				<div class="col-md-4 jumbotron">
-					<div style="height: 20px;">
-						<h4><span class="label label-danger"><?php print $warn_str;?></span></h4>
+			</script>
+		</head>
+		<body onload="document.login_form.frm_user.focus();">
+			<script type="text/javascript" src="./js/wz_tooltip.js"></script>
+			<div class="container-fluid" style="margin-left: 18px;">
+				<div class="row" style="height: 180px;">
+					<div class="col-md-6"></div>
+					<div class="col-md-5">
+						<div id="time_of_day" style="font-size: 600%;"></div>
+						<div id="date_of_day" style="font-size: 250%;"></div>
 					</div>
-					<h4<?php print $login_click_str;?> style="margin-bottom: 20px;"><?php print get_text("Please login");?>:</h4>
-					<form class="form-horizontal" method="post" action="<?php print $requested_page;?>" name="login_form">
-						<div class="form-group">
-							<div class="col-sm-8">
-								<input type="text" class="form-control" name="frm_user" onchange="document.login_form.frm_user.value = document.login_form.frm_user.value.trim();" placeholder="<?php print get_text("User");?>">
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-8">
-								<input type="password" class="form-control" id="frm_passwd" name="frm_passwd" onchange="document.login_form.frm_passwd.value = document.login_form.frm_passwd.value.trim();" placeholder="<?php print get_text("Password");?>">
-							</div>
-							<div class="pw_show glyphicon glyphicon-eye-open"<?php print get_help_text_str("show_hide_password");?>></div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-8">
-							<button type="submit" class="btn btn-default"><?php print get_text("Login");?></button>
-							</div>
-						</div>
-					</form>
+					<div class="col-md-1"></div>
 				</div>
-				<div class="col-md-7"></div>
+				<div class="row">
+					<div class="col-md-1"></div>
+					<div class="col-md-4 jumbotron">
+						<div style="height: 20px;">
+							<h4><span class="label label-danger"><?php print $warn_str;?></span></h4>
+						</div>
+						<h4<?php print $login_click_str;?> style="margin-bottom: 20px;"><?php print get_text("Please login");?>:</h4>
+						<form class="form-horizontal" method="post" action="<?php print $requested_page;?>" name="login_form">
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="text" class="form-control" name="frm_user" onchange="document.login_form.frm_user.value = document.login_form.frm_user.value.trim();" placeholder="<?php print get_text("User");?>">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="password" class="form-control" id="frm_passwd" name="frm_passwd" onchange="document.login_form.frm_passwd.value = document.login_form.frm_passwd.value.trim();" placeholder="<?php print get_text("Password");?>">
+								</div>
+								<div class="pw_show glyphicon glyphicon-eye-open"<?php print get_help_text_str("show_hide_password");?>></div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+								<button type="submit" class="btn btn-default"><?php print get_text("Login");?></button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="col-md-7"></div>
+				</div>
 			</div>
-		</div>
-	</body>
-</html>
+		</body>
+	</html>
 	<?php
 		exit ();
 	}
