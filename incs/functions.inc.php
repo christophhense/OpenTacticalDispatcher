@@ -556,7 +556,7 @@ function show_dispatch_text($ticket_id, $search, $last) {
 			<th colspan=5><h5><strong style="white-space: nowrap;" class="very-big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
 			<td></td>
 		</tr>
-		<?php print get_dispatch_message($ticket_id, "message_text", "hypertext")[0];?>
+		<?php print get_dispatch_message($ticket_id, "message_text", "")["html-browser"];?>
 		<tr style="height: 26px;"><td colspan=7></td></tr>
 		<tr>
 			<td></td>
@@ -706,7 +706,7 @@ function show_head($ticket_id, $search, $ticket_report) {
 	?>
 	<tr>
 		<th><?php print get_text("Status");?>:</th>
-		<td colspan=4<?php print get_title_str(get_text(get_status($row['status'])) . $elaped_str);?>><?php print get_text(get_status($row['status'])) . $elaped_str;?></td>
+		<td colspan=4<?php print get_title_str(get_text(get_ticket_status($row['status'])) . $elaped_str);?>><?php print get_text(get_ticket_status($row['status'])) . $elaped_str;?></td>
 	</tr>
 	<tr>
 		<th><?php print get_text("Run Start");?>:</th>
@@ -1464,7 +1464,7 @@ function show_day_night_style() {
 	}
 }
 
-function get_status($status) {
+function get_ticket_status($status) {
 	switch ($status)	{
 		case 1:
 			return get_text("Closed");
