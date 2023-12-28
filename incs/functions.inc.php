@@ -556,7 +556,7 @@ function show_dispatch_text($ticket_id, $search, $last) {
 			<th colspan=5><h5><strong style="white-space: nowrap;" class="very-big"><?php print remove_nls($default_subjects[0]);?></strong></h5></th>
 			<td></td>
 		</tr>
-		<?php print get_dispatch_message($ticket_id, "message_text", "")["html-browser"];?>
+		<?php print get_dispatch_message($ticket_id, "message_text")["html-browser"];?>
 		<tr style="height: 26px;"><td colspan=7></td></tr>
 		<tr>
 			<td></td>
