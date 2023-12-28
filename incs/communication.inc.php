@@ -717,16 +717,16 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			$html_text = get_dispatch_message($ticket_id, "message_text")["html-mail"];
 		}
 		$result = do_email($addresses["EMAIL"], $subject, $html_text, $text, "");
-		$message_text = "";
+		$email_message_log_text = "";
 		if ($result[0] == "OK") {
 			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_SEND'];
 			$sent_ok++;
 		} else {
 			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_ERROR'];
-			$message_text .= $result[1] . "  ";
+			$email_message_log_text .= $result[1] . "  ";
 			$sent_error++;
 		}
-		$message_text .= get_text("Subject") . ": " . $subject . "  " . get_text("Message text")  . ": " . $text;
+		$email_message_log_text .= get_text("Subject") . ": " . $subject . "  " . get_text("Message text")  . ": " . $text;
 		foreach ($addresses["EMAIL"] as $key => $value) {
 			$log_text = "";
 			$unit_id = 0;
@@ -734,15 +734,15 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			switch ($value["type"]) {
 				case "unit":
 					$unit_id = $value["id"];
-					$log_text .= substr($value["address"], 6) . "  " . $message_text;
+					$log_text .= substr($value["address"], 6) . "  " . $email_message_log_text;
 					break;
 				case "facility":
 					$facility_id = $value["id"];
-					$log_text .= substr($value["address"], 6) . "  " . $message_text;
+					$log_text .= substr($value["address"], 6) . "  " . $email_message_log_text;
 					break;
 				default:
 					//Specify recipient in the log text
-					$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $message_text;
+					$log_text .= $value["handle"] . "  " . substr($value["address"], 6) . "  " . $email_message_log_text;
 			}
 			do_log($message_type, $ticket_id, $unit_id, $log_text, $facility_id, "", "", "");
 		}
