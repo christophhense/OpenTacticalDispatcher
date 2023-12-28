@@ -711,16 +711,12 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	}
 	//========================= E-Mail
 	if (array_key_exists("EMAIL", $addresses)) {
-		$html_text = "";
+		$html_text = "<!DOCTYPE html><html lang='de'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
+			"<meta name='viewport' content='width=device-width'><title></title><style></style></head><body>" . preg_replace('/\r\n|\r/m', "<br>", $text) . "</body></html>";
 		if ($text_type == "DISPATCH_MESSAGE") {
-			//$text = get_dispatch_message($ticket_id, "message_text", "hypertext")[0];
 			$html_text = get_dispatch_message($ticket_id, "message_text")["html-mail"];
-			@error_log($text);
-		} else {
-			//mach html daraus		
 		}
-		//$result = do_email($addresses["EMAIL"], $_POST['frm_subject'], $_POST['frm_text'], $_POST['frm_attachment']);
-		$result = do_email($addresses["EMAIL"], $_POST['frm_subject'], $html_text, $text, $_POST['frm_attachment']);
+		$result = do_email($addresses["EMAIL"], $subject, $html_text, $text, "");
 		$message_text = "";
 		if ($result[0] == "OK") {
 			$message_type = $GLOBALS['LOG_EMAIL_MESSAGE_SEND'];
@@ -1560,7 +1556,6 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 		var initial_message_group = "<?php print $message_group;?>";
 		var current_message_group = "<?php print $message_group;?>";
 
-		//var shorttext_max_char = <?php print $dispatch_shorttext[1];?>;
 		var shorttext_max_char = <?php print $dispatch_shorttext["shorttext-maxchars"];?>;
 
 		function count_chars() {
@@ -1580,7 +1575,8 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 		setInterval(fill_shorttext, 100);
 		function fill_shorttext() {
 			if (current_message_group == "unit_all") {
-				$("#frm_shorttext").val($("#frm_text").val().substr(0, shorttext_max_char));
+				var shorttext = $("#frm_text").val().substr(0, shorttext_max_char);
+				$("#frm_shorttext").val(shorttext.replaceAll(/\n/g, ' '));
 				count_chars();
 			}
 		}
@@ -1726,7 +1722,6 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 
 	</script>
 	<input type="hidden" name="ticket_id" value=<?php print $ticket_id;?>>
-	<input type="hidden" name="frm_attachment" value="">
 	<table class="table table-striped table-condensed" style="table-layout: fixed;">
 		<tr id="options_bar" style="visibility: hidden;">
 			<th style="width: 33%; border-top: 0px;">
