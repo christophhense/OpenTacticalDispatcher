@@ -35,6 +35,8 @@ INSERT INTO `captions` (`capt`, `repl`) VALUES
 ('API disconnected', 'API getrennt'),
 ('API device-text', 'API Gerätestatus'),
 ('Associated data service address multiple', 'Datendienst-Adresse mehrfach konfiguriert'),
+('Attachment: Actions', 'Anhang: Rückmeldungen'),
+('Attachment: Dispatched Units', 'Anhang: Disponierte Einheiten'),
 ('Auto-logout disabled', 'Auto-Abmelden abgeschaltet'),
 ('Auto-logout in', 'Abmelden in'),
 ('Auto-logout off', 'Auto-Abmelden aus'),

@@ -13,3 +13,5 @@ ALTER TABLE `hints` CHANGE `client_address` `client_address` varchar(50) NOT NUL
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Settings reseted.', 'Einstellungen zurückgesetzt.');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Reseted database-credentials only.', 'Datenbank-Zugangsdaten zurückgesetzt.');
 INSERT INTO `captions` (`capt`, `repl`) VALUES ('Version control files still exist. Update is only simulated.', 'Versionsverwaltungsdateien sind noch vorhanden. Aktualisierung wird nur simuliert.');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Attachment: Actions', 'Anhang: Rückmeldungen');
+INSERT INTO `captions` (`capt`, `repl`) VALUES ('Attachment: Dispatched Units', 'Anhang: Disponierte Einheiten');
