@@ -3,6 +3,23 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+function get_paper_size() {
+	$return_array = Array ("axis_x" => 595, "axis_y" => 842, 
+		"align_top" => 43, "align_bottom" => 43, "align_left" => 40, "align_right" => 545, 
+		"font_type" => "Helvetica", "font_encoding" => "ISOLatin1Encoding", "font_define" => "Helvetica-ISOLatin1", 
+		"font_very_big" => 15, "font_big" => 12, "font_normal" => 10, "font_small" => 8);
+	/*	Paper size
+		0 position in the bottom left corner
+		Orientation portait
+			DIN A4	  595 x 842
+			US Letter 612 x 792
+		Orientation landscape
+			DIN A4	  842 x 595
+			US Letter 792 x 612
+	*/
+	return $return_array;
+}
+
 function get_assign_infos($row) {
 	$return_array = array ("unit" => "", "dispatched" => "" ,"status" => "", "time" => "", "facility" => "");
 	$return_array["unit"] = $row['unit_handle'];
@@ -34,17 +51,16 @@ function get_assign_infos($row) {
 	return $return_array;
 }
 
-function get_dispatch_message($ticket_id, $text_sel) {
+function get_dispatch_message($ticket_id, $text_type) {
 	$match_str = "";
-	switch ($text_sel) {
-		case null:
-		case "message_text":
-			$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
-			break;
+	switch ($text_type) {
 		case "message_shorttext":
 			$match_str = strtoupper(get_variable("_api_dispatch_shorttext_setng"));
 			break;
+		case "message_text":	
+		case null:		
 		default:
+			$match_str = strtoupper(get_variable("_api_dispatch_text_setng"));
 	}
 	$text_settings_string = array ();
 	$text_setting = array ();
@@ -95,16 +111,12 @@ function get_dispatch_message($ticket_id, $text_sel) {
 		}
 		$return_array["html-mail"] .= "<!DOCTYPE html><html lang='de'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
 			"<meta name='viewport' content='width=device-width'><title></title><style></style></head><body><table>";
-		$ps_pt_align_left = 40;
-		$ps_pt_align_right = 545;
-		$ps_font_size_small = 8;
-		$ps_font_size_big = 12;
-		$ps_font_size_verybig = 15;
+		$paper_size = get_paper_size();
 		$ps_x = 731;
 		for ($i = 0; $i < count($text_selects); $i++) {
 			$caption = "";
 			$text = "";
-			$return_array["postscript"] .= $ps_pt_align_left . " " . $ps_x . " moveto\n";
+			$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 				/*	message-text codes
 					Actions		A
 					ADDRESS		B	UPPERCASE on facility
@@ -145,7 +157,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= "";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						while ($act_row = stripslashes_deep(db_fetch_array($result))) {
 							$ps_x = $ps_x - 18;
 							$raw_text = date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . wordwrap($act_row['description'], 70);
@@ -153,7 +165,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 							$return_array["shorttext"] .= "";
 							$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $raw_text . "</td><td></td></tr>";
 							$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $raw_text . "</td><td></td></tr>";
-							$return_array["postscript"] .= "(" . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+							$return_array["postscript"] .= "(" . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						}
 					}
 					unset ($result);
@@ -171,7 +183,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "C":
@@ -182,7 +194,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]);
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "D":
 					$ps_x = $ps_x - 18;
@@ -192,7 +204,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "E":
 					$ps_x = $ps_x - 18;
@@ -202,7 +214,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "F":
 					$caption = $raw_text = "";
@@ -214,7 +226,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "G":
@@ -227,7 +239,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "H":
@@ -240,7 +252,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "I":
@@ -251,7 +263,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "J":
 					$caption = $raw_text = "";
@@ -263,7 +275,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "K":
@@ -276,7 +288,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "L":
@@ -289,7 +301,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "M":
@@ -301,7 +313,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $$paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "N":
 					$caption = $raw_text = "";
@@ -313,21 +325,17 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "O":
 					$ps_x = $ps_x - 18;
 					$raw_text = "============================================================";
-					//old
-					$text = $raw_text;
-					$return_array[0] .= $caption . $raw_text . "\\n";
-					//new
 					$return_array["text"] .= $caption . $raw_text . "\\n";
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "S":
 					$ps_x = $ps_x - 18;
@@ -337,7 +345,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 					$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 					$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "T":
 					$caption = $raw_text = "";
@@ -349,7 +357,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "U":
@@ -365,7 +373,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 					if (db_num_rows($result_u) > 0) {
 						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
 							"/Encoding ISOLatin1Encoding def\n" . "currentdict\n" . "end\n" . 
-							"/Helvetica-ISOLatin1 exch definefont\n" . $ps_font_size_small . " scalefont\n" . "setfont\n";
+							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_small"] . " scalefont\n" . "setfont\n";
 						$return_array["text"] .= get_text("Attachment: Dispatched Units") . "\\n";
 						$return_array["shorttext"] .= "";
 						$return_array["html-mail"] .= "<tr><td></td><td>" . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
@@ -374,12 +382,12 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["html-browser"] .= "<tr><td></td><td>" . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
 							get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
 							get_text("Receiving location") . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . get_text("Units") . "(" . db_num_rows($result_u) . ")) show\n" . $ps_pt_align_left + 110 . " " . $ps_x . " moveto\n" . 
-							"(" . get_text("Dispatched") . ") show\n" . $ps_pt_align_left + 180 . " " . $ps_x . " moveto\n" . 
-							"(" . get_text("Status") . ") show\n" . $ps_pt_align_left + 240 . " " . $ps_x . " moveto\n" . 
+						$return_array["postscript"] .= "(" . get_text("Units") . "(" . db_num_rows($result_u) . ")) show\n" . $paper_size["align_left"] + 110 . " " . $ps_x . " moveto\n" . 
+							"(" . get_text("Dispatched") . ") show\n" . $paper_size["align_left"] + 180 . " " . $ps_x . " moveto\n" . 
+							"(" . get_text("Status") . ") show\n" . $paper_size["align_left"] + 240 . " " . $ps_x . " moveto\n" . 
 							"(" . get_text("Receiving location") . ") show\n";
 						$ps_x = $ps_x - 18;
-						$return_array["postscript"] .= $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
 							$assign_info = get_assign_infos($u_row);
 							$return_array["html-browser"] .= "<tr><td></td><td>" . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>" . 
@@ -390,17 +398,17 @@ function get_dispatch_message($ticket_id, $text_sel) {
 								remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>" . 
 								remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>" . remove_nls($assign_info["time"]) . 
 								"</td><td>" . remove_nls($assign_info["facility"]) . "</td><td></td></tr>";
-							$return_array["postscript"] .= "(" . remove_nls($assign_info["unit"]) . ") show\n" . $ps_pt_align_left + 110 . " " . $ps_x . " moveto\n" . 
-								remove_nls("(" . $assign_info["dispatched"]) . ") show\n" . $ps_pt_align_left + 155 . " " . $ps_x . " moveto\n" . 
-								remove_nls("(" . $assign_info["status"]) . ") show\n" . $ps_pt_align_left + 200 . " " . $ps_x . " moveto\n" . 
-								remove_nls("(" . $assign_info["time"]) . ") show\n" . $ps_pt_align_left + 240 . " " . $ps_x . " moveto\n" . 
+							$return_array["postscript"] .= "(" . remove_nls($assign_info["unit"]) . ") show\n" . $paper_size["align_left"] + 110 . " " . $ps_x . " moveto\n" . 
+								remove_nls("(" . $assign_info["dispatched"]) . ") show\n" . $paper_size["align_left"] + 155 . " " . $ps_x . " moveto\n" . 
+								remove_nls("(" . $assign_info["status"]) . ") show\n" . $paper_size["align_left"] + 200 . " " . $ps_x . " moveto\n" . 
+								remove_nls("(" . $assign_info["time"]) . ") show\n" . $paper_size["align_left"] + 240 . " " . $ps_x . " moveto\n" . 
 								remove_nls("(" . $assign_info["facility"]) . ") show\n";
 								$ps_x = $ps_x - 18;
-								$return_array["postscript"] .= $ps_pt_align_left . " " . $ps_x . " moveto\n";
+								$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						}
 						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
 							"/Encoding ISOLatin1Encoding def\n" . "currentdict\n" . "end\n" . 
-							"/Helvetica-ISOLatin1 exch definefont\n" . $ps_font_size_big . " scalefont\n" . "setfont\n";
+							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_big"] . " scalefont\n" . "setfont\n";
 					}
 					unset ($result_u);
 					break;
@@ -414,7 +422,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 						$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
 						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . $raw_text . "</td><td></td></tr>";
-						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $ps_pt_align_left . " " . $ps_x . " moveto\n";
+						$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					}
 					break;
 				case "Z":
@@ -432,7 +440,7 @@ function get_dispatch_message($ticket_id, $text_sel) {
 		}
 		$return_array["html-mail"] .= "</table></body></html>";
 		$ps_x = $ps_x - 18;
-		$return_array["postscript"] .= $ps_pt_align_left . " " . $ps_x . " moveto\n(" . get_text("Printed at") . " " . 
+		$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n(" . get_text("Printed at") . " " . 
 			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
 	}
 	//@error_log(print_r($return_array, true));
@@ -643,80 +651,8 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 		}
 	}
 	//========================= Print
-	/*	Paper size
-		DIN A4	  595 x 842
-		US Letter 612 x 792
-		0 position in the bottom left corner
-	*/
-	$ps_pt_align_left = 40;
-	$ps_pt_align_right = 545;
-	$ps_font_size_small = 8;
-	$ps_font_size_big = 12;
-	$ps_font_size_verybig = 15;
-	//old
-	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses) && false) {
-		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
-		$text_postscript_first_part = "%!\n" .
-			"/Helvetica findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
-			"setfont\n" .
-			$ps_pt_align_left . " 799 moveto \n" .
-			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
-			$ps_pt_align_left . " 782 moveto \n" .
-			"(" . get_text("Incident dispatch system") . ") show\n";
-		$text_postscript_last_part = "/Helvetica-Bold findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_verybig . " scalefont\n" .
-			"setfont\n" .
-			$ps_pt_align_left . " 755 moveto \n" .
-			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
-			"/Helvetica findfont\n" .
-			"dup length dict begin\n" .
-			"{def} forall\n" .
-			"/Encoding ISOLatin1Encoding def\n" .
-			"currentdict\n" .
-			"end\n" .
-			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
-			"setfont\n";
-		$i = 731;
-		foreach ($text_lines_array as $key) {
-			$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n" .
-				"(" . $key . ") show\n";
-			$i = $i - 18;
-		}
-		$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n(" . get_text("Printed at") . " " . 
-			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
-		$text_postscript_last_part .= "showpage\n";
-		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
-			$subscriber_url = substr($key["address"], 8);
-			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
-				$ps_pt_align_right . " exch sub\n799 moveto show\n" . $text_postscript_last_part, 'ISO-8859-1', mb_list_encodings());
-			$result = do_print($subscriber_url, $subscriber_message);
-			//$result = do_print($subscriber_url, $text_new);
-			if ($result[0] == "successfull-ok") {
-				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
-				$sent_ok++;
-			} else {
-				$message_type = $GLOBALS['LOG_PRINT_JOB_ERROR'];
-				$sent_error++;
-			}
-			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text, 0, "", "", "");
-		}
-	}
-	//new
 	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
+		$paper_size = get_paper_size();
 		if ($text_type == "DISPATCH_MESSAGE") {
 			$text_postscript = get_dispatch_message($ticket_id, "message_text")["postscript"];
 			//@error_log($text);
@@ -730,13 +666,12 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
+			$paper_size["font_big"] . " scalefont\n" .
 			"setfont\n" .
-			$ps_pt_align_left . " 799 moveto \n" .
+			$paper_size["align_left"] . " 799 moveto \n" .
 			"(" . remove_nls(get_variable("title_string")) . ") show\n" .
-			$ps_pt_align_left . " 782 moveto \n" .
+			$paper_size["align_left"] . " 782 moveto \n" .
 			"(" . get_text("Incident dispatch system") . ") show\n";
-
 		$text_postscript_last_part = "/Helvetica-Bold findfont\n" .
 			"dup length dict begin\n" .
 			"{def} forall\n" .
@@ -744,9 +679,9 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_verybig . " scalefont\n" .
+			$paper_size["font_very_big"] . " scalefont\n" .
 			"setfont\n" .
-			$ps_pt_align_left . " 755 moveto \n" .
+			$paper_size["align_left"] . " 755 moveto \n" .
 			"(" . wordwrap($subject, 40, "\n", true) . ") show\n" .
 			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
@@ -755,22 +690,15 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"currentdict\n" .
 			"end\n" .
 			"/Helvetica-ISOLatin1 exch definefont\n" .
-			$ps_font_size_big . " scalefont\n" .
+			$paper_size["font_big"] . " scalefont\n" .
 			"setfont\n";
 		$i = 731;
-		/*foreach ($text_lines_array as $key) {
-			$text_postscript_last_part .= $ps_pt_align_left . " " . $i . " moveto\n" .
-				"(" . $key . ") show\n";
-			$i = $i - 18;
-		}*/
 		$text_postscript_last_part .= $text_postscript;
-		//$text_postscript_last_part .= "showpage\n";
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
 			$subscriber_url = substr($key["address"], 8);
 			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
-				$ps_pt_align_right . " exch sub\n799 moveto show\n" . $text_postscript_last_part . "showpage\n", 'ISO-8859-1', mb_list_encodings());
+				$paper_size["align_right"] . " exch sub\n799 moveto show\n" . $text_postscript_last_part . "showpage\n", 'ISO-8859-1', mb_list_encodings());
 			$result = do_print($subscriber_url, $subscriber_message);
-			//$result = do_print($subscriber_url, $text_new);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
 				$sent_ok++;
