@@ -109,7 +109,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 		if ((isset ($row['problemend'])) && is_datetime($row['problemend'])) {
 			$_problemend = "  " . get_text("Run End") . ":" . $row['problemend'];
 		}
-		$return_array["html-mail"] .= "<!DOCTYPE html><html lang='de'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
+		$return_array["html-mail"] .= "<!DOCTYPE html><html lang='" . get_language() . "'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
 			"<meta name='viewport' content='width=device-width'><title></title><style></style></head><body><table>";
 		$paper_size = get_paper_size();
 		$ps_x = 731;
@@ -151,22 +151,28 @@ function get_dispatch_message($ticket_id, $text_type) {
 
 					$result = db_query($query, __FILE__, __LINE__);
 					if (db_affected_rows($result) > 0) {
+						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
+							"/Encoding ISOLatin1Encoding def\n" . "currentdict\n" . "end\n" . 
+							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_small"] . " scalefont\n" . "setfont\n";
 						$ps_x = $ps_x - 18;
 						$caption = get_text("Actions") . ": ";
 						$return_array["text"] .= get_text("Attachment: Actions") . "\\n";
 						$return_array["shorttext"] .= "";
-						$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . "</td><td></td></tr>";
-						$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $caption . "</td><td></td></tr>";
+						$return_array["html-mail"] .= "<tr style='font-size: small;'><td></td><td colspan=5>" . $caption . "</td><td></td></tr>";
+						$return_array["html-browser"] .= "<tr><td></td><td colspan=5>" . $caption . "</td><td></td></tr>";
 						$return_array["postscript"] .= "(" . $caption . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						while ($act_row = stripslashes_deep(db_fetch_array($result))) {
 							$ps_x = $ps_x - 18;
 							$raw_text = date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . wordwrap($act_row['description'], 70);
-							$return_array["text"] .= $raw_text . "\\n";
+							$return_array["text"] .= "";
 							$return_array["shorttext"] .= "";
-							$return_array["html-mail"] .= "<tr><td></td><td colspan=5 class='big'>" . $raw_text . "</td><td></td></tr>";
-							$return_array["html-browser"] .= "<tr><td></td><td colspan=5 class='big'>" . $raw_text . "</td><td></td></tr>";
+							$return_array["html-mail"] .= "<tr style='font-size: small;'><td></td><td colspan=5>" . $raw_text . "</td><td></td></tr>";
+							$return_array["html-browser"] .= "<tr><td></td><td colspan=5>" . $raw_text . "</td><td></td></tr>";
 							$return_array["postscript"] .= "(" . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						}
+						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
+							"/Encoding ISOLatin1Encoding def\n" . "currentdict\n" . "end\n" . 
+							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_big"] . " scalefont\n" . "setfont\n";
 					}
 					unset ($result);
 					break;
@@ -376,7 +382,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_small"] . " scalefont\n" . "setfont\n";
 						$return_array["text"] .= get_text("Attachment: Dispatched Units") . "\\n";
 						$return_array["shorttext"] .= "";
-						$return_array["html-mail"] .= "<tr><td></td><td>" . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
+						$return_array["html-mail"] .= "<tr style='font-size: small;'><td></td><td>" . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
 							get_text("Dispatched") . "</td><td colspan=2 style='text-align: center;'>" . get_text("Status") . "</td><td>" . 
 							get_text("Receiving location") . "</td><td></td></tr>";
 						$return_array["html-browser"] .= "<tr><td></td><td>" . get_text("Units") . "(" . db_num_rows($result_u) . ")" . "</td><td style='text-align: center;'>" . 
@@ -394,7 +400,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 								remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>" . 
 								remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>" . remove_nls($assign_info["time"]) . 
 								"</td><td>" . remove_nls($assign_info["facility"]) . "</td><td></td></tr>";
-							$return_array["html-mail"] .= "<tr><td></td><td>" . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>" . 
+							$return_array["html-mail"] .= "<tr style='font-size: small;'><td></td><td>" . remove_nls($assign_info["unit"]) . "</td><td style='text-align: center;'>" . 
 								remove_nls($assign_info["dispatched"]) . "</td><td style='text-align: center;'>" . 
 								remove_nls($assign_info["status"]) . "</td><td style='text-align: center;'>" . remove_nls($assign_info["time"]) . 
 								"</td><td>" . remove_nls($assign_info["facility"]) . "</td><td></td></tr>";
@@ -711,7 +717,7 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	}
 	//========================= E-Mail
 	if (array_key_exists("EMAIL", $addresses)) {
-		$html_text = "<!DOCTYPE html><html lang='de'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
+		$html_text = "<!DOCTYPE html><html lang='" . get_language() . "'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" . 
 			"<meta name='viewport' content='width=device-width'><title></title><style></style></head><body>" . preg_replace('/\r\n|\r/m', "<br>", $text) . "</body></html>";
 		if ($text_type == "DISPATCH_MESSAGE") {
 			$html_text = get_dispatch_message($ticket_id, "message_text")["html-mail"];
