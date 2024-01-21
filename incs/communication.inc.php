@@ -665,11 +665,13 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 	//========================= Print
 	if (array_key_exists(get_variable("_api_prefix_printer_encdg"), $addresses)) {
 		$paper_size = get_paper_size();
+		$text_postscript = "";
+		$log_postscript = "";
 		if ($text_type == "DISPATCH_MESSAGE") {
-			$text_postscript = get_dispatch_message($ticket_id, "message_text")["postscript"];
-			//@error_log($text);
+			$dispatch_message_array = get_dispatch_message($ticket_id, "message_text");
+			$text_postscript = $dispatch_message_array["postscript"];
+			$log_postscript = $dispatch_message_array["text"];
 		}
-		$text_lines_array = explode("\n", wordwrap($text, 80, "\n", true));
 		$text_postscript_first_part = "%!\n" .
 			"/Helvetica findfont\n" .
 			"dup length dict begin\n" .
@@ -704,7 +706,6 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			"/Helvetica-ISOLatin1 exch definefont\n" .
 			$paper_size["font_big"] . " scalefont\n" .
 			"setfont\n";
-		$i = 731;
 		$text_postscript_last_part .= $text_postscript;
 		foreach ($addresses[get_variable("_api_prefix_printer_encdg")] as $key) {
 			$subscriber_url = substr($key["address"], 8);
@@ -718,7 +719,7 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 				$message_type = $GLOBALS['LOG_PRINT_JOB_ERROR'];
 				$sent_error++;
 			}
-			//do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $text, 0, "", "", "");
+			do_log($message_type, $ticket_id, $key["id"], get_text("Receiver") . ": " . substr($key["address"], 8) . " " . $log_postscript, 0, "", "", "");
 		}
 	}
 	//========================= E-Mail
