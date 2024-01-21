@@ -7,7 +7,8 @@ function get_paper_size() {
 	$return_array = Array ("axis_x" => 595, "axis_y" => 842, 
 		"align_top" => 43, "align_bottom" => 43, "align_left" => 40, "align_right" => 545, 
 		"font_type" => "Helvetica", "font_encoding" => "ISOLatin1Encoding", "font_define" => "Helvetica-ISOLatin1", 
-		"font_very_big" => 15, "font_big" => 12, "font_normal" => 10, "font_small" => 8);
+		"font_very_big" => 15, "font_big" => 12, "font_normal" => 10, "font_small" => 8,
+		"line_space_normal" => 18, "line_space_small" => 14);
 	/*	Paper size
 		0 position in the bottom left corner
 		Orientation portait
@@ -145,8 +146,11 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "A":
 					$caption = $raw_text = "";
 
-					$query = "SELECT * " .
-						"FROM `actions` " .
+					$query = "SELECT `a`.`description`, " . 
+						"`a`.`updated`, " . 
+						"`r`.`handle`AS `unit` " . 
+						"FROM `actions` `a` " . 
+						"LEFT JOIN `units` `r` ON (`a`.`unit_id` = `r`.`id`) " . 
 						"WHERE `ticket_id` = " . $ticket_id;
 
 					$result = db_query($query, __FILE__, __LINE__);
@@ -154,7 +158,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
 							"/Encoding ISOLatin1Encoding def\n" . "currentdict\n" . "end\n" . 
 							"/Helvetica-ISOLatin1 exch definefont\n" . $paper_size["font_small"] . " scalefont\n" . "setfont\n";
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_small"];
 						$caption = get_text("Actions") . ": ";
 						$return_array["text"] .= get_text("Attachment: Actions") . "\\n";
 						$return_array["shorttext"] .= "";
@@ -162,8 +166,8 @@ function get_dispatch_message($ticket_id, $text_type) {
 						$return_array["html-browser"] .= "<tr><td></td><td colspan=5>" . $caption . "</td><td></td></tr>";
 						$return_array["postscript"] .= "(" . $caption . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						while ($act_row = stripslashes_deep(db_fetch_array($result))) {
-							$ps_x = $ps_x - 18;
-							$raw_text = date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . wordwrap($act_row['description'], 70);
+							$ps_x = $ps_x - $paper_size["line_space_small"];
+							$raw_text = date(get_variable("date_format"), strtotime($act_row['updated'])) . " - " . remove_nls($act_row['unit']) . " - " . remove_nls($act_row['description']);
 							$return_array["text"] .= "";
 							$return_array["shorttext"] .= "";
 							$return_array["html-mail"] .= "<tr style='font-size: small;'><td></td><td colspan=5>" . $raw_text . "</td><td></td></tr>";
@@ -179,7 +183,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "B":
 					$caption = $raw_text = "";
 					if (isset ($row['location']) && $row['location'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Addr") . ": ";
 						$raw_text = remove_nls($row['location']);
 						if ($row['facility_id'] > 0) {
@@ -193,7 +197,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					}
 					break;
 				case "C":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Severity") . ": ";
 					$raw_text = get_text(get_severity($row['severity']));
 					$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -203,7 +207,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "D":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Incident type") . ": ";
 					$raw_text = get_type($row['incident_type_id']);
 					$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -213,7 +217,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "E":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Written") . ": ";
 					$raw_text = format_date($row['datetime']) . " " . get_text("by") . " " . get_user_name($row['call_taker_id']);
 					$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -225,7 +229,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "F":
 					$caption = $raw_text = "";
 					if (isset ($row['updated'])) {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Updated") . ": ";
 						$raw_text = format_date($row['updated']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -238,7 +242,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "G":
 					$caption = $raw_text = "";
 					if (isset ($row['contact']) && $row['contact'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Reported by") . ": ";
 						$raw_text = $row['contact'];
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -251,7 +255,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "H":
 					$caption = $raw_text = "";
 					if (isset ($row['phone']) && $row['phone'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Callback phone") . ": ";
 						$raw_text = $row['phone'];
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -262,7 +266,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					}
 					break;
 				case "I":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Status") . ": ";
 					$raw_text = get_ticket_status($row['status']);
 					$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -274,7 +278,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "J":
 					$caption = $raw_text = "";
 					if (isset ($row['location']) && $row['location'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Addr") . ": ";
 						$raw_text = remove_nls($row['location']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -287,7 +291,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "K":
 					$caption = $raw_text = "";
 					if (isset ($row['description']) && $row['description'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Synopsis") . ": ";
 						$raw_text = remove_nls($row['description']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -300,7 +304,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "L":
 					$caption = $raw_text = "";
 					if (isset ($row['comments']) && $row['comments'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Comments") . ": ";
 						$raw_text = remove_nls($row['comments']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -311,7 +315,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					}
 					break;
 				case "M":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Position") . ": ";
 					$utm = array ();
 					$raw_text = $row['lat'] . " " . $row['lng'] . ", " . $utm[3] . $utm[2] . $utm[0] . $utm[1];
@@ -324,7 +328,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "N":
 					$caption = $raw_text = "";
 					if (isset ($row['incident_name']) && $row['incident_name'] != "") {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Incident name") . ": ";
 						$raw_text = remove_nls($row['incident_name']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -335,7 +339,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					}
 					break;
 				case "O":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$raw_text = "============================================================";
 					$return_array["text"] .= $caption . $raw_text . "\\n";
 					$return_array["shorttext"] .= substr($raw_text, $text_start[$i], $text_chars[$i]) . " ";
@@ -344,7 +348,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 					$return_array["postscript"] .= "(" . $caption . $raw_text . ") show\n" . $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 					break;
 				case "S":
-					$ps_x = $ps_x - 18;
+					$ps_x = $ps_x - $paper_size["line_space_normal"];
 					$caption = get_text("Run Start") . ": ";
 					$raw_text = format_date($row['problemstart']) . $_problemend;
 					$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -356,7 +360,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "T":
 					$caption = $raw_text = "";
 					if ($row['facility_id'] > 0) {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Facility") . ": ";
 						$raw_text = remove_nls($row['facility_handle']);
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -392,7 +396,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 							"(" . get_text("Dispatched") . ") show\n" . $paper_size["align_left"] + 180 . " " . $ps_x . " moveto\n" . 
 							"(" . get_text("Status") . ") show\n" . $paper_size["align_left"] + 240 . " " . $ps_x . " moveto\n" . 
 							"(" . get_text("Receiving location") . ") show\n";
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_small"];
 						$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						while ($u_row = stripslashes_deep(db_fetch_assoc($result_u))) {
 							$assign_info = get_assign_infos($u_row);
@@ -409,7 +413,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 								remove_nls("(" . $assign_info["status"]) . ") show\n" . $paper_size["align_left"] + 200 . " " . $ps_x . " moveto\n" . 
 								remove_nls("(" . $assign_info["time"]) . ") show\n" . $paper_size["align_left"] + 240 . " " . $ps_x . " moveto\n" . 
 								remove_nls("(" . $assign_info["facility"]) . ") show\n";
-								$ps_x = $ps_x - 18;
+								$ps_x = $ps_x - $paper_size["line_space_small"];
 								$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n";
 						}
 						$return_array["postscript"] .= "/Helvetica findfont\n" . "dup length dict begin\n" . "{def} forall\n" . 
@@ -421,7 +425,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 				case "V":
 					$caption = $raw_text = "";
 					if (is_datetime($row['booked_date'])) {
-						$ps_x = $ps_x - 18;
+						$ps_x = $ps_x - $paper_size["line_space_normal"];
 						$caption = get_text("Scheduled Date");
 						$raw_text = format_date($row['booked_date']) . $_problemend;
 						$return_array["text"] .= $caption . $raw_text . "\\n";
@@ -445,7 +449,7 @@ function get_dispatch_message($ticket_id, $text_type) {
 			}
 		}
 		$return_array["html-mail"] .= "</table></body></html>";
-		$ps_x = $ps_x - 18;
+		$ps_x = $ps_x - $paper_size["line_space_normal"];
 		$return_array["postscript"] .= $paper_size["align_left"] . " " . $ps_x . " moveto\n(" . get_text("Printed at") . " " . 
 			date(get_variable("date_format")) . " " . get_text("by") . " " . $_SESSION['user_name'] . ") show\n";
 	}
@@ -567,7 +571,7 @@ function do_email($addresses, $subject, $html_text, $text, $attachment) {
 	return $result_data;
 }
 
-function do_print($url, $text) {
+function do_print($url, $ps_print_text, $job_name) {
 	require_once ("./lib/phpprinttip/php_classes/PrintIPP.php");
 	$ipp = new PrintIPP();
 	$url_array = parse_url($url);
@@ -590,9 +594,11 @@ function do_print($url, $text) {
 	$ipp->setMimeMediaType("application/postscript");
 	$ipp->setDocumentName(get_text("Dispatch text"));
 	$ipp->setSides(1);
-	$ipp->setData($text);
+	$ipp->setData($ps_print_text);
 	$ipp->setUserName(get_variable("title_string"));
-	//$ipp->setJobName("Hello World2");
+	if ($job_name != "") {
+		$ipp->setJobName($job_name);
+	}
 	$ipp->debug_level = 0; // Debugging very verbose
 	$ipp->setLog("/tmp/printipp","file",0);
 	//$ipp->setAuthentication($username,$password); //Set system user name and password when server needs authentication for operation. (e.g. cancelJob() on CUPS with standard settings). If the server do not support Basic nor Digest authentication, you need to install SASL to use authentication. See INSTALL
@@ -704,7 +710,7 @@ function send_message($addresses, $text_type, $subject, $text, $shorttext, $tick
 			$subscriber_url = substr($key["address"], 8);
 			$subscriber_message = mb_convert_encoding($text_postscript_first_part . "(" . $key["handle"] . ") dup stringwidth pop\n" . 
 				$paper_size["align_right"] . " exch sub\n799 moveto show\n" . $text_postscript_last_part . "showpage\n", 'ISO-8859-1', mb_list_encodings());
-			$result = do_print($subscriber_url, $subscriber_message);
+			$result = do_print($subscriber_url, $subscriber_message, $subject);
 			if ($result[0] == "successfull-ok") {
 				$message_type = $GLOBALS['LOG_PRINT_JOB_SEND'];
 				$sent_ok++;
@@ -1672,6 +1678,7 @@ function show_send_message_table_left($message_group, $target_id, $target_api_lo
 					break;
 				case "INDIVIDUAL_MESSAGE":
 					set_message_group("unit_all");
+					disable_reporting_channel("<?php print $api_reporting_channel_regexp[2];?>", true);
 					break;
 				default:
 					if (message_type.substr(0, 8) == "FIXTEXT_") {
