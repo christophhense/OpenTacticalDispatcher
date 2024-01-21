@@ -39,8 +39,13 @@ function callprogression_input_type_str($callprogression) {
 		return "hidden";
 	}
 }
+
 function callprogression_is_cleared($row) {
-	return (is_datetime($row))? "<font color='red'><b>" . get_text("Cleared") . "</b></font>" : "";
+	if (is_datetime($row)) {
+		return "<font color='red'><b>" . get_text("Cleared") . "</b></font>";
+	} else {
+		return "";
+	}
 }
 
 function get_start_end_facility_select_array($function, $facility_id, $start_end_location, $incident_location) {
@@ -60,31 +65,31 @@ function get_start_end_facility_select_array($function, $facility_id, $start_end
 		$facility_id = 0;
 	}
 	switch ($function) {
-	case "on_scene":
-		$id_str = " id=\"frm_on_scene_facility_id\"";
-		$name_str = " name=\"frm_on_scene_facility_id\"";
-		$onchange_str = " onchange=\"do_facility_to_on_scene_location(this.options[selectedIndex].value.trim());\"";
-		$tabindex_str = "";
-		$and_value = 4;
-		$help_text_str = get_help_text_str("_facy_on_scene");
-		$selected_str = "";
-		if ($facility_id == -1) {
-			$selected_str = " SELECTED ";
-		}
-		$use_incident_location_str = "<option value=-1" . $selected_str . ">" . get_text("Use incident location") . "</option>\n";
-		$facility_address_array_prefix = "on_scene";
-		break;
-	case "receiving":
-		$id_str = " id=\"frm_receiving_facility_id\"";
-		$name_str = " name=\"frm_receiving_facility_id\"";
-		$onchange_str = " onchange=\"do_facility_to_receiving_location(this.options[selectedIndex].value.trim());\"";
-		$tabindex_str = " tabindex=2";
-		$and_value = 8;
-		$help_text_str = get_help_text_str("_facy_rec");
-		$use_incident_location_str = "";
-		$facility_address_array_prefix = "receiving";
-		break;
-	default;
+		case "on_scene":
+			$id_str = " id=\"frm_on_scene_facility_id\"";
+			$name_str = " name=\"frm_on_scene_facility_id\"";
+			$onchange_str = " onchange=\"do_facility_to_on_scene_location(this.options[selectedIndex].value.trim());\"";
+			$tabindex_str = "";
+			$and_value = 4;
+			$help_text_str = get_help_text_str("_facy_on_scene");
+			$selected_str = "";
+			if ($facility_id == -1) {
+				$selected_str = " SELECTED ";
+			}
+			$use_incident_location_str = "<option value=-1" . $selected_str . ">" . get_text("Use incident location") . "</option>\n";
+			$facility_address_array_prefix = "on_scene";
+			break;
+		case "receiving":
+			$id_str = " id=\"frm_receiving_facility_id\"";
+			$name_str = " name=\"frm_receiving_facility_id\"";
+			$onchange_str = " onchange=\"do_facility_to_receiving_location(this.options[selectedIndex].value.trim());\"";
+			$tabindex_str = " tabindex=2";
+			$and_value = 8;
+			$help_text_str = get_help_text_str("_facy_rec");
+			$use_incident_location_str = "";
+			$facility_address_array_prefix = "receiving";
+			break;
+		default;
 	}
 
 	$query_facilities = "SELECT DISTINCT " .

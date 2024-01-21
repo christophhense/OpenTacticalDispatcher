@@ -88,33 +88,33 @@ function show_stats() {
 			var info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			var text_color = "red";
 			switch (new_infos_array['api']['host_available']) {
-			case "true":
-				text_color = "black";
-				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (new_infos_array['api']['host_text'] != "") {
-					info_text = "&nbsp;&nbsp;" + new_infos_array['api']['host_text'];
-				} else {
-					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
-				}
-				switch (new_infos_array['api']['host_code']) {
-				case "success":
-					text_color = "green";
+				case "true":
+					text_color = "black";
+					available_text = "<?php print get_text("Available since");?>: " + available_datetime;
+					if (new_infos_array['api']['host_text'] != "") {
+						info_text = "&nbsp;&nbsp;" + new_infos_array['api']['host_text'];
+					} else {
+						info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
+					}
+					switch (new_infos_array['api']['host_code']) {
+						case "success":
+							text_color = "green";
+							break;
+						case "warning":
+							text_color = "orange";
+							break;
+						case "error":
+							text_color = "red";
+							break;
+						default:
+					}
 					break;
-				case "warning":
-					text_color = "orange";
-					break;
-				case "error":
-					text_color = "red";
+				case "null":
+					available_text = "<?php print get_text("Not configured.");?>";
+					info_text = "";
+					text_color = "black";
 					break;
 				default:
-				}
-				break;
-			case "null":
-				available_text = "<?php print get_text("Not configured.");?>";
-				info_text = "";
-				text_color = "black";
-				break;
-			default:
 			}
 			if ($("#application_interface").html() != (available_text + info_text)) {
 				UnTip();
@@ -126,33 +126,33 @@ function show_stats() {
 			info_text = "<?php print "&nbsp;&nbsp;" . get_text("No answer from foreign host.");?>";
 			text_color = "red";
 			switch (new_infos_array['api']['phone_host_available']) {
-			case "true":
-				text_color = "black";
-				available_text = "<?php print get_text("Available since");?>: " + available_datetime;
-				if (new_infos_array['api']['phone_host_text'] != "") {
-					info_text = "&nbsp;&nbsp;" + new_infos_array['api']['phone_host_text'];
-				} else {
-					info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
-				}
-				switch (new_infos_array['api']['phone_host_code']) {
-				case "success":
-					text_color = "green";
+				case "true":
+					text_color = "black";
+					available_text = "<?php print get_text("Available since");?>: " + available_datetime;
+					if (new_infos_array['api']['phone_host_text'] != "") {
+						info_text = "&nbsp;&nbsp;" + new_infos_array['api']['phone_host_text'];
+					} else {
+						info_text = "<?php print "&nbsp;&nbsp;" . get_text("No info-text available.");?>";
+					}
+					switch (new_infos_array['api']['phone_host_code']) {
+						case "success":
+							text_color = "green";
+							break;
+						case "warning":
+							text_color = "orange";
+							break;
+						case "error":
+							text_color = "red";
+							break;
+						default:
+					}
 					break;
-				case "warning":
-					text_color = "orange";
-					break;
-				case "error":
-					text_color = "red";
+				case "null":
+					available_text = "<?php print get_text("Not configured.");?>";
+					info_text = "";
+					text_color = "black";
 					break;
 				default:
-				}
-				break;
-			case "null":
-				available_text = "<?php print get_text("Not configured.");?>";
-				info_text = "";
-				text_color = "black";
-				break;
-			default:
 			}
 			if ($("#application_interface_phone").html() != (available_text + info_text)) {
 			UnTip();
@@ -692,28 +692,28 @@ function get_default_textblocks($file) {
 				if (($line != false) && ($line[TEXTBLOCKS_TYPE] == $value["type"])) {
 					$textblocks_type = "";
 					switch ($line[TEXTBLOCKS_TYPE]) {
-					case "textblocks_syn":
-						$textblocks_type = get_text("Textblocks synopsis");
-						break;
-					case "textblocks_desc":
-						$textblocks_type = get_text("Textblocks description");
-						break;
-					case "textblocks_act":
-						$textblocks_type = get_text("Textblocks action");
-						break;
-					case "textblocks_ass":
-						$textblocks_type = get_text("Textblocks assign");
-						break;
-					case "textblocks_clo":
-						$textblocks_type = get_text("Textblocks incident close");
-						break;
-					case "textblocks_log":
-						$textblocks_type = get_text("Textblocks log");
-						break;
-					case "textblocks_msg":
-						$textblocks_type = get_text("Textblocks message");
-						break;
-					default:
+						case "textblocks_syn":
+							$textblocks_type = get_text("Textblocks synopsis");
+							break;
+						case "textblocks_desc":
+							$textblocks_type = get_text("Textblocks description");
+							break;
+						case "textblocks_act":
+							$textblocks_type = get_text("Textblocks action");
+							break;
+						case "textblocks_ass":
+							$textblocks_type = get_text("Textblocks assign");
+							break;
+						case "textblocks_clo":
+							$textblocks_type = get_text("Textblocks incident close");
+							break;
+						case "textblocks_log":
+							$textblocks_type = get_text("Textblocks log");
+							break;
+						case "textblocks_msg":
+							$textblocks_type = get_text("Textblocks message");
+							break;
+						default:
 					}
 					$return_str .= "<tr><td style='padding: 2px; vertical-align: top;'>" . $textblocks_type . "</td>";
 					$return_str .= "<td style='padding: 2px; vertical-align: top;'>" . wordwrap(remove_nls($line[TEXTBLOCKS_TEXT]), 80, "<br>", true) . "</td>";

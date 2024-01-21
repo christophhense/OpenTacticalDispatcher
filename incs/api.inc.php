@@ -28,12 +28,12 @@ function get_unit_data($function, $source, $source_regexp) {
 		$position_report_evaluation_time = trim($emergency_settings[2]);
 	}
 	switch ($function) {
-	case "_api_log_encdg":
-	case "_api_errlog_encdg":
-	case "_api_message_encdg":
-		$unit_data["store_unknown_unit_data"] = true;
-		break;
-	default:
+		case "_api_log_encdg":
+		case "_api_errlog_encdg":
+		case "_api_message_encdg":
+			$unit_data["store_unknown_unit_data"] = true;
+			break;
+		default:
 	}
 	if (($source != "") && ($function != "_connection_test")) {
 		$where_source_address_str = " LIKE '%" . $source . "%'";
@@ -200,28 +200,28 @@ function do_receipt_message($unit_id) {
 		if (db_num_rows($result) > 0) {
 			$row = stripslashes_deep(db_fetch_array($result));
 			switch ($row['unit_status_id']) {
-			case get_variable("_api_clr_stat"):
-				$code = $GLOBALS['LOG_CALL_CLEAR'];
-				break;
-			case get_variable("_api_quat_stat"):
-				$code = $GLOBALS['LOG_UNIT_TO_QUARTERS'];
-				break;
-			case get_variable("_api_off_duty_stat"):
-				$code = $GLOBALS['LOG_UNIT_NO_SERVICE'];
-				break;
-			default:
-				switch ($row['dispatch']) {
-				case 0:
+				case get_variable("_api_clr_stat"):
 					$code = $GLOBALS['LOG_CALL_CLEAR'];
 					break;
-				case 1:
+				case get_variable("_api_quat_stat"):
 					$code = $GLOBALS['LOG_UNIT_TO_QUARTERS'];
 					break;
-				case 2:
+				case get_variable("_api_off_duty_stat"):
 					$code = $GLOBALS['LOG_UNIT_NO_SERVICE'];
 					break;
 				default:
-				}
+					switch ($row['dispatch']) {
+						case 0:
+							$code = $GLOBALS['LOG_CALL_CLEAR'];
+							break;
+						case 1:
+							$code = $GLOBALS['LOG_UNIT_TO_QUARTERS'];
+							break;
+						case 2:
+							$code = $GLOBALS['LOG_UNIT_NO_SERVICE'];
+							break;
+						default:
+					}
 			}
 		}
 	}
@@ -281,145 +281,145 @@ function get_receipt_message($status) {
 	$return_array["lat"] = "";
 	$return_array["lng"] = "";
 	switch ($status) {
-	case $GLOBALS['LOG_CALL_REQ']:
-	case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
-	case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
-	case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
-	case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
-		$return_array["code"] = get_variable("_api_callreq_encdg");
-		$mode = get_variable("_api_callreq_repl");
-		$receipt = get_variable("_api_callreq_rece");
-		$message_id = get_variable("_api_callreq_mess");
-		break;
-	case $GLOBALS['LOG_CALL_MANACKN']:
-		$return_array["code"] = get_variable("_api_manackn_encdg");
-		$mode = get_variable("_api_manackn_repl");
-		$receipt = get_variable("_api_manackn_rece");
-		$message_id = get_variable("_api_manackn_mess");
-		break;
-	case $GLOBALS['LOG_EMGCY_LO']:
-		$return_array["code"] = get_variable("_api_emgcy_lo_encdg");
-		$mode = get_variable("_api_emgcy_lo_repl");
-		$receipt = get_variable("_api_emgcy_lo_rece");
-		$message_id = get_variable("_api_emgcy_lo_mess");
-		break;
-	case $GLOBALS['LOG_EMGCY_HI']:
-		$return_array["code"] = get_variable("_api_emgcy_hi_encdg");
-		$mode = get_variable("_api_emgcy_hi_repl");
-		$receipt = get_variable("_api_emgcy_hi_rece");
-		$message_id = get_variable("_api_emgcy_hi_mess");
-		break;
-	case $GLOBALS['LOG_CALL_DISPATCHED']:
-		$return_array["lat"] = "0.99999";	//lat holen
-		$return_array["lng"] = "0.99999";	//lon holen
-		$return_array["code"] = get_variable("_api_disp_encdg");
-		$mode = get_variable("_api_disp_repl");
-		$receipt = get_variable("_api_disp_rece");
-		$message_id = get_variable("_api_disp_mess");
-		break;
-	case $GLOBALS['LOG_CALL_RESPONDING']:
-		$return_array["code"] = get_variable("_api_resp_encdg");
-		$mode = get_variable("_api_resp_repl");
-		$receipt = get_variable("_api_resp_rece");
-		$message_id = get_variable("_api_resp_mess");
-		break;
-	case $GLOBALS['LOG_CALL_ON_SCENE']:
-		$return_array["code"] = get_variable("_api_onsc_encdg");
-		$mode = get_variable("_api_onsc_repl");
-		$receipt = get_variable("_api_onsc_rece");
-		$message_id = get_variable("_api_onsc_mess");
-		break;
-	case $GLOBALS['LOG_CALL_FACILITY_ENROUTE']:
-		$return_array["code"] = get_variable("_api_fcen_encdg");
-		$mode = get_variable("_api_fcen_repl");
-		$receipt = get_variable("_api_fcen_rece");
-		$message_id = get_variable("_api_fcen_mess");
-		break;
-	case $GLOBALS['LOG_CALL_FACILITY_ARRIVED']:
-		$return_array["code"] = get_variable("_api_fcar_encdg");
-		$mode = get_variable("_api_fcar_repl");
-		$receipt = get_variable("_api_fcar_rece");
-		$message_id = get_variable("_api_fcar_mess");
-		break;
-	case $GLOBALS['LOG_CALL_CLEAR']:
-		$return_array["code"] = get_variable("_api_clr_encdg");
-		$mode = get_variable("_api_clr_repl");
-		$receipt = get_variable("_api_clr_rece");
-		$message_id = get_variable("_api_clr_mess");
-		break;
-	case $GLOBALS['LOG_UNIT_TO_QUARTERS']:
-		$return_array["code"] = get_variable("_api_quat_encdg");
-		$mode = get_variable("_api_quat_repl");
-		$receipt = get_variable("_api_quat_rece");
-		$message_id = get_variable("_api_quat_mess");
-		break;
-	case $GLOBALS['LOG_UNIT_NO_SERVICE']:
-		$return_array["code"] = get_variable("_api_off_duty_encdg");
-		$mode = get_variable("_api_off_duty_repl");
-		$receipt = get_variable("_api_off_duty_rece");
-		$message_id = get_variable("_api_off_duty_mess");
-		break;
-	default:
+		case $GLOBALS['LOG_CALL_REQ']:
+		case $GLOBALS['LOG_CALL_RESPONDING_WITHOUT_TICKET']:
+		case $GLOBALS['LOG_CALL_ON_SCENE_WITHOUT_TICKET']:
+		case $GLOBALS['LOG_CALL_FACILITY_ENROUTE_WITHOUT_TICKET']:
+		case $GLOBALS['LOG_CALL_FACILITY_ARRIVED_WITHOUT_TICKET']:
+			$return_array["code"] = get_variable("_api_callreq_encdg");
+			$mode = get_variable("_api_callreq_repl");
+			$receipt = get_variable("_api_callreq_rece");
+			$message_id = get_variable("_api_callreq_mess");
+			break;
+		case $GLOBALS['LOG_CALL_MANACKN']:
+			$return_array["code"] = get_variable("_api_manackn_encdg");
+			$mode = get_variable("_api_manackn_repl");
+			$receipt = get_variable("_api_manackn_rece");
+			$message_id = get_variable("_api_manackn_mess");
+			break;
+		case $GLOBALS['LOG_EMGCY_LO']:
+			$return_array["code"] = get_variable("_api_emgcy_lo_encdg");
+			$mode = get_variable("_api_emgcy_lo_repl");
+			$receipt = get_variable("_api_emgcy_lo_rece");
+			$message_id = get_variable("_api_emgcy_lo_mess");
+			break;
+		case $GLOBALS['LOG_EMGCY_HI']:
+			$return_array["code"] = get_variable("_api_emgcy_hi_encdg");
+			$mode = get_variable("_api_emgcy_hi_repl");
+			$receipt = get_variable("_api_emgcy_hi_rece");
+			$message_id = get_variable("_api_emgcy_hi_mess");
+			break;
+		case $GLOBALS['LOG_CALL_DISPATCHED']:
+			$return_array["lat"] = "0.99999";	//lat holen
+			$return_array["lng"] = "0.99999";	//lon holen
+			$return_array["code"] = get_variable("_api_disp_encdg");
+			$mode = get_variable("_api_disp_repl");
+			$receipt = get_variable("_api_disp_rece");
+			$message_id = get_variable("_api_disp_mess");
+			break;
+		case $GLOBALS['LOG_CALL_RESPONDING']:
+			$return_array["code"] = get_variable("_api_resp_encdg");
+			$mode = get_variable("_api_resp_repl");
+			$receipt = get_variable("_api_resp_rece");
+			$message_id = get_variable("_api_resp_mess");
+			break;
+		case $GLOBALS['LOG_CALL_ON_SCENE']:
+			$return_array["code"] = get_variable("_api_onsc_encdg");
+			$mode = get_variable("_api_onsc_repl");
+			$receipt = get_variable("_api_onsc_rece");
+			$message_id = get_variable("_api_onsc_mess");
+			break;
+		case $GLOBALS['LOG_CALL_FACILITY_ENROUTE']:
+			$return_array["code"] = get_variable("_api_fcen_encdg");
+			$mode = get_variable("_api_fcen_repl");
+			$receipt = get_variable("_api_fcen_rece");
+			$message_id = get_variable("_api_fcen_mess");
+			break;
+		case $GLOBALS['LOG_CALL_FACILITY_ARRIVED']:
+			$return_array["code"] = get_variable("_api_fcar_encdg");
+			$mode = get_variable("_api_fcar_repl");
+			$receipt = get_variable("_api_fcar_rece");
+			$message_id = get_variable("_api_fcar_mess");
+			break;
+		case $GLOBALS['LOG_CALL_CLEAR']:
+			$return_array["code"] = get_variable("_api_clr_encdg");
+			$mode = get_variable("_api_clr_repl");
+			$receipt = get_variable("_api_clr_rece");
+			$message_id = get_variable("_api_clr_mess");
+			break;
+		case $GLOBALS['LOG_UNIT_TO_QUARTERS']:
+			$return_array["code"] = get_variable("_api_quat_encdg");
+			$mode = get_variable("_api_quat_repl");
+			$receipt = get_variable("_api_quat_rece");
+			$message_id = get_variable("_api_quat_mess");
+			break;
+		case $GLOBALS['LOG_UNIT_NO_SERVICE']:
+			$return_array["code"] = get_variable("_api_off_duty_encdg");
+			$mode = get_variable("_api_off_duty_repl");
+			$receipt = get_variable("_api_off_duty_rece");
+			$message_id = get_variable("_api_off_duty_mess");
+			break;
+		default:
 	}
 	switch ($mode) {
-	case 0:
-		$return_array["code"] = "";
-		break;
-	case 1:
-		break;
-	case 2:
-		$return_array["text"] = $receipt;
-		break;
-	case 3:
+		case 0:
+			$return_array["code"] = "";
+			break;
+		case 1:
+			break;
+		case 2:
+			$return_array["text"] = $receipt;
+			break;
+		case 3:
 
-		$query = "SELECT `id`, " .
-			"`text`, " .
-			"`code`, " .
-			"`report_channels` " .
-			"FROM `textblocks` " .
-			"WHERE `id` = " . $message_id . ";";
+			$query = "SELECT `id`, " .
+				"`text`, " .
+				"`code`, " .
+				"`report_channels` " .
+				"FROM `textblocks` " .
+				"WHERE `id` = " . $message_id . ";";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		$row = stripslashes_deep(db_fetch_assoc($result));
-		if (db_num_rows($result) > 0) {
-			if ($row['code'] != "") {
-				$return_array["code"] = $row['code'];
-			} else {
-				$return_array["code"] = get_variable("_api_message_encdg");
+			$result = db_query($query, __FILE__, __LINE__);
+			$row = stripslashes_deep(db_fetch_assoc($result));
+			if (db_num_rows($result) > 0) {
+				if ($row['code'] != "") {
+					$return_array["code"] = $row['code'];
+				} else {
+					$return_array["code"] = get_variable("_api_message_encdg");
+				}
+				if ($row['text'] != "") {
+					$return_array["text"] = $row['text'];
+				}
 			}
-			if ($row['text'] != "") {
-				$return_array["text"] = $row['text'];
-			}
-		}
-		break;
-	case 4:
-		$return_array["code"] = "";
-		break;
-	case 5:
+			break;
+		case 4:
+			$return_array["code"] = "";
+			break;
+		case 5:
 
-		$query = "SELECT `id`, " .
-			"`text`, " .
-			"`code`, " .
-			"`report_channels` " .
-			"FROM `textblocks` " .
-			"WHERE `id` = " . $message_id . ";";
+			$query = "SELECT `id`, " .
+				"`text`, " .
+				"`code`, " .
+				"`report_channels` " .
+				"FROM `textblocks` " .
+				"WHERE `id` = " . $message_id . ";";
 
-		$result = db_query($query, __FILE__, __LINE__);
-		$row = stripslashes_deep(db_fetch_assoc($result));
-		if (db_num_rows($result) > 0) {
-			if ($row['code'] != "") {
-				$return_array["code"] = $row['code'];
-			} else {
-				$return_array["code"] = get_variable("_api_message_encdg");
+			$result = db_query($query, __FILE__, __LINE__);
+			$row = stripslashes_deep(db_fetch_assoc($result));
+			if (db_num_rows($result) > 0) {
+				if ($row['code'] != "") {
+					$return_array["code"] = $row['code'];
+				} else {
+					$return_array["code"] = get_variable("_api_message_encdg");
+				}
+				if ($row['text'] != "") {
+					$return_array["text"] = $row['text'];
+				}
 			}
-			if ($row['text'] != "") {
-				$return_array["text"] = $row['text'];
-			}
-		}
-		break;
-	case 6:
-		break;
-	default:
+			break;
+		case 6:
+			break;
+		default:
 	}
 	return $return_array;
 }
@@ -532,43 +532,43 @@ function set_api_availability($api_type = "api", $available = "true", $code = ""
 		}
 	} else {
 		switch ($code) {
-		case $connection_test_array['source_success_code']:
-			$code = "success";
-			break;
-		case $connection_test_array['source_warning_code']:
-			$code = "warning";
-			break;
-		case $connection_test_array['source_error_code']:
-			$code = "error";
-			break;
-		default:
-			$code = "";
-		}
-		if (($code != "") || (($code == "") && ($availability_array['available'] != "true"))) {
-			$availability_array['available'] = "true";
-			$current_state = $availability_array['timestamp_current_state'];
-			$last_retry = $availability_array['timestamp_last_retry'];
-			if ($current_state == "2017-01-01 00:00:00") {
-			$current_state = $last_retry = mysql_datetime();
+			case $connection_test_array['source_success_code']:
+				$code = "success";
+				break;
+			case $connection_test_array['source_warning_code']:
+				$code = "warning";
+				break;
+			case $connection_test_array['source_error_code']:
+				$code = "error";
+				break;
+			default:
+				$code = "";
 			}
+			if (($code != "") || (($code == "") && ($availability_array['available'] != "true"))) {
+				$availability_array['available'] = "true";
+				$current_state = $availability_array['timestamp_current_state'];
+				$last_retry = $availability_array['timestamp_last_retry'];
+				if ($current_state == "2017-01-01 00:00:00") {
+					$current_state = $last_retry = mysql_datetime();
+				}
 
-			$query = "UPDATE `settings` " .
-				"SET `value` = '" . $availability_array['available'] . ";" .
-				$current_state . ";" .
-				$last_retry . ";" .
-				$code . ";" .
-				$text . "'" .
-				" WHERE `name` = '" . $setting_name . "';";
-			
-			db_query($query, __FILE__, __LINE__);
-			$availability_array['code'] = $code;
-			$availability_array['text'] = $text;
-			if (($code == "success") && ($availability_array['available'] != "null")) {
-				do_log_connection_changed($api_type, $availability_array, true);
-			}
-			if ((($code == "warning") || ($code == "error") || ($code == "")) && ($availability_array['available'] != "null")) {
-				do_log_connection_changed($api_type, $availability_array, true);
-			}
+				$query = "UPDATE `settings` " .
+					"SET `value` = '" . $availability_array['available'] . ";" .
+					$current_state . ";" .
+					$last_retry . ";" .
+					$code . ";" .
+					$text . "'" .
+					" WHERE `name` = '" . $setting_name . "';";
+				
+				db_query($query, __FILE__, __LINE__);
+				$availability_array['code'] = $code;
+				$availability_array['text'] = $text;
+				if (($code == "success") && ($availability_array['available'] != "null")) {
+					do_log_connection_changed($api_type, $availability_array, true);
+				}
+				if ((($code == "warning") || ($code == "error") || ($code == "")) && ($availability_array['available'] != "null")) {
+					do_log_connection_changed($api_type, $availability_array, true);
+				}
 		}
 	}
 }
@@ -628,18 +628,19 @@ function get_api_availability($api_type = "api") {
 }
 
 function do_api_connection($api_type = "api", $source = "", $destination = "", $code = "", $text_str = "", $lat_lon_str = "", $test = false) {
+	require_once ("./incs/install.inc.php");
 	$connection_host = "";
 	$connection_parameter = array ();
 	switch ($api_type) {
-	case "api":
-	case "api_test":
-		$connection_host = get_variable("_api_destination_host");
-		break;
-	case "phone":
-	case "phone_test":
-		$connection_host = get_variable("_api_phone_host");
-		break;
-	default:
+		case "api":
+		case "api_test":
+			$connection_host = get_variable("_api_destination_host");
+			break;
+		case "phone":
+		case "phone_test":
+			$connection_host = get_variable("_api_phone_host");
+			break;
+		default:
 	}
 	$connection_parameter = parse_url($connection_host);
 	if (!isset ($connection_parameter["scheme"])) {

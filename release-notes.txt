@@ -1,11 +1,11 @@
-@version 22.10.1
+@version 24.04.1
 
 * Tested platforms
 
-	- Windows 10 Pro (VLSC)
-		- Database:      10.4.27-MariaDB
-		- Webserver:     Apache/2.4.54 (Win64) OpenSSL/1.1.1p
-		- PHP:           8.2.0
+	- Windows 11 Pro
+		- Database:      5.5.59-MariaDB
+		- Webserver:     lighttpd/1.4.48
+		- PHP:           7.2.3
 		- Graphics mode: 1920 x 1080 (16:9)
 		- Browser:       Firefox 112.0.1, Zoom: 120%
 						 Google Chrome 112.0.5615.138, Zoom: 125%
@@ -13,10 +13,10 @@
 	- Ubuntu 22.04 LTS
 		- Database:      10.6.12-MariaDB
 		- Webserver:     Apache/2.4.52
-		- PHP:           8.2.4
+		- PHP:           8.2.10
 		- Graphics mode: 1920 x 1080 (16:9)
-		- Browser:       Firefox 112.0, Zoom: 120%
-						 Chromium 112.0.5615.49, Zoom 125%
+		- Browser:       Firefox 117.0, Zoom: 120%
+						 Chromium 116.0.5845.140, Zoom 125%
 
 Activities sorted by application function.
 
@@ -25,15 +25,19 @@ Activities sorted by application function.
 		Change popup to top notice Danger No Server Connection
 * Situation
 	NONE
+	NONE
 * Callboard
+	NONE
 	NONE
 * Communication
 	NONE
 * Ticket - new
 	NONE
+	NONE
 * Ticket - update
 	NONE
 * Ticket - report
+	NONE
 	NONE
 * Ticket - close
 	NONE
@@ -43,11 +47,15 @@ Activities sorted by application function.
 	NONE
 * Ticket - dispatch
 	NONE
+	NONE
 * Ticket - disposition
+	NONE
 	NONE
 * Log report
 	NONE
+	NONE
 * Units - overview
+	NONE
 	NONE
 * Units - new
 	NONE
@@ -55,120 +63,107 @@ Activities sorted by application function.
 	NONE
 * Facilities - overview
 	NONE
+	NONE
 * Facilities - new
 	NONE
 * Facilities - update
 	NONE
 * Reports
 	NONE
+	NONE
 * Settings - overview
 	NONE
+	NONE
 * Settings - user accounts - User accounts
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - own account
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - new
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - user accounts - in-/export
+	NONE
 	NONE
 * Settings - general - notification sounds
 	NONE
+	NONE
 * Settings - general - General Settings
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - ticket name
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - API
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - fixmessage
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - general - in-/export
 	NONE
+	NONE
 * Settings - facilities - put on the same status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - categorie
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - facilities - in-/export
 	NONE
+	NONE
 * Settings - units - put on the same status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - units - categorie
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - units - status
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - areas (menu item hidden)
 	NONE
 * Settings - units - in-/export
 	NONE
+	NONE
 * Settings - incident types - incident types
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - incident types - default incident types
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - incident types - in-/export
 	NONE
+	NONE
 * Settings - textblocks - synopsis
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - comments
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - actions
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - disposition
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - close comments
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - log report
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - messages
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - default-textblocks
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - textblocks - in-/export
 	NONE
+	NONE
 * Settings - captions and hints - captions
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - captions and hints - hints
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - captions and hints - in-/export
 	NONE
+	NONE
 * Settings - database and updates - optimize
-	CHANGE
-		Button submit with ajax
+	NONE
 * Settings - database and updates - reset
-	CHANGE
-		Form submit with ajax
+	NONE
 * Settings - database and updates - updates
+	NONE
 	NONE
 * Settings - system information
 	NONE
 * Installation
 	NONE
+	NONE
 * Configuration wizard
+	NONE
 	NONE
 * Program code and miscellaneous
 	NONE

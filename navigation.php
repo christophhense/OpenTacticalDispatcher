@@ -17,14 +17,14 @@ $moment_date_format = php_to_moment(get_variable("date_format"));
 $connection_test_array = get_connection_test_configuration();
 $parking_form_data_settings = explode(",", get_variable("parking_form_data"));
 switch ($callboard_enabled) {
-case 0:
-	$display_callboard_str = "display: none;";
-	break;
-case 1:
-	$display_callboard_str = "display: inline-block;";
-	break;
-default:
-	$display_callboard_str = "display: none;";
+	case 0:
+		$display_callboard_str = "display: none;";
+		break;
+	case 1:
+		$display_callboard_str = "display: inline-block;";
+		break;
+	default:
+		$display_callboard_str = "display: none;";
 }
 $audio_sources_str = "";
 $sound_names_array = get_sound_array();
@@ -432,7 +432,6 @@ foreach ($sound_names_array as $value) {
 					}
 					if (get_infos_array['screen']['reset_button'] !== undefined && 
 						current_button_id != get_infos_array['screen']['reset_button']) {
-						console.log("Blinken abschalten");
 						highlight_button(get_infos_array['screen']['reset_button'], true);
 					}
 					if (current_main_script == "situation" && situation_type != "tickets_scheduled" && situation_type != "tickets_closed" && (
@@ -485,12 +484,12 @@ foreach ($sound_names_array as $value) {
 					change_class(current_button_id, "btn btn-xs btn-default");
 					change_class(button_id, "btn btn-xs btn-primary");
 					switch (button_id) {
-					case "situation":
-					case "communication":
-						send_request("./set_data.php?function=screen&reset_button=" + button_id + 
-							"&screen_id=" + page_screen_id, no_callback);
-						break;
-					default:
+						case "situation":
+						case "communication":
+							send_request("./set_data.php?function=screen&reset_button=" + button_id + 
+								"&screen_id=" + page_screen_id, no_callback);
+							break;
+						default:
 					}
 					current_button_id = button_id;
 				} else {
@@ -537,23 +536,23 @@ foreach ($sound_names_array as $value) {
 //========== misc
 			function show_message(message, appearance) {
 				switch (appearance) {
-				case "primary":
-					$("#infostring_top").removeClass().addClass("label label-primary");
-					break;
-				case "success":
-					$("#infostring_top").removeClass().addClass("label label-success");
-					break;
-				case "info":
-					$("#infostring_top").removeClass().addClass("label label-info");
-					break;
-				case "warning":
-					$("#infostring_top").removeClass().addClass("label label-warning");
-					break;
-				case "danger":
-					$("#infostring_top").removeClass().addClass("label label-danger");
-					break;
-				default:
-					$("#infostring_top").removeClass().addClass("label label-default");
+					case "primary":
+						$("#infostring_top").removeClass().addClass("label label-primary");
+						break;
+					case "success":
+						$("#infostring_top").removeClass().addClass("label label-success");
+						break;
+					case "info":
+						$("#infostring_top").removeClass().addClass("label label-info");
+						break;
+					case "warning":
+						$("#infostring_top").removeClass().addClass("label label-warning");
+						break;
+					case "danger":
+						$("#infostring_top").removeClass().addClass("label label-danger");
+						break;
+					default:
+						$("#infostring_top").removeClass().addClass("label label-default");
 				}
 				$("#infostring_top").html(message);
 				setTimeout("$('#infostring_top').html('');", 1500);
@@ -579,23 +578,23 @@ foreach ($sound_names_array as $value) {
 
 			function show_communication_message(message, appearance) {
 				switch (appearance) {
-				case "primary":
-					$("#communicationstring_top").removeClass().addClass("label label-primary");
-					break;
-				case "success":
-					$("#communicationstring_top").removeClass().addClass("label label-success");
-					break;
-				case "info":
-					$("#communicationstring_top").removeClass().addClass("label label-info");
-					break;
-				case "warning":
-					$("#communicationstring_top").removeClass().addClass("label label-warning");
-					break;
-				case "danger":
-					$("#communicationstring_top").removeClass().addClass("label label-danger");
-					break;
-				default:
-					$("#communicationstring_top").removeClass().addClass("label label-default");
+					case "primary":
+						$("#communicationstring_top").removeClass().addClass("label label-primary");
+						break;
+					case "success":
+						$("#communicationstring_top").removeClass().addClass("label label-success");
+						break;
+					case "info":
+						$("#communicationstring_top").removeClass().addClass("label label-info");
+						break;
+					case "warning":
+						$("#communicationstring_top").removeClass().addClass("label label-warning");
+						break;
+					case "danger":
+						$("#communicationstring_top").removeClass().addClass("label label-danger");
+						break;
+					default:
+						$("#communicationstring_top").removeClass().addClass("label label-default");
 				}
 				if ($("#communicationstring_top").text() != message) {
 					clearTimeout(communication_message_timeout);
@@ -716,18 +715,22 @@ foreach ($sound_names_array as $value) {
 				send_request("./get_data.php?request=" + Math.floor(Math.random() * 99999999) + 
 					"&screen_id=" + last_infos_array['screen']['screen_id'], refresh_latest_infos)
 				do_api_connection_test(false, "");
+				var show_dispatch_buttons = "none";
 				switch (user_level) {
-				case "0":
-					$("#level").html("<?php print get_text("permission_super");?>");
-					break;
-				case "1":
-					$("#level").html("<?php print get_text("permission_admin");?>");
-					break;
-				case "2":
-					$("#level").html("<?php print get_text("permission_operator");?>");
-					break;
-				default:
-					$("#level").html("<?php print get_text("permission_guest");?>");
+					case "0":
+						$("#level").html("<?php print get_text("permission_super");?>");
+						show_dispatch_buttons = "inline";
+						break;
+					case "1":
+						$("#level").html("<?php print get_text("permission_admin");?>");
+						show_dispatch_buttons = "inline";
+						break;
+					case "2":
+						$("#level").html("<?php print get_text("permission_operator");?>");
+						show_dispatch_buttons = "inline";
+						break;
+					default:
+						$("#level").html("<?php print get_text("permission_guest");?>");
 				}
 				if (user_name !== undefined && user_name != "") {
 					$("#logged_in").html(user_name);
@@ -737,12 +740,10 @@ foreach ($sound_names_array as $value) {
 				$("#timeout_info").css("display", "inline");
 				$("#day_night").css("display", "inline");
 				$("#date_time").css("display", "inline");
-				if ((user_level != 0) && (user_level != 1) &&  (user_level != 2)) {
-					$("#add_ticket").css("display", "none");
-					$("#units").css("display", "none");
-					$("#facilities").css("display", "none");
-					$("#communication").css("display", "none");
-				}
+				$("#add_ticket").css("display", show_dispatch_buttons);
+				$("#units").css("display", show_dispatch_buttons);
+				$("#facilities").css("display", show_dispatch_buttons);
+				$("#communication").css("display", show_dispatch_buttons);
 				is_logged_in = true;
 				window.parent.callboard.location.href = "callboard.php";
 				window.parent.main.location.href="situation.php?screen_id=" + last_infos_array['screen']['screen_id'];
@@ -774,150 +775,150 @@ foreach ($sound_names_array as $value) {
 
 			function do_changes(get_changes_array) {
 				switch (get_changes_array["type"]) {
-				case "message":
-					show_message(get_changes_array["action"], get_changes_array["item"]);
-					break;
-				case "current_script":
-					current_main_script = get_changes_array["action"];
-					switch (current_main_script) {
-					case "situation":
-					case "dispatch":
-					case "ticket_report":
-					case "dispatch_text":
-					case "ticket_edit":
-					case "ticket_close":
-					case "action":
-						highlight_button("situation")
+					case "message":
+						show_message(get_changes_array["action"], get_changes_array["item"]);
 						break;
-					case "communication_send":
-					case "communication_receive":
-						highlight_button("communication")
+					case "current_script":
+						current_main_script = get_changes_array["action"];
+						switch (current_main_script) {
+							case "situation":
+							case "dispatch":
+							case "ticket_report":
+							case "dispatch_text":
+							case "ticket_edit":
+							case "ticket_close":
+							case "action":
+								highlight_button("situation")
+								break;
+							case "communication_send":
+							case "communication_receive":
+								highlight_button("communication")
+								break;
+							case "ticket_add":
+								highlight_button("add_ticket")
+								break;
+							case "log_report":
+								highlight_button("log_report")
+								break;
+							case "units":
+							case "units_add":
+							case "units_edit":
+								highlight_button("units")
+								break;
+							case "facilities":
+							case "facilities_add":
+							case "facilities_edit":
+								highlight_button("facilities")
+								break;
+							case "reports":
+								highlight_button("reports")
+								break;
+							case "configuration":
+								highlight_button("configuration")
+								break;
+							default:
+						}
 						break;
-					case "ticket_add":
-						highlight_button("add_ticket")
+					case "script":
+						switch (get_changes_array["item"]) {
+							case "callboard":
+								window.parent.callboard.location.href="callboard.php";
+								break;
+							case "main":
+								window.parent.main.location.href=get_changes_array["action"];
+								break;
+							default:
+						}
 						break;
-					case "log_report":
-						highlight_button("log_report")
+					case "function":
+						switch (get_changes_array["item"]) {
+							case "test_audio":
+								test_audio(get_changes_array["action"]);
+								break;
+							case "start_polling":
+								start_polling();
+								break;
+							case "stop_polling":
+								stop_polling();
+								break;
+							case "window_location_reload":
+								window.location.reload();
+								break;
+							default:
+						}
 						break;
-					case "units":
-					case "units_add":
-					case "units_edit":
-						highlight_button("units")
-						break;
-					case "facilities":
-					case "facilities_add":
-					case "facilities_edit":
-						highlight_button("facilities")
-						break;
-					case "reports":
-						highlight_button("reports")
-						break;
-					case "configuration":
-						highlight_button("configuration")
+					case "set_parked_form_data":
+						switch (get_changes_array["item"]) {
+							case "ticket_add_form_data":
+								ticket_add_form_data = get_changes_array["ticket_add_form_data"];
+								break;
+							case "ticket_add_timestamp":
+								ticket_add_timestamp = get_changes_array["action"];
+								break;
+							case "ticket_add_ticket_id":
+								ticket_add_ticket_id = get_changes_array["action"];
+								break;
+							case "ticket_close_form_data":
+								ticket_close_form_data[get_changes_array["action"]] = get_changes_array["ticket_close_form_data"];
+								break;
+							case "ticket_close_timestamp":
+								ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+								break;
+							case "ticket_close_delete":
+								ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
+								ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
+								break;
+							case "action_form_data":
+								action_form_data[get_changes_array["action"]] = get_changes_array["action_form_data"];
+								break;
+							case "action_timestamp":
+								action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
+								break;
+							case "action_delete":
+								action_form_data[get_changes_array["action"]] = (function () {return;})();
+								action_timestamp[get_changes_array["action"]] = (function () {return;})();
+								break;
+							case "log_report_form_data":
+								log_report_form_data = get_changes_array["log_report_form_data"];
+								break;
+							case "log_report_timestamp":
+								log_report_timestamp = get_changes_array["action"];
+								break;
+							default:
+						}
 						break;
 					default:
-					}
-					break;
-				case "script":
-					switch (get_changes_array["item"]) {
-					case "callboard":
-						window.parent.callboard.location.href="callboard.php";
-						break;
-					case "main":
-						window.parent.main.location.href=get_changes_array["action"];
-						break;
-					default:
-					}
-					break;
-				case "function":
-					switch (get_changes_array["item"]) {
-					case "test_audio":
-						test_audio(get_changes_array["action"]);
-						break;
-					case "start_polling":
-						start_polling();
-						break;
-					case "stop_polling":
-						stop_polling();
-						break;
-					case "window_location_reload":
-						window.location.reload();
-						break;
-					default:
-					}
-					break;
-				case "set_parked_form_data":
-					switch (get_changes_array["item"]) {
-					case "ticket_add_form_data":
-						ticket_add_form_data = get_changes_array["ticket_add_form_data"];
-						break;
-					case "ticket_add_timestamp":
-						ticket_add_timestamp = get_changes_array["action"];
-						break;
-					case "ticket_add_ticket_id":
-						ticket_add_ticket_id = get_changes_array["action"];
-						break;
-					case "ticket_close_form_data":
-						ticket_close_form_data[get_changes_array["action"]] = get_changes_array["ticket_close_form_data"];
-						break;
-					case "ticket_close_timestamp":
-						ticket_close_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
-						break;
-					case "ticket_close_delete":
-						ticket_close_form_data[get_changes_array["action"]] = (function () {return;})();
-						ticket_close_timestamp[get_changes_array["action"]] = (function () {return;})();
-						break;
-					case "action_form_data":
-						action_form_data[get_changes_array["action"]] = get_changes_array["action_form_data"];
-						break;
-					case "action_timestamp":
-						action_timestamp[get_changes_array["action"]] = get_changes_array["datetime"];
-						break;
-					case "action_delete":
-						action_form_data[get_changes_array["action"]] = (function () {return;})();
-						action_timestamp[get_changes_array["action"]] = (function () {return;})();
-						break;
-					case "log_report_form_data":
-						log_report_form_data = get_changes_array["log_report_form_data"];
-						break;
-					case "log_report_timestamp":
-						log_report_timestamp = get_changes_array["action"];
-						break;
-					default:
-					}
-					break;
-				default:
 				}
 				get_changes_array = "undefined";
 			}
 
 			function show_main(site) {
 				switch (site) {
-				case "situation":
-					do_changes({"type":"script", "item":"main", "action":"situation.php?screen_id=" + last_infos_array['screen']['screen_id']});
-					break;
-				case "communication":
-					do_changes({"type":"script", "item":"main", "action":"communication.php"});
-					break;
-				case "add_ticket":
-					do_changes({"type":"script", "item":"main", "action":"ticket_add.php"});
-					break;
-				case "log":
-					do_changes({"type":"script", "item":"main", "action":"log_report.php"});
-					break;
-				case "units":
-					do_changes({"type":"script", "item":"main", "action":"units.php"});
-					break;
-				case "facilities":
-					do_changes({"type":"script", "item":"main", "action":"facilities.php"});
-					break;
-				case "reports":
-					do_changes({"type":"script", "item":"main", "action":"reports.php"});
-					break;
-				case "configuration":
-					do_changes({"type":"script", "item":"main", "action":"configuration.php"});
-					break;
-				default:
+					case "situation":
+						do_changes({"type":"script", "item":"main", "action":"situation.php?screen_id=" + last_infos_array['screen']['screen_id']});
+						break;
+					case "communication":
+						do_changes({"type":"script", "item":"main", "action":"communication.php"});
+						break;
+					case "add_ticket":
+						do_changes({"type":"script", "item":"main", "action":"ticket_add.php"});
+						break;
+					case "log":
+						do_changes({"type":"script", "item":"main", "action":"log_report.php"});
+						break;
+					case "units":
+						do_changes({"type":"script", "item":"main", "action":"units.php"});
+						break;
+					case "facilities":
+						do_changes({"type":"script", "item":"main", "action":"facilities.php"});
+						break;
+					case "reports":
+						do_changes({"type":"script", "item":"main", "action":"reports.php"});
+						break;
+					case "configuration":
+						do_changes({"type":"script", "item":"main", "action":"configuration.php"});
+						break;
+					default:
 				}
 			}
 
