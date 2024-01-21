@@ -19,8 +19,6 @@ $auto_poll_time = trim($auto_poll_settings[0]);
 $function = "";
 if (isset ($_GET["function"])) {
 	$function = $_GET["function"];
-if (isset ($_GET["function"])) {
-	$function = $_GET["function"];
 }
 if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0)) {
 	$current_user_id = "0";
@@ -90,10 +88,10 @@ switch ($function) {
 		} else {
 			$json_screen["day_night"] = "day";
 		}
-		$number_of_screens = 0;
+	$number_of_screens = 0;
 		$_SESSION["screens"][$_GET["screen_id"]] = date("U");
 		foreach ($_SESSION["screens"] as $key => $value) {
-		$number_of_screens++;
+			$number_of_screens++;
 			if (date("U") - $value > (ceil(($auto_poll_time * 200) / 1000))) {
 				unset ($_SESSION["screens"][$key]);
 			}
@@ -102,11 +100,10 @@ switch ($function) {
 		$json_screen["screen_list"] = $_SESSION["screens"];
 		$json_screen["first_screen"] = "off";
 		if ((isset ($_SESSION["first_screen"])) && ($_SESSION["first_screen"] == $_GET["screen_id"])) {
-		if ((isset ($_SESSION["first_screen"])) && ($_SESSION["first_screen"] == $_GET["screen_id"])) {
 			$json_screen["first_screen"] = "on";
 			$_SESSION["first_screen_timestamp"] = date("U");
 		} else {
-			if ((!isset ($_SESSION["first_screen_timestamp"])) || (date("U") - $_SESSION['first_screen_timestamp'] > (ceil(($auto_poll_time * 200) / 1000)))) {
+			if ((!isset ($_SESSION["first_screen_timestamp"])) || (date("U") - $_SESSION["first_screen_timestamp"] > (ceil(($auto_poll_time * 200) / 1000)))) {
 				$_SESSION["first_screen"] = $_GET["screen_id"];
 				$_SESSION["first_screen_timestamp"] = date("U");
 				$json_screen["first_screen"] = "on";
@@ -119,11 +116,6 @@ switch ($function) {
 			$json_screen["situation_type"] = $_SESSION["screen_id_" . $_GET["screen_id"]]["situation_type"];
 		}
 		//========== User
-		if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0) && ($rows_affected == 1) && ($row["expires"] > mysql_datetime(time()))) {
-			foreach ($_SESSION["reset_button"] as $key => $value) {
-				if ($key == $_GET["screen_id"]) {
-					$json_screen["reset_button"] = $value;
-					unset ($_SESSION["reset_button"][$key]);
 		if ((isset ($_SESSION["user_id"])) && ($_SESSION["user_id"] > 0) && ($rows_affected == 1) && ($row["expires"] > mysql_datetime(time()))) {
 			foreach ($_SESSION["reset_button"] as $key => $value) {
 				if ($key == $_GET["screen_id"]) {
