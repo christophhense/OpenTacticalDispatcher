@@ -49,7 +49,9 @@ Activities sorted by application function.
 	NONE
 * Ticket - close
 	NONE
-* Ticket - action
+* Ticket - new action
+	NONE
+* Ticket - update action
 	NONE
 * Ticket - dispatch
 	NONE
