@@ -25,19 +25,15 @@ Activities sorted by application function.
 		Change popup to top notice Danger No Server Connection
 * Situation
 	NONE
-	NONE
 * Callboard
-	NONE
 	NONE
 * Communication
 	NONE
 * Ticket - new
 	NONE
-	NONE
 * Ticket - update
 	NONE
 * Ticket - report
-	NONE
 	NONE
 * Ticket - close
 	NONE
@@ -47,15 +43,11 @@ Activities sorted by application function.
 	NONE
 * Ticket - dispatch
 	NONE
-	NONE
 * Ticket - disposition
-	NONE
 	NONE
 * Log report
 	NONE
-	NONE
 * Units - overview
-	NONE
 	NONE
 * Units - new
 	NONE
@@ -63,16 +55,13 @@ Activities sorted by application function.
 	NONE
 * Facilities - overview
 	NONE
-	NONE
 * Facilities - new
 	NONE
 * Facilities - update
 	NONE
 * Reports
 	NONE
-	NONE
 * Settings - overview
-	NONE
 	NONE
 * Settings - user accounts - User accounts
 	NONE
@@ -82,9 +71,7 @@ Activities sorted by application function.
 	NONE
 * Settings - user accounts - in-/export
 	NONE
-	NONE
 * Settings - general - notification sounds
-	NONE
 	NONE
 * Settings - general - General Settings
 	NONE
@@ -96,7 +83,6 @@ Activities sorted by application function.
 	NONE
 * Settings - general - in-/export
 	NONE
-	NONE
 * Settings - facilities - put on the same status
 	NONE
 * Settings - facilities - categorie
@@ -104,7 +90,6 @@ Activities sorted by application function.
 * Settings - facilities - status
 	NONE
 * Settings - facilities - in-/export
-	NONE
 	NONE
 * Settings - units - put on the same status
 	NONE
@@ -116,13 +101,11 @@ Activities sorted by application function.
 	NONE
 * Settings - units - in-/export
 	NONE
-	NONE
 * Settings - incident types - incident types
 	NONE
 * Settings - incident types - default incident types
 	NONE
 * Settings - incident types - in-/export
-	NONE
 	NONE
 * Settings - textblocks - synopsis
 	NONE
@@ -142,13 +125,11 @@ Activities sorted by application function.
 	NONE
 * Settings - textblocks - in-/export
 	NONE
-	NONE
 * Settings - captions and hints - captions
 	NONE
 * Settings - captions and hints - hints
 	NONE
 * Settings - captions and hints - in-/export
-	NONE
 	NONE
 * Settings - database and updates - optimize
 	NONE
@@ -156,14 +137,11 @@ Activities sorted by application function.
 	NONE
 * Settings - database and updates - updates
 	NONE
-	NONE
 * Settings - system information
 	NONE
 * Installation
 	NONE
-	NONE
 * Configuration wizard
-	NONE
 	NONE
 * Program code and miscellaneous
 	NONE
