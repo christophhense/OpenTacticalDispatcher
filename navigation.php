@@ -1001,7 +1001,7 @@ foreach ($sound_names_array as $value) {
 						onclick="show_main('situation');"><?php print get_text("Situation");?></button>
 					<button id="callboard" class="btn btn-xs btn-default" accesskey="t" 
 						onclick="show_hide_callboard();" style="<?php print $display_callboard_str;?>"><?php print get_text("Board");?></button>
-					<button id="communication" class="btn btn-xs btn-default btn-blink" accesskey="r" 
+					<button id="communication" class="btn btn-xs btn-default btn-blink" accesskey="w" 
 						onclick="show_main('communication');"><?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
 					</button>

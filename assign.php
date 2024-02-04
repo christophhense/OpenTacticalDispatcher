@@ -708,17 +708,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id;?>&screen_id=' + screen_id_main);" tabindex=9><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('<?php print $url_back;?>?ticket_id=<?php print $ticket_id;?>&screen_id=' + screen_id_main);" tabindex=9><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="do_reset();" tabindex=8><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="do_reset();" tabindex=8><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_assign_form();" tabindex=7><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_assign_form();" tabindex=7><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div style="margin-top: 20px;">

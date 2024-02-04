@@ -279,17 +279,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'];?>');" tabindex=5><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('ticket_edit.php?ticket_id=<?php print $_GET['ticket_id'];?>');" tabindex=5><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="set_parked_form_data(); document.ticket_close_form.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="set_parked_form_data(); document.ticket_close_form.reset(); do_lock_readonly('problemend');" tabindex=4><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_close_form();" tabindex=3><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_ticket_close_form();" tabindex=3><?php print get_text("Save");?></button>
 									</div>
 								</div>
 							</div>

@@ -248,17 +248,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.own_profile_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.own_profile_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_profile();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_profile();"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 							</div>
@@ -343,18 +343,18 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<?php if (is_admin() || is_super()) { ?>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.user_add_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.user_add_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_add_form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_user(document.user_add_form);"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<?php } ?>
@@ -643,17 +643,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>	
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.user_edit_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.user_edit_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_user(document.user_edit_form);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_user(document.user_edit_form);" <?php print $save_disabled;?>><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 20px;">
@@ -783,7 +783,7 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 		<?php
@@ -791,17 +791,17 @@ switch ($function) {
 		?>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.audio_files_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.audio_files_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('audio_files_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('audio_files_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_audio");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_audio");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 		<?php
@@ -881,22 +881,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.settings_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.settings_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('settings_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onClick="send_configuration_form('settings_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_settings");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_settings");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -1110,22 +1110,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.incident_number_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.incident_number_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_inc_num(this.form);"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_inc_num(this.form);"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_names");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_names");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -1296,22 +1296,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.api_config_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.api_config_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="submit_api_settings();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="submit_api_settings();"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_api_settings");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_api_settings");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -1646,17 +1646,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('set_facilities_common_status_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('set_facilities_common_status_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_common_status");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_common_status");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -1768,22 +1768,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.facility_types_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.facility_types_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_types_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onClick="send_configuration_form('facility_types_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_category");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_category");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -1985,22 +1985,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.facility_status_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.facility_status_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="send_configuration_form('facility_status_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onClick="send_configuration_form('facility_status_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_status_value");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_facilities_status_value");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -2333,17 +2333,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('set_units_common_status_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('set_units_common_status_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_common_status");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_common_status");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -2455,22 +2455,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.unit_types_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.unit_types_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_types_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('unit_types_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_category");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_category");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -2645,22 +2645,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.unit_status_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.unit_status_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('unit_status_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('unit_status_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_status_value");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_units_status_value");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -2844,17 +2844,17 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.regions.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.regions.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.regions.submit();"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onClick="document.regions.submit();"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 							</div>
@@ -3371,7 +3371,7 @@ switch ($function) {
 						<div style="padding: 20px; border:1px outset #FFFFFF; position: relative; background-color: #F8F8F8;">
 							<b><?php print get_text("Reset all resources back to first Region?");?></b><br>
 							<br><br>
-							<button onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
+							<button accesskey="c" onclick="window.location.href='configuration.php';"><?php print get_text("Cancel");?></button>
 							<button type="submit"><?php print get_text("Reset");?></button>
 							<br><br>
 						</div>
@@ -3471,22 +3471,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.incident_types_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.incident_types_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('incident_types_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('incident_types_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_types");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_incident_types");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -3780,22 +3780,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.textblocks_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.textblocks_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('textblocks_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('textblocks_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_fixtexts");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_fixtexts");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -4009,22 +4009,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="document.captions_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.captions_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('captions_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('captions_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_captions");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_captions");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -4109,22 +4109,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="document.hints_form.reset();"><?php print get_text("Reset");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="r" onClick="document.hints_form.reset();"><?php print get_text("Reset");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="send_configuration_form('hints_form');"><?php print get_text("Save");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="send_configuration_form('hints_form');"><?php print get_text("Save");?></button>
 								</div>
 							</div>
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_hints");?>');"><?php print get_text("Helptext");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("set_hints");?>');"><?php print get_text("Helptext");?></button>
 								</div>
 							</div>
 						</div>
@@ -4228,22 +4228,22 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="document.reset_form.reset();"><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.reset_form.reset();"><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px;" onclick="send_configuration_form('reset_form');"><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" style="margin-top: 10px;" onclick="send_configuration_form('reset_form');"><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("db_reset");?>');"><?php print get_text("Helptext");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("db_reset");?>');"><?php print get_text("Helptext");?></button>
 									</div>
 								</div>
 							</div>
@@ -4762,12 +4762,12 @@ switch ($function) {
 								<div class="container-fluid" style="position: fixed;">
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('configuration.php');"><?php print get_text("Cancel");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("Updates");?>');"><?php print get_text("Helptext");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="i" onClick="show_infobox('<?php print get_text("Helptext");?>', '<?php print get_help_text("Updates");?>');"><?php print get_text("Helptext");?></button>
 										</div>
 									</div>
 								</div>
@@ -4946,7 +4946,7 @@ switch ($function) {
 								</div>
 							</div>
 							<div class="modal-footer">
-								<!--<button id="update_cancel_button" type="button" class="btn btn-default" onclick="$('#update_infobox').modal('hide');"><?php print get_text("Cancel");?></button>	-->
+								<!--<button id="update_cancel_button" type="button" class="btn btn-default" accesskey="c" onclick="$('#update_infobox').modal('hide');"><?php print get_text("Cancel");?></button>	-->
 							</div>
 						</div>
 					</div>
@@ -5012,7 +5012,7 @@ switch ($function) {
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 						</div>

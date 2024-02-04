@@ -341,18 +341,18 @@ switch ($function) {
 								<div class="container-fluid" style="position: fixed; z-index: 1000;">
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
+											<button type="button" class="btn btn-xs btn-default" tabindex=21 accesskey="c" onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facility_add_form').trigger('reset');"><?php print get_text("Reset");?></button>
+											<button type="button" class="btn btn-xs btn-default" tabindex=22 accesskey="r" onclick="$('#facility_add_form').trigger('reset');"><?php print get_text("Reset");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
 											<div<?php print get_help_text_str("_save_and_copy");?> class="btn-group">
-												<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_facility_form('#facility_add_form', '');"><?php print get_text("Save");?></button>
+												<button type="button" class="btn btn-xs btn-default" tabindex=23 accesskey="s" onclick="submit_facility_form('#facility_add_form', '');"><?php print get_text("Save");?></button>
 												<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 												</button>
@@ -559,12 +559,12 @@ switch ($function) {
 								<div class="container-fluid" style="position: fixed; z-index: 1000;">
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" tabindex=21 onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
+											<button type="button" class="btn btn-xs btn-default" tabindex=21 accesskey="c" onclick="goto_window('facilities.php');"><?php print get_text("Cancel");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" tabindex=22 onclick="$('#facility_edit_form').trigger('reset');"><?php print get_text("Reset");?></button>
+											<button type="button" class="btn btn-xs btn-default" tabindex=22 accesskey="r" onclick="$('#facility_edit_form').trigger('reset');"><?php print get_text("Reset");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
@@ -573,7 +573,7 @@ switch ($function) {
 											<?php if ($copy_button == true) { ?>
 												<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="copy_facility_form();"><?php print get_text("Copy dataset");?></button>
 											<?php } else { ?>
-												<button type="button" class="btn btn-xs btn-default" tabindex=23 onclick="submit_facility_form('#facility_edit_form', '');"><?php print get_text("Save");?></button>
+												<button type="button" class="btn btn-xs btn-default" tabindex=23 accesskey="s" onclick="submit_facility_form('#facility_edit_form', '');"><?php print get_text("Save");?></button>
 												<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 												</button>
@@ -778,7 +778,7 @@ switch ($function) {
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 			<?php

@@ -10,6 +10,7 @@ if (isset ($_GET['ticket_id'])) {
 	$ticket_id = $_GET['ticket_id'];
 }
 $back_button_lable = get_text("Back");
+$back_button_accesskey = "b";
 $back_button_click_str = "ticket_edit.php?ticket_id=" . $ticket_id;
 $function = "";
 if (isset ($_GET['function'])) {
@@ -23,6 +24,7 @@ if ($function == "dispatch_text") {
 	$page_name = "Dispatch text";
 	$script_name = "dispatch_text";
 	$back_button_lable = get_text("Next Page");
+	$back_button_accesskey = "y";
 	$back_button_click_str = "situation.php?screen_id=' + new_infos_array['screen']['screen_id'] +'";
 	$back = "situation";
 	if (isset ($_GET['back'])) {
@@ -30,6 +32,7 @@ if ($function == "dispatch_text") {
 	}
 	if ($back == "ticket") {
 		$back_button_lable = get_text("Back");
+		$back_button_accesskey = "b";
 		$back_button_click_str = "ticket_edit.php?ticket_id=" . $ticket_id;
 	}
 }
@@ -89,12 +92,12 @@ if (is_guest()) {
 					<div id="button_container" class="container-fluid hidden-print" style="position: fixed;">
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="goto_window('<?php print $back_button_click_str;?>');" tabindex=2><?php print $back_button_lable;?></button>
+								<button type="button" class="btn btn-xs btn-default" accesskey="<?php print $back_button_accesskey;?>" onclick="goto_window('<?php print $back_button_click_str;?>');" tabindex=2><?php print $back_button_lable;?></button>
 							</div>
 						</div>
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-xs btn-default" onclick="window.parent.main.focus(); window.parent.main.print();" tabindex=1><?php print get_text("Print");?></button>
+								<button type="button" class="btn btn-xs btn-default" accesskey="p" onclick="window.parent.main.focus(); window.parent.main.print();" tabindex=1><?php print get_text("Print");?></button>
 							</div>
 						</div>
 					</div>

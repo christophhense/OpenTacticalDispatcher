@@ -580,43 +580,43 @@ switch ($function) {
 							<div class="container-fluid" style="position: fixed;">
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);" tabindex=19><?php print get_text("Cancel");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);" tabindex=19><?php print get_text("Cancel");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="do_reset_edit_form();" tabindex=18><?php print get_text("Reset");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="do_reset_edit_form();" tabindex=18><?php print get_text("Reset");?></button>
 									</div>
 								</div>
 								<div class="row" style="margin-top: 10px;">
 									<div class="col-md-12">
-										<button type="button" class="btn btn-xs btn-default" onclick="validate_ticket_edit_form();" tabindex=17><?php print get_text("Save");?></button>
+										<button type="button" class="btn btn-xs btn-default" accesskey="s" onclick="validate_ticket_edit_form();" tabindex=17><?php print get_text("Save");?></button>
 									</div>
 								</div>
 								<div style="margin-top: 20px;">
 									<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket');" tabindex=16><?php print get_text("Dispatch text");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="m" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>&function=dispatch_text&back=ticket');" tabindex=16><?php print get_text("Dispatch text");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>');" tabindex=15><?php print get_text("Incident Report");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="u" onclick="goto_window('ticket_report.php?ticket_id=<?php print $ticket_id;?>');" tabindex=15><?php print get_text("Incident Report");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('ticket_close.php?ticket_id=<?php print $ticket_id;?>');" tabindex=14><?php print get_text("Close_incident_short");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="z" onclick="goto_window('ticket_close.php?ticket_id=<?php print $ticket_id;?>');" tabindex=14><?php print get_text("Close_incident_short");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=13><?php print get_text("Add Action");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="a" onclick="goto_window('action.php?back=ticket&ticket_id=<?php print $ticket_id . $unit_id_str;?>');" tabindex=13><?php print get_text("Add Action");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;<?php print $buttons_display_str;?>">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('dispatch.php?ticket_id=<?php print $ticket_id;?>');" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="q" onclick="goto_window('dispatch.php?ticket_id=<?php print $ticket_id;?>');" tabindex=12><?php print get_text("Dispatch_Units_short");?></button>
 										</div>
 									</div>
 								</div>

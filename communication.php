@@ -280,17 +280,17 @@ if (is_operator() || is_admin() || is_super()) {
 								<div class="container-fluid" style="position: fixed;">
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_cancel();" tabindex=10><?php print get_text("Cancel");?></button>
+											<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" accesskey="c" onclick="do_cancel();" tabindex=10><?php print get_text("Cancel");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="load_content();" tabindex=9><?php print get_text("Reset");?></button>
+											<button type="button" class="btn btn-xs btn-default" style="min-width: 60px;" accesskey="r" onclick="load_content();" tabindex=9><?php print get_text("Reset");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" onclick="do_send_api_message();" tabindex=8>
+											<button id="send_button" type="button" class="btn btn-xs btn-default" style="min-width: 60px;" accesskey="m" onclick="do_send_api_message();" tabindex=8>
 												<?php print get_text("Send");?>
 											</button>
 										</div>
@@ -486,7 +486,7 @@ if (is_operator() || is_admin() || is_super()) {
 						<div id="button_container" class="container-fluid" style="position: fixed;">
 							<div class="row" style="margin-top: 10px;">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 						</div>

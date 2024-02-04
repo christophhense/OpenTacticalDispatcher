@@ -399,12 +399,12 @@ switch ($function) {
 								<div id="button_container" class="container-fluid" style="position: fixed;">
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="goto_window('situation.php?screen_id=' + new_infos_array['screen']['screen_id']);"><?php print get_text("Cancel");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">
 										<div class="col-md-12">
-											<button type="button" class="btn btn-xs btn-default" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
+											<button type="button" class="btn btn-xs btn-default" accesskey="r" onclick="document.reports_form.reset(); query_changed();"><?php print get_text("Reset");?></button>
 										</div>
 									</div>
 									<div class="row" style="margin-top: 10px;">

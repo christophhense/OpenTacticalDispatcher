@@ -37,75 +37,73 @@ Activities sorted by application function.
 	BUGFIX
 		Avoiding to take over breakspaces to shorttext
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - new
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - update
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - disposition print
 	CHANGE
 		Smaller line spacing
 	FEATURE
 		Attached table of assigned units with additional information instead of comma separated list
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 	ISSUE
 		Network printing is limited to one page and is not available for free-form text
 		No support for line wrapping in network printing, longer text runs off the page
 * Ticket - report
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - close
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - new action
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - update action
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - dispatch
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Ticket - disposition
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
-	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Units - overview
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Units - new
 	CHANGE
 		JS-Code for ajax submit
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Units - update
 	BUGFIX
 		Does not change unit if dispatched
 		Setting new printer if data-service textarea manually cleared
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Facilities - overview
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Facilities - new
 	CHANGE
 		JS-Code for ajax submit
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Facilities - update
 	CHANGE
 		JS-Code for ajax submit
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Reports
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Settings - overview
 	FEATURE
-		Keyboard shortcuts for navigationbar buttons
+		Keyboard shortcuts for navigationbar and site buttons
 * Settings - user accounts - User accounts
 	NONE
 * Settings - user accounts - own account

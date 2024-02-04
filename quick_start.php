@@ -324,7 +324,7 @@ switch ($function) {
 			<div class="row">
 				<div class="col-md-4"></div>
 				<div class="col-md-4">
-					<button class="btn btn-default btn-lg btn-block" onclick="location.href='index.php';"><?php print get_text("Cancel");?></button>
+					<button class="btn btn-default btn-lg btn-block" accesskey="c" onclick="location.href='index.php';"><?php print get_text("Cancel");?></button>
 				</div>
 				<div class="col-md-4"></div>
 			</div>
@@ -499,7 +499,7 @@ switch ($function) {
 						<div class="container-fluid" style="position: fixed;">
 							<div class="row">
 								<div class="col-md-12">
-									<button type="button" class="btn btn-xs btn-default" onclick="window.location.href='index.php';"><?php print get_text("Cancel");?></button>
+									<button type="button" class="btn btn-xs btn-default" accesskey="c" onclick="window.location.href='index.php';"><?php print get_text("Cancel");?></button>
 								</div>
 							</div>
 							<div class="row">

@@ -508,7 +508,7 @@ switch ($function) {
 		<?php
 				if (is_super() || is_admin() || is_operator()) {
 		?>
-										<button id="cancel_button" class="btn btn-xs btn-default" type="button" onclick="cancel_clicked();" style="display: none;"><?php print get_text("Cancel");?></button>
+										<button id="cancel_button" class="btn btn-xs btn-default" type="button" accesskey="c" onclick="cancel_clicked();" style="display: none;"><?php print get_text("Cancel");?></button>
 		<?php
 				}
 		?>
