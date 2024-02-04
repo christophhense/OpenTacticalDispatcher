@@ -79,6 +79,8 @@ switch ($function) {
 			<script src="./js/fileinput_locales/<?php print $language;?>.js" type="text/javascript"></script>
 			<?php print show_day_night_style();?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				function in_array(ary, val) {
 					for (var i = 0; i < ary.length; i++) {
@@ -150,6 +152,7 @@ switch ($function) {
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						try {
 							set_current_infos();
 						} catch(e) {
@@ -164,6 +167,7 @@ switch ($function) {
 		<?php
 		show_infobox("small");
 		show_infobox("large");
+		show_accesskeys();
 }
 switch ($function) {
 	case "profile_update":

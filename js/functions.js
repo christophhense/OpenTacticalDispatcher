@@ -518,8 +518,8 @@ function send_test_audio(sound) {
 	send_post_message(changes_data);
 }
 
-function reload_callboard() {
-	var changes_data = '{"type":"script","item":"callboard","action":""}';
+function reload_callboard(showhide) {
+	var changes_data = '{"type":"script","item":"callboard","action":"' + showhide + '"}';
 	send_post_message(changes_data);
 }
 

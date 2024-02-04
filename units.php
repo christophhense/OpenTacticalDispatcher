@@ -387,11 +387,18 @@ switch ($function) {
 		}
 		?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				$(document).ready(function() {
 					set_cursor_position(frm_handle, $("#frm_handle").val().length);
-					<?php show_prevent_browser_back_button();?>
 					set_window_present("units_add");
+					<?php show_prevent_browser_back_button();?>
+					window.addEventListener("message", function(event) {
+						if (event.origin != window.location.origin) return;
+						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
+					});
 				});
 
 			</script>
@@ -559,6 +566,7 @@ switch ($function) {
 				</form>
 			</div>
 			<?php show_infobox("small");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 		<?php
@@ -604,11 +612,18 @@ switch ($function) {
 		}
 		?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				$(document).ready(function() {
 					set_cursor_position(frm_name, $("#frm_name").val().length);
-					<?php show_prevent_browser_back_button();?>
 					set_window_present("units_edit");
+					<?php show_prevent_browser_back_button();?>
+					window.addEventListener("message", function(event) {
+						if (event.origin != window.location.origin) return;
+						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
+					});
 				});
 
 			</script>
@@ -800,6 +815,7 @@ switch ($function) {
 				</form>
 			</div>
 			<?php show_infobox("small");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 		<?php
@@ -815,6 +831,8 @@ switch ($function) {
 	default:
 		?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				function edit_assign(assign_id) {
 					<?php if (is_operator() || is_admin() || is_super()) { ?>
@@ -846,6 +864,7 @@ switch ($function) {
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						if (new_infos_array['reload_flags']['units']) {
 							if ((current_unit_id !== undefined) && (current_unit_id > 0)) {
 								show_assigns(current_unit_id);
@@ -914,6 +933,7 @@ switch ($function) {
 			</div>
 			<?php show_infobox("small");?>
 			<?php show_infobox("large");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 	<?php

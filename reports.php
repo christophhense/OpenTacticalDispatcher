@@ -281,6 +281,8 @@ switch ($function) {
 			<script src="./js/jquery.highlight-5.closure.js" type="text/javascript"></script>
 			<?php print show_day_night_style();?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				function query_changed() {
 					var error_message = "";
@@ -377,6 +379,7 @@ switch ($function) {
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 					});
 				});
 
@@ -517,6 +520,7 @@ switch ($function) {
 					</form>	
 				</div>
 			<?php show_infobox("small");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 	<?php

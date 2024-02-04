@@ -202,6 +202,7 @@ if (is_operator() || is_admin() || is_super()) {
 		?>
 				<script>
 					var new_infos_array = [];
+					var screen_id_main = 0;
 
 					function do_send_api_message() {
 						var error_message = "";
@@ -257,6 +258,7 @@ if (is_operator() || is_admin() || is_super()) {
 						window.addEventListener("message", function(event) {
 							if (event.origin != window.location.origin) return;
 							new_infos_array = JSON.parse(event.data);
+							screen_id_main = new_infos_array['screen']['screen_id'];
 						});
 					});
 
@@ -305,6 +307,7 @@ if (is_operator() || is_admin() || is_super()) {
 						</div>
 					</form>
 				</div>
+				<?php show_accesskeys();?>
 			</body>
 		</html>
 		<?php
@@ -314,6 +317,7 @@ if (is_operator() || is_admin() || is_super()) {
 		?>
 			<script>
 				var new_infos_array = [];
+				var screen_id_main = 0;
 				var select_ticket_api_log_id = 0;
 
 				function load_content() {
@@ -460,6 +464,7 @@ if (is_operator() || is_admin() || is_super()) {
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						if (new_infos_array['reload_flags']['communication']) {
 							load_content();
 						}
@@ -496,6 +501,7 @@ if (is_operator() || is_admin() || is_super()) {
 				</div>
 			</div>
 			<?php show_infobox("large");?>
+			<?php show_accesskeys();?>
 		</body>
 		</html>
 		<?php

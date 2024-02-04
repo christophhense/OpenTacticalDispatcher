@@ -282,6 +282,10 @@ switch ($function) {
 				<script src="./js/functions.js" type="text/javascript"></script>
 			</head>
 			<script>
+				var new_infos_array_callboard = [];
+				var screen_id_main = 0;
+				var active_assigns_button = false;
+				var cleared_assigns_button = false;
 
 				function show_cleared_assigns() {
 					$.get("callboard.php?function=table&cleared_assigns=show", function(data) {
@@ -304,9 +308,6 @@ switch ($function) {
 						$("#callboard").html(data);
 					});
 				}
-
-				var active_assigns_button = false;
-				var cleared_assigns_button = false;
 
 				function checkbox_clicked(id) {
 					if ($("#" + id).prop("checked")) {
@@ -479,6 +480,7 @@ switch ($function) {
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array_callboard = JSON.parse(event.data);
+						screen_id_main = new_infos_array_callboard['screen']['screen_id'];
 						if (
 							new_infos_array_callboard['reload_flags'] !== undefined && 
 							new_infos_array_callboard['reload_flags']['units']
@@ -533,6 +535,7 @@ switch ($function) {
 						</div>
 					</div>
 				</div>
+				<?php show_accesskeys();?>
 			</body>
 		</html>
 		<?php

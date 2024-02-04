@@ -788,33 +788,33 @@ foreach ($sound_names_array as $value) {
 							case "ticket_edit":
 							case "ticket_close":
 							case "action":
-								highlight_button("situation")
+								highlight_button("situation");
 								break;
 							case "communication_send":
 							case "communication_receive":
-								highlight_button("communication")
+								highlight_button("communication");
 								break;
 							case "ticket_add":
-								highlight_button("add_ticket")
+								highlight_button("add_ticket");
 								break;
 							case "log_report":
-								highlight_button("log_report")
+								highlight_button("log_report");
 								break;
 							case "units":
 							case "units_add":
 							case "units_edit":
-								highlight_button("units")
+								highlight_button("units");
 								break;
 							case "facilities":
 							case "facilities_add":
 							case "facilities_edit":
-								highlight_button("facilities")
+								highlight_button("facilities");
 								break;
 							case "reports":
-								highlight_button("reports")
+								highlight_button("reports");
 								break;
 							case "configuration":
-								highlight_button("configuration")
+								highlight_button("configuration");
 								break;
 							default:
 						}
@@ -822,7 +822,13 @@ foreach ($sound_names_array as $value) {
 					case "script":
 						switch (get_changes_array["item"]) {
 							case "callboard":
-								window.parent.callboard.location.href="callboard.php";
+								switch (get_changes_array["action"]) {
+									case "showhide":
+										show_hide_callboard();
+										break;
+									default:
+										window.parent.callboard.location.href="callboard.php";
+								}
 								break;
 							case "main":
 								window.parent.main.location.href=get_changes_array["action"];
@@ -991,17 +997,17 @@ foreach ($sound_names_array as $value) {
 			<div class="row" id="buttons" style="display: none;">
 				<div class="col-md-1"></div>
 				<div class="col-md-7">
-					<button id="situation" class="btn btn-xs btn-default btn-blink"
+					<button id="situation" class="btn btn-xs btn-default btn-blink" accesskey="h" 
 						onclick="show_main('situation');"><?php print get_text("Situation");?></button>
-					<button id="callboard" class="btn btn-xs btn-default"
+					<button id="callboard" class="btn btn-xs btn-default" accesskey="t" 
 						onclick="show_hide_callboard();" style="<?php print $display_callboard_str;?>"><?php print get_text("Board");?></button>
-					<button id="communication" class="btn btn-xs btn-default btn-blink"
+					<button id="communication" class="btn btn-xs btn-default btn-blink" accesskey="r" 
 						onclick="show_main('communication');"><?php print get_text("Communication");?>
 						<span id="count_messages" class="badge" style=" width:23px; margin-left: 3px; background-color: grey; color: white;">0</span>
 					</button>
-					<button id="add_ticket" class="btn btn-xs btn-default"
+					<button id="add_ticket" class="btn btn-xs btn-default" accesskey="n" 
 						onclick="show_main('add_ticket');"><?php print get_text("New");?></button>
-					<button id="log_report" class="btn btn-xs btn-default"
+					<button id="log_report" class="btn btn-xs btn-default" accesskey="l" 
 						onclick="show_main('log');"><?php print get_text("Log report");?></button>
 					<button id="units" class="btn btn-xs btn-default"
 						onclick="show_main('units');"><?php print get_text("Units");?></button>

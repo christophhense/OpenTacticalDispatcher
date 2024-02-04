@@ -60,6 +60,8 @@ if (is_guest()) {
 		<script src="./js/bootstrap.min.js" type="text/javascript"></script>
 		<script src="./js/functions.js" type="text/javascript"></script>
 		<script>
+			var new_infos_array = [];
+			var screen_id_main = 0;
 
 			$(document).ready(function() {
 				show_to_top_button("<?php print get_text("To top");?>");
@@ -68,6 +70,7 @@ if (is_guest()) {
 				window.addEventListener("message", function(event) {
 					if (event.origin != window.location.origin) return;
 					new_infos_array = JSON.parse(event.data);
+					screen_id_main = new_infos_array['screen']['screen_id'];
 				});
 			});
 
@@ -104,5 +107,6 @@ if (is_guest()) {
 				<div class="col-md-1"></div>
 			</div>
 		</div>
+		<?php show_accesskeys();?>
 	</body>
 </html>

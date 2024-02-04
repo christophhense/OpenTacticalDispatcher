@@ -1686,6 +1686,15 @@ function show_prevent_browser_back_button() {
 	}
 }
 
+function show_accesskeys() {
+	?>
+		<div accesskey="h" onclick="goto_window('situation.php?screen_id=' + screen_id_main);"></div>
+		<div accesskey="t" onclick="reload_callboard('showhide');"></div>
+		<div accesskey="r" onclick="goto_window('communication.php');"></div>
+		<div accesskey="n" onclick="goto_window('ticket_add.php');"></div>
+		<div accesskey="l" onclick="goto_window('log_report.php');"></div>
+	<?php
+}
 //====== selects
 
 function get_select_str($query, $form_id, $form_name, $class, $title, $style, $onchange, $option_0, $element_id, $no_options, $tabindex) {

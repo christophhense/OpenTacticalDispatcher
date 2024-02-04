@@ -781,6 +781,7 @@ switch ($function) {
 			</div>
 			<?php show_infobox("small");?>
 			<?php show_infobox("large");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>	
 	<?php

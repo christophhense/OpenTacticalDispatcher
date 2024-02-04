@@ -897,6 +897,7 @@ switch ($function) {
 				</form>	
 			</div>
 			<?php show_infobox("small");?>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 	<?php

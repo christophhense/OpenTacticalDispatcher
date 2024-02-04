@@ -306,11 +306,18 @@ switch ($function) {
 			}
 			?>
 				<script>
+					var new_infos_array = [];
+					var screen_id_main = 0;
 
 					$(document).ready(function() {
 						set_cursor_position(frm_handle, $("#frm_handle").val().length);
 						set_window_present("facilities_add");
 						<?php show_prevent_browser_back_button();?>
+						window.addEventListener("message", function(event) {
+							if (event.origin != window.location.origin) return;
+							new_infos_array = JSON.parse(event.data);
+							screen_id_main = new_infos_array['screen']['screen_id'];
+						});
 					});
 
 				</script>
@@ -484,6 +491,7 @@ switch ($function) {
 					</form>
 				</div>
 				<?php show_infobox("small");?>
+				<?php show_accesskeys();?>
 			</body>
 		</html>
 			<?php
@@ -512,11 +520,18 @@ switch ($function) {
 			}
 			?>
 				<script>
+					var new_infos_array = [];
+					var screen_id_main = 0;
 
 					$(document).ready(function() {
 						set_cursor_position(frm_name, $("#frm_name").val().length);
 						set_window_present("facilities_edit");
 						<?php show_prevent_browser_back_button();?>
+						window.addEventListener("message", function(event) {
+							if (event.origin != window.location.origin) return;
+							new_infos_array = JSON.parse(event.data);
+							screen_id_main = new_infos_array['screen']['screen_id'];
+						});
 					});
 
 				</script>
@@ -700,6 +715,7 @@ switch ($function) {
 					</form>
 				</div>
 				<?php show_infobox("small");?>
+				<?php show_accesskeys();?>
 			</body>
 		</html>
 			<?php
@@ -713,6 +729,8 @@ switch ($function) {
 		default:
 	?>
 			<script>
+				var new_infos_array = [];
+				var screen_id_main = 0;
 
 				function get_facilities() {
 					$.get("facilities.php?function=table_left", function(data) {
@@ -735,10 +753,10 @@ switch ($function) {
 					show_to_top_button("<?php print get_text("To top");?>");
 					set_window_present("facilities");
 					<?php show_prevent_browser_back_button();?>
-					var change_situation_first_set = 0;
 					window.addEventListener("message", function(event) {
 						if (event.origin != window.location.origin) return;
 						new_infos_array = JSON.parse(event.data);
+						screen_id_main = new_infos_array['screen']['screen_id'];
 						if (new_infos_array['reload_flags']['facilities']) {
 							get_facilities();
 						}
@@ -800,6 +818,7 @@ switch ($function) {
 					<div class="col-md-1"></div>
 				</div>
 			</div>
+			<?php show_accesskeys();?>
 		</body>
 	</html>
 	<?php
